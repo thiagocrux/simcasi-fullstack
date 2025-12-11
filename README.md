@@ -1,36 +1,176 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Syphilis Cases Monitoring System (Simcasi)
 
-## Getting Started
+This is a fullstack application designed to monitor and manage syphilis cases.
 
-First, run the development server:
+## Technologies
+
+The project uses a modern toolchain focused on developer experience and performance:
+
+- `next` — The React Framework for the Web.
+- `react` — The library for web and native user interfaces.
+- `prisma` — Next-generation ORM for Node.js and TypeScript.
+- `postgresql` — The World's Most Advanced Open Source Relational Database.
+- `tailwindcss` — Utility-first CSS framework for styling.
+- `pnpm` — Fast and disk-efficient JavaScript package manager.
+- `docker` — Platform for developing, shipping, and running applications.
+
+## Prerequisites
+
+Before installing and running this app, make sure you have the following installed on your machine:
+
+- Node.js (recommended v18+; verify with `node -v`)
+- pnpm (package manager; install via `corepack enable` or `npm i -g pnpm`)
+- Docker & Docker Compose (for running the database)
+
+## Installation
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/thiagocrux/simcasi-fullstack
+cd simcasi-fullstack
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Setup Environment Variables:
 
-## Learn More
+   Create a `.env` file in the root directory. Ensure you have the necessary variables for Docker and Prisma. Example:
 
-To learn more about Next.js, take a look at the following resources:
+   ```env
+   # Database Configuration for Docker
+   POSTGRES_USER=postgres
+   POSTGRES_PASSWORD=postgres
+   POSTGRES_DATABASE=simcasi
+   POSTGRES_HOST_PORT=5432
+   POSTGRES_CONTAINER_PORT=5432
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   # Prisma Connection String
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/simcasi?schema=public"
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Start the database:
 
-## Deploy on Vercel
+   This project uses PostgreSQL with Docker. Start the database container:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   docker-compose up -d
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+5. Setup the database with Prisma:
+
+   Run the migrations to apply the schema to the database:
+
+   ```bash
+   pnpm prisma:migrate
+   ```
+
+   Generate the Prisma Client type definitions:
+
+   ```bash
+   pnpm prisma:generate
+   ```
+
+   Seed the database with initial data:
+
+   ```bash
+   pnpm prisma:seed
+   ```
+
+6. Run the development server:
+
+```bash
+pnpm dev
+```
+
+The application will be available at `http://localhost:3000`.
+
+## Available scripts
+
+This section documents the main scripts available in `package.json` and what they do.
+
+### Development
+
+- #### `dev`
+
+  Starts the Next.js development server.
+
+  ```bash
+  pnpm dev
+  ```
+
+- #### `prisma:studio`
+
+  Opens Prisma Studio, a visual editor for your database.
+
+  ```bash
+  pnpm prisma:studio
+  ```
+
+### Production
+
+- #### `build`
+
+  Builds the application for production.
+
+  ```bash
+  pnpm build
+  ```
+
+- #### `start`
+
+  Starts the production server.
+
+  ```bash
+  pnpm start
+  ```
+
+- #### `prisma:migrate:deploy`
+
+  Runs pending migrations for production environments.
+
+  ```bash
+  pnpm prisma:migrate:deploy
+  ```
+
+### Database Management
+
+- #### `prisma:migrate`
+
+  Runs `prisma migrate dev` to apply migrations to the development database.
+
+  ```bash
+  pnpm prisma:migrate
+  ```
+
+- #### `prisma:generate`
+
+  Generates the Prisma Client based on your schema.
+
+  ```bash
+  pnpm prisma:generate
+  ```
+
+- #### `prisma:migrate:reset`
+
+  Resets the database (Caution: deletes all data).
+
+  ```bash
+  pnpm prisma:migrate:reset
+  ```
+
+- #### `prisma:seed`
+
+  Seeds the database with initial data.
+
+  ```bash
+  pnpm prisma:seed
+  ```
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)

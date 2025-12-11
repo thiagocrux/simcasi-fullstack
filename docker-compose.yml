@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: simcasi_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '${POSTGRES_HOST_PORT}:${POSTGRES_CONTAINER_PORT}'
