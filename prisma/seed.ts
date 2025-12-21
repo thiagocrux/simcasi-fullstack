@@ -1,5 +1,7 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import crypto from 'crypto';
+
+import { ROLES } from '@/core/domain/constants/role.constants';
 import { PrismaClient } from './generated/client';
 
 import {
@@ -7,7 +9,6 @@ import {
   PERMISSIONS_BY_ROLE,
   isPermission,
 } from '@/core/domain/constants/permission.constants';
-import { ROLES } from '@/core/domain/constants/role.constants';
 
 const connectionString = `${process.env.DATABASE_URL}`;
 const adapter = new PrismaPg({ connectionString });
