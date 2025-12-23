@@ -30,6 +30,16 @@ const config: Config = {
         input: 'var(--color-input)',
         ring: 'var(--color-ring)',
 
+        /* Shadcn sidebar colors */
+        sidebar: 'var(--color-sidebar)',
+        'sidebar-foreground': 'var(--color-sidebar-foreground)',
+        'sidebar-primary': 'var(--color-sidebar-primary)',
+        'sidebar-primary-foreground': 'var(--color-sidebar-primary-foreground)',
+        'sidebar-accent': 'var(--color-sidebar-accent)',
+        'sidebar-accent-foreground': 'var(--color-sidebar-accent-foreground)',
+        'sidebar-border': 'var(--color-sidebar-border)',
+        'sidebar-ring': 'var(--color-sidebar-ring)',
+
         /* Custom colors */
         'custom-gray': 'var(--color-custom-gray)',
         chart: {
@@ -38,16 +48,6 @@ const config: Config = {
           '3': 'var(--color-chart-3)',
           '4': 'var(--color-chart-4)',
           '5': 'var(--color-chart-5)',
-        },
-        sidebar: {
-          DEFAULT: 'var(--color-sidebar)',
-          foreground: 'var(--color-sidebar-foreground)',
-          primary: 'var(--color-sidebar-primary)',
-          'primary-foreground': 'var(--color-sidebar-primary-foreground)',
-          accent: 'var(--color-sidebar-accent)',
-          'accent-foreground': 'var(--color-sidebar-accent-foreground)',
-          border: 'var(--color-sidebar-border)',
-          ring: 'var(--color-sidebar-ring)',
         },
       },
       borderRadius: {

@@ -3,6 +3,8 @@
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css' layer(utilities);
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
   /* Shadcn Colors converted to light-dark */
   --color-background: light-dark(oklch(1 0 0), oklch(0.129 0.042 264.695));
@@ -96,37 +98,22 @@
     oklch(0.645 0.246 16.439)
   );
 
-  --color-sidebar: light-dark(
-    oklch(0.984 0.003 247.858),
-    oklch(0.208 0.042 265.755)
-  );
+  --color-sidebar: light-dark(hsl(0 0% 98%), hsl(240 5.9% 10%));
   --color-sidebar-foreground: light-dark(
-    oklch(0.129 0.042 264.695),
-    oklch(0.984 0.003 247.858)
+    hsl(240 5.3% 26.1%),
+    hsl(240 4.8% 95.9%)
   );
-  --color-sidebar-primary: light-dark(
-    oklch(0.208 0.042 265.755),
-    oklch(0.488 0.243 264.376)
-  );
-  --color-sidebar-primary-foreground: light-dark(
-    oklch(0.984 0.003 247.858),
-    oklch(0.984 0.003 247.858)
-  );
-  --color-sidebar-accent: light-dark(
-    oklch(0.968 0.007 247.896),
-    oklch(0.279 0.041 260.031)
-  );
+  --color-sidebar-primary: light-dark(hsl(240 5.9% 10%), hsl(224.3 76.3% 48%));
+  --color-sidebar-primary-foreground: light-dark(hsl(0 0% 98%), hsl(0 0% 100%));
+  --color-sidebar-accent: light-dark(hsl(240 4.8% 95.9%), hsl(240 3.7% 15.9%));
   --color-sidebar-accent-foreground: light-dark(
-    oklch(0.208 0.042 265.755),
-    oklch(0.984 0.003 247.858)
+    hsl(240 5.9% 10%),
+    hsl(240 4.8% 95.9%)
   );
-  --color-sidebar-border: light-dark(
-    oklch(0.929 0.013 255.508),
-    oklch(1 0 0 / 10%)
-  );
+  --color-sidebar-border: light-dark(hsl(220 13% 91%), hsl(240 3.7% 15.9%));
   --color-sidebar-ring: light-dark(
-    oklch(0.704 0.04 256.788),
-    oklch(0.551 0.027 264.364)
+    hsl(217.2 91.2% 59.8%),
+    hsl(217.2 91.2% 59.8%)
   );
   /* Custom colors */
   --color-custom-gray: light-dark(#80828b, #80828b);
