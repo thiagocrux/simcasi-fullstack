@@ -10,6 +10,8 @@ export const messages = {
 
   INVALID_PASSWORD:
     'A senha deve ter entre 8 e 128 caracteres, incluindo pelo menos uma letra minúscula, uma maiúscula, um número, um símbolo e pode conter espaços.',
+  UNMATCHED_PASSWORDS:
+    'As senhas não coincidem. Verifique se você digitou a mesma senha nos dois campos.',
   INVALID_PHONE:
     'Por favor, insira um telefone no seguinte formato: +XX (XX) 9XXXX-XXXX.',
 } as const;

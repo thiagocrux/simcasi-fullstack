@@ -1,7 +1,8 @@
 import * as z from 'zod';
+
 import { messages } from '../messages';
 
-export const createTreatmentSchema = z.object({
+export const treatmentSchema = z.object({
   medication: z.string().nonempty(messages.REQUIRED_FIELD('Medicação')),
   healthCenter: z
     .string()
@@ -12,5 +13,5 @@ export const createTreatmentSchema = z.object({
   partnerInformation: z.string().optional(),
 });
 
-export type CreateTreatmentInput = z.infer<typeof createTreatmentSchema>;
+export type CreateTreatmentInput = z.infer<typeof treatmentSchema>;
 export type UpdateTreatmentInput = Partial<CreateTreatmentInput>;

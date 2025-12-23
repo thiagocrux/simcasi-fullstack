@@ -1,9 +1,9 @@
 import * as z from 'zod';
 
-export const createObservationSchema = z.object({
+export const observationSchema = z.object({
   observations: z.string().optional(),
   partnerBeingTreated: z.boolean(),
 });
 
-export type CreateObservationInput = z.infer<typeof createObservationSchema>;
+export type CreateObservationInput = z.infer<typeof observationSchema>;
 export type UpdateObservationInput = Partial<CreateObservationInput>;

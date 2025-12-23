@@ -12,7 +12,7 @@ import {
   SEXUALITY_OPTIONS,
 } from '../../constants/patient.constants';
 
-export const createPatientSchema = z.object({
+export const patientSchema = z.object({
   susCardNumber: z
     .string()
     .nonempty(messages.REQUIRED_FIELD('Número do cartão do SUS'))
@@ -76,5 +76,5 @@ export const createPatientSchema = z.object({
   complement: z.string().optional(),
 });
 
-export type CreatePatientInput = z.infer<typeof createPatientSchema>;
+export type CreatePatientInput = z.infer<typeof patientSchema>;
 export type UpdatePatientInput = Partial<CreatePatientInput>;

@@ -2,7 +2,7 @@ import * as z from 'zod';
 
 import { messages } from '../messages';
 
-export const createExamSchema = z.object({
+export const examSchema = z.object({
   treponemalTestType: z
     .string()
     .nonempty(messages.REQUIRED_FIELD('Tipo de teste treponêmico')),
@@ -31,5 +31,5 @@ export const createExamSchema = z.object({
     .nonempty(messages.REQUIRED_FIELD('Observações de referência')),
 });
 
-export type CreateExamInput = z.infer<typeof createExamSchema>;
+export type CreateExamInput = z.infer<typeof examSchema>;
 export type UpdateExamInput = Partial<CreateExamInput>;
