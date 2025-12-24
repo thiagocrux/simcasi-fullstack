@@ -41,7 +41,7 @@ const config: Config = {
         'sidebar-ring': 'var(--color-sidebar-ring)',
 
         /* Custom colors */
-        'custom-gray': 'var(--color-custom-gray)',
+        //...
         chart: {
           '1': 'var(--color-chart-1)',
           '2': 'var(--color-chart-2)',
