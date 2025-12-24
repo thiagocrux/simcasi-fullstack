@@ -1,20 +1,51 @@
 import { Metadata } from 'next';
 
-type MetadataProps = { params: { notificationId: string } };
+import { NotificationForm } from '@/app/components/features/notifications/NotificationForm';
+import { Card } from '@/app/components/ui/card';
 
-export function generateMetadata({ params }: MetadataProps): Metadata {
-  const isEditMode = !!params.notificationId && params.notificationId !== 'new';
+type NotificationFormPageProps = { params: { notificationId: string } };
+
+export function generateMetadata({
+  params,
+}: NotificationFormPageProps): Metadata {
+  const { notificationId } = params;
+  const isEditMode = !!notificationId && notificationId !== 'new';
 
   return {
-    title: isEditMode
+    title: !isEditMode
       ? 'Criar notificação | SIMCASI'
       : 'Editar notificação | SIMCASI',
-    description: isEditMode
+    description: !isEditMode
       ? 'Preencha o formulário para cadastrar uma nova notificação no SIMCASI.'
       : 'Edite as informações de uma notificação no SIMCASI.',
   };
 }
 
-export default function NotificationFormPage() {
-  return <p>NotificationFormPage</p>;
+export default function NotificationFormPage({
+  params,
+}: NotificationFormPageProps) {
+  const { notificationId } = params;
+  const isEditMode = !!notificationId && notificationId !== 'new';
+
+  return (
+    <>
+      <Card className="flex flex-col p-6 max-w-3xl">
+        <div>
+          <h1 className="font-bold text-xl">{`Formulário de ${
+            !isEditMode ? 'criação' : 'edição'
+          } de notificação`}</h1>
+          <p className="text-muted-foreground text-sm">
+            {`${
+              !isEditMode ? 'Preencha' : 'Atualize'
+            } as informações abaixo para ${
+              !isEditMode
+                ? 'adicionar uma nova notificação ao sistema.'
+                : 'editar a notificação no sistema.'
+            }`}
+          </p>
+        </div>
+        <NotificationForm isEditMode={isEditMode} />
+      </Card>
+    </>
+  );
 }

@@ -1,20 +1,47 @@
 import { Metadata } from 'next';
 
-type MetadataProps = { params: { treatmentId: string } };
+import { TreatmentForm } from '@/app/components/features/treatments/TreatmentForm';
+import { Card } from '@/app/components/ui/card';
 
-export function generateMetadata({ params }: MetadataProps): Metadata {
-  const isEditMode = !!params.treatmentId && params.treatmentId !== 'new';
+type TreatmentFormPageProps = { params: { treatmentId: string } };
+
+export function generateMetadata({ params }: TreatmentFormPageProps): Metadata {
+  const { treatmentId } = params;
+  const isEditMode = !!treatmentId && treatmentId !== 'new';
 
   return {
-    title: isEditMode
+    title: !isEditMode
       ? 'Criar tratamento | SIMCASI'
       : 'Editar tratamento | SIMCASI',
-    description: isEditMode
+    description: !isEditMode
       ? 'Preencha o formulário para cadastrar um novo tratamento no SIMCASI.'
       : 'Edite as informações de um tratamento no SIMCASI.',
   };
 }
 
-export default function TreatmentFormPage() {
-  return <p>TreatmentFormPage</p>;
+export default function TreatmentFormPage({ params }: TreatmentFormPageProps) {
+  const { treatmentId } = params;
+  const isEditMode = !!treatmentId && treatmentId !== 'new';
+
+  return (
+    <>
+      <Card className="flex flex-col p-6 max-w-3xl">
+        <div>
+          <h1 className="font-bold text-xl">{`Formulário de ${
+            !isEditMode ? 'criação' : 'edição'
+          } de tratamento`}</h1>
+          <p className="text-muted-foreground text-sm">
+            {`${
+              !isEditMode ? 'Preencha' : 'Atualize'
+            } as informações abaixo para ${
+              !isEditMode
+                ? 'adicionar um novo tratamento ao sistema.'
+                : 'editar o tratamento no sistema.'
+            }`}
+          </p>
+        </div>
+        <TreatmentForm isEditMode={isEditMode} />
+      </Card>
+    </>
+  );
 }

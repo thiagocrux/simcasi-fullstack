@@ -2,7 +2,20 @@ import { cookies } from 'next/headers';
 
 import { ThemeSwitcher } from '@/app/components/common/ThemeSwitcher';
 import { AppSidebar } from '@/app/components/layout/AppSidebar';
-import { SidebarProvider, SidebarTrigger } from '@/app/components/ui/sidebar';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/app/components/ui/breadcrumb';
+import { Separator } from '@/app/components/ui/separator';
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/app/components/ui/sidebar';
 
 export default async function RootLayout({
   children,
@@ -15,21 +28,37 @@ export default async function RootLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
-      <div className="relative flex flex-1 border">
-        <div className="top-4 left-4 absolute flex items-center">
-          <SidebarTrigger />
-        </div>
-        <div className="top-4 right-4 absolute flex items-center">
-          <ThemeSwitcher />
-        </div>
-        <div className="flex flex-col w-full">
-          <main className="flex flex-col flex-1 items-center px-6 py-6 w-full">
-            <div className="md:ml-80 max-w-2xl">{children}</div>
-          </main>
-          <footer className="flex md:ml-80 px-6 py-10 border-border border-t min-h-20">
-            Footer
-          </footer>
-        </div>
+      <div className="flex flex-col w-full">
+        <SidebarInset>
+          <header className="top-0 sticky flex justify-between items-center gap-2 bg-background p-4 border-b shrink-0">
+            <div className="flex items-center gap-2">
+              <SidebarTrigger className="-ml-1" />
+              <Separator
+                orientation="vertical"
+                className="mr-2 data-[orientation=vertical]:h-4"
+              />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem className="hidden md:block">
+                    <BreadcrumbLink href="#">Foo</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="hidden md:block" />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>Bar</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+            <ThemeSwitcher />
+          </header>
+        </SidebarInset>
+        <main className="p-6 w-full h-full">
+          <div className="flex justify-center">{children}</div>
+        </main>
+        <footer className="flex justify-between p-6 text-muted-foreground text-xs">
+          <p>@ 2025 Thiago Cruz</p>
+          <p>Sobre o sistema</p>
+        </footer>
       </div>
     </SidebarProvider>
   );

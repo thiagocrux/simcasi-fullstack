@@ -1,20 +1,47 @@
 import { Metadata } from 'next';
 
-type MetadataProps = { params: { patientId: string } };
+import { PatientForm } from '@/app/components/features/patients/PatientForm';
+import { Card } from '@/app/components/ui/card';
 
-export function generateMetadata({ params }: MetadataProps): Metadata {
-  const isEditMode = !!params.patientId && params.patientId !== 'new';
+type PatientFormPageProps = { params: { patientId: string } };
+
+export function generateMetadata({ params }: PatientFormPageProps): Metadata {
+  const { patientId } = params;
+  const isEditMode = !!patientId && patientId !== 'new';
 
   return {
-    title: isEditMode
+    title: !isEditMode
       ? 'Criar paciente | SIMCASI'
       : 'Editar paciente | SIMCASI',
-    description: isEditMode
+    description: !isEditMode
       ? 'Preencha o formulário para cadastrar um novo paciente no SIMCASI.'
       : 'Edite as informações de um paciente no SIMCASI.',
   };
 }
 
-export default function PatientFormPage() {
-  return <p>PatientFormPage</p>;
+export default function PatientFormPage({ params }: PatientFormPageProps) {
+  const { patientId } = params;
+  const isEditMode = !!patientId && patientId !== 'new';
+
+  return (
+    <>
+      <Card className="flex flex-col p-6 max-w-3xl">
+        <div>
+          <h1 className="font-bold text-xl">{`Formulário de ${
+            !isEditMode ? 'criação' : 'edição'
+          } de paciente`}</h1>
+          <p className="text-muted-foreground text-sm">
+            {`${
+              !isEditMode ? 'Preencha' : 'Atualize'
+            } as informações abaixo para ${
+              !isEditMode
+                ? 'adicionar um novo paciente ao sistema.'
+                : 'editar o paciente no sistema.'
+            }`}
+          </p>
+        </div>
+        <PatientForm />
+      </Card>
+    </>
+  );
 }
