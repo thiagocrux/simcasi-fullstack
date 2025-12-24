@@ -58,7 +58,7 @@ interface ThemeSwitcherProps {
   contentClasses?: string;
 }
 
-export default function ThemeSwitcher({
+export function ThemeSwitcher({
   showLabel = false,
   selectClasses = '',
   contentClasses = '',
@@ -184,7 +184,7 @@ export default function ThemeSwitcher({
     return (
       <Button
         variant="outline"
-        className={`text-custom-gray hover:text-custom-gray bg-transparent transition-none ${selectClasses}`}
+        className={`text-muted-foreground hover:text-muted-foreground bg-transparent transition-none ${selectClasses}`}
         disabled
       >
         <Sun className="opacity-50" />
@@ -205,7 +205,7 @@ export default function ThemeSwitcher({
         persistTheme(newValue);
       }}
     >
-      <SelectTrigger className={selectClasses}>
+      <SelectTrigger className={selectClasses} size="sm">
         <SelectValue placeholder="Selecione um tema" />
       </SelectTrigger>
       <SelectContent className={contentClasses}>
