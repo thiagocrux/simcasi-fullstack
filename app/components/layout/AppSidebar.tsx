@@ -97,7 +97,7 @@ const data = {
       items: [
         {
           title: 'Criar novo usuário',
-          url: '#',
+          url: '/users/new',
           icon: UserPlus,
         },
       ],
