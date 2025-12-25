@@ -3,19 +3,34 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
-import { signInUser } from '@/app/actions/session.actions';
+import { createPatient } from '@/app/actions/patient.actions';
 import { FieldErrorMessage } from '../../common/FieldErrorMessage';
 import { Button } from '../../ui/button';
+import { Checkbox } from '../../ui/checkbox';
 import { Field, FieldGroup, FieldLabel } from '../../ui/field';
 import { Input } from '../../ui/input';
 import { Spinner } from '../../ui/spinner';
 
 import {
+  GENDER_OPTIONS,
+  NATIONALITY_OPTIONS,
+  RACE_OPTIONS,
+  SEX_OPTIONS,
+  SEXUALITY_OPTIONS,
+} from '@/core/domain/constants/patient.constants';
+import {
   CreatePatientInput,
   patientSchema,
 } from '@/core/domain/validation/schemas/patient.schema';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../ui/select';
 
 interface PatientFormProps {
   className?: string;
@@ -27,6 +42,7 @@ export function PatientForm({ className }: PatientFormProps) {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors: formErrors, isSubmitting },
   } = useForm<CreatePatientInput>({
     resolver: zodResolver(patientSchema),
@@ -59,7 +75,7 @@ export function PatientForm({ className }: PatientFormProps) {
   });
 
   const mutation = useMutation({
-    mutationFn: (input: CreatePatientInput) => signInUser(input as any),
+    mutationFn: (input: CreatePatientInput) => createPatient(input),
     onSuccess: () => {
       // TODO: Implement success case
     },
@@ -117,11 +133,11 @@ export function PatientForm({ className }: PatientFormProps) {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="socialName">Nome social</FieldLabel>
+          <FieldLabel htmlFor="socialName">Nome social (opcional)</FieldLabel>
           <Input
             {...register('socialName')}
             name="socialName"
-            placeholder="Insira o nome social (opcional)"
+            placeholder="Insira o nome social"
             aria-invalid={!!formErrors.socialName}
           />
           {formErrors.socialName && (
@@ -143,89 +159,212 @@ export function PatientForm({ className }: PatientFormProps) {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="race">Raça</FieldLabel>
-          <Input
-            {...register('race')}
+          <Controller
             name="race"
-            placeholder="Insira a raça"
-            aria-invalid={!!formErrors.race}
+            control={control}
+            render={({ field }) => (
+              <>
+                <FieldLabel htmlFor="race">Raça</FieldLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    className={
+                      formErrors.race
+                        ? 'border-destructive! focus:ring-destructive/30!'
+                        : ''
+                    }
+                  >
+                    <SelectValue placeholder="Selecione a raça" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {RACE_OPTIONS.map((race) => (
+                      <SelectItem key={race.value} value={race.value}>
+                        {race.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formErrors.race && (
+                  <FieldErrorMessage message={formErrors.race.message} />
+                )}
+              </>
+            )}
           />
-          {formErrors.race && (
-            <FieldErrorMessage message={formErrors.race.message} />
-          )}
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="sex">Sexo</FieldLabel>
-          <Input
-            {...register('sex')}
+          <Controller
             name="sex"
-            placeholder="Insira o sexo"
-            aria-invalid={!!formErrors.sex}
+            control={control}
+            render={({ field }) => (
+              <>
+                <FieldLabel htmlFor="sex">Sexo</FieldLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    className={
+                      formErrors.sex
+                        ? 'border-destructive! focus:ring-destructive/30!'
+                        : ''
+                    }
+                  >
+                    <SelectValue placeholder="Selecione o sexo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SEX_OPTIONS.map((sex) => (
+                      <SelectItem key={sex.value} value={sex.value}>
+                        {sex.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formErrors.sex && (
+                  <FieldErrorMessage message={formErrors.sex.message} />
+                )}
+              </>
+            )}
           />
-          {formErrors.sex && (
-            <FieldErrorMessage message={formErrors.sex.message} />
-          )}
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="gender">Gênero</FieldLabel>
-          <Input
-            {...register('gender')}
+          <Controller
             name="gender"
-            placeholder="Insira o gênero"
-            aria-invalid={!!formErrors.gender}
+            control={control}
+            render={({ field }) => (
+              <>
+                <FieldLabel htmlFor="gender">Gênero</FieldLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    className={
+                      formErrors.gender
+                        ? 'border-destructive! focus:ring-destructive/30!'
+                        : ''
+                    }
+                  >
+                    <SelectValue placeholder="Selecione o gênero" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {GENDER_OPTIONS.map((gender) => (
+                      <SelectItem key={gender.value} value={gender.value}>
+                        {gender.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formErrors.gender && (
+                  <FieldErrorMessage message={formErrors.gender.message} />
+                )}
+              </>
+            )}
           />
-          {formErrors.gender && (
-            <FieldErrorMessage message={formErrors.gender.message} />
-          )}
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="sexuality">Sexualidade</FieldLabel>
-          <Input
-            {...register('sexuality')}
+          <Controller
             name="sexuality"
-            placeholder="Insira a sexualidade"
-            aria-invalid={!!formErrors.sexuality}
+            control={control}
+            render={({ field }) => (
+              <>
+                <FieldLabel htmlFor="sexuality">Sexualidade</FieldLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    className={
+                      formErrors.sexuality
+                        ? 'border-destructive! focus:ring-destructive/30!'
+                        : ''
+                    }
+                  >
+                    <SelectValue placeholder="Selecione a sexualidade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SEXUALITY_OPTIONS.map((sexuality) => (
+                      <SelectItem key={sexuality.value} value={sexuality.value}>
+                        {sexuality.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formErrors.sexuality && (
+                  <FieldErrorMessage message={formErrors.sexuality.message} />
+                )}
+              </>
+            )}
           />
-          {formErrors.sexuality && (
-            <FieldErrorMessage message={formErrors.sexuality.message} />
-          )}
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="nationality">Nacionalidade</FieldLabel>
-          <Input
-            {...register('nationality')}
+          <Controller
             name="nationality"
-            placeholder="Insira a nacionalidade"
-            aria-invalid={!!formErrors.nationality}
+            control={control}
+            render={({ field }) => (
+              <>
+                <FieldLabel htmlFor="nationality">Nacionalidade</FieldLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    className={
+                      formErrors.nationality
+                        ? 'border-destructive! focus:ring-destructive/30!'
+                        : ''
+                    }
+                  >
+                    <SelectValue placeholder="Selecione a nacionalidade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {NATIONALITY_OPTIONS.map((nationality) => (
+                      <SelectItem
+                        key={nationality.value}
+                        value={nationality.value}
+                      >
+                        {nationality.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formErrors.nationality && (
+                  <FieldErrorMessage message={formErrors.nationality.message} />
+                )}
+              </>
+            )}
           />
-          {formErrors.nationality && (
-            <FieldErrorMessage message={formErrors.nationality.message} />
-          )}
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="schooling">Escolaridade</FieldLabel>
-          <Input
-            {...register('schooling')}
+          <Controller
             name="schooling"
-            placeholder="Insira a escolaridade"
-            aria-invalid={!!formErrors.schooling}
+            control={control}
+            render={({ field }) => (
+              <>
+                <FieldLabel htmlFor="schooling">Escolaridade</FieldLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    className={
+                      formErrors.schooling
+                        ? 'border-destructive! focus:ring-destructive/30!'
+                        : ''
+                    }
+                  >
+                    <SelectValue placeholder="Selecione a escolaridade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {RACE_OPTIONS.map((schooling) => (
+                      <SelectItem key={schooling.value} value={schooling.value}>
+                        {schooling.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {formErrors.schooling && (
+                  <FieldErrorMessage message={formErrors.schooling.message} />
+                )}
+              </>
+            )}
           />
-          {formErrors.schooling && (
-            <FieldErrorMessage message={formErrors.schooling.message} />
-          )}
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="phone">Telefone</FieldLabel>
+          <FieldLabel htmlFor="phone">Telefone (opcional)</FieldLabel>
           <Input
             {...register('phone')}
             name="phone"
-            placeholder="Insira o telefone (opcional)"
+            placeholder="Insira o telefone"
             aria-invalid={!!formErrors.phone}
           />
           {formErrors.phone && (
@@ -234,11 +373,11 @@ export function PatientForm({ className }: PatientFormProps) {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="email">E-mail</FieldLabel>
+          <FieldLabel htmlFor="email">E-mail (opcional)</FieldLabel>
           <Input
             {...register('email')}
             name="email"
-            placeholder="Insira o e-mail (opcional)"
+            placeholder="Insira o e-mail"
             aria-invalid={!!formErrors.email}
           />
           {formErrors.email && (
@@ -260,11 +399,11 @@ export function PatientForm({ className }: PatientFormProps) {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="fatherName">Nome do pai</FieldLabel>
+          <FieldLabel htmlFor="fatherName">Nome do pai (opcional)</FieldLabel>
           <Input
             {...register('fatherName')}
             name="fatherName"
-            placeholder="Insira o nome do pai (opcional)"
+            placeholder="Insira o nome do pai"
             aria-invalid={!!formErrors.fatherName}
           />
           {formErrors.fatherName && (
@@ -273,13 +412,20 @@ export function PatientForm({ className }: PatientFormProps) {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="isDeceased">Falecido</FieldLabel>
-          <Input
-            {...register('isDeceased')}
-            name="isDeceased"
-            type="checkbox"
-            aria-invalid={!!formErrors.isDeceased}
-          />
+          <div className="flex items-center gap-3">
+            <Controller
+              control={control}
+              name="isDeceased"
+              render={({ field }) => (
+                <Checkbox
+                  id="isDeceased"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
+            <FieldLabel htmlFor="isDeceased">Falecido</FieldLabel>
+          </div>
           {formErrors.isDeceased && (
             <FieldErrorMessage message={formErrors.isDeceased.message} />
           )}
@@ -301,11 +447,11 @@ export function PatientForm({ className }: PatientFormProps) {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="zipCode">CEP</FieldLabel>
+          <FieldLabel htmlFor="zipCode">CEP (opcional)</FieldLabel>
           <Input
             {...register('zipCode')}
             name="zipCode"
-            placeholder="Insira o CEP (opcional)"
+            placeholder="Insira o CEP"
             aria-invalid={!!formErrors.zipCode}
           />
           {formErrors.zipCode && (
@@ -379,11 +525,11 @@ export function PatientForm({ className }: PatientFormProps) {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="complement">Complemento</FieldLabel>
+          <FieldLabel htmlFor="complement">Complemento (opcional)</FieldLabel>
           <Input
             {...register('complement')}
             name="complement"
-            placeholder="Insira o complemento (opcional)"
+            placeholder="Insira o complemento"
             aria-invalid={!!formErrors.complement}
           />
           {formErrors.complement && (
