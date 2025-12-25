@@ -5,10 +5,10 @@ import { Card } from '@/app/components/ui/card';
 
 type ObservationFormPageProps = { params: { observationId: string } };
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
-}: ObservationFormPageProps): Metadata {
-  const { observationId } = params;
+}: ObservationFormPageProps): Promise<Metadata> {
+  const { observationId } = await params;
   const isEditMode = !!observationId && observationId !== 'new';
 
   return {
@@ -21,10 +21,10 @@ export function generateMetadata({
   };
 }
 
-export default function ObservationFormPage({
+export default async function ObservationFormPage({
   params,
 }: ObservationFormPageProps) {
-  const { observationId } = params;
+  const { observationId } = await params;
   const isEditMode = !!observationId && observationId !== 'new';
 
   return (

@@ -5,8 +5,10 @@ import { Card } from '@/app/components/ui/card';
 
 type TreatmentFormPageProps = { params: { treatmentId: string } };
 
-export function generateMetadata({ params }: TreatmentFormPageProps): Metadata {
-  const { treatmentId } = params;
+export async function generateMetadata({
+  params,
+}: TreatmentFormPageProps): Promise<Metadata> {
+  const { treatmentId } = await params;
   const isEditMode = !!treatmentId && treatmentId !== 'new';
 
   return {
@@ -19,8 +21,10 @@ export function generateMetadata({ params }: TreatmentFormPageProps): Metadata {
   };
 }
 
-export default function TreatmentFormPage({ params }: TreatmentFormPageProps) {
-  const { treatmentId } = params;
+export default async function TreatmentFormPage({
+  params,
+}: TreatmentFormPageProps) {
+  const { treatmentId } = await params;
   const isEditMode = !!treatmentId && treatmentId !== 'new';
 
   return (

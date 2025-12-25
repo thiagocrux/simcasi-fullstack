@@ -5,10 +5,10 @@ import { Card } from '@/app/components/ui/card';
 
 type NotificationFormPageProps = { params: { notificationId: string } };
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
-}: NotificationFormPageProps): Metadata {
-  const { notificationId } = params;
+}: NotificationFormPageProps): Promise<Metadata> {
+  const { notificationId } = await params;
   const isEditMode = !!notificationId && notificationId !== 'new';
 
   return {
@@ -21,10 +21,10 @@ export function generateMetadata({
   };
 }
 
-export default function NotificationFormPage({
+export default async function NotificationFormPage({
   params,
 }: NotificationFormPageProps) {
-  const { notificationId } = params;
+  const { notificationId } = await params;
   const isEditMode = !!notificationId && notificationId !== 'new';
 
   return (
