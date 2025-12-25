@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 import { FieldErrorMessage } from '../../common/FieldErrorMessage';
 import { Button } from '../../ui/button';
@@ -20,6 +20,7 @@ import {
   CreateObservationInput,
   observationSchema,
 } from '@/core/domain/validation/schemas/observation.schema';
+import { Checkbox } from '../../ui/checkbox';
 
 interface ObservationFormProps {
   isEditMode: boolean;
@@ -34,6 +35,7 @@ export function ObservationForm({
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors: formErrors, isSubmitting },
   } = useForm<CreateObservationInput>({
@@ -63,11 +65,11 @@ export function ObservationForm({
     <form onSubmit={handleSubmit(onSubmit)} className={className}>
       <FieldGroup className="grid grid-cols-1">
         <Field>
-          <FieldLabel htmlFor="observations">Observações</FieldLabel>
+          <FieldLabel htmlFor="observations">Observações (opcional)</FieldLabel>
           <Input
             {...register('observations')}
             name="observations"
-            placeholder="Insira observações (opcional)"
+            placeholder="Insira observações"
             aria-invalid={!!formErrors.observations}
           />
           {formErrors.observations && (
@@ -76,15 +78,22 @@ export function ObservationForm({
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="partnerBeingTreated">
-            Parceiro em tratamento
-          </FieldLabel>
-          <Input
-            {...register('partnerBeingTreated')}
-            name="partnerBeingTreated"
-            type="checkbox"
-            aria-invalid={!!formErrors.partnerBeingTreated}
-          />
+          <div className="flex items-center gap-3">
+            <Controller
+              control={control}
+              name="partnerBeingTreated"
+              render={({ field }) => (
+                <Checkbox
+                  id="partnerBeingTreated"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              )}
+            />
+            <FieldLabel htmlFor="partnerBeingTreated">
+              Parceiro em tratamento
+            </FieldLabel>
+          </div>
           {formErrors.partnerBeingTreated && (
             <FieldErrorMessage
               message={formErrors.partnerBeingTreated.message}
