@@ -6,6 +6,6 @@ export const metadata: Metadata = {
     'Consulte todas as informações detalhadas deste tratamento no SIMCASI.',
 };
 
-export default function TreatmentDetails() {
-  return <p>TreatmentDetailsPage</p>;
+export default function TreatmentDetailsPage() {
+  return <p>TreatmentDetailsPagePage</p>;
 }

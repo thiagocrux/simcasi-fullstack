@@ -6,6 +6,6 @@ export const metadata: Metadata = {
     'Consulte todas as informações detalhadas desta notificação no SIMCASI.',
 };
 
-export default function NotificationDetails() {
-  return <p>NotificationDetailsPage</p>;
+export default function NotificationDetailsPage() {
+  return <p>NotificationDetailsPagePage</p>;
 }

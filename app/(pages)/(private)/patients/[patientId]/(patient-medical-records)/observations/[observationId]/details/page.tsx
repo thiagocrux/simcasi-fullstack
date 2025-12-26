@@ -6,6 +6,6 @@ export const metadata: Metadata = {
     'Consulte todas as informações detalhadas desta observação no SIMCASI.',
 };
 
-export default function ObservationDetails() {
-  return <p>ObservationDetailsPage</p>;
+export default function ObservationDetailsPage() {
+  return <p>ObservationDetailsPagePage</p>;
 }

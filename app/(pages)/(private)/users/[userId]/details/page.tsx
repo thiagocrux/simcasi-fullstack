@@ -6,6 +6,6 @@ export const metadata: Metadata = {
     'Consulte todas as informações detalhadas deste usuário no SIMCASI.',
 };
 
-export default function UserDetails() {
-  return <p>UserDetailsPage</p>;
+export default function UserDetailsPage() {
+  return <p>UserDetailsPagePage</p>;
 }

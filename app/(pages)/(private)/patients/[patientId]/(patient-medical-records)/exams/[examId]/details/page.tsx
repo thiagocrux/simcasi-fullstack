@@ -6,6 +6,6 @@ export const metadata: Metadata = {
     'Consulte todas as informações detalhadas deste exame no SIMCASI.',
 };
 
-export default function ExamDetails() {
-  return <p>ExamDetailsPage</p>;
+export default function ExamDetailsPage() {
+  return <p>ExamDetailsPagePage</p>;
 }
