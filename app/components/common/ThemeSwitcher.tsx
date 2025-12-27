@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '../ui/button';
 
+import { cn } from '@/lib/utils';
 import {
   Select,
   SelectContent,
@@ -205,13 +206,13 @@ export function ThemeSwitcher({
         persistTheme(newValue);
       }}
     >
-      <SelectTrigger className={selectClasses} size="sm">
+      <SelectTrigger className={cn('cursor-pointer', selectClasses)} size="sm">
         <SelectValue placeholder="Selecione um tema" />
       </SelectTrigger>
       <SelectContent className={contentClasses}>
         <SelectGroup>
           {(['light', 'dark', 'system'] as Theme[]).map((key) => (
-            <SelectItem value={key} key={key}>
+            <SelectItem value={key} key={key} className="cursor-pointer">
               <span className="inline-flex items-center gap-2">
                 {themeLabels[key].icon}
                 {showLabel && themeLabels[key].label}

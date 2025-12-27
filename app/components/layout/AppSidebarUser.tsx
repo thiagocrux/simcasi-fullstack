@@ -1,13 +1,7 @@
 'use client';
 
-import {
-  BadgeCheck,
-  ChevronsUpDown,
-  Info,
-  LogOut,
-  Mail,
-  Settings2,
-} from 'lucide-react';
+import { ChevronsUpDown, LogOut, type LucideIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
@@ -34,10 +28,16 @@ interface AppSidebarUserProps {
     email: string;
     avatar: string;
   };
+  dropdownItems: {
+    title: string;
+    url: string;
+    icon: LucideIcon;
+  }[];
 }
 
-export function AppSidebarUser({ user }: AppSidebarUserProps) {
+export function AppSidebarUser({ user, dropdownItems }: AppSidebarUserProps) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -79,22 +79,16 @@ export function AppSidebarUser({ user }: AppSidebarUserProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Perfil
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings2 />
-                Configurações
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Mail />
-                Suporte
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Info />
-                Sobre
-              </DropdownMenuItem>
+              {dropdownItems.map((item) => (
+                <DropdownMenuItem
+                  key={item.title}
+                  onClick={() => router.push(item.url)}
+                  className="cursor-pointer"
+                >
+                  <item.icon />
+                  {item.title}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>

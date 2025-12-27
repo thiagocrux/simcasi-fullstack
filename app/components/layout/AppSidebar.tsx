@@ -4,14 +4,17 @@ import { useRouter } from 'next/navigation';
 import * as React from 'react';
 
 import {
+  BadgeCheck,
   ClipboardPlus,
   Command,
   Contact,
   DoorOpen,
   FileLock,
   Hospital,
+  Info,
   KeyRound,
   LayoutDashboard,
+  Mail,
   Settings2,
   SquareActivity,
   Syringe,
@@ -45,7 +48,6 @@ const data = {
       title: 'Dashboard',
       url: '/dashboard',
       icon: LayoutDashboard,
-      isActive: false,
     },
   ],
   medicalRecords: [
@@ -53,7 +55,7 @@ const data = {
       title: 'Pacientes',
       url: '/patients',
       icon: User,
-      isActive: true,
+      isActive: false,
       items: [
         {
           title: 'Criar novo paciente',
@@ -66,25 +68,21 @@ const data = {
       title: 'Exames',
       url: '/exams',
       icon: Hospital,
-      isActive: false,
     },
     {
       title: 'Notificações',
       url: '/notifications',
       icon: ClipboardPlus,
-      isActive: false,
     },
     {
       title: 'Observações',
       url: '/observations',
       icon: SquareActivity,
-      isActive: false,
     },
     {
       title: 'Tratamentos',
       url: '/treatments',
       icon: Syringe,
-      isActive: false,
     },
   ],
   // TODO: Show section only to users with admin role.
@@ -106,13 +104,11 @@ const data = {
       title: 'Permissões',
       url: '/permissions',
       icon: KeyRound,
-      isActive: false,
     },
     {
       title: 'Sessões',
       url: '/sessions',
       icon: DoorOpen,
-      isActive: false,
     },
   ],
   // TODO: Show section only to users with admin role.
@@ -121,15 +117,28 @@ const data = {
       title: 'Registros de auditoria',
       url: '/audit-logs',
       icon: FileLock,
-      isActive: false,
     },
   ],
   settings: [
     {
-      title: 'Preferências',
+      title: 'Perfil',
+      url: '#',
+      icon: BadgeCheck,
+    },
+    {
+      title: 'Configurações',
       url: '#',
       icon: Settings2,
-      isActive: false,
+    },
+    {
+      title: 'Suporte',
+      url: '#',
+      icon: Mail,
+    },
+    {
+      title: 'Sobre',
+      url: '#',
+      icon: Info,
     },
   ],
 };
@@ -174,7 +183,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <AppSidebarContent label="Auditorias" items={data.audit} />
       </SidebarContent>
       <SidebarFooter>
-        <AppSidebarUser user={data.user} />
+        <AppSidebarUser user={data.user} dropdownItems={data.settings} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
