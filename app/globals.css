@@ -2,6 +2,7 @@
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css' layer(utilities);
+@plugin "tailwindcss-animate";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -78,6 +79,15 @@
   );
   --color-sidebar-border: light-dark(oklch(0.922 0 0), oklch(1 0 0 / 10%));
   --color-sidebar-ring: light-dark(oklch(0.708 0 0), oklch(0.556 0 0));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* Custom breakpoints */
+  --breakpoint-xs: 375px;
+  --breakpoint-2xs: 435px;
+  --breakpoint-3xs: 550px;
 }
 
 @layer base {
