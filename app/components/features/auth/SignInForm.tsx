@@ -10,7 +10,7 @@ import {
   CreateSessionInput,
   sessionSchema,
 } from '@/core/domain/validation/schemas/session.schema';
-import { FieldErrorMessage } from '../../common/FieldErrorMessage';
+import { FieldError } from '../../common/FieldError';
 import { PasswordInput } from '../../common/PasswordInput';
 import { Button } from '../../ui/button';
 import { Field, FieldGroup, FieldLabel } from '../../ui/field';
@@ -60,9 +60,10 @@ export function SignInForm({ className }: SignInFormProps) {
             aria-invalid={!!formErrors.email}
           />
           {formErrors.email && (
-            <FieldErrorMessage message={formErrors.email.message} />
+            <FieldError message={formErrors.email.message} />
           )}
         </Field>
+
         <Field>
           <FieldLabel htmlFor="password">Senha</FieldLabel>
           <PasswordInput
@@ -72,10 +73,11 @@ export function SignInForm({ className }: SignInFormProps) {
             aria-invalid={!!formErrors.password}
           />
           {formErrors.password && (
-            <FieldErrorMessage message={formErrors.password.message} />
+            <FieldError message={formErrors.password.message} />
           )}
         </Field>
       </FieldGroup>
+
       <Button
         type="button"
         variant="link"
@@ -84,6 +86,7 @@ export function SignInForm({ className }: SignInFormProps) {
       >
         Esqueceu a senha?
       </Button>
+
       <Button
         type="submit"
         size="lg"

@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 
 import { requestNewPassword } from '@/app/actions/session.actions';
-import { FieldErrorMessage } from '../../common/FieldErrorMessage';
+import { FieldError } from '../../common/FieldError';
 import { Button } from '../../ui/button';
 import { Field, FieldLabel } from '../../ui/field';
 import { Input } from '../../ui/input';
@@ -59,9 +59,10 @@ export function RequestNewPasswordForm({
           aria-invalid={!!formErrors.registeredEmail}
         />
         {formErrors.registeredEmail && (
-          <FieldErrorMessage message={formErrors.registeredEmail.message} />
+          <FieldError message={formErrors.registeredEmail.message} />
         )}
       </Field>
+
       <Button
         type="submit"
         size="lg"

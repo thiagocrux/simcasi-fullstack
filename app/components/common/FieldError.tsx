@@ -3,15 +3,12 @@
 import { cn } from '@/lib/utils';
 import ReactMarkdown from 'react-markdown';
 
-interface FieldErrorMessageProps {
+interface FieldErrorProps {
   message: string | undefined;
   className?: string;
 }
 
-export function FieldErrorMessage({
-  message,
-  className,
-}: FieldErrorMessageProps) {
+export function FieldError({ message, className }: FieldErrorProps) {
   if (!message) {
     return null;
   }

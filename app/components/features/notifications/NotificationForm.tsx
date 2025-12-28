@@ -5,8 +5,10 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import { FieldErrorMessage } from '../../common/FieldErrorMessage';
+import { FieldError } from '../../common/FieldError';
+import { FieldGroupHeading } from '../../common/FieldGroupHeading';
 import { Button } from '../../ui/button';
+import { Card } from '../../ui/card';
 import { Field, FieldGroup, FieldLabel } from '../../ui/field';
 import { Input } from '../../ui/input';
 import { Spinner } from '../../ui/spinner';
@@ -61,44 +63,52 @@ export function NotificationForm({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={className}>
-      <FieldGroup className="grid grid-cols-1">
-        <Field>
-          <FieldLabel htmlFor="sinan">SINAN</FieldLabel>
-          <Input
-            {...register('sinan')}
-            name="sinan"
-            placeholder="Insira o SINAN"
-            aria-invalid={!!formErrors.sinan}
-          />
-          {formErrors.sinan && (
-            <FieldErrorMessage message={formErrors.sinan.message} />
-          )}
-        </Field>
+    <Card className="flex flex-col px-4 sm:px-8 py-8 sm:py-12">
+      <form onSubmit={handleSubmit(onSubmit)} className={className}>
+        <FieldGroup className="gap-8 grid grid-cols-1">
+          <FieldGroupHeading text="Dados da notificação" />
 
-        <Field>
-          <FieldLabel htmlFor="observations">Observações (opcional)</FieldLabel>
-          <Textarea
-            {...register('observations')}
-            name="observations"
-            placeholder="Insira as observações"
-            aria-invalid={!!formErrors.observations}
-          />
-          {formErrors.observations && (
-            <FieldErrorMessage message={formErrors.observations.message} />
-          )}
-        </Field>
-      </FieldGroup>
+          <FieldGroup className="gap-4 grid grid-cols-1 lg:grid-cols-2">
+            <Field>
+              <FieldLabel htmlFor="sinan">SINAN</FieldLabel>
+              <Input
+                {...register('sinan')}
+                name="sinan"
+                placeholder="000000"
+                aria-invalid={!!formErrors.sinan}
+              />
+              {formErrors.sinan && (
+                <FieldError message={formErrors.sinan.message} />
+              )}
+            </Field>
 
-      <Button
-        type="submit"
-        size="lg"
-        className="mt-8 w-full cursor-pointer"
-        disabled={isSubmitting}
-      >
-        {isSubmitting && <Spinner />}
-        Salvar
-      </Button>
-    </form>
+            <Field className="col-span-full">
+              <FieldLabel htmlFor="observations">
+                Observações (opcional)
+              </FieldLabel>
+              <Textarea
+                {...register('observations')}
+                name="observations"
+                placeholder="Ex: Paciente apresentou reação alérgica leve."
+                aria-invalid={!!formErrors.observations}
+              />
+              {formErrors.observations && (
+                <FieldError message={formErrors.observations.message} />
+              )}
+            </Field>
+          </FieldGroup>
+        </FieldGroup>
+
+        <Button
+          type="submit"
+          size="lg"
+          className="mt-8 w-full cursor-pointer"
+          disabled={isSubmitting}
+        >
+          {isSubmitting && <Spinner />}
+          Salvar
+        </Button>
+      </form>
+    </Card>
   );
 }

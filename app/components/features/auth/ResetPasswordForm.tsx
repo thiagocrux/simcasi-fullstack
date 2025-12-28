@@ -9,7 +9,7 @@ import {
   ResetPasswordInput,
   resetPasswordSchema,
 } from '@/core/domain/validation/schemas/session.schema';
-import { FieldErrorMessage } from '../../common/FieldErrorMessage';
+import { FieldError } from '../../common/FieldError';
 import { PasswordInput } from '../../common/PasswordInput';
 import { Button } from '../../ui/button';
 import { Field, FieldGroup, FieldLabel } from '../../ui/field';
@@ -56,10 +56,11 @@ export function ResetPasswordForm({ className }: ResetPasswordProps) {
             aria-invalid={!!formErrors.newPassword}
           />
           {formErrors.newPassword && (
-            <FieldErrorMessage message={formErrors.newPassword.message} />
+            <FieldError message={formErrors.newPassword.message} />
           )}
         </Field>
-        <FieldGroup>
+
+        <Field>
           <FieldLabel>Confirmação de nova senha</FieldLabel>
           <PasswordInput
             {...register('newPasswordConfirmation')}
@@ -68,12 +69,11 @@ export function ResetPasswordForm({ className }: ResetPasswordProps) {
             aria-invalid={!!formErrors.newPasswordConfirmation}
           />
           {formErrors.newPasswordConfirmation && (
-            <FieldErrorMessage
-              message={formErrors.newPasswordConfirmation.message}
-            />
+            <FieldError message={formErrors.newPasswordConfirmation.message} />
           )}
-        </FieldGroup>
+        </Field>
       </FieldGroup>
+
       <Button
         type="submit"
         size="lg"

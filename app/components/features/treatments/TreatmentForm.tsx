@@ -2,12 +2,15 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Datepicker } from '../../common/Datepicker';
-import { FieldErrorMessage } from '../../common/FieldErrorMessage';
+import { FieldError } from '../../common/FieldError';
+import { FieldGroupHeading } from '../../common/FieldGroupHeading';
 import { Button } from '../../ui/button';
+import { Card } from '../../ui/card';
 import { Field, FieldGroup, FieldLabel } from '../../ui/field';
 import { Input } from '../../ui/input';
 import { Spinner } from '../../ui/spinner';
@@ -23,11 +26,14 @@ import {
 } from '@/core/domain/validation/schemas/treatment.schema';
 
 interface TreatmentFormProps {
-  isEditMode: boolean;
+  isEditMode?: boolean;
   className?: string;
 }
 
-export function TreatmentForm({ isEditMode, className }: TreatmentFormProps) {
+export function TreatmentForm({
+  isEditMode = false,
+  className,
+}: TreatmentFormProps) {
   const router = useRouter();
 
   const {
@@ -63,110 +69,116 @@ export function TreatmentForm({ isEditMode, className }: TreatmentFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={className}>
-      <FieldGroup className="grid grid-cols-1">
-        <Field>
-          <FieldLabel htmlFor="medication">Medicação</FieldLabel>
-          <Input
-            {...register('medication')}
-            name="medication"
-            placeholder="Insira a medicação"
-            aria-invalid={!!formErrors.medication}
-          />
-          {formErrors.medication && (
-            <FieldErrorMessage message={formErrors.medication.message} />
-          )}
-        </Field>
+    <Card className="flex flex-col px-4 sm:px-8 py-8 sm:py-12">
+      <form onSubmit={handleSubmit(onSubmit)} className={className}>
+        <FieldGroup className="gap-8 grid grid-cols-1">
+          <FieldGroupHeading text="Dados do tratamento" />
 
-        <Field>
-          <FieldLabel htmlFor="healthCenter">
-            Unidade Básica de Saúde
-          </FieldLabel>
-          <Input
-            {...register('healthCenter')}
-            name="healthCenter"
-            placeholder="Insira a Unidade Básica de Saúde"
-            aria-invalid={!!formErrors.healthCenter}
-          />
-          {formErrors.healthCenter && (
-            <FieldErrorMessage message={formErrors.healthCenter.message} />
-          )}
-        </Field>
+          <FieldGroup className="gap-4 grid grid-cols-1 lg:grid-cols-2">
+            <Field>
+              <FieldLabel htmlFor="medication">Medicação</FieldLabel>
+              <Input
+                {...register('medication')}
+                name="medication"
+                placeholder="Ex: Penicilina Benzatina"
+                aria-invalid={!!formErrors.medication}
+              />
+              {formErrors.medication && (
+                <FieldError message={formErrors.medication.message} />
+              )}
+            </Field>
 
-        <Field>
-          <Controller
-            name="startDate"
-            control={control}
-            render={({ field }) => (
-              <>
-                <FieldLabel htmlFor="startDate">Data de início</FieldLabel>
-                <Datepicker
-                  placeholder="Selecione a data de início"
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  hasError={!!formErrors.startDate}
-                />
-                {formErrors.startDate && (
-                  <FieldErrorMessage message={formErrors.startDate.message} />
+            <Field>
+              <FieldLabel htmlFor="healthCenter">
+                Unidade Básica de Saúde
+              </FieldLabel>
+              <Input
+                {...register('healthCenter')}
+                name="healthCenter"
+                placeholder="Ex: UBS Centro"
+                aria-invalid={!!formErrors.healthCenter}
+              />
+              {formErrors.healthCenter && (
+                <FieldError message={formErrors.healthCenter.message} />
+              )}
+            </Field>
+
+            <Field>
+              <Controller
+                name="startDate"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <FieldLabel htmlFor="startDate">Data de início</FieldLabel>
+                    <Datepicker
+                      placeholder="DD/MM/AAAA"
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      hasError={!!formErrors.startDate}
+                    />
+                    {formErrors.startDate && (
+                      <FieldError message={formErrors.startDate.message} />
+                    )}
+                  </>
                 )}
-              </>
-            )}
-          />
-        </Field>
+              />
+            </Field>
 
-        <Field>
-          <FieldLabel htmlFor="dosage">Dosagem</FieldLabel>
-          <Input
-            {...register('dosage')}
-            name="dosage"
-            placeholder="Insira a dosagem"
-            aria-invalid={!!formErrors.dosage}
-          />
-          {formErrors.dosage && (
-            <FieldErrorMessage message={formErrors.dosage.message} />
-          )}
-        </Field>
+            <Field>
+              <FieldLabel htmlFor="dosage">Dosagem</FieldLabel>
+              <Input
+                {...register('dosage')}
+                name="dosage"
+                placeholder="Ex: 2.400.000 UI"
+                aria-invalid={!!formErrors.dosage}
+              />
+              {formErrors.dosage && (
+                <FieldError message={formErrors.dosage.message} />
+              )}
+            </Field>
 
-        <Field>
-          <FieldLabel htmlFor="observations">Observações (opcional)</FieldLabel>
-          <Input
-            {...register('observations')}
-            name="observations"
-            placeholder="Insira as observações do tratamento"
-            aria-invalid={!!formErrors.observations}
-          />
-          {formErrors.observations && (
-            <FieldErrorMessage message={formErrors.observations.message} />
-          )}
-        </Field>
+            <Field>
+              <FieldLabel htmlFor="observations">
+                Observações (opcional)
+              </FieldLabel>
+              <Input
+                {...register('observations')}
+                name="observations"
+                placeholder="Ex: Paciente apresentou melhora."
+                aria-invalid={!!formErrors.observations}
+              />
+              {formErrors.observations && (
+                <FieldError message={formErrors.observations.message} />
+              )}
+            </Field>
 
-        <Field>
-          <FieldLabel htmlFor="partnerInformation">
-            Informações do parceiro (opcional)
-          </FieldLabel>
-          <Input
-            {...register('partnerInformation')}
-            name="partnerInformation"
-            placeholder="Insira as informações do parceiro"
-            aria-invalid={!!formErrors.partnerInformation}
-          />
-          {formErrors.partnerInformation && (
-            <FieldErrorMessage
-              message={formErrors.partnerInformation.message}
-            />
-          )}
-        </Field>
-      </FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="partnerInformation">
+                Informações do parceiro (opcional)
+              </FieldLabel>
+              <Input
+                {...register('partnerInformation')}
+                name="partnerInformation"
+                placeholder="Ex: Parceiro tratado na mesma data."
+                aria-invalid={!!formErrors.partnerInformation}
+              />
+              {formErrors.partnerInformation && (
+                <FieldError message={formErrors.partnerInformation.message} />
+              )}
+            </Field>
+          </FieldGroup>
+        </FieldGroup>
 
-      <Button
-        type="submit"
-        size="lg"
-        className="mt-8 w-full cursor-pointer"
-        disabled={isSubmitting}
-      >
-        {isSubmitting && <Spinner />}
-        Salvar
-      </Button>
-    </form>
+        <Button
+          type="submit"
+          size="lg"
+          className="mt-8 w-full cursor-pointer"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? <Spinner /> : <Save />}
+          {isEditMode ? 'Atualizar' : 'Salvar'}
+        </Button>
+      </form>
+    </Card>
   );
 }

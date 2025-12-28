@@ -45,6 +45,18 @@ export default function ExamDetailsPage() {
       title: 'Outros',
       fields: [
         {
+          label: 'Outro teste não treponêmico',
+          value: mockExams[0].otherNontreponemalTest,
+        },
+        {
+          label: 'Data do outro teste não treponêmico',
+          value: mockExams[0].otherNontreponemalTestDate
+            ? new Date(
+                mockExams[0].otherNontreponemalTestDate
+              ).toLocaleDateString('pt-BR')
+            : null,
+        },
+        {
           label: 'Observações de referência',
           value: mockExams[0].referenceObservations,
         },

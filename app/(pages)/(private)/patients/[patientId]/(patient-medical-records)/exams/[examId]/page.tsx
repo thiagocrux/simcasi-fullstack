@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 
+import { PageHeader } from '@/app/components/common/PageHeader';
+import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { ExamForm } from '@/app/components/features/exams/ExamForm';
-import { Card } from '@/app/components/ui/card';
 
 type ExamFormPageProps = { params: { examId: string } };
 
@@ -25,23 +26,20 @@ export default async function ExamFormPage({ params }: ExamFormPageProps) {
 
   return (
     <>
-      <Card className="flex flex-col p-6 max-w-3xl">
-        <div>
-          <h1 className="font-bold text-xl">{`Formulário  de ${
-            !isEditMode ? 'criação' : 'edição'
-          } de exame`}</h1>
-          <p className="text-muted-foreground text-sm">
-            {`${
-              !isEditMode ? 'Preencha' : 'Atualize'
-            } as informações abaixo para ${
-              !isEditMode
-                ? 'adicionar um novo exame ao sistema.'
-                : 'editar o exame no sistema.'
-            }`}
-          </p>
-        </div>
+      <div className="flex flex-col gap-8 w-full max-w-3xl">
+        <ReturnLink />
+        <PageHeader
+          title={`Formulário de ${!isEditMode ? 'criação' : 'edição'} de exame`}
+          description={`${
+            !isEditMode ? 'Preencha' : 'Atualize'
+          } as informações abaixo para ${
+            !isEditMode
+              ? 'adicionar um novo exame ao sistema.'
+              : 'editar o exame no sistema.'
+          }`}
+        />
         <ExamForm isEditMode={isEditMode} />
-      </Card>
+      </div>
     </>
   );
 }

@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 
+import { PageHeader } from '@/app/components/common/PageHeader';
+import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { NotificationForm } from '@/app/components/features/notifications/NotificationForm';
-import { Card } from '@/app/components/ui/card';
 
 type NotificationFormPageProps = { params: { notificationId: string } };
 
@@ -29,23 +30,22 @@ export default async function NotificationFormPage({
 
   return (
     <>
-      <Card className="flex flex-col p-6 max-w-3xl">
-        <div>
-          <h1 className="font-bold text-xl">{`Formulário de ${
+      <div className="flex flex-col gap-8 w-full max-w-3xl">
+        <ReturnLink />
+        <PageHeader
+          title={`Formulário de ${
             !isEditMode ? 'criação' : 'edição'
-          } de notificação`}</h1>
-          <p className="text-muted-foreground text-sm">
-            {`${
-              !isEditMode ? 'Preencha' : 'Atualize'
-            } as informações abaixo para ${
-              !isEditMode
-                ? 'adicionar uma nova notificação ao sistema.'
-                : 'editar a notificação no sistema.'
-            }`}
-          </p>
-        </div>
+          } de notificação`}
+          description={`${
+            !isEditMode ? 'Preencha' : 'Atualize'
+          } as informações abaixo para ${
+            !isEditMode
+              ? 'adicionar uma nova notificação ao sistema.'
+              : 'editar a notificação no sistema.'
+          }`}
+        />
         <NotificationForm isEditMode={isEditMode} />
-      </Card>
+      </div>
     </>
   );
 }
