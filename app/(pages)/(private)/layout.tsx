@@ -32,7 +32,7 @@ export default async function RootLayout({
         <SidebarInset>
           <header className="top-0 sticky flex justify-between items-center gap-2 bg-background p-4 border-b shrink-0">
             <div className="flex items-center gap-2">
-              <SidebarTrigger className="-ml-1" />
+              <SidebarTrigger className="-ml-1 cursor-pointer" />
               <Separator
                 orientation="vertical"
                 className="mr-2 data-[orientation=vertical]:h-4"
