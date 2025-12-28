@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 
+import { PageHeader } from '@/app/components/common/PageHeader';
+import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { PatientForm } from '@/app/components/features/patients/PatientForm';
-import { Card } from '@/app/components/ui/card';
 
 type PatientFormPageProps = { params: { patientId: string } };
 
@@ -29,23 +30,22 @@ export default async function PatientFormPage({
 
   return (
     <>
-      <Card className="flex flex-col p-6 max-w-3xl">
-        <div>
-          <h1 className="font-bold text-xl">{`Formulário de ${
+      <div className="flex flex-col gap-8 w-full max-w-3xl">
+        <ReturnLink />
+        <PageHeader
+          title={`Formulário de ${
             !isEditMode ? 'criação' : 'edição'
-          } de paciente`}</h1>
-          <p className="text-muted-foreground text-sm">
-            {`${
-              !isEditMode ? 'Preencha' : 'Atualize'
-            } as informações abaixo para ${
-              !isEditMode
-                ? 'adicionar um novo paciente ao sistema.'
-                : 'editar o paciente no sistema.'
-            }`}
-          </p>
-        </div>
+          } de paciente`}
+          description={`${
+            !isEditMode ? 'Preencha' : 'Atualize'
+          } as informações abaixo para ${
+            !isEditMode
+              ? 'adicionar um novo paciente ao sistema.'
+              : 'editar o paciente no sistema.'
+          }`}
+        />
         <PatientForm />
-      </Card>
+      </div>
     </>
   );
 }

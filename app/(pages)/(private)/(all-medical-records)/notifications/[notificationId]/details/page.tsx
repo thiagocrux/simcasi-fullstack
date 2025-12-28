@@ -5,28 +5,28 @@ import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
-import { mockUsers } from '@/lib/mock';
+import { mockNotifications } from '@/lib/mock';
 
 export const metadata: Metadata = {
-  title: 'Detalhes do usuário | SIMCASI',
-  description: 'Consulte as informações detalhadas deste usuário no SIMCASI.',
+  title: 'Detalhes da notificação | SIMCASI',
+  description:
+    'Consulte as informações detalhadas desta notificação no SIMCASI.',
 };
 
-export default function UserDetailsPage() {
+export default function NotificationDetailsPage() {
   const data = [
     {
-      title: 'Identificação e acesso',
+      title: 'Dados da notificação',
       fields: [
-        { label: 'Nome', value: mockUsers[0].name },
-        { label: 'E-mail', value: mockUsers[0].email },
-        { label: 'ID do Perfil', value: mockUsers[0].roleId },
+        { label: 'SINAN', value: mockNotifications[0].sinan },
+        { label: 'Observações', value: mockNotifications[0].observations },
       ],
     },
   ];
 
   async function handleUpdate() {
     'use server';
-    redirect(`/users/${mockUsers[0].id}`);
+    redirect(`/notifications/${mockNotifications[0].id}`);
   }
 
   async function handleDelete() {
@@ -39,14 +39,14 @@ export default function UserDetailsPage() {
       <div className="flex flex-col gap-8 w-full max-w-3xl">
         <ReturnLink />
         <PageHeader
-          title="Detalhes do usuário"
-          description="Aqui você pode visualizar todas as informações completas deste usuário."
+          title="Detalhes da notificação"
+          description="Aqui você pode visualizar todas as informações desta notificação."
         />
         <DetailsPageActions
           dialogTitle="Você tem certeza absoluta?"
-          dialogDescription="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o usuário."
-          updateAction={{ label: 'Editar usuário', action: handleUpdate }}
-          deleteAction={{ label: 'Deletar usuário', action: handleDelete }}
+          dialogDescription="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a notificação."
+          updateAction={{ label: 'Editar notificação', action: handleUpdate }}
+          deleteAction={{ label: 'Deletar notificação', action: handleDelete }}
         />
         <DetailsPageProperties data={data} />
       </div>
