@@ -6,6 +6,8 @@ import { useMemo, useState } from 'react';
 import {
   ArrowDownAZ,
   ArrowUpZA,
+  ClockArrowDown,
+  ClockArrowUp,
   Eye,
   MoreHorizontal,
   Pen,
@@ -25,6 +27,8 @@ import {
 } from '@tanstack/react-table';
 
 import { exportToCsv } from '@/lib/exportToCsv';
+import { formatDate } from '@/lib/formatters';
+import { renderOrFallback } from '@/lib/utils';
 import { User } from '@/prisma/generated/client';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
@@ -40,7 +44,7 @@ import {
   DropdownMenuTrigger,
 } from '../../ui/dropdown-menu';
 
-interface UsersDataTable {
+interface UsersTable {
   data: User[];
   pageSize?: number;
   showFilterInput?: boolean;
@@ -49,26 +53,38 @@ interface UsersDataTable {
   showPaginationInput?: boolean;
 }
 
-type Column = 'id' | 'name' | 'email' | 'roleId';
+type Column =
+  | 'id'
+  | 'name'
+  | 'email'
+  | 'roleId'
+  | 'createdAt'
+  | 'updatedBy'
+  | 'updatedAt'
+  | 'deletedAt';
 
 const COLUMN_LABELS: Record<Column, string> = {
   id: 'ID',
   name: 'Nome',
   email: 'E-mail',
   roleId: 'Nível de permissão',
+  createdAt: 'Criado em',
+  updatedBy: 'Atualizado por',
+  updatedAt: 'Atualizado em',
+  deletedAt: 'Deletado em',
 };
 
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN: Column = 'name';
 
-export function UsersDataTable({
+export function UsersTable({
   data,
   pageSize = DEFAULT_PAGE_SIZE,
   showFilterInput = true,
-  showPrintButton = false,
+  showPrintButton = true,
   showColumnToggleButton = true,
   showPaginationInput = false,
-}: UsersDataTable) {
+}: UsersTable) {
   const router = useRouter();
 
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -107,10 +123,12 @@ export function UsersDataTable({
         },
         cell: ({ row }) => (
           <div className="ml-1">
-            <HighlightedText
-              text={row.getValue('id')}
-              highlight={filterOption === 'id' ? filterValue : ''}
-            />
+            {renderOrFallback(row.getValue('id'), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={filterOption === 'id' ? filterValue : ''}
+              />
+            ))}
           </div>
         ),
       },
@@ -135,10 +153,12 @@ export function UsersDataTable({
         },
         cell: ({ row }) => (
           <div className="ml-1">
-            <HighlightedText
-              text={row.getValue('name')}
-              highlight={filterOption === 'name' ? filterValue : ''}
-            />
+            {renderOrFallback(row.getValue('name'), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={filterOption === 'name' ? filterValue : ''}
+              />
+            ))}
           </div>
         ),
       },
@@ -163,10 +183,12 @@ export function UsersDataTable({
         },
         cell: ({ row }) => (
           <div className="ml-1">
-            <HighlightedText
-              text={row.getValue('email')}
-              highlight={filterOption === 'email' ? filterValue : ''}
-            />
+            {renderOrFallback(row.getValue('email'), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={filterOption === 'email' ? filterValue : ''}
+              />
+            ))}
           </div>
         ),
       },
@@ -191,10 +213,144 @@ export function UsersDataTable({
         },
         cell: ({ row }) => (
           <div className="ml-1">
-            <HighlightedText
-              text={row.getValue('roleId')}
-              highlight={filterOption === 'roleId' ? filterValue : ''}
-            />
+            {renderOrFallback(row.getValue('roleId'), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={filterOption === 'roleId' ? filterValue : ''}
+              />
+            ))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'createdAt',
+        sortingFn: 'datetime',
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+              className="px-1! cursor-pointer"
+            >
+              Criado em
+              {column.getSortIndex() === 0 &&
+                column.getIsSorted() === 'asc' && <ClockArrowDown />}
+              {column.getSortIndex() === 0 &&
+                column.getIsSorted() === 'desc' && <ClockArrowUp />}
+            </Button>
+          );
+        },
+        cell: ({ row }) => (
+          <div className="ml-1">
+            {renderOrFallback(
+              formatDate(row.getValue('createdAt') as Date),
+              (value) => (
+                <HighlightedText
+                  text={value}
+                  highlight={filterOption === 'createdAt' ? filterValue : ''}
+                />
+              )
+            )}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'updatedBy',
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+              className="px-1! cursor-pointer"
+            >
+              Atualizado por
+              {column.getSortIndex() === 0 &&
+                column.getIsSorted() === 'asc' && <ArrowDownAZ />}
+              {column.getSortIndex() === 0 &&
+                column.getIsSorted() === 'desc' && <ArrowUpZA />}
+            </Button>
+          );
+        },
+        cell: ({ row }) => (
+          <div className="ml-1">
+            {renderOrFallback(row.getValue('updatedBy'), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={filterOption === 'updatedBy' ? filterValue : ''}
+              />
+            ))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'updatedAt',
+        sortingFn: 'datetime',
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+              className="px-1! cursor-pointer"
+            >
+              Atualizado em
+              {column.getSortIndex() === 0 &&
+                column.getIsSorted() === 'asc' && <ClockArrowDown />}
+              {column.getSortIndex() === 0 &&
+                column.getIsSorted() === 'desc' && <ClockArrowUp />}
+            </Button>
+          );
+        },
+        cell: ({ row }) => (
+          <div className="ml-1">
+            {renderOrFallback(
+              formatDate(row.getValue('updatedAt') as Date),
+              (value) => (
+                <HighlightedText
+                  text={value}
+                  highlight={filterOption === 'updatedAt' ? filterValue : ''}
+                />
+              )
+            )}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'deletedAt',
+        sortingFn: 'datetime',
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+              className="px-1! cursor-pointer"
+            >
+              Deletado em
+              {column.getSortIndex() === 0 &&
+                column.getIsSorted() === 'asc' && <ClockArrowDown />}
+              {column.getSortIndex() === 0 &&
+                column.getIsSorted() === 'desc' && <ClockArrowUp />}
+            </Button>
+          );
+        },
+        cell: ({ row }) => (
+          <div className="ml-1">
+            {renderOrFallback(
+              formatDate(row.getValue('deletedAt') as Date),
+              (value) => (
+                <HighlightedText
+                  text={value}
+                  highlight={filterOption === 'deletedAt' ? filterValue : ''}
+                />
+              )
+            )}
           </div>
         ),
       },
@@ -281,11 +437,12 @@ export function UsersDataTable({
 
   function exportData() {
     const rows = table.getFilteredRowModel().rows.map((row) => {
-      const { password, ...rest } = row.original;
+      const { password: _password, ...rest } = row.original;
+      void _password;
       return rest;
     });
 
-    exportToCsv(rows, 'users-export');
+    exportToCsv(rows, 'data-table-export');
   }
 
   return (

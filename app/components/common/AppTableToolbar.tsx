@@ -45,7 +45,7 @@ function TableFilter({
   columnLabelMapper: Record<string, string>;
 }) {
   return (
-    <InputGroup className="max-w-full md:max-w-sm">
+    <InputGroup className="max-w-full md:max-w-[500px]">
       <InputGroupInput
         type="text"
         placeholder="Pesquisar por..."
@@ -55,7 +55,7 @@ function TableFilter({
         onChange={(event) =>
           table.getColumn(filterOption)?.setFilterValue(event.target.value)
         }
-        className="max-w-full md:max-w-sm"
+        className="w-full"
       />
       <InputGroupAddon
         align="inline-start"
@@ -149,7 +149,7 @@ export function AppTableToolbar({
   setFilterOption,
   handleDataExport,
   showFilterInput = false,
-  showPrintButton = false,
+  showPrintButton = true,
   showColumnToggleButton = false,
   className,
 }: AppTableToolbar) {

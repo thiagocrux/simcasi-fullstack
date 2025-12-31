@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from 'clsx';
+import { type ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -57,4 +58,13 @@ export function getPaginationRange(
   }
 
   return [];
+}
+
+export function renderOrFallback(
+  value: unknown,
+  renderer: (value: string) => ReactNode,
+  fallback: ReactNode = '-'
+): ReactNode {
+  if (value === undefined || value === null || value === '') return fallback;
+  return renderer(String(value));
 }
