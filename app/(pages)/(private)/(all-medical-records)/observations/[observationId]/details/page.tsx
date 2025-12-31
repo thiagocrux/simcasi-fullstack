@@ -42,7 +42,9 @@ export default async function ObservationDetailsPage({
 
   async function handleUpdate() {
     'use server';
-    redirect(`/observations/${observation?.id}`);
+    redirect(
+      `/patients/${observation?.patientId}/observations/${observation?.id}`
+    );
   }
 
   async function handleDelete() {

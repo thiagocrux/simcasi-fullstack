@@ -54,7 +54,7 @@ export default async function TreatmentDetailsPage({
 
   async function handleUpdate() {
     'use server';
-    redirect(`/treatments/${treatment?.id}`);
+    redirect(`/patients/${treatment?.patientId}/treatments/${treatment?.id}`);
   }
 
   async function handleDelete() {

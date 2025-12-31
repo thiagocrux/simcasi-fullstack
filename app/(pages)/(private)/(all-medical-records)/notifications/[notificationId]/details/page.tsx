@@ -39,7 +39,9 @@ export default async function NotificationDetailsPage({
 
   async function handleUpdate() {
     'use server';
-    redirect(`/notifications/${notification?.id}`);
+    redirect(
+      `/patients/${notification?.patientId}/notifications/${notification?.id}`
+    );
   }
 
   async function handleDelete() {

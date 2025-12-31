@@ -75,7 +75,7 @@ export default async function ExamDetailsPage({
 
   async function handleUpdate() {
     'use server';
-    redirect(`/exams/${exam?.id}`);
+    redirect(`/patients/${exam?.patientId}/exams/${exam?.id}`);
   }
 
   async function handleDelete() {
