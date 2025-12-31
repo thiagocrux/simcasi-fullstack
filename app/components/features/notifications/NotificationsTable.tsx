@@ -97,6 +97,11 @@ export function NotificationsTable({
     DEFAULT_FILTER_COLUMN
   );
 
+  // TODO: Implement real delete functionality.
+  function handleDelete() {
+    console.log(`Delete called for ID: ${data[0].id}`);
+  }
+
   const columns = useMemo<ColumnDef<Partial<Notification>>[]>(() => {
     const filterValue =
       (columnFilters.find((filter) => filter.id === filterOption)
@@ -364,7 +369,11 @@ export function NotificationsTable({
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() =>
-                    router.push(`/notifications/${row.getValue('id')}`)
+                    router.push(
+                      `patients/${'patientId'}/notifications/${row.getValue(
+                        'id'
+                      )}`
+                    )
                   }
                 >
                   <Pen />
@@ -375,9 +384,7 @@ export function NotificationsTable({
                   description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a notificação."
                   cancelAction={{ action: () => {} }}
                   continueAction={{
-                    action: () => {
-                      alert(row.getValue('id'));
-                    },
+                    action: handleDelete,
                   }}
                 >
                   <DropdownMenuItem
@@ -394,7 +401,7 @@ export function NotificationsTable({
         },
       },
     ];
-  }, [columnFilters, filterOption, router]);
+  }, [columnFilters, filterOption, handleDelete, router]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({

@@ -98,6 +98,11 @@ export function ObservationsTable({
     DEFAULT_FILTER_COLUMN
   );
 
+  // TODO: Implement real delete functionality.
+  function handleDelete() {
+    console.log(`Delete called for ID: ${data[0].id}`);
+  }
+
   const columns = useMemo<ColumnDef<Partial<Observation>>[]>(() => {
     const filterValue =
       (columnFilters.find((filter) => filter.id === filterOption)
@@ -365,7 +370,11 @@ export function ObservationsTable({
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() =>
-                    router.push(`/observations/${row.getValue('id')}`)
+                    router.push(
+                      `patients/${'patientId'}/observations/${row.getValue(
+                        'id'
+                      )}`
+                    )
                   }
                 >
                   <Pen />
@@ -376,9 +385,7 @@ export function ObservationsTable({
                   description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
                   cancelAction={{ action: () => {} }}
                   continueAction={{
-                    action: () => {
-                      alert(row.getValue('id'));
-                    },
+                    action: handleDelete,
                   }}
                 >
                   <DropdownMenuItem
@@ -395,7 +402,7 @@ export function ObservationsTable({
         },
       },
     ];
-  }, [columnFilters, filterOption, router]);
+  }, [columnFilters, filterOption, handleDelete, router]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({

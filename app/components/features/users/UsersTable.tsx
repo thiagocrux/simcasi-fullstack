@@ -96,6 +96,11 @@ export function UsersTable({
     DEFAULT_FILTER_COLUMN
   );
 
+  // TODO: Implement real delete functionality.
+  function handleDelete() {
+    console.log(`Delete called for ID: ${data[0].id}`);
+  }
+
   const columns = useMemo<ColumnDef<Partial<User>>[]>(() => {
     const filterValue =
       (columnFilters.find((filter) => filter.id === filterOption)
@@ -387,9 +392,7 @@ export function UsersTable({
                   description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
                   cancelAction={{ action: () => {} }}
                   continueAction={{
-                    action: () => {
-                      alert(row.getValue('id'));
-                    },
+                    action: handleDelete,
                   }}
                 >
                   <DropdownMenuItem
@@ -406,7 +409,7 @@ export function UsersTable({
         },
       },
     ];
-  }, [columnFilters, filterOption, router]);
+  }, [columnFilters, filterOption, handleDelete, router]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({

@@ -112,6 +112,11 @@ export function ExamsTable({
     DEFAULT_FILTER_COLUMN
   );
 
+  // TODO: Implement real delete functionality.
+  function handleDelete() {
+    console.log(`Delete called for ID: ${data[0].id}`);
+  }
+
   const columns = useMemo<ColumnDef<Partial<Exam>>[]>(() => {
     const filterValue =
       (columnFilters.find((filter) => filter.id === filterOption)
@@ -653,7 +658,13 @@ export function ExamsTable({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer"
-                  onClick={() => router.push(`/exams/${row.getValue('id')}`)}
+                  onClick={() =>
+                    router.push(
+                      `patients/${row.getValue(
+                        'patientId'
+                      )}/exams/${row.getValue('id')}`
+                    )
+                  }
                 >
                   <Pen />
                   Editar exame
@@ -663,9 +674,7 @@ export function ExamsTable({
                   description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o exame."
                   cancelAction={{ action: () => {} }}
                   continueAction={{
-                    action: () => {
-                      alert(row.getValue('id'));
-                    },
+                    action: handleDelete,
                   }}
                 >
                   <DropdownMenuItem

@@ -104,6 +104,11 @@ export function TreatmentsTable({
     DEFAULT_FILTER_COLUMN
   );
 
+  // TODO: Implement real delete functionality.
+  function handleDelete() {
+    console.log(`Delete called for ID: ${data[0].id}`);
+  }
+
   const columns = useMemo<ColumnDef<Partial<Treatment>>[]>(() => {
     const filterValue =
       (columnFilters.find((filter) => filter.id === filterOption)
@@ -486,7 +491,11 @@ export function TreatmentsTable({
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() =>
-                    router.push(`/treatments/${row.getValue('id')}`)
+                    router.push(
+                      `patients/${row.getValue(
+                        'patientId'
+                      )}/treatments/${row.getValue('id')}`
+                    )
                   }
                 >
                   <Pen />
@@ -497,9 +506,7 @@ export function TreatmentsTable({
                   description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o tratamento."
                   cancelAction={{ action: () => {} }}
                   continueAction={{
-                    action: () => {
-                      alert(row.getValue('id'));
-                    },
+                    action: handleDelete,
                   }}
                 >
                   <DropdownMenuItem
@@ -516,7 +523,7 @@ export function TreatmentsTable({
         },
       },
     ];
-  }, [columnFilters, filterOption, router]);
+  }, [columnFilters, filterOption, handleDelete, router]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
