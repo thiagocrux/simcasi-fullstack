@@ -13,26 +13,35 @@ export const metadata: Metadata = {
     'Consulte todas as informações detalhadas deste paciente no SIMCASI.',
 };
 
-export default function PatientDetailsPage() {
+interface PatientDetailsPageProps {
+  params: Promise<{ patientId: string }>;
+}
+
+export default async function PatientDetailsPage({
+  params,
+}: PatientDetailsPageProps) {
+  const { patientId } = await params;
+
+  // --- TODO: Replace the logic below with the actual action call
+  const patient = mockPatients.find((patient) => patient.id === patientId);
+
   const data = [
     {
       title: 'Identificação e dados pessoais',
       fields: [
         {
           label: 'Número do cartão do SUS',
-          value: mockPatients[0].susCardNumber,
+          value: patient?.susCardNumber,
         },
-        { label: 'Nome', value: mockPatients[0].name },
-        { label: 'CPF', value: mockPatients[0].cpf },
-        { label: 'Nome social', value: mockPatients[0].socialName },
+        { label: 'Nome', value: patient?.name },
+        { label: 'CPF', value: patient?.cpf },
+        { label: 'Nome social', value: patient?.socialName },
         {
           label: 'Data de nascimento',
-          value: new Date(mockPatients[0].birthDate).toLocaleDateString(
-            'pt-BR'
-          ),
+          value: Intl.DateTimeFormat('pt-BR').format(patient?.birthDate),
         },
-        { label: 'Nome da mãe', value: mockPatients[0].motherName },
-        { label: 'Nome do pai', value: mockPatients[0].fatherName },
+        { label: 'Nome da mãe', value: patient?.motherName },
+        { label: 'Nome do pai', value: patient?.fatherName },
       ],
     },
     {
@@ -40,44 +49,44 @@ export default function PatientDetailsPage() {
       fields: [
         {
           label: 'Tipo de monitoramento',
-          value: mockPatients[0].monitoringType,
+          value: patient?.monitoringType,
         },
         {
           label: 'Falecido',
-          value: mockPatients[0].isDeceased ? 'Sim' : 'Não',
+          value: patient?.isDeceased ? 'Sim' : 'Não',
         },
       ],
     },
     {
       title: 'Dados demográficos e sociais',
       fields: [
-        { label: 'Raça', value: mockPatients[0].race },
-        { label: 'Sexo', value: mockPatients[0].sex },
-        { label: 'Gênero', value: mockPatients[0].gender },
-        { label: 'Sexualidade', value: mockPatients[0].sexuality },
-        { label: 'Nacionalidade', value: mockPatients[0].nationality },
-        { label: 'Escolaridade', value: mockPatients[0].schooling },
+        { label: 'Raça', value: patient?.race },
+        { label: 'Sexo', value: patient?.sex },
+        { label: 'Gênero', value: patient?.gender },
+        { label: 'Sexualidade', value: patient?.sexuality },
+        { label: 'Nacionalidade', value: patient?.nationality },
+        { label: 'Escolaridade', value: patient?.schooling },
       ],
     },
     {
       title: 'Contato e endereço',
       fields: [
-        { label: 'Telefone', value: mockPatients[0].phone },
-        { label: 'E-mail', value: mockPatients[0].email },
-        { label: 'CEP', value: mockPatients[0].zipCode },
-        { label: 'Estado', value: mockPatients[0].state },
-        { label: 'Cidade', value: mockPatients[0].city },
-        { label: 'Bairro', value: mockPatients[0].neighborhood },
-        { label: 'Rua', value: mockPatients[0].street },
-        { label: 'Número da casa', value: mockPatients[0].houseNumber },
-        { label: 'Complemento', value: mockPatients[0].complement },
+        { label: 'Telefone', value: patient?.phone },
+        { label: 'E-mail', value: patient?.email },
+        { label: 'CEP', value: patient?.zipCode },
+        { label: 'Estado', value: patient?.state },
+        { label: 'Cidade', value: patient?.city },
+        { label: 'Bairro', value: patient?.neighborhood },
+        { label: 'Rua', value: patient?.street },
+        { label: 'Número da casa', value: patient?.houseNumber },
+        { label: 'Complemento', value: patient?.complement },
       ],
     },
   ];
 
   async function handleUpdate() {
     'use server';
-    redirect(`/patients/${mockPatients[0].id}`);
+    redirect(`/patients/${patient?.id}`);
   }
 
   async function handleDelete() {

@@ -13,29 +13,40 @@ export const metadata: Metadata = {
     'Consulte as informações detalhadas deste tratamento no SIMCASI.',
 };
 
-export default function TreatmentDetailsPage() {
+interface TreatmentDetailsPageProps {
+  params: Promise<{ treatmentId: string }>;
+}
+
+export default async function TreatmentDetailsPage({
+  params,
+}: TreatmentDetailsPageProps) {
+  const { treatmentId } = await params;
+
+  // --- TODO: Replace the logic below with the actual action call
+  const treatment = mockTreatments.find(
+    (treatment) => treatment.id === treatmentId
+  );
+
   const data = [
     {
       title: 'Dados do tratamento',
       fields: [
-        { label: 'Medicamento', value: mockTreatments[0].medication },
-        { label: 'Unidade de saúde', value: mockTreatments[0].healthCenter },
+        { label: 'Medicamento', value: treatment?.medication },
+        { label: 'Unidade de saúde', value: treatment?.healthCenter },
         {
           label: 'Data de início',
-          value: new Date(mockTreatments[0].startDate).toLocaleDateString(
-            'pt-BR'
-          ),
+          value: Intl.DateTimeFormat('pt-BR').format(treatment?.startDate),
         },
-        { label: 'Dosagem', value: mockTreatments[0].dosage },
+        { label: 'Dosagem', value: treatment?.dosage },
       ],
     },
     {
       title: 'Observações',
       fields: [
-        { label: 'Observações', value: mockTreatments[0].observations },
+        { label: 'Observações', value: treatment?.observations },
         {
           label: 'Informações do parceiro',
-          value: mockTreatments[0].partnerInformation,
+          value: treatment?.partnerInformation,
         },
       ],
     },
@@ -43,7 +54,7 @@ export default function TreatmentDetailsPage() {
 
   async function handleUpdate() {
     'use server';
-    redirect(`/treatments/${mockTreatments[0].id}`);
+    redirect(`/treatments/${treatment?.id}`);
   }
 
   async function handleDelete() {

@@ -13,20 +13,33 @@ export const metadata: Metadata = {
     'Consulte as informações detalhadas desta notificação no SIMCASI.',
 };
 
-export default function NotificationDetailsPage() {
+interface NotificationDetailsPageProps {
+  params: Promise<{ notificationId: string }>;
+}
+
+export default async function NotificationDetailsPage({
+  params,
+}: NotificationDetailsPageProps) {
+  const { notificationId } = await params;
+
+  // --- TODO: Replace the logic below with the actual action call
+  const notification = mockNotifications.find(
+    (notification) => notification.id === notificationId
+  );
+
   const data = [
     {
       title: 'Dados da notificação',
       fields: [
-        { label: 'SINAN', value: mockNotifications[0].sinan },
-        { label: 'Observações', value: mockNotifications[0].observations },
+        { label: 'SINAN', value: notification?.sinan },
+        { label: 'Observações', value: notification?.observations },
       ],
     },
   ];
 
   async function handleUpdate() {
     'use server';
-    redirect(`/notifications/${mockNotifications[0].id}`);
+    redirect(`/notifications/${notification?.id}`);
   }
 
   async function handleDelete() {

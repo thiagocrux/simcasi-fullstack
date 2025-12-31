@@ -9,11 +9,11 @@ interface DetailsPageActions {
   dialogTitle: string;
   dialogDescription: string;
   updateAction: {
-    label: string;
+    label?: string;
     action: () => void;
   };
   deleteAction: {
-    label: string;
+    label?: string;
     action: () => void;
   };
 }
@@ -33,7 +33,7 @@ export function DetailsPageActions({
         onClick={updateAction.action}
       >
         <SquarePen />
-        <span>{updateAction.label}</span>
+        {updateAction.label && <span>{updateAction.label}</span>}
       </Button>
       <AppAlertDialog
         title={dialogTitle}
@@ -47,7 +47,7 @@ export function DetailsPageActions({
           className="cursor-pointer select-none"
         >
           <Trash2 />
-          <span>{updateAction.label}</span>
+          {deleteAction.label && <span>{deleteAction.label}</span>}
         </Button>
       </AppAlertDialog>
     </div>

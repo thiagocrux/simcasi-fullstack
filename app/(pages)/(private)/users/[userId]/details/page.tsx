@@ -12,21 +12,32 @@ export const metadata: Metadata = {
   description: 'Consulte as informações detalhadas deste usuário no SIMCASI.',
 };
 
-export default function UserDetailsPage() {
+interface UserDetailsPageProps {
+  params: Promise<{ userId: string }>;
+}
+
+export default async function UserDetailsPage({
+  params,
+}: UserDetailsPageProps) {
+  const { userId } = await params;
+
+  // --- TODO: Replace the logic below with the actual action call
+  const user = mockUsers.find((user) => user.id === userId);
+
   const data = [
     {
       title: 'Identificação e acesso',
       fields: [
-        { label: 'Nome', value: mockUsers[0].name },
-        { label: 'E-mail', value: mockUsers[0].email },
-        { label: 'ID do Perfil', value: mockUsers[0].roleId },
+        { label: 'ID', value: user?.roleId },
+        { label: 'Nome', value: user?.name },
+        { label: 'E-mail', value: user?.email },
       ],
     },
   ];
 
   async function handleUpdate() {
     'use server';
-    redirect(`/users/${mockUsers[0].id}`);
+    redirect(`/users/${user?.id}`);
   }
 
   async function handleDelete() {

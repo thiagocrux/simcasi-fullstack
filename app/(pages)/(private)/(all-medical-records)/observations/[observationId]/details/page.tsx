@@ -13,15 +13,28 @@ export const metadata: Metadata = {
     'Consulte as informações detalhadas desta observação no SIMCASI.',
 };
 
-export default function ObservationDetailsPage() {
+interface ObservationDetailsPageProps {
+  params: Promise<{ observationId: string }>;
+}
+
+export default async function ObservationDetailsPage({
+  params,
+}: ObservationDetailsPageProps) {
+  const { observationId } = await params;
+
+  // --- TODO: Replace the logic below with the actual action call
+  const observation = mockObservations.find(
+    (observation) => observation.id === observationId
+  );
+
   const data = [
     {
       title: 'Dados da observação',
       fields: [
-        { label: 'Observações', value: mockObservations[0].observations },
+        { label: 'Observações', value: observation?.observations },
         {
           label: 'Parceiro sendo tratado',
-          value: mockObservations[0].hasPartnerBeingTreated ? 'Sim' : 'Não',
+          value: observation?.hasPartnerBeingTreated ? 'Sim' : 'Não',
         },
       ],
     },
@@ -29,7 +42,7 @@ export default function ObservationDetailsPage() {
 
   async function handleUpdate() {
     'use server';
-    redirect(`/observations/${mockObservations[0].id}`);
+    redirect(`/observations/${observation?.id}`);
   }
 
   async function handleDelete() {

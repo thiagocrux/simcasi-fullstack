@@ -12,32 +12,41 @@ export const metadata: Metadata = {
   description: 'Consulte as informações detalhadas deste exame no SIMCASI.',
 };
 
-export default function ExamDetailsPage() {
+interface ExamDetailsPageProps {
+  params: Promise<{ examId: string }>;
+}
+
+export default async function ExamDetailsPage({
+  params,
+}: ExamDetailsPageProps) {
+  const { examId } = await params;
+
+  // --- TODO: Replace the logic below with the actual action call
+  const exam = mockExams.find((exam) => exam.id === examId);
+
   const data = [
     {
       title: 'Teste Treponêmico',
       fields: [
-        { label: 'Tipo', value: mockExams[0].treponemalTestType },
-        { label: 'Resultado', value: mockExams[0].treponemalTestResult },
+        { label: 'Tipo', value: exam?.treponemalTestType },
+        { label: 'Resultado', value: exam?.treponemalTestResult },
         {
           label: 'Data',
-          value: new Date(mockExams[0].treponemalTestDate).toLocaleDateString(
-            'pt-BR'
-          ),
+          value: Intl.DateTimeFormat('pt-BR').format(exam?.treponemalTestDate),
         },
-        { label: 'Local', value: mockExams[0].treponemalTestLocation },
+        { label: 'Local', value: exam?.treponemalTestLocation },
       ],
     },
     {
       title: 'Teste Não Treponêmico',
       fields: [
-        { label: 'VDRL', value: mockExams[0].nontreponemalVdrlTest },
-        { label: 'Titulação', value: mockExams[0].nontreponemalTestTitration },
+        { label: 'VDRL', value: exam?.nontreponemalVdrlTest },
+        { label: 'Titulação', value: exam?.nontreponemalTestTitration },
         {
           label: 'Data',
-          value: new Date(
-            mockExams[0].nontreponemalTestDate
-          ).toLocaleDateString('pt-BR'),
+          value: Intl.DateTimeFormat('pt-BR').format(
+            exam?.nontreponemalTestDate
+          ),
         },
       ],
     },
@@ -46,19 +55,19 @@ export default function ExamDetailsPage() {
       fields: [
         {
           label: 'Outro teste não treponêmico',
-          value: mockExams[0].otherNontreponemalTest,
+          value: exam?.otherNontreponemalTest,
         },
         {
           label: 'Data do outro teste não treponêmico',
-          value: mockExams[0].otherNontreponemalTestDate
-            ? new Date(
-                mockExams[0].otherNontreponemalTestDate
-              ).toLocaleDateString('pt-BR')
+          value: exam?.otherNontreponemalTestDate
+            ? Intl.DateTimeFormat('pt-BR').format(
+                exam?.otherNontreponemalTestDate
+              )
             : null,
         },
         {
           label: 'Observações de referência',
-          value: mockExams[0].referenceObservations,
+          value: exam?.referenceObservations,
         },
       ],
     },
@@ -66,7 +75,7 @@ export default function ExamDetailsPage() {
 
   async function handleUpdate() {
     'use server';
-    redirect(`/exams/${mockExams[0].id}`);
+    redirect(`/exams/${exam?.id}`);
   }
 
   async function handleDelete() {

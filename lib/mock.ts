@@ -1152,7 +1152,7 @@ export const mockUsers = [
 
 export const mockSessions = [
   {
-    id: 'sess-00000000-0000-0000-0000-000000000001',
+    id: '550e8400-e29b-41d4-a716-446655440000',
     userId: '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
     issuedAt: new Date('2023-10-01'),
     expiresAt: new Date('2023-10-01T01:00:00'),
@@ -1163,7 +1163,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-000000000002',
+    id: '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
     userId: '2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e',
     issuedAt: new Date('2023-10-02'),
     expiresAt: new Date('2023-10-02T01:00:00'),
@@ -1174,7 +1174,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-000000000003',
+    id: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
     userId: '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f',
     issuedAt: new Date('2023-10-03'),
     expiresAt: new Date('2023-10-03T01:00:00'),
@@ -1185,7 +1185,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-000000000004',
+    id: 'a0e6f3b7-3a6e-4f6e-9f29-a1b2c3d4e5f6',
     userId: '4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
     issuedAt: new Date('2023-10-04'),
     expiresAt: new Date('2023-10-04T01:00:00'),
@@ -1196,7 +1196,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-000000000005',
+    id: 'b1c2d3e4-f5a6-4b7c-8d9e-0f1a2b3c4d5e',
     userId: '5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b',
     issuedAt: new Date('2023-10-05'),
     expiresAt: new Date('2023-10-05T01:00:00'),
@@ -1207,7 +1207,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-000000000006',
+    id: 'c2d3e4f5-a6b7-4c8d-9e0f-1a2b3c4d5e6f',
     userId: '6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c',
     issuedAt: new Date('2023-10-06'),
     expiresAt: new Date('2023-10-06T01:00:00'),
@@ -1218,7 +1218,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-000000000007',
+    id: 'd3e4f5a6-b7c8-4d9e-0f1a-2b3c4d5e6f7a',
     userId: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
     issuedAt: new Date('2023-10-07'),
     expiresAt: new Date('2023-10-07T01:00:00'),
@@ -1229,7 +1229,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-000000000008',
+    id: 'e4f5a6b7-c8d9-4e0f-1a2b-3c4d5e6f7a8b',
     userId: '8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
     issuedAt: new Date('2023-10-08'),
     expiresAt: new Date('2023-10-08T01:00:00'),
@@ -1240,7 +1240,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-000000000009',
+    id: 'f5a6b7c8-d9e0-4f1a-2b3c-4d5e6f7a8b9c',
     userId: '9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
     issuedAt: new Date('2023-10-09'),
     expiresAt: new Date('2023-10-09T01:00:00'),
@@ -1251,7 +1251,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-00000000000a',
+    id: 'a6b7c8d9-e0f1-4a2b-3c4d-5e6f7a8b9c0d',
     userId: '0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a',
     issuedAt: new Date('2023-10-10'),
     expiresAt: new Date('2023-10-10T01:00:00'),
@@ -1262,7 +1262,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-00000000000b',
+    id: 'b7c8d9e0-f1a2-4b3c-4d5e-6f7a8b9c0d1e',
     userId: '1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
     issuedAt: new Date('2023-10-11'),
     expiresAt: new Date('2023-10-11T01:00:00'),
@@ -1273,7 +1273,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-00000000000c',
+    id: 'c8d9e0f1-a2b3-4c4d-5e6f-7a8b9c0d1e2f',
     userId: '2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c',
     issuedAt: new Date('2023-10-12'),
     expiresAt: new Date('2023-10-12T01:00:00'),
@@ -1284,7 +1284,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-00000000000d',
+    id: 'd9e0f1a2-b3c4-4d5e-6f7a-8b9c0d1e2f3a',
     userId: '3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
     issuedAt: new Date('2023-10-13'),
     expiresAt: new Date('2023-10-13T01:00:00'),
@@ -1295,7 +1295,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-00000000000e',
+    id: 'e0f1a2b3-c4d5-4e6f-7a8b-9c0d1e2f3a4b',
     userId: '4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
     issuedAt: new Date('2023-10-14'),
     expiresAt: new Date('2023-10-14T01:00:00'),
@@ -1306,7 +1306,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-00000000-0000-0000-0000-00000000000f',
+    id: 'f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c',
     userId: '5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f',
     issuedAt: new Date('2023-10-15'),
     expiresAt: new Date('2023-10-15T01:00:00'),
@@ -1317,7 +1317,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-11111111-2222-3333-4444-555566667777',
+    id: 'a2b3c4d5-e6f7-4a8b-9c0d-1e2f3a4b5c6d',
     userId: '6d7e8f9a-0b1c-2d3e-4f5a-6b7c8d9e0f1a',
     issuedAt: new Date('2023-10-16'),
     expiresAt: new Date('2023-10-16T01:00:00'),
@@ -1328,7 +1328,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-22222222-3333-4444-5555-666677778888',
+    id: 'b3c4d5e6-f7a8-4b9c-0d1e-2f3a4b5c6d7e',
     userId: '7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b',
     issuedAt: new Date('2023-10-17'),
     expiresAt: new Date('2023-10-17T01:00:00'),
@@ -1339,7 +1339,7 @@ export const mockSessions = [
     deletedAt: null,
   },
   {
-    id: 'sess-33333333-4444-5555-6666-777788889999',
+    id: 'c4d5e6f7-a8b9-4c0d-1e2f-3a4b5c6d7e8f',
     userId: '8f9a0b1c-2d3e-4f5a-6b7c-8d9e0f1a2b3c',
     issuedAt: new Date('2023-10-18'),
     expiresAt: new Date('2023-10-18T01:00:00'),
@@ -2169,7 +2169,7 @@ export const mockTreatments = [
 
 export const mockAuditLogs = [
   {
-    id: 'alog-00000000-0000-0000-0000-000000000001',
+    id: '550e8400-e29b-41d4-a716-446655440000',
     userId: '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
     action: 'CREATE',
     entityName: 'Patient',
@@ -2181,7 +2181,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-01'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-000000000002',
+    id: '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
     userId: '2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e',
     action: 'UPDATE',
     entityName: 'Patient',
@@ -2193,7 +2193,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-02'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-000000000003',
+    id: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
     userId: '3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f',
     action: 'DELETE',
     entityName: 'Observation',
@@ -2205,7 +2205,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-03'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-000000000004',
+    id: 'a0e6f3b7-3a6e-4f6e-9f29-a1b2c3d4e5f6',
     userId: '4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
     action: 'CREATE',
     entityName: 'Exam',
@@ -2217,7 +2217,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-04'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-000000000005',
+    id: 'b1c2d3e4-f5a6-4b7c-8d9e-0f1a2b3c4d5e',
     userId: '5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b',
     action: 'UPDATE',
     entityName: 'Treatment',
@@ -2229,7 +2229,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-05'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-000000000006',
+    id: 'c2d3e4f5-a6b7-4c8d-9e0f-1a2b3c4d5e6f',
     userId: '6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c',
     action: 'CREATE',
     entityName: 'Notification',
@@ -2241,7 +2241,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-06'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-000000000007',
+    id: 'd3e4f5a6-b7c8-4d9e-0f1a-2b3c4d5e6f7a',
     userId: '7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
     action: 'CREATE',
     entityName: 'Observation',
@@ -2255,7 +2255,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-07'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-000000000008',
+    id: 'e4f5a6b7-c8d9-4e0f-1a2b-3c4d5e6f7a8b',
     userId: '8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
     action: 'UPDATE',
     entityName: 'User',
@@ -2267,7 +2267,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-08'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-000000000009',
+    id: 'f5a6b7c8-d9e0-4f1a-2b3c-4d5e6f7a8b9c',
     userId: '9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
     action: 'CREATE',
     entityName: 'Patient',
@@ -2279,7 +2279,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-09'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-00000000000a',
+    id: 'a6b7c8d9-e0f1-4a2b-3c4d-5e6f7a8b9c0d',
     userId: '0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a',
     action: 'DELETE',
     entityName: 'Exam',
@@ -2291,7 +2291,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-10'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-00000000000b',
+    id: 'b7c8d9e0-f1a2-4b3c-4d5e-6f7a8b9c0d1e',
     userId: '1e2f3a4b-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
     action: 'CREATE',
     entityName: 'Treatment',
@@ -2303,7 +2303,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-11'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-00000000000c',
+    id: 'c8d9e0f1-a2b3-4c4d-5e6f-7a8b9c0d1e2f',
     userId: '2f3a4b5c-6d7e-8f9a-0b1c-2d3e4f5a6b7c',
     action: 'UPDATE',
     entityName: 'Notification',
@@ -2315,7 +2315,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-12'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-00000000000d',
+    id: 'd9e0f1a2-b3c4-4d5e-6f7a-8b9c0d1e2f3a',
     userId: '3a4b5c6d-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
     action: 'CREATE',
     entityName: 'Observation',
@@ -2327,7 +2327,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-13'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-00000000000e',
+    id: 'e0f1a2b3-c4d5-4e6f-7a8b-9c0d1e2f3a4b',
     userId: '4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
     action: 'UPDATE',
     entityName: 'Patient',
@@ -2339,7 +2339,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-14'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-00000000000f',
+    id: 'f1a2b3c4-d5e6-4f7a-8b9c-0d1e2f3a4b5c',
     userId: '5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f',
     action: 'CREATE',
     entityName: 'Treatment',
@@ -2351,7 +2351,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-15'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-111111112222',
+    id: 'a2b3c4d5-e6f7-4a8b-9c0d-1e2f3a4b5c6d',
     userId: '6d7e8f9a-0b1c-2d3e-4f5a-6b7c8d9e0f1a',
     action: 'UPDATE',
     entityName: 'Exam',
@@ -2363,7 +2363,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-16'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-222222223333',
+    id: 'b3c4d5e6-f7a8-4b9c-0d1e-2f3a4b5c6d7e',
     userId: '7e8f9a0b-1c2d-3e4f-5a6b-7c8d9e0f1a2b',
     action: 'CREATE',
     entityName: 'Notification',
@@ -2375,7 +2375,7 @@ export const mockAuditLogs = [
     createdAt: new Date('2023-06-17'),
   },
   {
-    id: 'alog-00000000-0000-0000-0000-333333334444',
+    id: 'c4d5e6f7-a8b9-4c0d-1e2f-3a4b5c6d7e8f',
     userId: '8f9a0b1c-2d3e-4f5a-6b7c-8d9e0f1a2b3c',
     action: 'UPDATE',
     entityName: 'User',
