@@ -26,7 +26,7 @@ interface AppDialogProps {
     label?: string;
     action: () => void;
   };
-  content?: ReactNode;
+  triggerComponent?: ReactNode;
   children?: ReactNode;
   showCloseButton?: boolean;
 }
@@ -36,14 +36,14 @@ export function AppDialog({
   description,
   cancelAction,
   continueAction,
-  content,
+  triggerComponent,
   children,
   showCloseButton = true,
 }: AppDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">{children}</Button>
+        <>{triggerComponent}</>
       </DialogTrigger>
       <DialogContent
         className="sm:max-w-[425px]"
@@ -53,7 +53,7 @@ export function AppDialog({
           {title && <DialogTitle>{title}</DialogTitle>}
           {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-        {content ? <>{content}</> : null}
+        {children ? <>{children}</> : null}
         <DialogFooter>
           {cancelAction && (
             <DialogClose asChild>

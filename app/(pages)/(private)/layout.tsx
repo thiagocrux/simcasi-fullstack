@@ -2,6 +2,8 @@ import { cookies } from 'next/headers';
 
 import { ThemeSwitcher } from '@/app/components/common/ThemeSwitcher';
 import { AppSidebar } from '@/app/components/layout/AppSidebar';
+import { Separator } from '@/app/components/ui/separator';
+
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,7 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/app/components/ui/breadcrumb';
-import { Separator } from '@/app/components/ui/separator';
+
 import {
   SidebarInset,
   SidebarProvider,
