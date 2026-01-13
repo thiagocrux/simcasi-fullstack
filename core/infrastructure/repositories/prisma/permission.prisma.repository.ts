@@ -1,0 +1,160 @@
+import { Permission } from '@/core/domain/entities/permission.entity';
+import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
+import { Prisma } from '@/prisma/generated/client';
+import { prisma } from '../../lib/prisma';
+
+export class PrismaPermissionRepository implements PermissionRepository {
+  /**
+   * Finds a permission by its unique ID.
+   * @param id The permission ID.
+   * @param includeDeleted Whether to include soft-deleted records.
+   * @returns The permission or null if not found.
+   */
+  async findById(
+    id: string,
+    includeDeleted = false
+  ): Promise<Permission | null> {
+    const permission = await prisma.permission.findFirst({
+      where: {
+        id,
+        deletedAt: includeDeleted ? undefined : null,
+      },
+    });
+    return (permission as Permission) || null;
+  }
+
+  /**
+   * Finds a permission by its unique code.
+   * @param code The permission code (e.g., 'USER_CREATE').
+   * @param includeDeleted Whether to include soft-deleted records.
+   * @returns The permission or null if not found.
+   */
+  async findByCode(
+    code: string,
+    includeDeleted = false
+  ): Promise<Permission | null> {
+    const permission = await prisma.permission.findFirst({
+      where: {
+        code,
+        deletedAt: includeDeleted ? undefined : null,
+      },
+    });
+    return (permission as Permission) || null;
+  }
+
+  /**
+   * Retrieves a paginated list of permissions.
+   * @param params Filtering and pagination parameters.
+   * @returns An object containing the list of permissions and the total count.
+   */
+  async findAll(params?: {
+    skip?: number;
+    take?: number;
+    search?: string;
+    includeDeleted?: boolean;
+  }): Promise<{ items: Permission[]; total: number }> {
+    const skip = params?.skip || 0;
+    const take = params?.take || 20;
+    const search = params?.search;
+    const includeDeleted = params?.includeDeleted || false;
+
+    const where: Prisma.PermissionWhereInput = {
+      deletedAt: includeDeleted ? undefined : null,
+    };
+
+    if (search) {
+      where.code = { contains: search, mode: 'insensitive' };
+    }
+
+    const [items, total] = await Promise.all([
+      prisma.permission.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { code: 'asc' },
+      }),
+      prisma.permission.count({ where }),
+    ]);
+
+    return {
+      items: items as Permission[],
+      total,
+    };
+  }
+
+  /**
+   * Creates a new permission or restores a soft-deleted one with the same code.
+   * @param data The permission data.
+   * @returns The newly created or restored permission.
+   */
+  async create(
+    data: Omit<Permission, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
+  ): Promise<Permission> {
+    const existing = await prisma.permission.findFirst({
+      where: { code: data.code },
+    });
+
+    if (existing && existing.deletedAt) {
+      return (await prisma.permission.update({
+        where: { id: existing.id },
+        data: {
+          ...data,
+          deletedAt: null,
+          updatedAt: new Date(),
+        },
+      })) as Permission;
+    }
+
+    const permission = await prisma.permission.create({
+      data,
+    });
+
+    return permission as Permission;
+  }
+
+  /**
+   * Updates an existing permission record.
+   * @param id The permission ID.
+   * @param data The partial data to update.
+   * @returns The updated permission.
+   */
+  async update(
+    id: string,
+    data: Partial<Omit<Permission, 'id' | 'createdAt'>>
+  ): Promise<Permission> {
+    const permission = await prisma.permission.update({
+      where: { id },
+      data: {
+        ...data,
+        updatedAt: new Date(),
+      },
+    });
+    return permission as Permission;
+  }
+
+  /**
+   * Performs a soft delete on a permission.
+   * @param id The permission ID.
+   */
+  async softDelete(id: string): Promise<void> {
+    await prisma.permission.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+  }
+
+  /**
+   * Restores a soft-deleted permission.
+   * @param id The permission ID.
+   */
+  async restore(id: string): Promise<void> {
+    await prisma.permission.update({
+      where: { id },
+      data: {
+        deletedAt: null,
+      },
+    });
+  }
+}
