@@ -29,9 +29,27 @@ export interface SessionRepository {
   ): Promise<Session>;
 
   /**
+   * Updates data of an existing session. Useful for refreshing expiry.
+   */
+  update(
+    id: string,
+    data: Partial<Omit<Session, 'id' | 'issuedAt' | 'createdAt'>>
+  ): Promise<Session>;
+
+  /**
    * Executes Soft Delete (sets deletedAt). Usually used for logout.
    */
   softDelete(id: string): Promise<void>;
+
+  /**
+   * Revokes all active sessions for a specific user.
+   */
+  revokeAllByUserId(userId: string): Promise<void>;
+
+  /**
+   * Revokes all active sessions for a specific user, except one.
+   */
+  revokeOtherSessions(sessionId: string, userId: string): Promise<void>;
 
   /**
    * Physically removes expired sessions from the database.

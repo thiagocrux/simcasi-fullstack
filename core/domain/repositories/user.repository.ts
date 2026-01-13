@@ -26,7 +26,9 @@ export interface UserRepository {
    * Creates a new user record.
    */
   create(
-    data: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
+    data: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> & {
+      password: string;
+    }
   ): Promise<User>;
 
   /**

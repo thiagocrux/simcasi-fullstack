@@ -54,5 +54,5 @@ export interface TreatmentRepository {
   /**
    * Restores treatments of a patient deleted since a specific date (cascade restoration).
    */
-  restoreByPatientId(patientId: string, since: Date): Promise<void>;
+  restoreByPatientId(patientId: string, since?: Date): Promise<void>;
 }
