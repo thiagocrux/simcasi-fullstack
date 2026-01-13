@@ -20,11 +20,12 @@ export interface PatientRepository {
   ): Promise<Patient | null>;
 
   /**
-   * Lists patients with support for pagination.
+   * Lists patients with support for pagination and filtering.
    */
   findAll(params?: {
     skip?: number;
     take?: number;
+    search?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Patient[]; total: number }>;
 

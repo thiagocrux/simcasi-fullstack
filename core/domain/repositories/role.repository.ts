@@ -17,11 +17,12 @@ export interface RoleRepository {
   findByCode(code: string, includeDeleted?: boolean): Promise<Role | null>;
 
   /**
-   * Lists all roles with support for pagination.
+   * Lists all roles with support for pagination and filtering.
    */
   findAll(params?: {
     skip?: number;
     take?: number;
+    search?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Role[]; total: number }>;
 

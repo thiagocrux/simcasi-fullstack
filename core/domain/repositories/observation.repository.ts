@@ -11,19 +11,13 @@ export interface ObservationRepository {
   findById(id: string, includeDeleted?: boolean): Promise<Observation | null>;
 
   /**
-   * Retrieves all observations associated with a specific patient.
-   */
-  findByPatientId(
-    patientId: string,
-    params?: { skip?: number; take?: number; includeDeleted?: boolean }
-  ): Promise<{ items: Observation[]; total: number }>;
-
-  /**
-   * Lists all observations with support for pagination.
+   * Lists all observations with support for pagination and filtering.
    */
   findAll(params?: {
     skip?: number;
     take?: number;
+    search?: string;
+    patientId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Observation[]; total: number }>;
 

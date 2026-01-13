@@ -12,11 +12,13 @@ export interface UserRepository {
   findByEmail(email: string, includeDeleted?: boolean): Promise<User | null>;
 
   /**
-   * Lists users with support for pagination.
+   * Lists users with support for pagination and filtering.
    */
   findAll(params?: {
     skip?: number;
     take?: number;
+    search?: string;
+    roleId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: User[]; total: number }>;
 

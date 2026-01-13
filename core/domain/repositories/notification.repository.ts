@@ -11,19 +11,13 @@ export interface NotificationRepository {
   findById(id: string, includeDeleted?: boolean): Promise<Notification | null>;
 
   /**
-   * Retrieves all notifications associated with a specific patient.
-   */
-  findByPatientId(
-    patientId: string,
-    params?: { skip?: number; take?: number; includeDeleted?: boolean }
-  ): Promise<{ items: Notification[]; total: number }>;
-
-  /**
-   * Lists all notifications with support for pagination.
+   * Lists all notifications with support for pagination and filtering.
    */
   findAll(params?: {
     skip?: number;
     take?: number;
+    search?: string;
+    patientId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Notification[]; total: number }>;
 

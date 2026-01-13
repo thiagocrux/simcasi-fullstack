@@ -11,19 +11,13 @@ export interface ExamRepository {
   findById(id: string, includeDeleted?: boolean): Promise<Exam | null>;
 
   /**
-   * Retrieves all exams associated with a specific patient.
-   */
-  findByPatientId(
-    patientId: string,
-    params?: { skip?: number; take?: number; includeDeleted?: boolean }
-  ): Promise<{ items: Exam[]; total: number }>;
-
-  /**
-   * Lists all exams with support for pagination.
+   * Lists all exams with support for pagination and filtering.
    */
   findAll(params?: {
     skip?: number;
     take?: number;
+    search?: string;
+    patientId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Exam[]; total: number }>;
 

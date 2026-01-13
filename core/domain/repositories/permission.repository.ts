@@ -20,11 +20,12 @@ export interface PermissionRepository {
   ): Promise<Permission | null>;
 
   /**
-   * Lists all permissions with support for pagination.
+   * Lists all permissions with support for pagination and filtering.
    */
   findAll(params?: {
     skip?: number;
     take?: number;
+    search?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Permission[]; total: number }>;
 

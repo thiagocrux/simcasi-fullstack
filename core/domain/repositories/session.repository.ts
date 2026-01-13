@@ -11,19 +11,13 @@ export interface SessionRepository {
   findById(id: string, includeDeleted?: boolean): Promise<Session | null>;
 
   /**
-   * Retrieves all sessions associated with a specific user.
-   */
-  findByUserId(
-    userId: string,
-    params?: { skip?: number; take?: number; includeDeleted?: boolean }
-  ): Promise<{ items: Session[]; total: number }>;
-
-  /**
-   * Lists all sessions with support for pagination.
+   * Lists all sessions with support for pagination and filtering.
    */
   findAll(params?: {
     skip?: number;
     take?: number;
+    search?: string;
+    userId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Session[]; total: number }>;
 

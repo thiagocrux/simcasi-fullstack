@@ -17,6 +17,7 @@ export interface AuditLogRepository {
   findAll(params?: {
     skip?: number;
     take?: number;
+    search?: string;
     userId?: string;
     action?: string;
     entityName?: string;
