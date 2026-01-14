@@ -1,13 +1,13 @@
 import { Patient } from '@/core/domain/entities/patient.entity';
 
-export interface FindPatientsDto {
+export interface FindPatientsInput {
   skip?: number;
   take?: number;
   search?: string;
   includeDeleted?: boolean;
 }
 
-export interface FindPatientsResponseDto {
+export interface FindPatientsOutput {
   items: Patient[];
   total: number;
 }

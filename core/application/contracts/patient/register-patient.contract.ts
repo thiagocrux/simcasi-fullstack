@@ -1,4 +1,6 @@
-export interface RegisterPatientDto {
+import { Patient } from '@/core/domain/entities/patient.entity';
+
+export interface RegisterPatientInput {
   susCardNumber: string;
   name: string;
   cpf: string;
@@ -25,3 +27,5 @@ export interface RegisterPatientDto {
   complement?: string;
   createdBy: string;
 }
+
+export interface RegisterPatientOutput extends Patient {}

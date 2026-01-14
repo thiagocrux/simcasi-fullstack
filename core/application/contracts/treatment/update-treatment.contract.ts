@@ -1,0 +1,13 @@
+import { Treatment } from '@/core/domain/entities/treatment.entity';
+
+export interface UpdateTreatmentInput {
+  id: string;
+  medication?: string;
+  healthCenter?: string;
+  startDate?: Date;
+  dosage?: string;
+  observations?: string | null;
+  partnerInformation?: string | null;
+}
+
+export type UpdateTreatmentOutput = Treatment;
