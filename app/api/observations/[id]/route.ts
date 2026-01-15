@@ -15,7 +15,7 @@ export async function GET(
   try {
     const { id } = await params;
     const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['view:observation']);
+    await authorize(auth.roleId, ['read:observation']);
 
     const useCase = makeGetObservationByIdUseCase();
     const result = await useCase.execute({ id });

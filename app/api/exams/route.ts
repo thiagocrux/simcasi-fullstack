@@ -10,7 +10,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   try {
     const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['view:exam']);
+    await authorize(auth.roleId, ['read:exam']);
 
     const { searchParams } = request.nextUrl;
     const page = Number(searchParams.get('page')) || 1;

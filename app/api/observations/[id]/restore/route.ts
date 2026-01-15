@@ -11,7 +11,7 @@ export async function POST(
   try {
     const { id } = await params;
     const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['restore:observation']);
+    await authorize(auth.roleId, ['update:observation']);
 
     const useCase = makeRestoreObservationUseCase();
     await useCase.execute({

@@ -15,7 +15,7 @@ export async function GET(
   try {
     const { id } = await params;
     const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['view:treatment']);
+    await authorize(auth.roleId, ['read:treatment']);
 
     const useCase = makeGetTreatmentByIdUseCase();
     const result = await useCase.execute({ id });

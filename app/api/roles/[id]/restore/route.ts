@@ -11,7 +11,7 @@ export async function POST(
   try {
     const { id } = await params;
     const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['restore:role']);
+    await authorize(auth.roleId, ['update:role']);
 
     const useCase = makeRestoreRoleUseCase();
     await useCase.execute({

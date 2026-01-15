@@ -10,7 +10,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   try {
     const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['view:notification']);
+    await authorize(auth.roleId, ['read:notification']);
 
     const { searchParams } = new URL(request.url);
     const useCase = makeFindNotificationsUseCase();

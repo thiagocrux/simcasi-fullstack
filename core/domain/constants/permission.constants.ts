@@ -21,6 +21,11 @@ export const PERMISSIONS = [
   'read:permission',
   'update:permission',
   'delete:permission',
+  // role
+  'create:role',
+  'read:role',
+  'update:role',
+  'delete:role',
   // user
   'create:user',
   'read:user',

@@ -15,7 +15,7 @@ export async function GET(
   try {
     const { id } = await params;
     const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['view:exam']);
+    await authorize(auth.roleId, ['read:exam']);
 
     const getExamByIdUseCase = makeGetExamByIdUseCase();
     const exam = await getExamByIdUseCase.execute({ id });

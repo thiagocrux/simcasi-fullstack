@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   try {
     const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['view:audit_log']);
+    await authorize(auth.roleId, ['read:audit-log']);
 
     const { searchParams } = new URL(request.url);
     const page = Number(searchParams.get('page')) || 1;

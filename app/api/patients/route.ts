@@ -14,7 +14,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   try {
     const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['view:patient']);
+    await authorize(auth.roleId, ['read:patient']);
 
     const searchParams = request.nextUrl.searchParams;
     const page = Number(searchParams.get('page')) || 1;

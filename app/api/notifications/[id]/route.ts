@@ -15,7 +15,7 @@ export async function GET(
   try {
     const { id } = await params;
     const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['view:notification']);
+    await authorize(auth.roleId, ['read:notification']);
 
     const useCase = makeGetNotificationByIdUseCase();
     const result = await useCase.execute({ id });
