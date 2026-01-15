@@ -1,4 +1,5 @@
-import { NotFoundError } from '@/core/domain/errors/app.error';
+import { observationSchema } from '@/core/application/validation/schemas/observation.schema';
+import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
@@ -24,9 +25,18 @@ export class RegisterObservationUseCase implements UseCase<
   async execute(
     input: RegisterObservationInput
   ): Promise<RegisterObservationOutput> {
-    const { ipAddress, userAgent, ...observationData } = input;
+    const { createdBy, ipAddress, userAgent, ...observationData } = input;
 
-    // 1. Verify that the patient exists.
+    // 1. Validate input.
+    const validation = observationSchema.safeParse(observationData);
+    if (!validation.success) {
+      throw new ValidationError(
+        'Invalid register observation data.',
+        validation.error.flatten().fieldErrors
+      );
+    }
+
+    // 2. Verify that the patient exists.
     const patient = await this.patientRepository.findById(
       observationData.patientId
     );
@@ -34,15 +44,15 @@ export class RegisterObservationUseCase implements UseCase<
       throw new NotFoundError('Patient not found');
     }
 
-    // 2. Delegate to the repository.
+    // 3. Delegate to the repository.
     const observation = await this.observationRepository.create({
       ...observationData,
-      createdBy: observationData.createdBy || 'SYSTEM',
+      createdBy: createdBy || 'SYSTEM',
     });
 
-    // 3. Create audit log.
+    // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: observationData.createdBy || 'SYSTEM',
+      userId: createdBy || 'SYSTEM',
       action: 'CREATE',
       entityName: 'OBSERVATION',
       entityId: observation.id,

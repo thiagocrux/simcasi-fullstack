@@ -1,4 +1,5 @@
-import { NotFoundError } from '@/core/domain/errors/app.error';
+import { treatmentSchema } from '@/core/application/validation/schemas/treatment.schema';
+import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
@@ -24,9 +25,18 @@ export class RegisterTreatmentUseCase implements UseCase<
   async execute(
     input: RegisterTreatmentInput
   ): Promise<RegisterTreatmentOutput> {
-    const { ipAddress, userAgent, ...treatmentData } = input;
+    const { createdBy, ipAddress, userAgent, ...treatmentData } = input;
 
-    // 1. Verify that the patient exists.
+    // 1. Validate input.
+    const validation = treatmentSchema.safeParse(treatmentData);
+    if (!validation.success) {
+      throw new ValidationError(
+        'Invalid register treatment data.',
+        validation.error.flatten().fieldErrors
+      );
+    }
+
+    // 2. Verify that the patient exists.
     const patient = await this.patientRepository.findById(
       treatmentData.patientId
     );
@@ -34,15 +44,15 @@ export class RegisterTreatmentUseCase implements UseCase<
       throw new NotFoundError('Patient not found');
     }
 
-    // 2. Delegate to the repository.
+    // 3. Delegate to the repository.
     const treatment = await this.treatmentRepository.create({
       ...treatmentData,
-      createdBy: treatmentData.createdBy || 'SYSTEM',
+      createdBy: createdBy || 'SYSTEM',
     });
 
-    // 3. Create audit log.
+    // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: treatmentData.createdBy || 'SYSTEM',
+      userId: createdBy || 'SYSTEM',
       action: 'CREATE',
       entityName: 'TREATMENT',
       entityId: treatment.id,

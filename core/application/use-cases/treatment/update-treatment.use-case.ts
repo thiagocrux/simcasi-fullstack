@@ -1,4 +1,5 @@
-import { NotFoundError } from '@/core/domain/errors/app.error';
+import { treatmentSchema } from '@/core/application/validation/schemas/treatment.schema';
+import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
 import {
@@ -22,16 +23,25 @@ export class UpdateTreatmentUseCase implements UseCase<
   async execute(input: UpdateTreatmentInput): Promise<UpdateTreatmentOutput> {
     const { id, updatedBy, ipAddress, userAgent, ...data } = input;
 
-    // 1. Check if the treatment exists.
+    // 1. Validate input.
+    const validation = treatmentSchema.partial().safeParse(data);
+    if (!validation.success) {
+      throw new ValidationError(
+        'Invalid update treatment data.',
+        validation.error.flatten().fieldErrors
+      );
+    }
+
+    // 2. Check if the treatment exists.
     const existing = await this.treatmentRepository.findById(id);
     if (!existing) {
       throw new NotFoundError('Treatment not found');
     }
 
-    // 2. Update the treatment.
+    // 3. Update the treatment.
     const updatedTreatment = await this.treatmentRepository.update(id, data);
 
-    // 3. Create audit log.
+    // 4. Create audit log.
     await this.auditLogRepository.create({
       userId: updatedBy || 'SYSTEM',
       action: 'UPDATE',

@@ -1,4 +1,5 @@
-import { ConflictError } from '@/core/domain/errors/app.error';
+import { userSchema } from '@/core/application/validation/schemas/user.schema';
+import { ConflictError, ValidationError } from '@/core/domain/errors/app.error';
 import { HashProvider } from '@/core/domain/providers/hash.provider';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
@@ -22,23 +23,32 @@ export class RegisterUserUseCase implements UseCase<
   ) {}
 
   async execute(input: RegisterUserInput): Promise<RegisterUserOutput> {
-    // 1. Check if the email is already in use (by an active user).
+    // 1. Validate input.
+    const validation = userSchema.safeParse(input);
+    if (!validation.success) {
+      throw new ValidationError(
+        'Invalid register user data.',
+        validation.error.flatten().fieldErrors
+      );
+    }
+
+    // 2. Check if the email is already in use (by an active user).
     const existing = await this.userRepository.findByEmail(input.email);
     if (existing) {
       throw new ConflictError(`Email ${input.email} is already in use.`);
     }
 
-    // 2. Hash the password.
+    // 3. Hash the password.
     const { password, ipAddress, userAgent, createdBy, ...userData } = input;
     const hashedPassword = await this.hashProvider.hash(password);
 
-    // 3. Delegate to the repository (handles restoration if the email was soft-deleted).
+    // 4. Delegate to the repository (handles restoration if the email was soft-deleted).
     const user = await this.userRepository.create({
       ...userData,
       password: hashedPassword,
     });
 
-    // 4. Create audit log.
+    // 5. Create audit log.
     const { password: _, ...userWithoutPassword } = user;
     await this.auditLogRepository.create({
       userId: createdBy || 'SYSTEM',

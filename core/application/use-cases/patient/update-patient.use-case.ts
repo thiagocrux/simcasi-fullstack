@@ -1,4 +1,9 @@
-import { ConflictError, NotFoundError } from '@/core/domain/errors/app.error';
+import { patientSchema } from '@/core/application/validation/schemas/patient.schema';
+import {
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import {
@@ -22,13 +27,22 @@ export class UpdatePatientUseCase implements UseCase<
   async execute(input: UpdatePatientInput): Promise<UpdatePatientOutput> {
     const { id, data, updatedBy, ipAddress, userAgent } = input;
 
-    // 1. Check if patient exists.
+    // 1. Validate input.
+    const validation = patientSchema.partial().safeParse(data);
+    if (!validation.success) {
+      throw new ValidationError(
+        'Invalid update patient data.',
+        validation.error.flatten().fieldErrors
+      );
+    }
+
+    // 2. Check if patient exists.
     const existing = await this.patientRepository.findById(id);
     if (!existing) {
       throw new NotFoundError('Patient');
     }
 
-    // 2. If CPF is being updated, check if the new CPF is already in use.
+    // 3. If CPF is being updated, check if the new CPF is already in use.
     if (data.cpf && data.cpf !== existing.cpf) {
       const duplicateCpf = await this.patientRepository.findByCpf(data.cpf);
       if (duplicateCpf) {
@@ -38,10 +52,10 @@ export class UpdatePatientUseCase implements UseCase<
       }
     }
 
-    // 3. Delegate update to repository.
+    // 4. Delegate update to repository.
     const updated = await this.patientRepository.update(id, data);
 
-    // 4. Audit the update.
+    // 5. Audit the update.
     await this.auditLogRepository.create({
       userId: updatedBy || 'SYSTEM',
       action: 'UPDATE',

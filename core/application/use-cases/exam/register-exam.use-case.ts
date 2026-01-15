@@ -1,4 +1,5 @@
-import { NotFoundError } from '@/core/domain/errors/app.error';
+import { examSchema } from '@/core/application/validation/schemas/exam.schema';
+import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
@@ -22,23 +23,32 @@ export class RegisterExamUseCase implements UseCase<
   ) {}
 
   async execute(input: RegisterExamInput): Promise<RegisterExamOutput> {
-    const { ipAddress, userAgent, ...examData } = input;
+    const { createdBy, ipAddress, userAgent, ...examData } = input;
 
-    // 1. Verify that the patient exists.
+    // 1. Validate input.
+    const validation = examSchema.safeParse(examData);
+    if (!validation.success) {
+      throw new ValidationError(
+        'Invalid register exam data.',
+        validation.error.flatten().fieldErrors
+      );
+    }
+
+    // 2. Verify that the patient exists.
     const patient = await this.patientRepository.findById(examData.patientId);
     if (!patient) {
       throw new NotFoundError('Patient not found');
     }
 
-    // 2. Delegate to the repository.
+    // 3. Delegate to the repository.
     const exam = await this.examRepository.create({
       ...examData,
-      createdBy: examData.createdBy || 'SYSTEM',
+      createdBy: createdBy || 'SYSTEM',
     });
 
-    // 3. Create audit log.
+    // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: examData.createdBy || 'SYSTEM',
+      userId: createdBy || 'SYSTEM',
       action: 'CREATE',
       entityName: 'EXAM',
       entityId: exam.id,

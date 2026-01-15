@@ -1,4 +1,5 @@
-import { NotFoundError } from '@/core/domain/errors/app.error';
+import { examSchema } from '@/core/application/validation/schemas/exam.schema';
+import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
 import {
@@ -22,16 +23,25 @@ export class UpdateExamUseCase implements UseCase<
   async execute(input: UpdateExamInput): Promise<UpdateExamOutput> {
     const { id, updatedBy, ipAddress, userAgent, ...data } = input;
 
-    // 1. Check if the exam exists.
+    // 1. Validate input.
+    const validation = examSchema.partial().safeParse(data);
+    if (!validation.success) {
+      throw new ValidationError(
+        'Invalid update exam data.',
+        validation.error.flatten().fieldErrors
+      );
+    }
+
+    // 2. Check if the exam exists.
     const existing = await this.examRepository.findById(id);
     if (!existing) {
       throw new NotFoundError('Exam not found');
     }
 
-    // 2. Update the exam.
+    // 3. Update the exam.
     const updatedExam = await this.examRepository.update(id, data);
 
-    // 3. Create audit log.
+    // 4. Create audit log.
     await this.auditLogRepository.create({
       userId: updatedBy || 'SYSTEM',
       action: 'UPDATE',

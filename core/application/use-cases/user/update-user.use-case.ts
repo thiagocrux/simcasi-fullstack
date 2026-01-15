@@ -1,4 +1,9 @@
-import { ConflictError, NotFoundError } from '@/core/domain/errors/app.error';
+import { userSchema } from '@/core/application/validation/schemas/user.schema';
+import {
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from '@/core/domain/errors/app.error';
 import { HashProvider } from '@/core/domain/providers/hash.provider';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
@@ -24,13 +29,22 @@ export class UpdateUserUseCase implements UseCase<
   async execute(input: UpdateUserInput): Promise<UpdateUserOutput> {
     const { id, data, updatedBy, ipAddress, userAgent } = input;
 
-    // 1. Check if the user exists.
+    // 1. Validate input.
+    const validation = userSchema.partial().safeParse(data);
+    if (!validation.success) {
+      throw new ValidationError(
+        'Invalid update user data.',
+        validation.error.flatten().fieldErrors
+      );
+    }
+
+    // 2. Check if the user exists.
     const existing = await this.userRepository.findById(id);
     if (!existing) {
       throw new NotFoundError('User');
     }
 
-    // 2. Check for duplicates if the email is being changed.
+    // 3. Check for duplicates if the email is being changed.
     if (data.email && data.email !== existing.email) {
       const duplicate = await this.userRepository.findByEmail(data.email);
       if (duplicate) {
@@ -38,16 +52,16 @@ export class UpdateUserUseCase implements UseCase<
       }
     }
 
-    // 3. Hash the password if it is being changed.
+    // 4. Hash the password if it is being changed.
     const updateData = { ...data };
     if (data.password) {
       updateData.password = await this.hashProvider.hash(data.password);
     }
 
-    // 4. Update the user.
+    // 5. Update the user.
     const updatedUser = await this.userRepository.update(id, updateData);
 
-    // 5. Create audit log.
+    // 6. Create audit log.
     const { password: __, ...oldValuesWithoutPassword } = existing;
     const { password: ___, ...newValuesWithoutPassword } = updatedUser;
 

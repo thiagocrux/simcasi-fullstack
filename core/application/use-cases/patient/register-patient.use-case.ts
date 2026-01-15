@@ -1,4 +1,5 @@
-import { ConflictError } from '@/core/domain/errors/app.error';
+import { patientSchema } from '@/core/application/validation/schemas/patient.schema';
+import { ConflictError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import {
@@ -26,7 +27,16 @@ export class RegisterPatientUseCase implements UseCase<
   ) {}
 
   async execute(input: RegisterPatientInput): Promise<RegisterPatientOutput> {
-    // 1. Validate if an active patient already has this CPF.
+    // 1. Validate input.
+    const validation = patientSchema.safeParse(input);
+    if (!validation.success) {
+      throw new ValidationError(
+        'Invalid register patient data.',
+        validation.error.flatten().fieldErrors
+      );
+    }
+
+    // 2. Validate if an active patient already has this CPF.
     const existingByCpf = await this.patientRepository.findByCpf(input.cpf);
     if (existingByCpf) {
       throw new ConflictError(
@@ -34,7 +44,7 @@ export class RegisterPatientUseCase implements UseCase<
       );
     }
 
-    // 2. Validate if an active patient already has this SUS card number.
+    // 3. Validate if an active patient already has this SUS card number.
     const existingBySus = await this.patientRepository.findBySusCardNumber(
       input.susCardNumber
     );
@@ -44,13 +54,13 @@ export class RegisterPatientUseCase implements UseCase<
       );
     }
 
-    // 3. Delegate creation to repository (which handles restoration logic).
+    // 4. Delegate creation to repository (which handles restoration logic).
     const patient = await this.patientRepository.create({
       ...input,
       createdBy: input.createdBy || 'SYSTEM',
     });
 
-    // 4. Audit the creation.
+    // 5. Audit the creation.
     await this.auditLogRepository.create({
       userId: input.createdBy || 'SYSTEM',
       action: 'CREATE',
