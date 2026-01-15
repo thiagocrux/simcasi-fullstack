@@ -1,20 +1,20 @@
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import {
-  FindPatientsDto,
-  FindPatientsResponseDto,
-} from '../../dtos/patient/find-patients.dto';
+  FindPatientsInput,
+  FindPatientsOutput,
+} from '../../contracts/patient/find-patients.contract';
 import { UseCase } from '../use-case.interface';
 
 /**
  * Use case to retrieve a list of patients with pagination and search.
  */
 export class FindPatientsUseCase implements UseCase<
-  FindPatientsDto,
-  FindPatientsResponseDto
+  FindPatientsInput,
+  FindPatientsOutput
 > {
   constructor(private readonly patientRepository: PatientRepository) {}
 
-  async execute(input: FindPatientsDto): Promise<FindPatientsResponseDto> {
+  async execute(input: FindPatientsInput): Promise<FindPatientsOutput> {
     return await this.patientRepository.findAll(input);
   }
 }

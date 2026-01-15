@@ -1,39 +1,40 @@
-import { Patient } from '@/core/domain/entities/patient.entity';
+import { ConflictError, NotFoundError } from '@/core/domain/errors/app.error';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
-import { UpdatePatientDto } from '../../dtos/patient/update-patient.dto';
+import {
+  UpdatePatientInput,
+  UpdatePatientOutput,
+} from '../../contracts/patient/update-patient.contract';
 import { UseCase } from '../use-case.interface';
 
 /**
  * Use case to update an existing patient's information.
  */
 export class UpdatePatientUseCase implements UseCase<
-  UpdatePatientDto,
-  Patient
+  UpdatePatientInput,
+  UpdatePatientOutput
 > {
   constructor(private readonly patientRepository: PatientRepository) {}
 
-  async execute(input: UpdatePatientDto): Promise<Patient> {
+  async execute(input: UpdatePatientInput): Promise<UpdatePatientOutput> {
     const { id, data } = input;
 
-    // 1. Check if patient exists
+    // 1. Check if patient exists.
     const existing = await this.patientRepository.findById(id);
-
     if (!existing) {
-      throw new Error(`Patient with ID ${id} not found.`);
+      throw new NotFoundError('Patient');
     }
 
-    // 2. If CPF is being updated, check if the new CPF is already in use
+    // 2. If CPF is being updated, check if the new CPF is already in use.
     if (data.cpf && data.cpf !== existing.cpf) {
       const duplicateCpf = await this.patientRepository.findByCpf(data.cpf);
-
       if (duplicateCpf) {
-        throw new Error(
+        throw new ConflictError(
           `The CPF ${data.cpf} is already registered to another patient.`
         );
       }
     }
 
-    // 3. Delegate update to repository
+    // 3. Delegate update to repository.
     return await this.patientRepository.update(id, data);
   }
 }
