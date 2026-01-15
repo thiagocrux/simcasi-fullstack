@@ -22,7 +22,7 @@ export class RestoreNotificationUseCase implements UseCase<
   async execute(
     input: RestoreNotificationInput
   ): Promise<RestoreNotificationOutput> {
-    const { id, restoredBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the notification exists (including deleted).
     const notification = await this.notificationRepository.findById(id, true);
@@ -41,7 +41,7 @@ export class RestoreNotificationUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: restoredBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'RESTORE',
       entityName: 'NOTIFICATION',
       entityId: id,

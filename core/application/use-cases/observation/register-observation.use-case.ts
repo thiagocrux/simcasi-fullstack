@@ -25,7 +25,7 @@ export class RegisterObservationUseCase implements UseCase<
   async execute(
     input: RegisterObservationInput
   ): Promise<RegisterObservationOutput> {
-    const { createdBy, ipAddress, userAgent, ...observationData } = input;
+    const { userId, ipAddress, userAgent, ...observationData } = input;
 
     // 1. Validate input.
     const validation = observationSchema.safeParse(observationData);
@@ -47,12 +47,12 @@ export class RegisterObservationUseCase implements UseCase<
     // 3. Delegate to the repository.
     const observation = await this.observationRepository.create({
       ...observationData,
-      createdBy: createdBy || 'SYSTEM',
+      createdBy: userId || 'SYSTEM',
     });
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: createdBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'CREATE',
       entityName: 'OBSERVATION',
       entityId: observation.id,

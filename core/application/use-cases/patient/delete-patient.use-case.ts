@@ -28,7 +28,7 @@ export class DeletePatientUseCase implements UseCase<
   ) {}
 
   async execute(input: DeletePatientInput): Promise<DeletePatientOutput> {
-    const { id, deletedBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if patient exists.
     const patient = await this.patientRepository.findById(id);
@@ -50,7 +50,7 @@ export class DeletePatientUseCase implements UseCase<
 
     // 4. Audit the deletion.
     await this.auditLogRepository.create({
-      userId: deletedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'DELETE',
       entityName: 'PATIENT',
       entityId: id,

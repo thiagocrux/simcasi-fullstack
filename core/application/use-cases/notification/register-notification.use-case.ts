@@ -25,7 +25,7 @@ export class RegisterNotificationUseCase implements UseCase<
   async execute(
     input: RegisterNotificationInput
   ): Promise<RegisterNotificationOutput> {
-    const { createdBy, ipAddress, userAgent, ...data } = input;
+    const { userId, ipAddress, userAgent, ...data } = input;
 
     // 1. Validate input.
     const validation = notificationSchema.safeParse(data);
@@ -45,12 +45,12 @@ export class RegisterNotificationUseCase implements UseCase<
     // 3. Delegate to the repository.
     const notification = await this.notificationRepository.create({
       ...data,
-      createdBy: createdBy || 'SYSTEM',
+      createdBy: userId || 'SYSTEM',
     });
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: createdBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'CREATE',
       entityName: 'NOTIFICATION',
       entityId: notification.id,

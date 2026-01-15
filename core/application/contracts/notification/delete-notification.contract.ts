@@ -1,8 +1,7 @@
-export interface DeleteNotificationInput {
+import { AuditMetadata } from '../common/audit-metadata.contract';
+
+export interface DeleteNotificationInput extends AuditMetadata {
   id: string;
-  deletedBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export type DeleteNotificationOutput = void;

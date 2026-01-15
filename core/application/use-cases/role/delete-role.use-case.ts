@@ -20,7 +20,7 @@ export class DeleteRoleUseCase implements UseCase<
   ) {}
 
   async execute(input: DeleteRoleInput): Promise<DeleteRoleOutput> {
-    const { id, deletedBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the role exists.
     const existing = await this.roleRepository.findById(id);
@@ -33,7 +33,7 @@ export class DeleteRoleUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: deletedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'DELETE',
       entityName: 'ROLE',
       entityId: id,

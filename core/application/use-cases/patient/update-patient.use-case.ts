@@ -25,7 +25,7 @@ export class UpdatePatientUseCase implements UseCase<
   ) {}
 
   async execute(input: UpdatePatientInput): Promise<UpdatePatientOutput> {
-    const { id, data, updatedBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent, ...data } = input;
 
     // 1. Validate input.
     const validation = patientSchema.partial().safeParse(data);
@@ -43,26 +43,33 @@ export class UpdatePatientUseCase implements UseCase<
     }
 
     // 3. If CPF is being updated, check if the new CPF is already in use.
-    if (data.cpf && data.cpf !== existing.cpf) {
-      const duplicateCpf = await this.patientRepository.findByCpf(data.cpf);
+    if (validation.data.cpf && validation.data.cpf !== existing.cpf) {
+      const duplicateCpf = await this.patientRepository.findByCpf(
+        validation.data.cpf
+      );
       if (duplicateCpf) {
         throw new ConflictError(
-          `The CPF ${data.cpf} is already registered to another patient.`
+          `The CPF ${validation.data.cpf} is already registered to another patient.`
         );
       }
     }
 
     // 4. Delegate update to repository.
-    const updated = await this.patientRepository.update(id, data);
+    const updated = await this.patientRepository.update(id, {
+      ...validation.data,
+      birthDate: validation.data.birthDate
+        ? new Date(validation.data.birthDate)
+        : undefined,
+    });
 
     // 5. Audit the update.
     await this.auditLogRepository.create({
-      userId: updatedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'UPDATE',
       entityName: 'PATIENT',
       entityId: id,
       oldValues: existing,
-      newValues: data,
+      newValues: validation.data,
       ipAddress,
       userAgent,
     });

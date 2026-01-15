@@ -1,12 +1,10 @@
 import { Notification } from '@/core/domain/entities/notification.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RegisterNotificationInput {
+export interface RegisterNotificationInput extends AuditMetadata {
   patientId: string;
   sinan: string;
   observations?: string | null;
-  createdBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export type RegisterNotificationOutput = Notification;

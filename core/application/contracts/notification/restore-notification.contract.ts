@@ -1,10 +1,8 @@
 import { Notification } from '@/core/domain/entities/notification.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RestoreNotificationInput {
+export interface RestoreNotificationInput extends AuditMetadata {
   id: string;
-  restoredBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export type RestoreNotificationOutput = Notification;

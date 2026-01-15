@@ -22,7 +22,7 @@ export class DeleteObservationUseCase implements UseCase<
   async execute(
     input: DeleteObservationInput
   ): Promise<DeleteObservationOutput> {
-    const { id, deletedBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the observation exists.
     const observation = await this.observationRepository.findById(id);
@@ -35,7 +35,7 @@ export class DeleteObservationUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: deletedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'DELETE',
       entityName: 'OBSERVATION',
       entityId: id,

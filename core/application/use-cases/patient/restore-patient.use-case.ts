@@ -28,7 +28,7 @@ export class RestorePatientUseCase implements UseCase<
   ) {}
 
   async execute(input: RestorePatientInput): Promise<RestorePatientOutput> {
-    const { id, restoredBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if patient exists (including deleted).
     const patient = await this.patientRepository.findById(id, true);
@@ -53,7 +53,7 @@ export class RestorePatientUseCase implements UseCase<
 
       // 4. Audit the restoration.
       await this.auditLogRepository.create({
-        userId: restoredBy || 'SYSTEM',
+        userId: userId || 'SYSTEM',
         action: 'RESTORE',
         entityName: 'PATIENT',
         entityId: id,

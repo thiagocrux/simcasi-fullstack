@@ -1,8 +1,7 @@
-export interface RevokeSessionInput {
+import { AuditMetadata } from '../common/audit-metadata.contract';
+
+export interface RevokeSessionInput extends AuditMetadata {
   id: string;
-  revokedBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export interface RevokeSessionOutput {

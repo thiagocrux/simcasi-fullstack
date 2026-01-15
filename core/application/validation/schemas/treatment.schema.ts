@@ -8,10 +8,7 @@ export const treatmentSchema = z.object({
   healthCenter: z
     .string()
     .nonempty(messages.REQUIRED_FIELD('Unidade Básica de Saúde')),
-  startDate: z.union([
-    z.date(),
-    z.string().nonempty(messages.REQUIRED_FIELD('Data de início')),
-  ]),
+  startDate: z.string().nonempty(messages.REQUIRED_FIELD('Data de início')),
   dosage: z.string().nonempty(messages.REQUIRED_FIELD('Dosagem')),
   observations: z.string().optional(),
   partnerInformation: z.string().optional(),

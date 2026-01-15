@@ -31,7 +31,7 @@ export class FindSessionsUseCase implements UseCase<
         userAgent: s.userAgent,
         issuedAt: s.issuedAt,
         expiresAt: s.expiresAt,
-        deletedAt: s.deletedAt,
+        deletedAt: s.deletedAt ?? null,
       })),
       total,
     };

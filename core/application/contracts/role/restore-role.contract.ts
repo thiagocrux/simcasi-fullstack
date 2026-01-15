@@ -1,10 +1,8 @@
 import { Role } from '@/core/domain/entities/role.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RestoreRoleInput {
+export interface RestoreRoleInput extends AuditMetadata {
   id: string;
-  restoredBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export type RestoreRoleOutput = Role;

@@ -1,11 +1,9 @@
 import { Role } from '@/core/domain/entities/role.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface UpdateRoleInput {
+export interface UpdateRoleInput extends AuditMetadata {
   id: string;
   code?: string;
-  updatedBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export type UpdateRoleOutput = Role;

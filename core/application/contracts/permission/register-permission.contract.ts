@@ -1,10 +1,8 @@
 import { Permission } from '@/core/domain/entities/permission.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RegisterPermissionInput {
+export interface RegisterPermissionInput extends AuditMetadata {
   code: string;
-  createdBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export type RegisterPermissionOutput = Permission;

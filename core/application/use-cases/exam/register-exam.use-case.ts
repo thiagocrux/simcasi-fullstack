@@ -23,7 +23,7 @@ export class RegisterExamUseCase implements UseCase<
   ) {}
 
   async execute(input: RegisterExamInput): Promise<RegisterExamOutput> {
-    const { createdBy, ipAddress, userAgent, ...examData } = input;
+    const { userId, ipAddress, userAgent, ...examData } = input;
 
     // 1. Validate input.
     const validation = examSchema.safeParse(examData);
@@ -42,13 +42,18 @@ export class RegisterExamUseCase implements UseCase<
 
     // 3. Delegate to the repository.
     const exam = await this.examRepository.create({
-      ...examData,
-      createdBy: createdBy || 'SYSTEM',
+      ...validation.data,
+      treponemalTestDate: new Date(validation.data.treponemalTestDate),
+      nontreponemalTestDate: new Date(validation.data.nontreponemalTestDate),
+      otherNontreponemalTestDate: validation.data.otherNontreponemalTestDate
+        ? new Date(validation.data.otherNontreponemalTestDate)
+        : undefined,
+      createdBy: userId || 'SYSTEM',
     });
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: createdBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'CREATE',
       entityName: 'EXAM',
       entityId: exam.id,

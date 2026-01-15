@@ -1,10 +1,8 @@
 import { Permission } from '@/core/domain/entities/permission.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RestorePermissionInput {
+export interface RestorePermissionInput extends AuditMetadata {
   id: string;
-  restoredBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export type RestorePermissionOutput = Permission;

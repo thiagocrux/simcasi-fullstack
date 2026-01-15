@@ -10,10 +10,9 @@ export const examSchema = z.object({
   treponemalTestResult: z
     .string()
     .nonempty(messages.REQUIRED_FIELD('Resultado do teste treponêmico')),
-  treponemalTestDate: z.union([
-    z.date(),
-    z.string().nonempty(messages.REQUIRED_FIELD('Data do teste treponêmico')),
-  ]),
+  treponemalTestDate: z
+    .string()
+    .nonempty(messages.REQUIRED_FIELD('Data do teste treponêmico')),
   treponemalTestLocation: z
     .string()
     .nonempty(messages.REQUIRED_FIELD('Local do teste treponêmico')),
@@ -23,14 +22,11 @@ export const examSchema = z.object({
   nontreponemalTestTitration: z
     .string()
     .nonempty(messages.REQUIRED_FIELD('Titulação do teste não treponêmico')),
-  nontreponemalTestDate: z.union([
-    z.date(),
-    z
-      .string()
-      .nonempty(messages.REQUIRED_FIELD('Data do teste não treponêmico')),
-  ]),
+  nontreponemalTestDate: z
+    .string()
+    .nonempty(messages.REQUIRED_FIELD('Data do teste não treponêmico')),
   otherNontreponemalTest: z.string().optional(),
-  otherNontreponemalTestDate: z.union([z.date(), z.string()]).optional(),
+  otherNontreponemalTestDate: z.string().optional(),
   referenceObservations: z
     .string()
     .nonempty(messages.REQUIRED_FIELD('Observações de referência')),

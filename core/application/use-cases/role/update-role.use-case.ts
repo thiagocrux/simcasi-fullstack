@@ -20,7 +20,7 @@ export class UpdateRoleUseCase implements UseCase<
   ) {}
 
   async execute(input: UpdateRoleInput): Promise<UpdateRoleOutput> {
-    const { id, updatedBy, ipAddress, userAgent, ...data } = input;
+    const { id, userId, ipAddress, userAgent, ...data } = input;
 
     // 1. Check if the role exists.
     const existing = await this.roleRepository.findById(id);
@@ -41,7 +41,7 @@ export class UpdateRoleUseCase implements UseCase<
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: updatedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'UPDATE',
       entityName: 'ROLE',
       entityId: id,

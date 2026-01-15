@@ -1,10 +1,9 @@
 import { Exam } from '@/core/domain/entities/exam.entity';
 
-export interface RestoreExamInput {
+import { AuditMetadata } from '../common/audit-metadata.contract';
+
+export interface RestoreExamInput extends AuditMetadata {
   id: string;
-  restoredBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export type RestoreExamOutput = Exam;

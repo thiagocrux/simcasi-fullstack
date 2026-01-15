@@ -20,7 +20,7 @@ export class DeleteTreatmentUseCase implements UseCase<
   ) {}
 
   async execute(input: DeleteTreatmentInput): Promise<DeleteTreatmentOutput> {
-    const { id, deletedBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the treatment exists.
     const treatment = await this.treatmentRepository.findById(id);
@@ -33,7 +33,7 @@ export class DeleteTreatmentUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: deletedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'DELETE',
       entityName: 'TREATMENT',
       entityId: id,

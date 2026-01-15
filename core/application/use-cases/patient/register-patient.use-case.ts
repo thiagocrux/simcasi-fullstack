@@ -27,8 +27,10 @@ export class RegisterPatientUseCase implements UseCase<
   ) {}
 
   async execute(input: RegisterPatientInput): Promise<RegisterPatientOutput> {
+    const { userId, ipAddress, userAgent, ...patientData } = input;
+
     // 1. Validate input.
-    const validation = patientSchema.safeParse(input);
+    const validation = patientSchema.safeParse(patientData);
     if (!validation.success) {
       throw new ValidationError(
         'Invalid register patient data.',
@@ -37,38 +39,41 @@ export class RegisterPatientUseCase implements UseCase<
     }
 
     // 2. Validate if an active patient already has this CPF.
-    const existingByCpf = await this.patientRepository.findByCpf(input.cpf);
+    const existingByCpf = await this.patientRepository.findByCpf(
+      patientData.cpf
+    );
     if (existingByCpf) {
       throw new ConflictError(
-        `Patient with CPF ${input.cpf} is already registered and active.`
+        `Patient with CPF ${patientData.cpf} is already registered and active.`
       );
     }
 
     // 3. Validate if an active patient already has this SUS card number.
     const existingBySus = await this.patientRepository.findBySusCardNumber(
-      input.susCardNumber
+      patientData.susCardNumber
     );
     if (existingBySus) {
       throw new ConflictError(
-        `Patient with SUS Card Number ${input.susCardNumber} is already registered and active.`
+        `Patient with SUS Card Number ${patientData.susCardNumber} is already registered and active.`
       );
     }
 
     // 4. Delegate creation to repository (which handles restoration logic).
     const patient = await this.patientRepository.create({
-      ...input,
-      createdBy: input.createdBy || 'SYSTEM',
+      ...validation.data,
+      birthDate: new Date(validation.data.birthDate),
+      createdBy: userId || 'SYSTEM',
     });
 
     // 5. Audit the creation.
     await this.auditLogRepository.create({
-      userId: input.createdBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'CREATE',
       entityName: 'PATIENT',
       entityId: patient.id,
-      newValues: input,
-      ipAddress: input.ipAddress,
-      userAgent: input.userAgent,
+      newValues: patientData,
+      ipAddress,
+      userAgent,
     });
 
     return patient;

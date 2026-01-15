@@ -1,14 +1,11 @@
 import { User } from '@/core/domain/entities/user.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RegisterUserInput extends Omit<
-  User,
-  'id' | 'password' | 'createdAt' | 'updatedAt' | 'deletedAt'
-> {
+export interface RegisterUserInput
+  extends
+    Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
+    AuditMetadata {
   password: string;
-  // Audit fields
-  createdBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export interface RegisterUserOutput extends Omit<User, 'password'> {}

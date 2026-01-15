@@ -1,10 +1,8 @@
 import { Role } from '@/core/domain/entities/role.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RegisterRoleInput {
+export interface RegisterRoleInput extends AuditMetadata {
   code: string;
-  createdBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export type RegisterRoleOutput = Role;

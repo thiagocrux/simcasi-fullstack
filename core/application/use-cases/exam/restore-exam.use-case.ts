@@ -20,7 +20,7 @@ export class RestoreExamUseCase implements UseCase<
   ) {}
 
   async execute(input: RestoreExamInput): Promise<RestoreExamOutput> {
-    const { id, restoredBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the exam exists (including deleted).
     const exam = await this.examRepository.findById(id, true);
@@ -35,7 +35,7 @@ export class RestoreExamUseCase implements UseCase<
 
       // 3. Create audit log.
       await this.auditLogRepository.create({
-        userId: restoredBy || 'SYSTEM',
+        userId: userId || 'SYSTEM',
         action: 'RESTORE',
         entityName: 'EXAM',
         entityId: id,

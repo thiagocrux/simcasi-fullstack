@@ -22,7 +22,7 @@ export class DeleteNotificationUseCase implements UseCase<
   async execute(
     input: DeleteNotificationInput
   ): Promise<DeleteNotificationOutput> {
-    const { id, deletedBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the notification exists.
     const existing = await this.notificationRepository.findById(id);
@@ -35,7 +35,7 @@ export class DeleteNotificationUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: deletedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'DELETE',
       entityName: 'NOTIFICATION',
       entityId: id,

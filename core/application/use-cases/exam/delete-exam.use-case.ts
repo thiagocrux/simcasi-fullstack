@@ -20,7 +20,7 @@ export class DeleteExamUseCase implements UseCase<
   ) {}
 
   async execute(input: DeleteExamInput): Promise<DeleteExamOutput> {
-    const { id, deletedBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the exam exists.
     const exam = await this.examRepository.findById(id);
@@ -33,7 +33,7 @@ export class DeleteExamUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: deletedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'DELETE',
       entityName: 'EXAM',
       entityId: id,

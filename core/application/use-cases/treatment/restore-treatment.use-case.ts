@@ -20,7 +20,7 @@ export class RestoreTreatmentUseCase implements UseCase<
   ) {}
 
   async execute(input: RestoreTreatmentInput): Promise<RestoreTreatmentOutput> {
-    const { id, restoredBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the treatment exists (including deleted).
     const treatment = await this.treatmentRepository.findById(id, true);
@@ -35,7 +35,7 @@ export class RestoreTreatmentUseCase implements UseCase<
 
       // 3. Create audit log.
       await this.auditLogRepository.create({
-        userId: restoredBy || 'SYSTEM',
+        userId: userId || 'SYSTEM',
         action: 'RESTORE',
         entityName: 'TREATMENT',
         entityId: id,

@@ -22,7 +22,7 @@ export class RestorePermissionUseCase implements UseCase<
   async execute(
     input: RestorePermissionInput
   ): Promise<RestorePermissionOutput> {
-    const { id, restoredBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the permission exists (including deleted).
     const permission = await this.permissionRepository.findById(id, true);
@@ -41,7 +41,7 @@ export class RestorePermissionUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: restoredBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'RESTORE',
       entityName: 'PERMISSION',
       entityId: id,

@@ -22,7 +22,7 @@ export class DeleteUserUseCase implements UseCase<
   ) {}
 
   async execute(input: DeleteUserInput): Promise<DeleteUserOutput> {
-    const { id, deletedBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the user exists.
     const user = await this.userRepository.findById(id);
@@ -41,7 +41,7 @@ export class DeleteUserUseCase implements UseCase<
     const { password: _, ...oldValuesWithoutPassword } = user;
 
     await this.auditLogRepository.create({
-      userId: deletedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'DELETE',
       entityName: 'USER',
       entityId: id,

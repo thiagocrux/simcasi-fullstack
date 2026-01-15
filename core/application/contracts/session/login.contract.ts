@@ -1,10 +1,9 @@
+import { AuditMetadata } from '../common/audit-metadata.contract';
 import { SessionOutput } from './session-output.contract';
 
-export interface LoginInput {
+export interface LoginInput extends AuditMetadata {
   email: string;
   password: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export interface LoginOutput extends SessionOutput {}

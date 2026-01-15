@@ -1,10 +1,8 @@
 import { User } from '@/core/domain/entities/user.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RestoreUserInput {
+export interface RestoreUserInput extends AuditMetadata {
   id: string;
-  restoredBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export interface RestoreUserOutput extends Omit<User, 'password'> {}

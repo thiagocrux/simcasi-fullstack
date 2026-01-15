@@ -1,11 +1,12 @@
 import { Patient } from '@/core/domain/entities/patient.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RegisterPatientInput {
+export interface RegisterPatientInput extends AuditMetadata {
   susCardNumber: string;
   name: string;
   cpf: string;
   socialName?: string;
-  birthDate: Date;
+  birthDate: Date | string;
   race: string;
   sex: string;
   gender: string;
@@ -25,10 +26,6 @@ export interface RegisterPatientInput {
   street: string;
   houseNumber: string;
   complement?: string;
-  createdBy?: string;
-  // Audit metadata (optional, can be populated by the caller)
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export interface RegisterPatientOutput extends Patient {}

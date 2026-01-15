@@ -21,7 +21,7 @@ export class UpdateExamUseCase implements UseCase<
   ) {}
 
   async execute(input: UpdateExamInput): Promise<UpdateExamOutput> {
-    const { id, updatedBy, ipAddress, userAgent, ...data } = input;
+    const { id, userId, ipAddress, userAgent, ...data } = input;
 
     // 1. Validate input.
     const validation = examSchema.partial().safeParse(data);
@@ -39,11 +39,22 @@ export class UpdateExamUseCase implements UseCase<
     }
 
     // 3. Update the exam.
-    const updatedExam = await this.examRepository.update(id, data);
+    const updatedExam = await this.examRepository.update(id, {
+      ...validation.data,
+      treponemalTestDate: validation.data.treponemalTestDate
+        ? new Date(validation.data.treponemalTestDate)
+        : undefined,
+      nontreponemalTestDate: validation.data.nontreponemalTestDate
+        ? new Date(validation.data.nontreponemalTestDate)
+        : undefined,
+      otherNontreponemalTestDate: validation.data.otherNontreponemalTestDate
+        ? new Date(validation.data.otherNontreponemalTestDate)
+        : undefined,
+    });
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: updatedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'UPDATE',
       entityName: 'EXAM',
       entityId: id,

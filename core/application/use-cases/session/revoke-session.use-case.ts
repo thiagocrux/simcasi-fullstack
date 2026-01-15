@@ -20,7 +20,7 @@ export class RevokeSessionUseCase implements UseCase<
   ) {}
 
   async execute(input: RevokeSessionInput): Promise<RevokeSessionOutput> {
-    const { id, revokedBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
     const session = await this.sessionRepository.findById(id);
 
     if (!session) {
@@ -31,7 +31,7 @@ export class RevokeSessionUseCase implements UseCase<
 
     // Create audit log.
     await this.auditLogRepository.create({
-      userId: revokedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'REVOKE_SESSION',
       entityName: 'SESSION',
       entityId: id,

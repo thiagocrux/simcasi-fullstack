@@ -23,7 +23,7 @@ export class UpdateNotificationUseCase implements UseCase<
   async execute(
     input: UpdateNotificationInput
   ): Promise<UpdateNotificationOutput> {
-    const { id, updatedBy, ipAddress, userAgent, ...data } = input;
+    const { id, userId, ipAddress, userAgent, ...data } = input;
 
     // 1. Validate input.
     const validation = notificationSchema.partial().safeParse(data);
@@ -48,7 +48,7 @@ export class UpdateNotificationUseCase implements UseCase<
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: updatedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'UPDATE',
       entityName: 'NOTIFICATION',
       entityId: id,

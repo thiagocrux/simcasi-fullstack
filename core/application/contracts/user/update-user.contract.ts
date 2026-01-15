@@ -1,11 +1,9 @@
 import { User } from '@/core/domain/entities/user.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface UpdateUserInput {
+export interface UpdateUserInput extends AuditMetadata {
   id: string;
   data: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>>;
-  updatedBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export interface UpdateUserOutput extends Omit<User, 'password'> {}

@@ -27,7 +27,7 @@ export class UpdateUserUseCase implements UseCase<
   ) {}
 
   async execute(input: UpdateUserInput): Promise<UpdateUserOutput> {
-    const { id, data, updatedBy, ipAddress, userAgent } = input;
+    const { id, data, userId, ipAddress, userAgent } = input;
 
     // 1. Validate input.
     const validation = userSchema.partial().safeParse(data);
@@ -66,7 +66,7 @@ export class UpdateUserUseCase implements UseCase<
     const { password: ___, ...newValuesWithoutPassword } = updatedUser;
 
     await this.auditLogRepository.create({
-      userId: updatedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'UPDATE',
       entityName: 'USER',
       entityId: id,

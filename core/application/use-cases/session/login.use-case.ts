@@ -42,8 +42,8 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
       userId: user.id,
       issuedAt: new Date(),
       expiresAt: this.tokenProvider.getRefreshExpiryDate(),
-      ipAddress: input.ipAddress,
-      userAgent: input.userAgent,
+      ipAddress: input.ipAddress || 'unknown',
+      userAgent: input.userAgent || 'unknown',
     });
 
     // 4. Generate tokens including Session ID (sid).

@@ -1,20 +1,18 @@
 import { Exam } from '@/core/domain/entities/exam.entity';
+import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RegisterExamInput {
+export interface RegisterExamInput extends AuditMetadata {
   patientId: string;
   treponemalTestType: string;
   treponemalTestResult: string;
-  treponemalTestDate: Date;
+  treponemalTestDate: Date | string;
   treponemalTestLocation: string;
   nontreponemalVdrlTest: string;
   nontreponemalTestTitration: string;
-  nontreponemalTestDate: Date;
+  nontreponemalTestDate: Date | string;
   otherNontreponemalTest?: string | null;
-  otherNontreponemalTestDate?: Date | null;
+  otherNontreponemalTestDate?: Date | string | null;
   referenceObservations: string;
-  createdBy?: string;
-  ipAddress?: string;
-  userAgent?: string;
 }
 
 export type RegisterExamOutput = Exam;

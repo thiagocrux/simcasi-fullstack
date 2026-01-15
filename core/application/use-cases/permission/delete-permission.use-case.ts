@@ -20,7 +20,7 @@ export class DeletePermissionUseCase implements UseCase<
   ) {}
 
   async execute(input: DeletePermissionInput): Promise<DeletePermissionOutput> {
-    const { id, deletedBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the permission exists.
     const existing = await this.permissionRepository.findById(id);
@@ -33,7 +33,7 @@ export class DeletePermissionUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: deletedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'DELETE',
       entityName: 'PERMISSION',
       entityId: id,

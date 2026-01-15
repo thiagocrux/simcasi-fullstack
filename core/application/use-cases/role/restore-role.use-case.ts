@@ -20,7 +20,7 @@ export class RestoreRoleUseCase implements UseCase<
   ) {}
 
   async execute(input: RestoreRoleInput): Promise<RestoreRoleOutput> {
-    const { id, restoredBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the role exists (including deleted).
     const role = await this.roleRepository.findById(id, true);
@@ -39,7 +39,7 @@ export class RestoreRoleUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: restoredBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'RESTORE',
       entityName: 'ROLE',
       entityId: id,

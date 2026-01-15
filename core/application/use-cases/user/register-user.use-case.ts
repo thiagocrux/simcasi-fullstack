@@ -39,7 +39,7 @@ export class RegisterUserUseCase implements UseCase<
     }
 
     // 3. Hash the password.
-    const { password, ipAddress, userAgent, createdBy, ...userData } = input;
+    const { password, ipAddress, userAgent, userId, ...userData } = input;
     const hashedPassword = await this.hashProvider.hash(password);
 
     // 4. Delegate to the repository (handles restoration if the email was soft-deleted).
@@ -51,7 +51,7 @@ export class RegisterUserUseCase implements UseCase<
     // 5. Create audit log.
     const { password: _, ...userWithoutPassword } = user;
     await this.auditLogRepository.create({
-      userId: createdBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'CREATE',
       entityName: 'USER',
       entityId: user.id,

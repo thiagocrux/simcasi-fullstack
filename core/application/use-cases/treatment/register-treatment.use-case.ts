@@ -25,7 +25,7 @@ export class RegisterTreatmentUseCase implements UseCase<
   async execute(
     input: RegisterTreatmentInput
   ): Promise<RegisterTreatmentOutput> {
-    const { createdBy, ipAddress, userAgent, ...treatmentData } = input;
+    const { userId, ipAddress, userAgent, ...treatmentData } = input;
 
     // 1. Validate input.
     const validation = treatmentSchema.safeParse(treatmentData);
@@ -46,13 +46,14 @@ export class RegisterTreatmentUseCase implements UseCase<
 
     // 3. Delegate to the repository.
     const treatment = await this.treatmentRepository.create({
-      ...treatmentData,
-      createdBy: createdBy || 'SYSTEM',
+      ...validation.data,
+      startDate: new Date(validation.data.startDate),
+      createdBy: userId || 'SYSTEM',
     });
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: createdBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'CREATE',
       entityName: 'TREATMENT',
       entityId: treatment.id,

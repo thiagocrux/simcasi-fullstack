@@ -22,7 +22,7 @@ export class UpdateObservationUseCase implements UseCase<
   async execute(
     input: UpdateObservationInput
   ): Promise<UpdateObservationOutput> {
-    const { id, updatedBy, ipAddress, userAgent, ...data } = input;
+    const { id, userId, ipAddress, userAgent, ...data } = input;
 
     // 1. Check if the observation exists.
     const existing = await this.observationRepository.findById(id);
@@ -38,7 +38,7 @@ export class UpdateObservationUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: updatedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'UPDATE',
       entityName: 'OBSERVATION',
       entityId: id,

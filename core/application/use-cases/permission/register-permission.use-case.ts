@@ -22,7 +22,7 @@ export class RegisterPermissionUseCase implements UseCase<
   async execute(
     input: RegisterPermissionInput
   ): Promise<RegisterPermissionOutput> {
-    const { createdBy, ipAddress, userAgent, ...data } = input;
+    const { userId, ipAddress, userAgent, ...data } = input;
 
     // 1. Check if the permission code already exists.
     const permissionExists = await this.permissionRepository.findByCode(
@@ -37,7 +37,7 @@ export class RegisterPermissionUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: createdBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'CREATE',
       entityName: 'PERMISSION',
       entityId: permission.id,

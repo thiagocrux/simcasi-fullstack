@@ -20,7 +20,7 @@ export class RegisterRoleUseCase implements UseCase<
   ) {}
 
   async execute(input: RegisterRoleInput): Promise<RegisterRoleOutput> {
-    const { ipAddress, userAgent, createdBy, ...roleData } = input;
+    const { ipAddress, userAgent, userId, ...roleData } = input;
 
     // 1. Check if the role code already exists.
     const roleExists = await this.roleRepository.findByCode(roleData.code);
@@ -29,14 +29,11 @@ export class RegisterRoleUseCase implements UseCase<
     }
 
     // 2. Delegate to the repository (handles restoration if the code was soft-deleted).
-    const role = await this.roleRepository.create({
-      ...roleData,
-      createdBy: createdBy || 'SYSTEM',
-    });
+    const role = await this.roleRepository.create(roleData);
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: createdBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'CREATE',
       entityName: 'ROLE',
       entityId: role.id,

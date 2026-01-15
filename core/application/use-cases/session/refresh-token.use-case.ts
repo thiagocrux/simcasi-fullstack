@@ -66,8 +66,8 @@ export class RefreshTokenUseCase implements UseCase<
       userId: user.id,
       issuedAt: new Date(),
       expiresAt: this.tokenProvider.getRefreshExpiryDate(),
-      ipAddress: input.ipAddress,
-      userAgent: input.userAgent,
+      ipAddress: input.ipAddress || 'unknown',
+      userAgent: input.userAgent || 'unknown',
     });
 
     // 6. Generate new tokens with the new session ID.

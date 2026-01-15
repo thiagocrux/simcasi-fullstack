@@ -26,13 +26,7 @@ export const patientSchema = z.object({
     .nonempty(messages.REQUIRED_FIELD('CPF'))
     .regex(regex.CPF, messages.INVALID_FIELD('CPF')),
   socialName: z.string().optional(),
-  birthDate: z.union([
-    z.date(messages.INVALID_FIELD('Data de nascimento')),
-    z
-      .string()
-      .nonempty(messages.REQUIRED_FIELD('Data de nascimento'))
-      .regex(regex.DATE, messages.INVALID_FIELD('Data de nascimento')),
-  ]),
+  birthDate: z.string().nonempty(messages.REQUIRED_FIELD('Data de nascimento')),
   race: z.enum(
     RACE_OPTIONS.map((option) => option.value),
     messages.REQUIRED_FIELD('Raça')

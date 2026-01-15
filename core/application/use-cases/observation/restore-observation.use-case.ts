@@ -22,7 +22,7 @@ export class RestoreObservationUseCase implements UseCase<
   async execute(
     input: RestoreObservationInput
   ): Promise<RestoreObservationOutput> {
-    const { id, restoredBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the observation exists (including deleted).
     const observation = await this.observationRepository.findById(id, true);
@@ -37,7 +37,7 @@ export class RestoreObservationUseCase implements UseCase<
 
       // 3. Create audit log.
       await this.auditLogRepository.create({
-        userId: restoredBy || 'SYSTEM',
+        userId: userId || 'SYSTEM',
         action: 'RESTORE',
         entityName: 'OBSERVATION',
         entityId: id,

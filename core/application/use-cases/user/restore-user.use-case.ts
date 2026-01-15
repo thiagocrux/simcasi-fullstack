@@ -21,7 +21,7 @@ export class RestoreUserUseCase implements UseCase<
   ) {}
 
   async execute(input: RestoreUserInput): Promise<RestoreUserOutput> {
-    const { id, restoredBy, ipAddress, userAgent } = input;
+    const { id, userId, ipAddress, userAgent } = input;
 
     // 1. Check if the user exists (including deleted).
     const user = await this.userRepository.findById(id, true);
@@ -39,7 +39,7 @@ export class RestoreUserUseCase implements UseCase<
       const { password: _, ...newValuesWithoutPassword } = user;
 
       await this.auditLogRepository.create({
-        userId: restoredBy || 'SYSTEM',
+        userId: userId || 'SYSTEM',
         action: 'RESTORE',
         entityName: 'USER',
         entityId: id,

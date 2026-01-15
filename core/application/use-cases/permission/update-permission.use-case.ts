@@ -20,7 +20,7 @@ export class UpdatePermissionUseCase implements UseCase<
   ) {}
 
   async execute(input: UpdatePermissionInput): Promise<UpdatePermissionOutput> {
-    const { id, updatedBy, ipAddress, userAgent, ...data } = input;
+    const { id, userId, ipAddress, userAgent, ...data } = input;
 
     // 1. Check if the permission exists.
     const existing = await this.permissionRepository.findById(id);
@@ -43,7 +43,7 @@ export class UpdatePermissionUseCase implements UseCase<
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: updatedBy || 'SYSTEM',
+      userId: userId || 'SYSTEM',
       action: 'UPDATE',
       entityName: 'PERMISSION',
       entityId: id,
