@@ -10,14 +10,15 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const auth = await authenticateRequest(request);
     await authorize(auth.roleId, ['view:patient']);
 
     const getPatientByIdUseCase = makeGetPatientByIdUseCase();
-    const patient = await getPatientByIdUseCase.execute({ id: params.id });
+    const patient = await getPatientByIdUseCase.execute({ id });
 
     return NextResponse.json(patient);
   } catch (error) {
@@ -27,9 +28,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const auth = await authenticateRequest(request);
     await authorize(auth.roleId, ['update:patient']);
 
@@ -37,9 +39,9 @@ export async function PATCH(
     const updateUseCase = makeUpdatePatientUseCase();
 
     const updated = await updateUseCase.execute({
-      id: params.id,
-      data: body,
-      updatedBy: auth.userId,
+      id,
+      ...body,
+      userId: auth.userId,
       ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
       userAgent: request.headers.get('user-agent') || 'unknown',
     });
@@ -52,16 +54,17 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const auth = await authenticateRequest(request);
     await authorize(auth.roleId, ['delete:patient']);
 
     const deleteUseCase = makeDeletePatientUseCase();
     await deleteUseCase.execute({
-      id: params.id,
-      deletedBy: auth.userId,
+      id,
+      userId: auth.userId,
       ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
       userAgent: request.headers.get('user-agent') || 'unknown',
     });

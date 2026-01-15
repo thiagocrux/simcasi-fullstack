@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     const patient = await registerUseCase.execute({
       ...body,
-      createdBy: auth.userId,
+      userId: auth.userId,
       ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
       userAgent: request.headers.get('user-agent') || 'unknown',
     });

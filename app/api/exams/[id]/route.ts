@@ -10,14 +10,15 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const auth = await authenticateRequest(request);
     await authorize(auth.roleId, ['view:exam']);
 
     const getExamByIdUseCase = makeGetExamByIdUseCase();
-    const exam = await getExamByIdUseCase.execute({ id: params.id });
+    const exam = await getExamByIdUseCase.execute({ id });
 
     return NextResponse.json(exam);
   } catch (error) {
@@ -27,9 +28,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const auth = await authenticateRequest(request);
     await authorize(auth.roleId, ['update:exam']);
 
@@ -37,9 +39,9 @@ export async function PATCH(
     const updateUseCase = makeUpdateExamUseCase();
 
     const updated = await updateUseCase.execute({
-      id: params.id,
+      id,
       ...body,
-      updatedBy: auth.userId,
+      userId: auth.userId,
       ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
       userAgent: request.headers.get('user-agent') || 'unknown',
     });
@@ -52,16 +54,17 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const auth = await authenticateRequest(request);
     await authorize(auth.roleId, ['delete:exam']);
 
     const deleteUseCase = makeDeleteExamUseCase();
     await deleteUseCase.execute({
-      id: params.id,
-      updatedBy: auth.userId,
+      id,
+      userId: auth.userId,
       ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
       userAgent: request.headers.get('user-agent') || 'unknown',
     });

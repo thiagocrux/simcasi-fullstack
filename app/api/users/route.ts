@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
     const useCase = makeRegisterUserUseCase();
     const user = await useCase.execute({
       ...body,
+      userId: auth.userId,
       ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
       userAgent: request.headers.get('user-agent') || 'unknown',
     });

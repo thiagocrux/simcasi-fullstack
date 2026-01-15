@@ -6,16 +6,17 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const auth = await authenticateRequest(request);
     await authorize(auth.roleId, ['restore:treatment']);
 
     const useCase = makeRestoreTreatmentUseCase();
     await useCase.execute({
-      id: params.id,
-      updatedBy: auth.userId,
+      id,
+      userId: auth.userId,
       ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
       userAgent: request.headers.get('user-agent') || 'unknown',
     });
