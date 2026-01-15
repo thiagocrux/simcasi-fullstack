@@ -5,6 +5,9 @@ export interface UpdatePatientInput {
   data: Partial<
     Omit<Patient, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'createdBy'>
   >;
+  updatedBy?: string;
+  ipAddress?: string;
+  userAgent?: string;
 }
 
 export interface UpdatePatientOutput extends Patient {}

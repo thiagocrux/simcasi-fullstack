@@ -8,7 +8,9 @@ export interface RegisterTreatmentInput {
   dosage: string;
   observations?: string | null;
   partnerInformation?: string | null;
-  createdBy: string;
+  createdBy?: string;
+  ipAddress?: string;
+  userAgent?: string;
 }
 
 export type RegisterTreatmentOutput = Treatment;

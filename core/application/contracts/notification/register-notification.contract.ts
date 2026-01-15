@@ -4,7 +4,9 @@ export interface RegisterNotificationInput {
   patientId: string;
   sinan: string;
   observations?: string | null;
-  createdBy: string;
+  createdBy?: string;
+  ipAddress?: string;
+  userAgent?: string;
 }
 
 export type RegisterNotificationOutput = Notification;

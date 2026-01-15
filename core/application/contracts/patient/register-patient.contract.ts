@@ -25,7 +25,10 @@ export interface RegisterPatientInput {
   street: string;
   houseNumber: string;
   complement?: string;
-  createdBy: string;
+  createdBy?: string;
+  // Audit metadata (optional, can be populated by the caller)
+  ipAddress?: string;
+  userAgent?: string;
 }
 
 export interface RegisterPatientOutput extends Patient {}

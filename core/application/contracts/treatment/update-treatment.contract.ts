@@ -8,6 +8,9 @@ export interface UpdateTreatmentInput {
   dosage?: string;
   observations?: string | null;
   partnerInformation?: string | null;
+  updatedBy?: string;
+  ipAddress?: string;
+  userAgent?: string;
 }
 
 export type UpdateTreatmentOutput = Treatment;

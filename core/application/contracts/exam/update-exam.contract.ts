@@ -12,6 +12,9 @@ export interface UpdateExamInput {
   otherNontreponemalTest?: string | null;
   otherNontreponemalTestDate?: Date | null;
   referenceObservations?: string;
+  updatedBy?: string;
+  ipAddress?: string;
+  userAgent?: string;
 }
 
 export type UpdateExamOutput = Exam;

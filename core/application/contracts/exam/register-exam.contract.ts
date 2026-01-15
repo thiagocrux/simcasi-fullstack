@@ -12,7 +12,9 @@ export interface RegisterExamInput {
   otherNontreponemalTest?: string | null;
   otherNontreponemalTestDate?: Date | null;
   referenceObservations: string;
-  createdBy: string;
+  createdBy?: string;
+  ipAddress?: string;
+  userAgent?: string;
 }
 
 export type RegisterExamOutput = Exam;
