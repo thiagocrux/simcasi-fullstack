@@ -1,5 +1,6 @@
 import { ConflictError } from '@/core/domain/errors/app.error';
 import { HashProvider } from '@/core/domain/providers/hash.provider';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import {
   RegisterUserInput,
@@ -16,7 +17,8 @@ export class RegisterUserUseCase implements UseCase<
 > {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly hashProvider: HashProvider
+    private readonly hashProvider: HashProvider,
+    private readonly auditLogRepository: AuditLogRepository
   ) {}
 
   async execute(input: RegisterUserInput): Promise<RegisterUserOutput> {
@@ -27,12 +29,27 @@ export class RegisterUserUseCase implements UseCase<
     }
 
     // 2. Hash the password.
-    const hashedPassword = await this.hashProvider.hash(input.password);
+    const { password, ipAddress, userAgent, createdBy, ...userData } = input;
+    const hashedPassword = await this.hashProvider.hash(password);
 
     // 3. Delegate to the repository (handles restoration if the email was soft-deleted).
-    return await this.userRepository.create({
-      ...input,
+    const user = await this.userRepository.create({
+      ...userData,
       password: hashedPassword,
     });
+
+    // 4. Create audit log.
+    const { password: _, ...userWithoutPassword } = user;
+    await this.auditLogRepository.create({
+      userId: createdBy || 'SYSTEM',
+      action: 'CREATE',
+      entityName: 'USER',
+      entityId: user.id,
+      newValues: userWithoutPassword,
+      ipAddress,
+      userAgent,
+    });
+
+    return userWithoutPassword;
   }
 }

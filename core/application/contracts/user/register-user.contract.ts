@@ -5,6 +5,10 @@ export interface RegisterUserInput extends Omit<
   'id' | 'password' | 'createdAt' | 'updatedAt' | 'deletedAt'
 > {
   password: string;
+  // Audit fields
+  createdBy?: string;
+  ipAddress?: string;
+  userAgent?: string;
 }
 
 export interface RegisterUserOutput extends Omit<User, 'password'> {}

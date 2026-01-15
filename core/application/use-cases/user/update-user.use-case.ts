@@ -1,5 +1,6 @@
 import { ConflictError, NotFoundError } from '@/core/domain/errors/app.error';
 import { HashProvider } from '@/core/domain/providers/hash.provider';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import {
   UpdateUserInput,
@@ -16,11 +17,12 @@ export class UpdateUserUseCase implements UseCase<
 > {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly hashProvider: HashProvider
+    private readonly hashProvider: HashProvider,
+    private readonly auditLogRepository: AuditLogRepository
   ) {}
 
   async execute(input: UpdateUserInput): Promise<UpdateUserOutput> {
-    const { id, data } = input;
+    const { id, data, updatedBy, ipAddress, userAgent } = input;
 
     // 1. Check if the user exists.
     const existing = await this.userRepository.findById(id);
@@ -43,6 +45,23 @@ export class UpdateUserUseCase implements UseCase<
     }
 
     // 4. Update the user.
-    return await this.userRepository.update(id, updateData);
+    const updatedUser = await this.userRepository.update(id, updateData);
+
+    // 5. Create audit log.
+    const { password: __, ...oldValuesWithoutPassword } = existing;
+    const { password: ___, ...newValuesWithoutPassword } = updatedUser;
+
+    await this.auditLogRepository.create({
+      userId: updatedBy || 'SYSTEM',
+      action: 'UPDATE',
+      entityName: 'USER',
+      entityId: id,
+      oldValues: oldValuesWithoutPassword,
+      newValues: newValuesWithoutPassword,
+      ipAddress,
+      userAgent,
+    });
+
+    return newValuesWithoutPassword;
   }
 }
