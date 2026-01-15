@@ -1,4 +1,5 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import {
@@ -16,17 +17,36 @@ export class RegisterExamUseCase implements UseCase<
 > {
   constructor(
     private readonly examRepository: ExamRepository,
-    private readonly patientRepository: PatientRepository
+    private readonly patientRepository: PatientRepository,
+    private readonly auditLogRepository: AuditLogRepository
   ) {}
 
   async execute(input: RegisterExamInput): Promise<RegisterExamOutput> {
+    const { ipAddress, userAgent, ...examData } = input;
+
     // 1. Verify that the patient exists.
-    const patient = await this.patientRepository.findById(input.patientId);
+    const patient = await this.patientRepository.findById(examData.patientId);
     if (!patient) {
       throw new NotFoundError('Patient not found');
     }
 
     // 2. Delegate to the repository.
-    return this.examRepository.create(input);
+    const exam = await this.examRepository.create({
+      ...examData,
+      createdBy: examData.createdBy || 'SYSTEM',
+    });
+
+    // 3. Create audit log.
+    await this.auditLogRepository.create({
+      userId: examData.createdBy || 'SYSTEM',
+      action: 'CREATE',
+      entityName: 'EXAM',
+      entityId: exam.id,
+      newValues: exam,
+      ipAddress,
+      userAgent,
+    });
+
+    return exam;
   }
 }

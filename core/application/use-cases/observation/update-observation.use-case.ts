@@ -1,4 +1,5 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
 import {
   UpdateObservationInput,
@@ -13,20 +14,40 @@ export class UpdateObservationUseCase implements UseCase<
   UpdateObservationInput,
   UpdateObservationOutput
 > {
-  constructor(private readonly observationRepository: ObservationRepository) {}
+  constructor(
+    private readonly observationRepository: ObservationRepository,
+    private readonly auditLogRepository: AuditLogRepository
+  ) {}
 
   async execute(
     input: UpdateObservationInput
   ): Promise<UpdateObservationOutput> {
-    const { id, ...data } = input;
+    const { id, updatedBy, ipAddress, userAgent, ...data } = input;
 
     // 1. Check if the observation exists.
-    const observation = await this.observationRepository.findById(id);
-    if (!observation) {
+    const existing = await this.observationRepository.findById(id);
+    if (!existing) {
       throw new NotFoundError('Observation not found');
     }
 
     // 2. Update the observation.
-    return this.observationRepository.update(id, data);
+    const updatedObservation = await this.observationRepository.update(
+      id,
+      data
+    );
+
+    // 3. Create audit log.
+    await this.auditLogRepository.create({
+      userId: updatedBy || 'SYSTEM',
+      action: 'UPDATE',
+      entityName: 'OBSERVATION',
+      entityId: id,
+      oldValues: existing,
+      newValues: updatedObservation,
+      ipAddress,
+      userAgent,
+    });
+
+    return updatedObservation;
   }
 }

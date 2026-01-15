@@ -1,4 +1,5 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
 import {
   UpdateExamInput,
@@ -13,18 +14,35 @@ export class UpdateExamUseCase implements UseCase<
   UpdateExamInput,
   UpdateExamOutput
 > {
-  constructor(private readonly examRepository: ExamRepository) {}
+  constructor(
+    private readonly examRepository: ExamRepository,
+    private readonly auditLogRepository: AuditLogRepository
+  ) {}
 
   async execute(input: UpdateExamInput): Promise<UpdateExamOutput> {
-    const { id, ...data } = input;
+    const { id, updatedBy, ipAddress, userAgent, ...data } = input;
 
     // 1. Check if the exam exists.
-    const exam = await this.examRepository.findById(id);
-    if (!exam) {
+    const existing = await this.examRepository.findById(id);
+    if (!existing) {
       throw new NotFoundError('Exam not found');
     }
 
     // 2. Update the exam.
-    return this.examRepository.update(id, data);
+    const updatedExam = await this.examRepository.update(id, data);
+
+    // 3. Create audit log.
+    await this.auditLogRepository.create({
+      userId: updatedBy || 'SYSTEM',
+      action: 'UPDATE',
+      entityName: 'EXAM',
+      entityId: id,
+      oldValues: existing,
+      newValues: updatedExam,
+      ipAddress,
+      userAgent,
+    });
+
+    return updatedExam;
   }
 }

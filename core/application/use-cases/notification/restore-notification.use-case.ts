@@ -1,4 +1,5 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
 import {
   RestoreNotificationInput,
@@ -14,28 +15,41 @@ export class RestoreNotificationUseCase implements UseCase<
   RestoreNotificationOutput
 > {
   constructor(
-    private readonly notificationRepository: NotificationRepository
+    private readonly notificationRepository: NotificationRepository,
+    private readonly auditLogRepository: AuditLogRepository
   ) {}
 
   async execute(
     input: RestoreNotificationInput
   ): Promise<RestoreNotificationOutput> {
+    const { id, restoredBy, ipAddress, userAgent } = input;
+
     // 1. Check if the notification exists (including deleted).
-    const notification = await this.notificationRepository.findById(
-      input.id,
-      true
-    );
+    const notification = await this.notificationRepository.findById(id, true);
     if (!notification) {
       throw new NotFoundError('Notification not found');
     }
 
     // 2. Perform the restoration if it was deleted.
     if (notification.deletedAt) {
-      await this.notificationRepository.restore(input.id);
+      await this.notificationRepository.restore(id);
     }
 
-    return (await this.notificationRepository.findById(
-      input.id
+    const restoredNotification = (await this.notificationRepository.findById(
+      id
     )) as RestoreNotificationOutput;
+
+    // 3. Create audit log.
+    await this.auditLogRepository.create({
+      userId: restoredBy || 'SYSTEM',
+      action: 'RESTORE',
+      entityName: 'NOTIFICATION',
+      entityId: id,
+      newValues: restoredNotification,
+      ipAddress,
+      userAgent,
+    });
+
+    return restoredNotification;
   }
 }

@@ -1,4 +1,5 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import {
   DeletePermissionInput,
@@ -13,16 +14,32 @@ export class DeletePermissionUseCase implements UseCase<
   DeletePermissionInput,
   DeletePermissionOutput
 > {
-  constructor(private readonly permissionRepository: PermissionRepository) {}
+  constructor(
+    private readonly permissionRepository: PermissionRepository,
+    private readonly auditLogRepository: AuditLogRepository
+  ) {}
 
   async execute(input: DeletePermissionInput): Promise<DeletePermissionOutput> {
+    const { id, deletedBy, ipAddress, userAgent } = input;
+
     // 1. Check if the permission exists.
-    const permission = await this.permissionRepository.findById(input.id);
-    if (!permission) {
+    const existing = await this.permissionRepository.findById(id);
+    if (!existing) {
       throw new NotFoundError('Permission not found');
     }
 
     // 2. Soft delete the permission.
-    await this.permissionRepository.softDelete(input.id);
+    await this.permissionRepository.softDelete(id);
+
+    // 3. Create audit log.
+    await this.auditLogRepository.create({
+      userId: deletedBy || 'SYSTEM',
+      action: 'DELETE',
+      entityName: 'PERMISSION',
+      entityId: id,
+      oldValues: existing,
+      ipAddress,
+      userAgent,
+    });
   }
 }

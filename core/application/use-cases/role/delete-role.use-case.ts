@@ -1,4 +1,5 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import {
   DeleteRoleInput,
@@ -13,16 +14,32 @@ export class DeleteRoleUseCase implements UseCase<
   DeleteRoleInput,
   DeleteRoleOutput
 > {
-  constructor(private readonly roleRepository: RoleRepository) {}
+  constructor(
+    private readonly roleRepository: RoleRepository,
+    private readonly auditLogRepository: AuditLogRepository
+  ) {}
 
   async execute(input: DeleteRoleInput): Promise<DeleteRoleOutput> {
+    const { id, deletedBy, ipAddress, userAgent } = input;
+
     // 1. Check if the role exists.
-    const role = await this.roleRepository.findById(input.id);
-    if (!role) {
+    const existing = await this.roleRepository.findById(id);
+    if (!existing) {
       throw new NotFoundError('Role not found');
     }
 
     // 2. Soft delete the role.
-    await this.roleRepository.softDelete(input.id);
+    await this.roleRepository.softDelete(id);
+
+    // 3. Create audit log.
+    await this.auditLogRepository.create({
+      userId: deletedBy || 'SYSTEM',
+      action: 'DELETE',
+      entityName: 'ROLE',
+      entityId: id,
+      oldValues: existing,
+      ipAddress,
+      userAgent,
+    });
   }
 }

@@ -1,4 +1,5 @@
 import { ConflictError, NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import {
   UpdateRoleInput,
@@ -13,14 +14,17 @@ export class UpdateRoleUseCase implements UseCase<
   UpdateRoleInput,
   UpdateRoleOutput
 > {
-  constructor(private readonly roleRepository: RoleRepository) {}
+  constructor(
+    private readonly roleRepository: RoleRepository,
+    private readonly auditLogRepository: AuditLogRepository
+  ) {}
 
   async execute(input: UpdateRoleInput): Promise<UpdateRoleOutput> {
-    const { id, ...data } = input;
+    const { id, updatedBy, ipAddress, userAgent, ...data } = input;
 
     // 1. Check if the role exists.
-    const role = await this.roleRepository.findById(id);
-    if (!role) {
+    const existing = await this.roleRepository.findById(id);
+    if (!existing) {
       throw new NotFoundError('Role not found');
     }
 
@@ -33,6 +37,20 @@ export class UpdateRoleUseCase implements UseCase<
     }
 
     // 3. Update the role.
-    return this.roleRepository.update(id, data);
+    const updatedRole = await this.roleRepository.update(id, data);
+
+    // 4. Create audit log.
+    await this.auditLogRepository.create({
+      userId: updatedBy || 'SYSTEM',
+      action: 'UPDATE',
+      entityName: 'ROLE',
+      entityId: id,
+      oldValues: existing,
+      newValues: updatedRole,
+      ipAddress,
+      userAgent,
+    });
+
+    return updatedRole;
   }
 }

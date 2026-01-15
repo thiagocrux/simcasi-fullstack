@@ -1,4 +1,5 @@
 import { ConflictError, NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import {
   UpdatePatientInput,
@@ -13,10 +14,13 @@ export class UpdatePatientUseCase implements UseCase<
   UpdatePatientInput,
   UpdatePatientOutput
 > {
-  constructor(private readonly patientRepository: PatientRepository) {}
+  constructor(
+    private readonly patientRepository: PatientRepository,
+    private readonly auditLogRepository: AuditLogRepository
+  ) {}
 
   async execute(input: UpdatePatientInput): Promise<UpdatePatientOutput> {
-    const { id, data } = input;
+    const { id, data, updatedBy, ipAddress, userAgent } = input;
 
     // 1. Check if patient exists.
     const existing = await this.patientRepository.findById(id);
@@ -35,6 +39,20 @@ export class UpdatePatientUseCase implements UseCase<
     }
 
     // 3. Delegate update to repository.
-    return await this.patientRepository.update(id, data);
+    const updated = await this.patientRepository.update(id, data);
+
+    // 4. Audit the update.
+    await this.auditLogRepository.create({
+      userId: updatedBy || 'SYSTEM',
+      action: 'UPDATE',
+      entityName: 'PATIENT',
+      entityId: id,
+      oldValues: existing,
+      newValues: data,
+      ipAddress,
+      userAgent,
+    });
+
+    return updated;
   }
 }

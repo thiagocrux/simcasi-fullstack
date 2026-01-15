@@ -1,4 +1,5 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
 import {
   RestoreExamInput,
@@ -13,20 +14,37 @@ export class RestoreExamUseCase implements UseCase<
   RestoreExamInput,
   RestoreExamOutput
 > {
-  constructor(private readonly examRepository: ExamRepository) {}
+  constructor(
+    private readonly examRepository: ExamRepository,
+    private readonly auditLogRepository: AuditLogRepository
+  ) {}
 
   async execute(input: RestoreExamInput): Promise<RestoreExamOutput> {
+    const { id, restoredBy, ipAddress, userAgent } = input;
+
     // 1. Check if the exam exists (including deleted).
-    const exam = await this.examRepository.findById(input.id, true);
+    const exam = await this.examRepository.findById(id, true);
     if (!exam) {
       throw new NotFoundError('Exam not found');
     }
 
     // 2. Perform the restoration if it was deleted.
     if (exam.deletedAt) {
-      await this.examRepository.restore(input.id);
+      await this.examRepository.restore(id);
+      exam.deletedAt = null;
+
+      // 3. Create audit log.
+      await this.auditLogRepository.create({
+        userId: restoredBy || 'SYSTEM',
+        action: 'RESTORE',
+        entityName: 'EXAM',
+        entityId: id,
+        newValues: exam,
+        ipAddress,
+        userAgent,
+      });
     }
 
-    return (await this.examRepository.findById(input.id)) as RestoreExamOutput;
+    return exam as RestoreExamOutput;
   }
 }

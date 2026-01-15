@@ -1,4 +1,5 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
@@ -22,26 +23,40 @@ export class DeletePatientUseCase implements UseCase<
     private readonly examRepository: ExamRepository,
     private readonly notificationRepository: NotificationRepository,
     private readonly observationRepository: ObservationRepository,
-    private readonly treatmentRepository: TreatmentRepository
+    private readonly treatmentRepository: TreatmentRepository,
+    private readonly auditLogRepository: AuditLogRepository
   ) {}
 
   async execute(input: DeletePatientInput): Promise<DeletePatientOutput> {
+    const { id, deletedBy, ipAddress, userAgent } = input;
+
     // 1. Check if patient exists.
-    const patient = await this.patientRepository.findById(input.id);
+    const patient = await this.patientRepository.findById(id);
 
     if (!patient) {
       throw new NotFoundError('Patient not found');
     }
 
     // 2. Soft delete the patient.
-    await this.patientRepository.softDelete(input.id);
+    await this.patientRepository.softDelete(id);
 
     // 3. Cascade soft delete to all related medical records.
     await Promise.all([
-      this.examRepository.softDeleteByPatientId(input.id),
-      this.notificationRepository.softDeleteByPatientId(input.id),
-      this.observationRepository.softDeleteByPatientId(input.id),
-      this.treatmentRepository.softDeleteByPatientId(input.id),
+      this.examRepository.softDeleteByPatientId(id),
+      this.notificationRepository.softDeleteByPatientId(id),
+      this.observationRepository.softDeleteByPatientId(id),
+      this.treatmentRepository.softDeleteByPatientId(id),
     ]);
+
+    // 4. Audit the deletion.
+    await this.auditLogRepository.create({
+      userId: deletedBy || 'SYSTEM',
+      action: 'DELETE',
+      entityName: 'PATIENT',
+      entityId: id,
+      oldValues: patient,
+      ipAddress,
+      userAgent,
+    });
   }
 }

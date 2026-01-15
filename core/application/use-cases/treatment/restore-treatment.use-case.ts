@@ -1,4 +1,5 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
 import {
   RestoreTreatmentInput,
@@ -13,22 +14,37 @@ export class RestoreTreatmentUseCase implements UseCase<
   RestoreTreatmentInput,
   RestoreTreatmentOutput
 > {
-  constructor(private readonly treatmentRepository: TreatmentRepository) {}
+  constructor(
+    private readonly treatmentRepository: TreatmentRepository,
+    private readonly auditLogRepository: AuditLogRepository
+  ) {}
 
   async execute(input: RestoreTreatmentInput): Promise<RestoreTreatmentOutput> {
+    const { id, restoredBy, ipAddress, userAgent } = input;
+
     // 1. Check if the treatment exists (including deleted).
-    const treatment = await this.treatmentRepository.findById(input.id, true);
+    const treatment = await this.treatmentRepository.findById(id, true);
     if (!treatment) {
       throw new NotFoundError('Treatment not found');
     }
 
     // 2. Perform the restoration if it was deleted.
     if (treatment.deletedAt) {
-      await this.treatmentRepository.restore(input.id);
+      await this.treatmentRepository.restore(id);
+      treatment.deletedAt = null;
+
+      // 3. Create audit log.
+      await this.auditLogRepository.create({
+        userId: restoredBy || 'SYSTEM',
+        action: 'RESTORE',
+        entityName: 'TREATMENT',
+        entityId: id,
+        newValues: treatment,
+        ipAddress,
+        userAgent,
+      });
     }
 
-    return (await this.treatmentRepository.findById(
-      input.id
-    )) as RestoreTreatmentOutput;
+    return treatment as RestoreTreatmentOutput;
   }
 }

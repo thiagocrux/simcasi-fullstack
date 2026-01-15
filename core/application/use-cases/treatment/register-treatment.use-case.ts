@@ -1,4 +1,5 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
 import {
@@ -16,19 +17,40 @@ export class RegisterTreatmentUseCase implements UseCase<
 > {
   constructor(
     private readonly treatmentRepository: TreatmentRepository,
-    private readonly patientRepository: PatientRepository
+    private readonly patientRepository: PatientRepository,
+    private readonly auditLogRepository: AuditLogRepository
   ) {}
 
   async execute(
     input: RegisterTreatmentInput
   ): Promise<RegisterTreatmentOutput> {
+    const { ipAddress, userAgent, ...treatmentData } = input;
+
     // 1. Verify that the patient exists.
-    const patient = await this.patientRepository.findById(input.patientId);
+    const patient = await this.patientRepository.findById(
+      treatmentData.patientId
+    );
     if (!patient) {
       throw new NotFoundError('Patient not found');
     }
 
     // 2. Delegate to the repository.
-    return this.treatmentRepository.create(input);
+    const treatment = await this.treatmentRepository.create({
+      ...treatmentData,
+      createdBy: treatmentData.createdBy || 'SYSTEM',
+    });
+
+    // 3. Create audit log.
+    await this.auditLogRepository.create({
+      userId: treatmentData.createdBy || 'SYSTEM',
+      action: 'CREATE',
+      entityName: 'TREATMENT',
+      entityId: treatment.id,
+      newValues: treatment,
+      ipAddress,
+      userAgent,
+    });
+
+    return treatment;
   }
 }

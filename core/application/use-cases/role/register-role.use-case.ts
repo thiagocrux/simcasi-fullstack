@@ -1,4 +1,5 @@
 import { ConflictError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import {
   RegisterRoleInput,
@@ -13,16 +14,37 @@ export class RegisterRoleUseCase implements UseCase<
   RegisterRoleInput,
   RegisterRoleOutput
 > {
-  constructor(private readonly roleRepository: RoleRepository) {}
+  constructor(
+    private readonly roleRepository: RoleRepository,
+    private readonly auditLogRepository: AuditLogRepository
+  ) {}
 
   async execute(input: RegisterRoleInput): Promise<RegisterRoleOutput> {
+    const { ipAddress, userAgent, createdBy, ...roleData } = input;
+
     // 1. Check if the role code already exists.
-    const roleExists = await this.roleRepository.findByCode(input.code);
+    const roleExists = await this.roleRepository.findByCode(roleData.code);
     if (roleExists) {
       throw new ConflictError('Role code already exists');
     }
 
     // 2. Delegate to the repository (handles restoration if the code was soft-deleted).
-    return this.roleRepository.create(input);
+    const role = await this.roleRepository.create({
+      ...roleData,
+      createdBy: createdBy || 'SYSTEM',
+    });
+
+    // 3. Create audit log.
+    await this.auditLogRepository.create({
+      userId: createdBy || 'SYSTEM',
+      action: 'CREATE',
+      entityName: 'ROLE',
+      entityId: role.id,
+      newValues: role,
+      ipAddress,
+      userAgent,
+    });
+
+    return role;
   }
 }

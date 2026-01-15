@@ -1,4 +1,5 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
 import {
   DeleteNotificationInput,
@@ -14,19 +15,33 @@ export class DeleteNotificationUseCase implements UseCase<
   DeleteNotificationOutput
 > {
   constructor(
-    private readonly notificationRepository: NotificationRepository
+    private readonly notificationRepository: NotificationRepository,
+    private readonly auditLogRepository: AuditLogRepository
   ) {}
 
   async execute(
     input: DeleteNotificationInput
   ): Promise<DeleteNotificationOutput> {
+    const { id, deletedBy, ipAddress, userAgent } = input;
+
     // 1. Check if the notification exists.
-    const notification = await this.notificationRepository.findById(input.id);
-    if (!notification) {
+    const existing = await this.notificationRepository.findById(id);
+    if (!existing) {
       throw new NotFoundError('Notification not found');
     }
 
     // 2. Soft delete the notification.
-    await this.notificationRepository.softDelete(input.id);
+    await this.notificationRepository.softDelete(id);
+
+    // 3. Create audit log.
+    await this.auditLogRepository.create({
+      userId: deletedBy || 'SYSTEM',
+      action: 'DELETE',
+      entityName: 'NOTIFICATION',
+      entityId: id,
+      oldValues: existing,
+      ipAddress,
+      userAgent,
+    });
   }
 }

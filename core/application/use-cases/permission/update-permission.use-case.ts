@@ -1,4 +1,5 @@
 import { ConflictError, NotFoundError } from '@/core/domain/errors/app.error';
+import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import {
   UpdatePermissionInput,
@@ -13,14 +14,17 @@ export class UpdatePermissionUseCase implements UseCase<
   UpdatePermissionInput,
   UpdatePermissionOutput
 > {
-  constructor(private readonly permissionRepository: PermissionRepository) {}
+  constructor(
+    private readonly permissionRepository: PermissionRepository,
+    private readonly auditLogRepository: AuditLogRepository
+  ) {}
 
   async execute(input: UpdatePermissionInput): Promise<UpdatePermissionOutput> {
-    const { id, ...data } = input;
+    const { id, updatedBy, ipAddress, userAgent, ...data } = input;
 
     // 1. Check if the permission exists.
-    const permission = await this.permissionRepository.findById(id);
-    if (!permission) {
+    const existing = await this.permissionRepository.findById(id);
+    if (!existing) {
       throw new NotFoundError('Permission not found');
     }
 
@@ -35,6 +39,20 @@ export class UpdatePermissionUseCase implements UseCase<
     }
 
     // 3. Update the permission.
-    return this.permissionRepository.update(id, data);
+    const updatedPermission = await this.permissionRepository.update(id, data);
+
+    // 4. Create audit log.
+    await this.auditLogRepository.create({
+      userId: updatedBy || 'SYSTEM',
+      action: 'UPDATE',
+      entityName: 'PERMISSION',
+      entityId: id,
+      oldValues: existing,
+      newValues: updatedPermission,
+      ipAddress,
+      userAgent,
+    });
+
+    return updatedPermission;
   }
 }
