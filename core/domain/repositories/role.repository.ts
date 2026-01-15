@@ -50,4 +50,9 @@ export interface RoleRepository {
    * Restores a logically deleted role (clears deletedAt).
    */
   restore(id: string): Promise<void>;
+
+  /**
+   * Checks if a role has at least one of the required permissions.
+   */
+  hasPermissions(roleId: string, codes: string[]): Promise<boolean>;
 }

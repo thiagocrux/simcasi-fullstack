@@ -151,4 +151,29 @@ export class PrismaRoleRepository implements RoleRepository {
       },
     });
   }
+
+  /**
+   * Checks if a role has at least one of the required permissions.
+   * @param roleId The role ID.
+   * @param codes Array of permission codes.
+   * @returns True if the role has any of the requested permissions.
+   */
+  async hasPermissions(roleId: string, codes: string[]): Promise<boolean> {
+    if (codes.length === 0) return true;
+
+    const count = await prisma.rolePermission.count({
+      where: {
+        roleId,
+        permission: {
+          code: { in: codes },
+          deletedAt: null,
+        },
+        role: {
+          deletedAt: null,
+        },
+      },
+    });
+
+    return count > 0;
+  }
 }
