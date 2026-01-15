@@ -16,7 +16,7 @@ import { Separator } from '@/app/components/ui/separator';
 import {
   RequestNewPasswordInput,
   ResetPasswordInput,
-} from '@/core/domain/validation/schemas/session.schema';
+} from '@/core/application/validation/schemas/session.schema';
 
 interface PasswordRecoverySectionProps {
   variant?:

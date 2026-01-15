@@ -1,13 +1,13 @@
 'use server';
 
-import { IdSchema } from '@/core/domain/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import { mockApiCall } from '@/lib/mock';
 
 import {
   CreateTreatmentInput,
   UpdateTreatmentInput,
   treatmentSchema,
-} from '@/core/domain/validation/schemas/treatment.schema';
+} from '@/core/application/validation/schemas/treatment.schema';
 
 export async function getAllTreatments() {
   try {

@@ -1,13 +1,13 @@
 'use server';
 
-import { IdSchema } from '@/core/domain/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import { mockApiCall } from '@/lib/mock';
 
 import {
   CreatePatientInput,
   UpdatePatientInput,
   patientSchema,
-} from '@/core/domain/validation/schemas/patient.schema';
+} from '@/core/application/validation/schemas/patient.schema';
 
 export async function getAllPatients() {
   try {

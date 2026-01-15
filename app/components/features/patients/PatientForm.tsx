@@ -29,7 +29,7 @@ import {
 import {
   CreatePatientInput,
   patientSchema,
-} from '@/core/domain/validation/schemas/patient.schema';
+} from '@/core/application/validation/schemas/patient.schema';
 
 import {
   Field,

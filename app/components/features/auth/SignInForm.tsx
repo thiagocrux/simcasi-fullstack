@@ -9,7 +9,7 @@ import { signInUser } from '@/app/actions/session.actions';
 import {
   CreateSessionInput,
   sessionSchema,
-} from '@/core/domain/validation/schemas/session.schema';
+} from '@/core/application/validation/schemas/session.schema';
 import { FieldError } from '../../common/FieldError';
 import { PasswordInput } from '../../common/PasswordInput';
 import { Button } from '../../ui/button';

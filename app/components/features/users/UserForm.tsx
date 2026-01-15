@@ -18,9 +18,9 @@ import { Input } from '../../ui/input';
 import { Spinner } from '../../ui/spinner';
 
 import {
-  CreateUserInput,
-  userSchema,
-} from '@/core/domain/validation/schemas/user.schema';
+  CreateUserFormInput,
+  userFormSchema,
+} from '@/core/application/validation/schemas/user.schema';
 
 import {
   Select,
@@ -43,13 +43,13 @@ export function UserForm({ isEditMode = false, className }: UserFormProps) {
     handleSubmit,
     formState: { errors: formErrors, isSubmitting },
     control,
-  } = useForm<CreateUserInput>({
-    resolver: zodResolver(userSchema),
+  } = useForm<CreateUserFormInput>({
+    resolver: zodResolver(userFormSchema),
     defaultValues: { email: '', password: '', passwordConfirmation: '' },
   });
 
   const signInUserMutation = useMutation({
-    mutationFn: (input: CreateUserInput) => signInUser(input),
+    mutationFn: (input: CreateUserFormInput) => signInUser(input),
     onSuccess: () => {
       // TODO: Implement success case.
     },
@@ -59,7 +59,7 @@ export function UserForm({ isEditMode = false, className }: UserFormProps) {
     },
   });
 
-  async function onSubmit(input: CreateUserInput) {
+  async function onSubmit(input: CreateUserFormInput) {
     signInUserMutation.mutate(input);
   }
 

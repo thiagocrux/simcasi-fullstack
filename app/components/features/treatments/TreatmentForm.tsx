@@ -23,7 +23,7 @@ import {
 import {
   CreateTreatmentInput,
   treatmentSchema,
-} from '@/core/domain/validation/schemas/treatment.schema';
+} from '@/core/application/validation/schemas/treatment.schema';
 
 interface TreatmentFormProps {
   isEditMode?: boolean;

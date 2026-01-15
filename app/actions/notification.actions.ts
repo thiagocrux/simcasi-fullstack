@@ -1,13 +1,13 @@
 'use server';
 
-import { IdSchema } from '@/core/domain/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import { mockApiCall } from '@/lib/mock';
 
 import {
   CreateNotificationInput,
   UpdateNotificationInput,
   notificationSchema,
-} from '@/core/domain/validation/schemas/notification.schema';
+} from '@/core/application/validation/schemas/notification.schema';
 
 export async function getAllNotifications() {
   try {

@@ -10,7 +10,7 @@ import {
   SCHOOLING_OPTIONS,
   SEX_OPTIONS,
   SEXUALITY_OPTIONS,
-} from '../../constants/patient.constants';
+} from '@/core/domain/constants/patient.constants';
 
 export const patientSchema = z.object({
   susCardNumber: z
@@ -26,10 +26,13 @@ export const patientSchema = z.object({
     .nonempty(messages.REQUIRED_FIELD('CPF'))
     .regex(regex.CPF, messages.INVALID_FIELD('CPF')),
   socialName: z.string().optional(),
-  birthDate: z
-    .string()
-    .nonempty(messages.REQUIRED_FIELD('Data de nascimento'))
-    .regex(regex.DATE, messages.INVALID_FIELD('Data de nascimento')),
+  birthDate: z.union([
+    z.date(messages.INVALID_FIELD('Data de nascimento')),
+    z
+      .string()
+      .nonempty(messages.REQUIRED_FIELD('Data de nascimento'))
+      .regex(regex.DATE, messages.INVALID_FIELD('Data de nascimento')),
+  ]),
   race: z.enum(
     RACE_OPTIONS.map((option) => option.value),
     messages.REQUIRED_FIELD('Raça')

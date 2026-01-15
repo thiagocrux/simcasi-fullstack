@@ -14,7 +14,7 @@ import { Spinner } from '../../ui/spinner';
 import {
   RequestNewPasswordInput,
   requestNewPasswordSchema,
-} from '@/core/domain/validation/schemas/session.schema';
+} from '@/core/application/validation/schemas/session.schema';
 
 interface RequestNewPasswordFormProps {
   className?: string;

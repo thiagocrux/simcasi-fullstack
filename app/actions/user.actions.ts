@@ -1,13 +1,13 @@
 'use server';
 
-import { IdSchema } from '@/core/domain/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import { mockApiCall } from '@/lib/mock';
 
 import {
   CreateUserInput,
   UpdateUserInput,
   userSchema,
-} from '@/core/domain/validation/schemas/user.schema';
+} from '@/core/application/validation/schemas/user.schema';
 
 export async function getAllUsers() {
   try {

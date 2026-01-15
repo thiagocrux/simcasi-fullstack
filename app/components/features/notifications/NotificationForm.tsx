@@ -22,7 +22,7 @@ import {
 import {
   CreateNotificationInput,
   notificationSchema,
-} from '@/core/domain/validation/schemas/notification.schema';
+} from '@/core/application/validation/schemas/notification.schema';
 
 interface NotificationFormProps {
   isEditMode: boolean;

@@ -23,7 +23,7 @@ import {
 import {
   CreateObservationInput,
   observationSchema,
-} from '@/core/domain/validation/schemas/observation.schema';
+} from '@/core/application/validation/schemas/observation.schema';
 
 interface ObservationFormProps {
   isEditMode?: boolean;

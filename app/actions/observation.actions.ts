@@ -1,13 +1,13 @@
 'use server';
 
-import { IdSchema } from '@/core/domain/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import { mockApiCall } from '@/lib/mock';
 
 import {
   CreateObservationInput,
   UpdateObservationInput,
   observationSchema,
-} from '@/core/domain/validation/schemas/observation.schema';
+} from '@/core/application/validation/schemas/observation.schema';
 
 export async function getAllObservations() {
   try {

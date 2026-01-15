@@ -6,7 +6,7 @@ import {
   ResetPasswordInput,
   resetPasswordSchema,
   sessionSchema,
-} from '@/core/domain/validation/schemas/session.schema';
+} from '@/core/application/validation/schemas/session.schema';
 
 export async function signInUser(input: CreateSessionInput) {
   try {

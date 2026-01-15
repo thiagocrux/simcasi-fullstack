@@ -1,13 +1,13 @@
 'use server';
 
-import { IdSchema } from '@/core/domain/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import { mockApiCall } from '@/lib/mock';
 
 import {
   CreateExamInput,
   UpdateExamInput,
   examSchema,
-} from '@/core/domain/validation/schemas/exam.schema';
+} from '@/core/application/validation/schemas/exam.schema';
 
 export async function getAllExams() {
   try {

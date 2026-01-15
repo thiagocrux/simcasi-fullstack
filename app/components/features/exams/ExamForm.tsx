@@ -20,7 +20,7 @@ import { Textarea } from '../../ui/textarea';
 import {
   CreateExamInput,
   examSchema,
-} from '@/core/domain/validation/schemas/exam.schema';
+} from '@/core/application/validation/schemas/exam.schema';
 
 interface ExamFormProps {
   isEditMode?: boolean;
