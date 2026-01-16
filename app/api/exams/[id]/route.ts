@@ -5,8 +5,12 @@ import {
   makeGetExamByIdUseCase,
   makeUpdateExamUseCase,
 } from '@/core/infrastructure/factories/exam.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * GET - /api/exams/[id]
+ * Get exam details by ID
+ */
 export const GET = withAuthentication(
   ['read:exam'],
   async (request, { params }) => {
@@ -19,6 +23,10 @@ export const GET = withAuthentication(
   }
 );
 
+/**
+ * PATCH - /api/exams/[id]
+ * Update exam information
+ */
 export const PATCH = withAuthentication(
   ['update:exam'],
   async (request, { params, auth }) => {
@@ -38,6 +46,10 @@ export const PATCH = withAuthentication(
   }
 );
 
+/**
+ * DELETE - /api/exams/[id]
+ * Soft delete an exam
+ */
 export const DELETE = withAuthentication(
   ['delete:exam'],
   async (request, { params, auth }) => {

@@ -16,7 +16,7 @@ import {
   makeRegisterExamUseCase,
   makeUpdateExamUseCase,
 } from '@/core/infrastructure/factories/exam.factory';
-import { withRefresh } from '@/lib/action-utils';
+import { withRefresh } from '@/lib/actions.utils';
 
 export async function getAllExams() {
   return withRefresh(['read:exam'], async () => {
@@ -48,7 +48,7 @@ export async function getExam(id: string) {
   });
 }
 
-export async function registerExam(input: CreateExamInput) {
+export async function createExam(input: CreateExamInput) {
   return withRefresh(
     ['create:exam'],
     async ({ userId, ipAddress, userAgent }) => {

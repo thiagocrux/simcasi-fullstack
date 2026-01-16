@@ -1,15 +1,23 @@
 import { NextResponse } from 'next/server';
 
+import { PAGINATION } from '@/core/domain/constants/pagination.constants';
 import {
   makeFindUsersUseCase,
   makeRegisterUserUseCase,
 } from '@/core/infrastructure/factories/user.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * GET - /api/users
+ * List all users with pagination and filters
+ */
 export const GET = withAuthentication(['read:user'], async (request) => {
   const { searchParams } = new URL(request.url);
-  const page = Number(searchParams.get('page')) || 1;
-  const limit = Number(searchParams.get('limit')) || 10;
+  const page = Number(searchParams.get('page')) || PAGINATION.DEFAULT_PAGE;
+  const limit = Math.min(
+    Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
+    PAGINATION.MAX_LIMIT
+  );
   const useCase = makeFindUsersUseCase();
   const result = await useCase.execute({
     skip: (page - 1) * limit,
@@ -22,6 +30,10 @@ export const GET = withAuthentication(['read:user'], async (request) => {
   return NextResponse.json(result);
 });
 
+/**
+ * POST - /api/users
+ * Register a new user
+ */
 export const POST = withAuthentication(
   ['create:user'],
   async (request, { auth }) => {

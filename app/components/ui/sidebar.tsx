@@ -10,7 +10,7 @@ import { Input } from '@/app/components/ui/input';
 import { Separator } from '@/app/components/ui/separator';
 import { Skeleton } from '@/app/components/ui/skeleton';
 import { useIsMobile } from '@/hooks/useMobile';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/shared.utils';
 
 import {
   Sheet,

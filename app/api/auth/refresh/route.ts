@@ -1,7 +1,12 @@
-import { AppError } from '@/core/domain/errors/app.error';
-import { makeRefreshTokenUseCase } from '@/core/infrastructure/factories/session.factory';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { AppError } from '@/core/domain/errors/app.error';
+import { makeRefreshTokenUseCase } from '@/core/infrastructure/factories/session.factory';
+
+/**
+ * POST - /api/auth/refresh
+ * Refresh access token using a refresh token
+ */
 export async function POST(request: NextRequest) {
   try {
     let refreshToken = '';

@@ -1,7 +1,12 @@
-import { makeLogoutUseCase } from '@/core/infrastructure/factories/session.factory';
-import { JoseTokenProvider } from '@/core/infrastructure/providers/jose-token.provider';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { makeLogoutUseCase } from '@/core/infrastructure/factories/session.factory';
+import { JoseTokenProvider } from '@/core/infrastructure/providers/jose-token.provider';
+
+/**
+ * POST - /api/auth/logout
+ * Invalidate current session and clear cookies
+ */
 export async function POST(request: NextRequest) {
   try {
     // 1. Get token from header or cookie

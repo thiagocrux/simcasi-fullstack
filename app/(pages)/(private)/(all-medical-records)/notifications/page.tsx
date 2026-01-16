@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { NotificationsTable } from '@/app/components/features/notifications/NotificationsTable';
-import { mockNotifications } from '@/lib/mock';
+import { mockNotifications } from '@/lib/mock.utils';
 import { Notification } from '@/prisma/generated/client';
 
 export const metadata: Metadata = {

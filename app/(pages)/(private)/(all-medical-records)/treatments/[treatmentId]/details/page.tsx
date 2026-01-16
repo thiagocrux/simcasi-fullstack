@@ -5,7 +5,7 @@ import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
-import { mockTreatments } from '@/lib/mock';
+import { mockTreatments } from '@/lib/mock.utils';
 
 export const metadata: Metadata = {
   title: 'Detalhes do tratamento | SIMCASI',

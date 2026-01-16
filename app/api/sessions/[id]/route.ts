@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 
 import { makeRevokeSessionUseCase } from '@/core/infrastructure/factories/session.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * DELETE /api/sessions/:id
- * Revokes a specific session (Admin only)
+ * DELETE - /api/sessions/[id]
+ * Revoke a specific session
  */
 export const DELETE = withAuthentication(
   ['delete:session'],

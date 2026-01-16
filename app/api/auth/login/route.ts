@@ -1,7 +1,12 @@
-import { AppError } from '@/core/domain/errors/app.error';
-import { makeLoginUseCase } from '@/core/infrastructure/factories/session.factory';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { AppError } from '@/core/domain/errors/app.error';
+import { makeLoginUseCase } from '@/core/infrastructure/factories/session.factory';
+
+/**
+ * POST - /api/auth/login
+ * Authenticate user and create a session
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

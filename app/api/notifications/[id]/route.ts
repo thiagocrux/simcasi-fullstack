@@ -5,8 +5,12 @@ import {
   makeGetNotificationByIdUseCase,
   makeUpdateNotificationUseCase,
 } from '@/core/infrastructure/factories/notification.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * GET - /api/notifications/[id]
+ * Get notification details by ID
+ */
 export const GET = withAuthentication(
   ['read:notification'],
   async (request, { params }) => {
@@ -19,6 +23,10 @@ export const GET = withAuthentication(
   }
 );
 
+/**
+ * PATCH - /api/notifications/[id]
+ * Update notification information
+ */
 export const PATCH = withAuthentication(
   ['update:notification'],
   async (request, { params, auth }) => {
@@ -38,6 +46,10 @@ export const PATCH = withAuthentication(
   }
 );
 
+/**
+ * DELETE - /api/notifications/[id]
+ * Soft delete a notification
+ */
 export const DELETE = withAuthentication(
   ['delete:notification'],
   async (request, { params, auth }) => {

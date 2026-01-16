@@ -52,7 +52,10 @@ export async function getAuditMetadata() {
   const ipAddress = headerList.get('x-forwarded-for') || 'unknown';
   const userAgent = headerList.get('user-agent') || 'unknown';
 
-  return { ipAddress, userAgent };
+  return {
+    ipAddress,
+    userAgent,
+  };
 }
 
 /**
@@ -87,7 +90,10 @@ export async function authenticateAction(): Promise<AuthenticationContext> {
 export async function withRefresh<T>(
   permissions: string[],
   actionFn: (
-    context: AuthenticationContext & { ipAddress: string; userAgent: string }
+    context: AuthenticationContext & {
+      ipAddress: string;
+      userAgent: string;
+    }
   ) => Promise<T>
 ) {
   const execute = async () => {
@@ -95,12 +101,19 @@ export async function withRefresh<T>(
     await authorize(authenticationContext.roleId, permissions);
     const { ipAddress, userAgent } = await getAuditMetadata();
 
-    return await actionFn({ ...authenticationContext, ipAddress, userAgent });
+    return await actionFn({
+      ...authenticationContext,
+      ipAddress,
+      userAgent,
+    });
   };
 
   try {
     const actionResult = await execute();
-    return { success: true, data: actionResult };
+    return {
+      success: true,
+      data: actionResult,
+    };
   } catch (caughtError: any) {
     // 1. Check for token expiration at any point during execution
     const isTokenExpired =
@@ -144,7 +157,10 @@ export async function withRefresh<T>(
 
           // 2. RETRY the original action with the new session
           const retryResult = await execute();
-          return { success: true, data: retryResult };
+          return {
+            success: true,
+            data: retryResult,
+          };
         } catch (refreshError: any) {
           // If refresh fails, session is dead. Clean up and let catch block handle it.
           cookieStore.delete('access_token');

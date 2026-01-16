@@ -4,7 +4,7 @@ import { isValid, parse, parseISO } from 'date-fns';
 import { ChevronDownIcon } from 'lucide-react';
 import * as React from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/shared.utils';
 import { Button } from '../ui/button';
 import { Calendar } from '../ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';

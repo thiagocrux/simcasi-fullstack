@@ -5,7 +5,7 @@ import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
-import { mockUsers } from '@/lib/mock';
+import { mockUsers } from '@/lib/mock.utils';
 
 export const metadata: Metadata = {
   title: 'Detalhes do usuário | SIMCASI',

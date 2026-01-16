@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 
 import { makeRestorePatientUseCase } from '@/core/infrastructure/factories/patient.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * POST - /api/patients/[id]/restore
+ * Restore a soft-deleted patient
+ */
 export const POST = withAuthentication(
   ['update:patient'],
   async (request, { params, auth }) => {

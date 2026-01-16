@@ -16,7 +16,7 @@ import {
   makeRegisterNotificationUseCase,
   makeUpdateNotificationUseCase,
 } from '@/core/infrastructure/factories/notification.factory';
-import { withRefresh } from '@/lib/action-utils';
+import { withRefresh } from '@/lib/actions.utils';
 
 export async function getAllNotifications() {
   return withRefresh(['read:notification'], async () => {
@@ -50,7 +50,7 @@ export async function getNotification(id: string) {
   });
 }
 
-export async function registerNotification(input: CreateNotificationInput) {
+export async function createNotification(input: CreateNotificationInput) {
   return withRefresh(
     ['create:notification'],
     async ({ userId, ipAddress, userAgent }) => {

@@ -26,9 +26,9 @@ import {
   type VisibilityState,
 } from '@tanstack/react-table';
 
-import { exportToCsv } from '@/lib/exportToCsv';
-import { formatDate } from '@/lib/formatters';
-import { renderOrFallback } from '@/lib/utils';
+import { exportToCsv } from '@/lib/csv.utils';
+import { formatDate } from '@/lib/formatters.utils';
+import { renderOrFallback } from '@/lib/shared.utils';
 import { Exam } from '@/prisma/generated/client';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';

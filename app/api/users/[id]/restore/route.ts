@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 
 import { makeRestoreUserUseCase } from '@/core/infrastructure/factories/user.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * POST - /api/users/[id]/restore
+ * Restore a soft-deleted user
+ */
 export const POST = withAuthentication(
   ['update:user'],
   async (request, { params, auth }) => {

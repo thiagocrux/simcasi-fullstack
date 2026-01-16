@@ -16,7 +16,7 @@ import {
   makeRegisterUserUseCase,
   makeUpdateUserUseCase,
 } from '@/core/infrastructure/factories/user.factory';
-import { withRefresh } from '@/lib/action-utils';
+import { withRefresh } from '@/lib/actions.utils';
 
 export async function getAllUsers() {
   return withRefresh(['read:user'], async () => {

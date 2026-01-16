@@ -5,8 +5,12 @@ import {
   makeGetUserByIdUseCase,
   makeUpdateUserUseCase,
 } from '@/core/infrastructure/factories/user.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * GET - /api/users/[id]
+ * Get user details by ID
+ */
 export const GET = withAuthentication(
   ['read:user'],
   async (request, { params }) => {
@@ -19,6 +23,10 @@ export const GET = withAuthentication(
   }
 );
 
+/**
+ * PATCH - /api/users/[id]
+ * Update user information
+ */
 export const PATCH = withAuthentication(
   ['update:user'],
   async (request, { params, auth }) => {
@@ -38,6 +46,10 @@ export const PATCH = withAuthentication(
   }
 );
 
+/**
+ * DELETE - /api/users/[id]
+ * Soft delete a user
+ */
 export const DELETE = withAuthentication(
   ['delete:user'],
   async (request, { params, auth }) => {

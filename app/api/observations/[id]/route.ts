@@ -5,8 +5,12 @@ import {
   makeGetObservationByIdUseCase,
   makeUpdateObservationUseCase,
 } from '@/core/infrastructure/factories/observation.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * GET - /api/observations/[id]
+ * Get observation details by ID
+ */
 export const GET = withAuthentication(
   ['read:observation'],
   async (request, { params }) => {
@@ -19,6 +23,10 @@ export const GET = withAuthentication(
   }
 );
 
+/**
+ * PATCH - /api/observations/[id]
+ * Update observation information
+ */
 export const PATCH = withAuthentication(
   ['update:observation'],
   async (request, { params, auth }) => {
@@ -38,6 +46,10 @@ export const PATCH = withAuthentication(
   }
 );
 
+/**
+ * DELETE - /api/observations/[id]
+ * Soft delete an observation
+ */
 export const DELETE = withAuthentication(
   ['delete:observation'],
   async (request, { params, auth }) => {

@@ -5,8 +5,12 @@ import {
   makeGetPatientByIdUseCase,
   makeUpdatePatientUseCase,
 } from '@/core/infrastructure/factories/patient.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * GET - /api/patients/[id]
+ * Get patient details by ID
+ */
 export const GET = withAuthentication(
   ['read:patient'],
   async (request, { params }) => {
@@ -19,6 +23,10 @@ export const GET = withAuthentication(
   }
 );
 
+/**
+ * PATCH - /api/patients/[id]
+ * Update patient information
+ */
 export const PATCH = withAuthentication(
   ['update:patient'],
   async (request, { params, auth }) => {
@@ -38,6 +46,10 @@ export const PATCH = withAuthentication(
   }
 );
 
+/**
+ * DELETE - /api/patients/[id]
+ * Soft delete a patient
+ */
 export const DELETE = withAuthentication(
   ['delete:patient'],
   async (request, { params, auth }) => {

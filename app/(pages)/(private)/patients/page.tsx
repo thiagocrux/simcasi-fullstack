@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { PatientsTable } from '@/app/components/features/patients/PatientsTable';
-import { mockPatients } from '@/lib/mock';
+import { mockPatients } from '@/lib/mock.utils';
 import { Patient } from '@/prisma/generated/client';
 
 export const metadata: Metadata = {

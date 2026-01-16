@@ -3,7 +3,7 @@
 import { CircleCheck, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/shared.utils';
 import { Button } from '../ui/button';
 
 interface ClipboardCopyButtonProps {

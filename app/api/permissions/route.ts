@@ -1,15 +1,23 @@
 import { NextResponse } from 'next/server';
 
+import { PAGINATION } from '@/core/domain/constants/pagination.constants';
 import {
   makeFindPermissionsUseCase,
   makeRegisterPermissionUseCase,
 } from '@/core/infrastructure/factories/permission.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * GET - /api/permissions
+ * List all permissions with pagination and filters
+ */
 export const GET = withAuthentication(['read:permission'], async (request) => {
   const { searchParams } = new URL(request.url);
-  const page = Number(searchParams.get('page')) || 1;
-  const limit = Number(searchParams.get('limit')) || 100;
+  const page = Number(searchParams.get('page')) || PAGINATION.DEFAULT_PAGE;
+  const limit = Math.min(
+    Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
+    PAGINATION.MAX_LIMIT
+  );
 
   const useCase = makeFindPermissionsUseCase();
   const result = await useCase.execute({
@@ -22,6 +30,10 @@ export const GET = withAuthentication(['read:permission'], async (request) => {
   return NextResponse.json(result);
 });
 
+/**
+ * POST - /api/permissions
+ * Register a new permission
+ */
 export const POST = withAuthentication(
   ['create:permission'],
   async (request, { auth }) => {

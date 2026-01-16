@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { ExamsTable } from '@/app/components/features/exams/ExamsTable';
-import { mockExams } from '@/lib/mock';
+import { mockExams } from '@/lib/mock.utils';
 import { Exam } from '@/prisma/generated/client';
 
 export const metadata: Metadata = {

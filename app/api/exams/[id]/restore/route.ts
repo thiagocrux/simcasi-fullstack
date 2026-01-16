@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 
 import { makeRestoreExamUseCase } from '@/core/infrastructure/factories/exam.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * POST - /api/exams/[id]/restore
+ * Restore a soft-deleted exam
+ */
 export const POST = withAuthentication(
   ['update:exam'],
   async (request, { params, auth }) => {

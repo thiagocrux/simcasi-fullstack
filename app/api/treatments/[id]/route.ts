@@ -5,8 +5,12 @@ import {
   makeGetTreatmentByIdUseCase,
   makeUpdateTreatmentUseCase,
 } from '@/core/infrastructure/factories/treatment.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * GET - /api/treatments/[id]
+ * Get treatment details by ID
+ */
 export const GET = withAuthentication(
   ['read:treatment'],
   async (request, { params }) => {
@@ -19,6 +23,10 @@ export const GET = withAuthentication(
   }
 );
 
+/**
+ * PATCH - /api/treatments/[id]
+ * Update treatment information
+ */
 export const PATCH = withAuthentication(
   ['update:treatment'],
   async (request, { params, auth }) => {
@@ -38,6 +46,10 @@ export const PATCH = withAuthentication(
   }
 );
 
+/**
+ * DELETE - /api/treatments/[id]
+ * Soft delete a treatment
+ */
 export const DELETE = withAuthentication(
   ['delete:treatment'],
   async (request, { params, auth }) => {

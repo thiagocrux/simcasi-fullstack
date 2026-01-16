@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 
 import { makeRestorePermissionUseCase } from '@/core/infrastructure/factories/permission.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * POST - /api/permissions/[id]/restore
+ * Restore a soft-deleted permission
+ */
 export const POST = withAuthentication(
   ['update:permission'],
   async (request, { params, auth }) => {

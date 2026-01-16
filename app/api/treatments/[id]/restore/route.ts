@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 
 import { makeRestoreTreatmentUseCase } from '@/core/infrastructure/factories/treatment.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * POST - /api/treatments/[id]/restore
+ * Restore a soft-deleted treatment
+ */
 export const POST = withAuthentication(
   ['update:treatment'],
   async (request, { params, auth }) => {

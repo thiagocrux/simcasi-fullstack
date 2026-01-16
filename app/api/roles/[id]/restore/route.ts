@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 
 import { makeRestoreRoleUseCase } from '@/core/infrastructure/factories/role.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * POST - /api/roles/[id]/restore
+ * Restore a soft-deleted role
+ */
 export const POST = withAuthentication(
   ['update:role'],
   async (request, { params, auth }) => {

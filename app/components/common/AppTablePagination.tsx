@@ -3,7 +3,7 @@
 import type { Table } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
-import { cn, getPaginationRange } from '@/lib/utils';
+import { cn, getPaginationRange } from '@/lib/shared.utils';
 import { Button } from '../ui/button';
 
 import {

@@ -1,5 +1,8 @@
 'use server';
 
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
 import {
   CreateSessionInput,
   RequestNewPasswordInput,
@@ -13,9 +16,7 @@ import {
   makeLogoutUseCase,
   makeValidateSessionUseCase,
 } from '@/core/infrastructure/factories/session.factory';
-import { getAuditMetadata, handleActionError } from '@/lib/action-utils';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { getAuditMetadata, handleActionError } from '@/lib/actions.utils';
 
 export async function signInUser(input: CreateSessionInput) {
   try {
@@ -27,7 +28,7 @@ export async function signInUser(input: CreateSessionInput) {
     }
 
     // 2. Get audit metadata.
-    const { ip, userAgent } = await getAuditMetadata();
+    const { ipAddress, userAgent } = await getAuditMetadata();
 
     // 3. Initialize use case.
     const loginUseCase = makeLoginUseCase();
@@ -35,7 +36,7 @@ export async function signInUser(input: CreateSessionInput) {
     // 4. Execute use case.
     const { accessToken, refreshToken } = await loginUseCase.execute({
       ...parsed.data,
-      ipAddress: ip,
+      ipAddress,
       userAgent,
     });
 

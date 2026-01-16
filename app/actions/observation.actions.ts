@@ -16,7 +16,7 @@ import {
   makeRegisterObservationUseCase,
   makeUpdateObservationUseCase,
 } from '@/core/infrastructure/factories/observation.factory';
-import { withRefresh } from '@/lib/action-utils';
+import { withRefresh } from '@/lib/actions.utils';
 
 export async function getAllObservations() {
   return withRefresh(['read:observation'], async () => {
@@ -50,7 +50,7 @@ export async function getObservation(id: string) {
   });
 }
 
-export async function registerObservation(input: CreateObservationInput) {
+export async function createObservation(input: CreateObservationInput) {
   return withRefresh(
     ['create:observation'],
     async ({ userId, ipAddress, userAgent }) => {

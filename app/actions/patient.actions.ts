@@ -16,7 +16,7 @@ import {
   makeRegisterPatientUseCase,
   makeUpdatePatientUseCase,
 } from '@/core/infrastructure/factories/patient.factory';
-import { withRefresh } from '@/lib/action-utils';
+import { withRefresh } from '@/lib/actions.utils';
 
 export async function getAllPatients() {
   return withRefresh(['read:patient'], async () => {
@@ -48,7 +48,7 @@ export async function getPatient(id: string) {
   });
 }
 
-export async function registerPatient(input: CreatePatientInput) {
+export async function createPatient(input: CreatePatientInput) {
   return withRefresh(
     ['create:patient'],
     async ({ userId, ipAddress, userAgent }) => {

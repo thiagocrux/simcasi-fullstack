@@ -2,22 +2,61 @@
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { AppError } from '@/core/domain/errors/app.error';
 import { makeRefreshTokenUseCase } from '@/core/infrastructure/factories/session.factory';
 import {
   AuthenticationContext,
   authenticateRequest,
 } from '@/core/infrastructure/middleware/authentication.middleware';
 import { authorize } from '@/core/infrastructure/middleware/authorization.middleware';
-import { getAuditMetadata } from './action-utils';
-import { handleApiError } from './apiErrorHandler';
+import { getAuditMetadata } from './actions.utils';
 
 type ApiHandler = (
   request: NextRequest,
   context: {
     params: any;
-    auth: AuthenticationContext & { ipAddress: string; userAgent: string };
+    auth: AuthenticationContext & {
+      ipAddress: string;
+      userAgent: string;
+    };
   }
 ) => Promise<NextResponse>;
+
+/**
+ * Standard error handler for Next.js API Route Handlers.
+ */
+export function handleApiError(error: any) {
+  if (error instanceof AppError) {
+    return NextResponse.json(
+      {
+        message: error.message,
+        code: error.code,
+      },
+      { status: error.statusCode }
+    );
+  }
+
+  // Handle specific JWT/Jose errors if needed, or other common generic errors
+  if (error.code === 'ERR_JWT_EXPIRED') {
+    return NextResponse.json(
+      {
+        message: 'Token has expired',
+        code: 'INVALID_TOKEN',
+      },
+      { status: 401 }
+    );
+  }
+
+  console.error('[API_ERROR]', error);
+
+  return NextResponse.json(
+    {
+      message: 'Internal server error',
+      code: 'INTERNAL_ERROR',
+    },
+    { status: 500 }
+  );
+}
 
 /**
  * Wrapper for API Route Handlers that require Authentication and Authorization.
@@ -35,7 +74,11 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
 
       return await handler(request, {
         params,
-        auth: { ...authContext, ipAddress, userAgent },
+        auth: {
+          ...authContext,
+          ipAddress,
+          userAgent,
+        },
       });
     };
 

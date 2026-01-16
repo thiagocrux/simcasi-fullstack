@@ -5,8 +5,12 @@ import {
   makeGetRoleByIdUseCase,
   makeUpdateRoleUseCase,
 } from '@/core/infrastructure/factories/role.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * GET - /api/roles/[id]
+ * Get role details by ID
+ */
 export const GET = withAuthentication(
   ['read:role'],
   async (request, { params }) => {
@@ -19,6 +23,10 @@ export const GET = withAuthentication(
   }
 );
 
+/**
+ * PATCH - /api/roles/[id]
+ * Update role information
+ */
 export const PATCH = withAuthentication(
   ['update:role'],
   async (request, { params, auth }) => {
@@ -38,6 +46,10 @@ export const PATCH = withAuthentication(
   }
 );
 
+/**
+ * DELETE - /api/roles/[id]
+ * Soft delete a role
+ */
 export const DELETE = withAuthentication(
   ['delete:role'],
   async (request, { params, auth }) => {

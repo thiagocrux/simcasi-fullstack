@@ -5,7 +5,7 @@ import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
-import { mockNotifications } from '@/lib/mock';
+import { mockNotifications } from '@/lib/mock.utils';
 
 export const metadata: Metadata = {
   title: 'Detalhes da notificação | SIMCASI',

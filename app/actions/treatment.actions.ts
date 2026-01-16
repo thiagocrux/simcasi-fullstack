@@ -16,7 +16,7 @@ import {
   makeRegisterTreatmentUseCase,
   makeUpdateTreatmentUseCase,
 } from '@/core/infrastructure/factories/treatment.factory';
-import { withRefresh } from '@/lib/action-utils';
+import { withRefresh } from '@/lib/actions.utils';
 
 export async function getAllTreatments() {
   return withRefresh(['read:treatment'], async () => {
@@ -50,7 +50,7 @@ export async function getTreatment(id: string) {
   });
 }
 
-export async function registerTreatment(input: CreateTreatmentInput) {
+export async function createTreatment(input: CreateTreatmentInput) {
   return withRefresh(
     ['create:treatment'],
     async ({ userId, ipAddress, userAgent }) => {

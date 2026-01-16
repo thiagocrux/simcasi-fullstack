@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 
 import { makeRestoreObservationUseCase } from '@/core/infrastructure/factories/observation.factory';
-import { withAuthentication } from '@/lib/api-utils';
+import { withAuthentication } from '@/lib/api.utils';
 
+/**
+ * POST - /api/observations/[id]/restore
+ * Restore a soft-deleted observation
+ */
 export const POST = withAuthentication(
   ['update:observation'],
   async (request, { params, auth }) => {
