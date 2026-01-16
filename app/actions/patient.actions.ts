@@ -1,6 +1,14 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
+
 import { IdSchema } from '@/core/application/validation/schemas/common.schema';
+import {
+  CreatePatientInput,
+  UpdatePatientInput,
+  patientSchema,
+} from '@/core/application/validation/schemas/patient.schema';
+import { ValidationError } from '@/core/domain/errors/app.error';
 import {
   makeDeletePatientUseCase,
   makeFindPatientsUseCase,
@@ -8,165 +16,143 @@ import {
   makeRegisterPatientUseCase,
   makeUpdatePatientUseCase,
 } from '@/core/infrastructure/factories/patient.factory';
-import { handleActionError, protectAction } from '@/lib/action-utils';
-import { revalidatePath } from 'next/cache';
-
-import {
-  CreatePatientInput,
-  UpdatePatientInput,
-  patientSchema,
-} from '@/core/application/validation/schemas/patient.schema';
+import { withAuthentication } from '@/lib/action-utils';
 
 export async function getAllPatients() {
-  try {
-    // 1. Protect action with required permissions.
-    await protectAction(['read:patient']);
-
-    // 2. Initialize use case.
+  return withAuthentication(['read:patient'], async () => {
+    // 1. Initialize use case.
     const findPatientsUseCase = makeFindPatientsUseCase();
 
-    // 3. Execute use case.
-    const patients = await findPatientsUseCase.execute({});
-
-    // 4. Return success result.
-    return { success: true, data: patients };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+    // 2. Execute use case.
+    return await findPatientsUseCase.execute({});
+  });
 }
 
 export async function getPatient(id: string) {
-  // 1. Validate ID input.
-  const parsed = IdSchema.safeParse(id);
+  return withAuthentication(['read:patient'], async () => {
+    // 1. Validate ID input.
+    const parsed = IdSchema.safeParse(id);
 
-  if (!parsed.success) {
-    return { success: false, errors: parsed.error.flatten().fieldErrors };
-  }
+    if (!parsed.success) {
+      throw new ValidationError(
+        'ID inválido',
+        parsed.error.flatten().fieldErrors
+      );
+    }
 
-  try {
-    // 2. Protect action with required permissions.
-    await protectAction(['read:patient']);
-
-    // 3. Initialize use case.
+    // 2. Initialize use case.
     const getPatientByIdUseCase = makeGetPatientByIdUseCase();
 
-    // 4. Execute use case.
-    const patient = await getPatientByIdUseCase.execute({ id: parsed.data });
-
-    // 5. Return success result.
-    return { success: true, data: patient };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+    // 3. Execute use case.
+    return await getPatientByIdUseCase.execute({ id: parsed.data });
+  });
 }
 
 export async function registerPatient(input: CreatePatientInput) {
-  try {
-    // 1. Protect action and get audit metadata.
-    const { userId, ipAddress, userAgent } = await protectAction([
-      'create:patient',
-    ]);
+  return withAuthentication(
+    ['create:patient'],
+    async ({ userId, ipAddress, userAgent }) => {
+      // 1. Validate form input.
+      const parsed = patientSchema.safeParse(input);
 
-    // 2. Validate form input.
-    const parsed = patientSchema.safeParse(input);
+      if (!parsed.success) {
+        throw new ValidationError(
+          'Dados do paciente inválidos',
+          parsed.error.flatten().fieldErrors
+        );
+      }
 
-    if (!parsed.success) {
-      return { success: false, errors: parsed.error.flatten().fieldErrors };
+      // 2. Initialize use case.
+      const registerPatientUseCase = makeRegisterPatientUseCase();
+
+      // 3. Execute use case with audit data.
+      const patient = await registerPatientUseCase.execute({
+        ...parsed.data,
+        userId,
+        ipAddress,
+        userAgent,
+      });
+
+      // 4. Revalidate cache.
+      revalidatePath('/patients');
+
+      return patient;
     }
-
-    // 3. Initialize use case.
-    const registerPatientUseCase = makeRegisterPatientUseCase();
-
-    // 4. Execute use case with audit data.
-    const patient = await registerPatientUseCase.execute({
-      ...parsed.data,
-      userId,
-      ipAddress,
-      userAgent,
-    });
-
-    // 5. Revalidate cache and return result.
-    revalidatePath('/patients');
-    return { success: true, data: patient };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+  );
 }
 
 export async function updatePatient(id: string, input: UpdatePatientInput) {
-  try {
-    // 1. Protect action and get audit metadata.
-    const { userId, ipAddress, userAgent } = await protectAction([
-      'update:patient',
-    ]);
+  return withAuthentication(
+    ['update:patient'],
+    async ({ userId, ipAddress, userAgent }) => {
+      // 1. Validate form/ID input.
+      const parsedId = IdSchema.safeParse(id);
+      const parsedData = patientSchema.partial().safeParse(input);
 
-    // 2. Validate form/ID input.
-    const parsedId = IdSchema.safeParse(id);
-    const parsedData = patientSchema.partial().safeParse(input);
+      if (!parsedId.success) {
+        throw new ValidationError(
+          'ID inválido',
+          parsedId.error.flatten().fieldErrors
+        );
+      }
 
-    if (!parsedId.success) {
-      return { success: false, errors: parsedId.error.flatten().fieldErrors };
+      if (!parsedData.success) {
+        throw new ValidationError(
+          'Dados de atualização inválidos',
+          parsedData.error.flatten().fieldErrors
+        );
+      }
+
+      // 2. Initialize use case.
+      const updatePatientUseCase = makeUpdatePatientUseCase();
+
+      // 3. Execute use case with audit data.
+      const patient = await updatePatientUseCase.execute({
+        ...parsedData.data,
+        id: parsedId.data,
+        userId,
+        ipAddress,
+        userAgent,
+      });
+
+      // 4. Revalidate cache.
+      revalidatePath(`/patients/${parsedId.data}`);
+      revalidatePath('/patients');
+
+      return patient;
     }
-
-    if (!parsedData.success) {
-      return { success: false, errors: parsedData.error.flatten().fieldErrors };
-    }
-
-    // 3. Initialize use case.
-    const updatePatientUseCase = makeUpdatePatientUseCase();
-
-    // 4. Execute use case with audit data.
-    const patient = await updatePatientUseCase.execute({
-      ...parsedData.data,
-      id: parsedId.data,
-      userId,
-      ipAddress,
-      userAgent,
-    });
-
-    // 5. Revalidate cache and return result.
-    revalidatePath(`/patients/${parsedId.data}`);
-    revalidatePath('/patients');
-    return { success: true, data: patient };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+  );
 }
 
 export async function deletePatient(id: string) {
-  // 1. Validate ID input.
-  const parsed = IdSchema.safeParse(id);
+  return withAuthentication(
+    ['delete:patient'],
+    async ({ userId, ipAddress, userAgent }) => {
+      // 1. Validate ID input.
+      const parsed = IdSchema.safeParse(id);
 
-  if (!parsed.success) {
-    return { success: false, errors: parsed.error.flatten().fieldErrors };
-  }
+      if (!parsed.success) {
+        throw new ValidationError(
+          'ID inválido',
+          parsed.error.flatten().fieldErrors
+        );
+      }
 
-  try {
-    // 2. Protect action and get audit metadata.
-    const { userId, ipAddress, userAgent } = await protectAction([
-      'delete:patient',
-    ]);
+      // 2. Initialize use case.
+      const deletePatientUseCase = makeDeletePatientUseCase();
 
-    // 3. Initialize use case.
-    const deletePatientUseCase = makeDeletePatientUseCase();
+      // 3. Execute use case with audit data.
+      await deletePatientUseCase.execute({
+        id: parsed.data,
+        userId,
+        ipAddress,
+        userAgent,
+      });
 
-    // 4. Execute use case with audit data.
-    await deletePatientUseCase.execute({
-      id: parsed.data,
-      userId,
-      ipAddress,
-      userAgent,
-    });
+      // 4. Revalidate cache.
+      revalidatePath('/patients');
 
-    // 5. Revalidate cache and return result.
-    revalidatePath('/patients');
-    return { success: true };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+      return { success: true };
+    }
+  );
 }

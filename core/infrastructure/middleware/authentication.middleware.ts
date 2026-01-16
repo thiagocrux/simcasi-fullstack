@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 import { InvalidTokenError } from '@/core/domain/errors/session.error';
 import { makeValidateSessionUseCase } from '../factories/session.factory';
 
-export interface AuthContext {
+export interface AuthenticationContext {
   userId: string;
   roleId: string;
   sessionId: string;
@@ -15,7 +15,7 @@ export interface AuthContext {
  */
 export async function authenticateRequest(
   request: NextRequest
-): Promise<AuthContext> {
+): Promise<AuthenticationContext> {
   const authHeader = request.headers.get('authorization');
   const token =
     authHeader?.replace('Bearer ', '') ||

@@ -8,6 +8,7 @@ import {
   UpdateExamInput,
   examSchema,
 } from '@/core/application/validation/schemas/exam.schema';
+import { ValidationError } from '@/core/domain/errors/app.error';
 import {
   makeDeleteExamUseCase,
   makeFindExamsUseCase,
@@ -15,158 +16,143 @@ import {
   makeRegisterExamUseCase,
   makeUpdateExamUseCase,
 } from '@/core/infrastructure/factories/exam.factory';
-import { handleActionError, protectAction } from '@/lib/action-utils';
+import { withAuthentication } from '@/lib/action-utils';
 
 export async function getAllExams() {
-  try {
-    // 1. Protect action with required permissions.
-    await protectAction(['read:exam']);
-
-    // 2. Initialize use case.
+  return withAuthentication(['read:exam'], async () => {
+    // 1. Initialize use case.
     const findExamsUseCase = makeFindExamsUseCase();
 
-    // 3. Execute use case.
-    const exams = await findExamsUseCase.execute({});
-
-    // 4. Return success result.
-    return { success: true, data: exams };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+    // 2. Execute use case.
+    return await findExamsUseCase.execute({});
+  });
 }
 
 export async function getExam(id: string) {
-  // 1. Validate ID input.
-  const parsed = IdSchema.safeParse(id);
-
-  if (!parsed.success) {
-    return { success: false, errors: parsed.error.flatten().fieldErrors };
-  }
-
-  try {
-    // 2. Protect action with required permissions.
-    await protectAction(['read:exam']);
-
-    // 3. Initialize use case.
-    const getExamByIdUseCase = makeGetExamByIdUseCase();
-
-    // 4. Execute use case.
-    const exam = await getExamByIdUseCase.execute({ id: parsed.data });
-
-    // 5. Return success result.
-    return { success: true, data: exam };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
-}
-
-export async function createExam(input: CreateExamInput) {
-  try {
-    // 1. Protect action and get audit metadata.
-    const { userId, ipAddress, userAgent } = await protectAction([
-      'create:exam',
-    ]);
-
-    // 2. Validate form input.
-    const parsed = examSchema.safeParse(input);
+  return withAuthentication(['read:exam'], async () => {
+    // 1. Validate ID input.
+    const parsed = IdSchema.safeParse(id);
 
     if (!parsed.success) {
-      return { success: false, errors: parsed.error.flatten().fieldErrors };
+      throw new ValidationError(
+        'ID inválido',
+        parsed.error.flatten().fieldErrors
+      );
     }
 
-    // 3. Initialize use case.
-    const registerExamUseCase = makeRegisterExamUseCase();
+    // 2. Initialize use case.
+    const getExamByIdUseCase = makeGetExamByIdUseCase();
 
-    // 4. Execute use case with audit data.
-    const exam = await registerExamUseCase.execute({
-      ...parsed.data,
-      userId,
-      ipAddress,
-      userAgent,
-    });
+    // 3. Execute use case.
+    return await getExamByIdUseCase.execute({ id: parsed.data });
+  });
+}
 
-    // 5. Revalidate cache and return.
-    revalidatePath(`/patients/${input.patientId}/exams`);
-    revalidatePath('/exams');
-    return { success: true, data: exam };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+export async function registerExam(input: CreateExamInput) {
+  return withAuthentication(
+    ['create:exam'],
+    async ({ userId, ipAddress, userAgent }) => {
+      // 1. Validate form input.
+      const parsed = examSchema.safeParse(input);
+
+      if (!parsed.success) {
+        throw new ValidationError(
+          'Dados do exame inválidos',
+          parsed.error.flatten().fieldErrors
+        );
+      }
+
+      // 2. Initialize use case.
+      const registerExamUseCase = makeRegisterExamUseCase();
+
+      // 3. Execute use case with audit data.
+      const exam = await registerExamUseCase.execute({
+        ...parsed.data,
+        userId,
+        ipAddress,
+        userAgent,
+      });
+
+      // 4. Revalidate cache.
+      revalidatePath(`/patients/${input.patientId}/exams`);
+      revalidatePath('/exams');
+
+      return exam;
+    }
+  );
 }
 
 export async function updateExam(id: string, input: UpdateExamInput) {
-  try {
-    // 1. Protect action and get audit metadata.
-    const { userId, ipAddress, userAgent } = await protectAction([
-      'update:exam',
-    ]);
+  return withAuthentication(
+    ['update:exam'],
+    async ({ userId, ipAddress, userAgent }) => {
+      // 1. Validate form/ID input.
+      const parsedId = IdSchema.safeParse(id);
+      const parsedData = examSchema.partial().safeParse(input);
 
-    // 2. Validate form/ID input.
-    const parsedId = IdSchema.safeParse(id);
-    const parsedData = examSchema.partial().safeParse(input);
+      if (!parsedId.success) {
+        throw new ValidationError(
+          'ID inválido',
+          parsedId.error.flatten().fieldErrors
+        );
+      }
 
-    if (!parsedId.success) {
-      return { success: false, errors: parsedId.error.flatten().fieldErrors };
+      if (!parsedData.success) {
+        throw new ValidationError(
+          'Dados do exame inválidos',
+          parsedData.error.flatten().fieldErrors
+        );
+      }
+
+      // 2. Initialize use case.
+      const updateExamUseCase = makeUpdateExamUseCase();
+
+      // 3. Execute use case with audit data.
+      const exam = await updateExamUseCase.execute({
+        ...parsedData.data,
+        id: parsedId.data,
+        userId,
+        ipAddress,
+        userAgent,
+      });
+
+      // 4. Revalidate cache.
+      revalidatePath('/exams');
+
+      return exam;
     }
-
-    if (!parsedData.success) {
-      return { success: false, errors: parsedData.error.flatten().fieldErrors };
-    }
-
-    // 3. Initialize use case.
-    const updateExamUseCase = makeUpdateExamUseCase();
-
-    // 4. Execute use case with audit data.
-    const exam = await updateExamUseCase.execute({
-      ...parsedData.data,
-      id: parsedId.data,
-      userId,
-      ipAddress,
-      userAgent,
-    });
-
-    // 5. Revalidate cache and return.
-    revalidatePath('/exams');
-    return { success: true, data: exam };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+  );
 }
 
 export async function deleteExam(id: string) {
-  // 1. Validate ID input.
-  const parsed = IdSchema.safeParse(id);
+  return withAuthentication(
+    ['delete:exam'],
+    async ({ userId, ipAddress, userAgent }) => {
+      // 1. Validate ID input.
+      const parsed = IdSchema.safeParse(id);
 
-  if (!parsed.success) {
-    return { success: false, errors: parsed.error.flatten().fieldErrors };
-  }
+      if (!parsed.success) {
+        throw new ValidationError(
+          'ID inválido',
+          parsed.error.flatten().fieldErrors
+        );
+      }
 
-  try {
-    // 2. Protect action and get audit metadata.
-    const { userId, ipAddress, userAgent } = await protectAction([
-      'delete:exam',
-    ]);
+      // 2. Initialize use case.
+      const deleteExamUseCase = makeDeleteExamUseCase();
 
-    // 3. Initialize use case.
-    const deleteExamUseCase = makeDeleteExamUseCase();
+      // 3. Execute use case with audit data.
+      await deleteExamUseCase.execute({
+        id: parsed.data,
+        userId,
+        ipAddress,
+        userAgent,
+      });
 
-    // 4. Execute use case with audit data.
-    await deleteExamUseCase.execute({
-      id: parsed.data,
-      userId,
-      ipAddress,
-      userAgent,
-    });
+      // 4. Revalidate cache.
+      revalidatePath('/exams');
 
-    // 5. Revalidate cache and return result.
-    revalidatePath('/exams');
-    return { success: true };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+      return { success: true };
+    }
+  );
 }

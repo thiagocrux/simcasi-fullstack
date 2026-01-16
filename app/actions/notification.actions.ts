@@ -4,175 +4,160 @@ import { revalidatePath } from 'next/cache';
 
 import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
+  CreateNotificationInput,
+  UpdateNotificationInput,
+  notificationSchema,
+} from '@/core/application/validation/schemas/notification.schema';
+import { ValidationError } from '@/core/domain/errors/app.error';
+import {
   makeDeleteNotificationUseCase,
   makeFindNotificationsUseCase,
   makeGetNotificationByIdUseCase,
   makeRegisterNotificationUseCase,
   makeUpdateNotificationUseCase,
 } from '@/core/infrastructure/factories/notification.factory';
-import { handleActionError, protectAction } from '@/lib/action-utils';
-
-import {
-  CreateNotificationInput,
-  UpdateNotificationInput,
-  notificationSchema,
-} from '@/core/application/validation/schemas/notification.schema';
+import { withAuthentication } from '@/lib/action-utils';
 
 export async function getAllNotifications() {
-  try {
-    // 1. Protect action with required permissions.
-    await protectAction(['read:notification']);
-
-    // 2. Initialize use case.
+  return withAuthentication(['read:notification'], async () => {
+    // 1. Initialize use case.
     const findNotificationsUseCase = makeFindNotificationsUseCase();
 
-    // 3. Execute use case.
-    const notifications = await findNotificationsUseCase.execute({});
-
-    // 4. Return success result.
-    return { success: true, data: notifications };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+    // 2. Execute use case.
+    return await findNotificationsUseCase.execute({});
+  });
 }
 
 export async function getNotification(id: string) {
-  // 1. Validate ID input.
-  const parsed = IdSchema.safeParse(id);
-
-  if (!parsed.success) {
-    return { success: false, errors: parsed.error.flatten().fieldErrors };
-  }
-
-  try {
-    // 2. Protect action with required permissions.
-    await protectAction(['read:notification']);
-
-    // 3. Initialize use case.
-    const getNotificationByIdUseCase = makeGetNotificationByIdUseCase();
-
-    // 4. Execute use case.
-    const notification = await getNotificationByIdUseCase.execute({
-      id: parsed.data,
-    });
-
-    // 5. Return success result.
-    return { success: true, data: notification };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
-}
-
-export async function createNotification(input: CreateNotificationInput) {
-  try {
-    // 1. Protect action and get audit metadata.
-    const { userId, ipAddress, userAgent } = await protectAction([
-      'create:notification',
-    ]);
-
-    // 2. Validate form input.
-    const parsed = notificationSchema.safeParse(input);
+  return withAuthentication(['read:notification'], async () => {
+    // 1. Validate ID input.
+    const parsed = IdSchema.safeParse(id);
 
     if (!parsed.success) {
-      return { success: false, errors: parsed.error.flatten().fieldErrors };
+      throw new ValidationError(
+        'ID inválido',
+        parsed.error.flatten().fieldErrors
+      );
     }
 
-    // 3. Initialize use case.
-    const registerNotificationUseCase = makeRegisterNotificationUseCase();
+    // 2. Initialize use case.
+    const getNotificationByIdUseCase = makeGetNotificationByIdUseCase();
 
-    // 4. Execute use case with audit data.
-    const notification = await registerNotificationUseCase.execute({
-      ...parsed.data,
-      userId,
-      ipAddress,
-      userAgent,
+    // 3. Execute use case.
+    return await getNotificationByIdUseCase.execute({
+      id: parsed.data,
     });
+  });
+}
 
-    // 5. Revalidate cache and return.
-    revalidatePath(`/patients/${input.patientId}/notifications`);
-    revalidatePath('/notifications');
-    return { success: true, data: notification };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+export async function registerNotification(input: CreateNotificationInput) {
+  return withAuthentication(
+    ['create:notification'],
+    async ({ userId, ipAddress, userAgent }) => {
+      // 1. Validate form input.
+      const parsed = notificationSchema.safeParse(input);
+
+      if (!parsed.success) {
+        throw new ValidationError(
+          'Dados da notificação inválidos',
+          parsed.error.flatten().fieldErrors
+        );
+      }
+
+      // 2. Initialize use case.
+      const registerNotificationUseCase = makeRegisterNotificationUseCase();
+
+      // 3. Execute use case with audit data.
+      const notification = await registerNotificationUseCase.execute({
+        ...parsed.data,
+        userId,
+        ipAddress,
+        userAgent,
+      });
+
+      // 4. Revalidate cache.
+      revalidatePath(`/patients/${input.patientId}/notifications`);
+      revalidatePath('/notifications');
+
+      return notification;
+    }
+  );
 }
 
 export async function updateNotification(
   id: string,
   input: UpdateNotificationInput
 ) {
-  try {
-    // 1. Protect action and get audit metadata.
-    const { userId, ipAddress, userAgent } = await protectAction([
-      'update:notification',
-    ]);
+  return withAuthentication(
+    ['update:notification'],
+    async ({ userId, ipAddress, userAgent }) => {
+      // 1. Validate form/ID input.
+      const parsedId = IdSchema.safeParse(id);
+      const parsedData = notificationSchema.partial().safeParse(input);
 
-    // 2. Validate form/ID input.
-    const parsedId = IdSchema.safeParse(id);
-    const parsedData = notificationSchema.partial().safeParse(input);
+      if (!parsedId.success) {
+        throw new ValidationError(
+          'ID inválido',
+          parsedId.error.flatten().fieldErrors
+        );
+      }
 
-    if (!parsedId.success) {
-      return { success: false, errors: parsedId.error.flatten().fieldErrors };
+      if (!parsedData.success) {
+        throw new ValidationError(
+          'Dados da notificação inválidos',
+          parsedData.error.flatten().fieldErrors
+        );
+      }
+
+      // 2. Initialize use case.
+      const updateNotificationUseCase = makeUpdateNotificationUseCase();
+
+      // 3. Execute use case with audit data.
+      const notification = await updateNotificationUseCase.execute({
+        ...parsedData.data,
+        id: parsedId.data,
+        userId,
+        ipAddress,
+        userAgent,
+      });
+
+      // 4. Revalidate cache.
+      revalidatePath('/notifications');
+
+      return notification;
     }
-
-    if (!parsedData.success) {
-      return { success: false, errors: parsedData.error.flatten().fieldErrors };
-    }
-
-    // 3. Initialize use case.
-    const updateNotificationUseCase = makeUpdateNotificationUseCase();
-
-    // 4. Execute use case with audit data.
-    const notification = await updateNotificationUseCase.execute({
-      ...parsedData.data,
-      id: parsedId.data,
-      userId,
-      ipAddress,
-      userAgent,
-    });
-
-    // 5. Revalidate cache and return.
-    revalidatePath('/notifications');
-    return { success: true, data: notification };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+  );
 }
 
 export async function deleteNotification(id: string) {
-  // 1. Validate ID input.
-  const parsed = IdSchema.safeParse(id);
+  return withAuthentication(
+    ['delete:notification'],
+    async ({ userId, ipAddress, userAgent }) => {
+      // 1. Validate ID input.
+      const parsed = IdSchema.safeParse(id);
 
-  if (!parsed.success) {
-    return { success: false, errors: parsed.error.flatten().fieldErrors };
-  }
+      if (!parsed.success) {
+        throw new ValidationError(
+          'ID inválido',
+          parsed.error.flatten().fieldErrors
+        );
+      }
 
-  try {
-    // 2. Protect action and get audit metadata.
-    const { userId, ipAddress, userAgent } = await protectAction([
-      'delete:notification',
-    ]);
+      // 2. Initialize use case.
+      const deleteNotificationUseCase = makeDeleteNotificationUseCase();
 
-    // 3. Initialize use case.
-    const deleteNotificationUseCase = makeDeleteNotificationUseCase();
+      // 3. Execute use case with audit data.
+      await deleteNotificationUseCase.execute({
+        id: parsed.data,
+        userId,
+        ipAddress,
+        userAgent,
+      });
 
-    // 4. Execute use case with audit data.
-    await deleteNotificationUseCase.execute({
-      id: parsed.data,
-      userId,
-      ipAddress,
-      userAgent,
-    });
+      // 4. Revalidate cache.
+      revalidatePath('/notifications');
 
-    // 5. Revalidate cache and return result.
-    revalidatePath('/notifications');
-    return { success: true };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    return handleActionError(error);
-  }
+      return { success: true };
+    }
+  );
 }
