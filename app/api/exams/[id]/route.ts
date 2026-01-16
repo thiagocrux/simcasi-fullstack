@@ -1,40 +1,28 @@
+import { NextResponse } from 'next/server';
+
 import {
   makeDeleteExamUseCase,
   makeGetExamByIdUseCase,
   makeUpdateExamUseCase,
 } from '@/core/infrastructure/factories/exam.factory';
-import { authenticateRequest } from '@/core/infrastructure/middleware/authentication.middleware';
-import { authorize } from '@/core/infrastructure/middleware/authorization.middleware';
-import { handleApiError } from '@/lib/apiErrorHandler';
-import { NextRequest, NextResponse } from 'next/server';
+import { withAuthentication } from '@/lib/api-utils';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['read:exam']);
+export const GET = withAuthentication(
+  ['read:exam'],
+  async (request, { params }) => {
+    const { id } = await (params as Promise<{ id: string }>);
 
     const getExamByIdUseCase = makeGetExamByIdUseCase();
     const exam = await getExamByIdUseCase.execute({ id });
 
     return NextResponse.json(exam);
-  } catch (error) {
-    return handleApiError(error);
   }
-}
+);
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['update:exam']);
-
+export const PATCH = withAuthentication(
+  ['update:exam'],
+  async (request, { params, auth }) => {
+    const { id } = await (params as Promise<{ id: string }>);
     const body = await request.json();
     const updateUseCase = makeUpdateExamUseCase();
 
@@ -42,35 +30,27 @@ export async function PATCH(
       id,
       ...body,
       userId: auth.userId,
-      ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
-      userAgent: request.headers.get('user-agent') || 'unknown',
+      ipAddress: auth.ipAddress,
+      userAgent: auth.userAgent,
     });
 
     return NextResponse.json(updated);
-  } catch (error) {
-    return handleApiError(error);
   }
-}
+);
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['delete:exam']);
+export const DELETE = withAuthentication(
+  ['delete:exam'],
+  async (request, { params, auth }) => {
+    const { id } = await (params as Promise<{ id: string }>);
 
     const deleteUseCase = makeDeleteExamUseCase();
     await deleteUseCase.execute({
       id,
       userId: auth.userId,
-      ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
-      userAgent: request.headers.get('user-agent') || 'unknown',
+      ipAddress: auth.ipAddress,
+      userAgent: auth.userAgent,
     });
 
     return new NextResponse(null, { status: 204 });
-  } catch (error) {
-    return handleApiError(error);
   }
-}
+);

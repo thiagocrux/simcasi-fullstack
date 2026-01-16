@@ -84,7 +84,7 @@ export async function authenticateAction(): Promise<AuthenticationContext> {
  * @param actionFn - The business logic to execute.
  * @returns The result of the action or a standardized error response.
  */
-export async function withAuthentication<T>(
+export async function withRefresh<T>(
   permissions: string[],
   actionFn: (
     context: AuthenticationContext & { ipAddress: string; userAgent: string }

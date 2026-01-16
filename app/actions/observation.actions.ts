@@ -16,10 +16,10 @@ import {
   makeRegisterObservationUseCase,
   makeUpdateObservationUseCase,
 } from '@/core/infrastructure/factories/observation.factory';
-import { withAuthentication } from '@/lib/action-utils';
+import { withRefresh } from '@/lib/action-utils';
 
 export async function getAllObservations() {
-  return withAuthentication(['read:observation'], async () => {
+  return withRefresh(['read:observation'], async () => {
     // 1. Initialize use case.
     const findObservationsUseCase = makeFindObservationsUseCase();
 
@@ -29,7 +29,7 @@ export async function getAllObservations() {
 }
 
 export async function getObservation(id: string) {
-  return withAuthentication(['read:observation'], async () => {
+  return withRefresh(['read:observation'], async () => {
     // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
 
@@ -51,7 +51,7 @@ export async function getObservation(id: string) {
 }
 
 export async function registerObservation(input: CreateObservationInput) {
-  return withAuthentication(
+  return withRefresh(
     ['create:observation'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form input.
@@ -88,7 +88,7 @@ export async function updateObservation(
   id: string,
   input: UpdateObservationInput
 ) {
-  return withAuthentication(
+  return withRefresh(
     ['update:observation'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form/ID input.
@@ -130,7 +130,7 @@ export async function updateObservation(
 }
 
 export async function deleteObservation(id: string) {
-  return withAuthentication(
+  return withRefresh(
     ['delete:observation'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate ID input.

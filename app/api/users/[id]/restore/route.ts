@@ -1,28 +1,21 @@
-import { makeRestoreUserUseCase } from '@/core/infrastructure/factories/user.factory';
-import { authenticateRequest } from '@/core/infrastructure/middleware/authentication.middleware';
-import { authorize } from '@/core/infrastructure/middleware/authorization.middleware';
-import { handleApiError } from '@/lib/apiErrorHandler';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-    const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['update:user']);
+import { makeRestoreUserUseCase } from '@/core/infrastructure/factories/user.factory';
+import { withAuthentication } from '@/lib/api-utils';
+
+export const POST = withAuthentication(
+  ['update:user'],
+  async (request, { params, auth }) => {
+    const { id } = await (params as Promise<{ id: string }>);
 
     const useCase = makeRestoreUserUseCase();
     await useCase.execute({
       id,
       userId: auth.userId,
-      ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
-      userAgent: request.headers.get('user-agent') || 'unknown',
+      ipAddress: auth.ipAddress,
+      userAgent: auth.userAgent,
     });
 
     return new NextResponse(null, { status: 204 });
-  } catch (error) {
-    return handleApiError(error);
   }
-}
+);

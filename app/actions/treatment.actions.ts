@@ -16,10 +16,10 @@ import {
   makeRegisterTreatmentUseCase,
   makeUpdateTreatmentUseCase,
 } from '@/core/infrastructure/factories/treatment.factory';
-import { withAuthentication } from '@/lib/action-utils';
+import { withRefresh } from '@/lib/action-utils';
 
 export async function getAllTreatments() {
-  return withAuthentication(['read:treatment'], async () => {
+  return withRefresh(['read:treatment'], async () => {
     // 1. Initialize use case.
     const findTreatmentsUseCase = makeFindTreatmentsUseCase();
 
@@ -29,7 +29,7 @@ export async function getAllTreatments() {
 }
 
 export async function getTreatment(id: string) {
-  return withAuthentication(['read:treatment'], async () => {
+  return withRefresh(['read:treatment'], async () => {
     // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
 
@@ -51,7 +51,7 @@ export async function getTreatment(id: string) {
 }
 
 export async function registerTreatment(input: CreateTreatmentInput) {
-  return withAuthentication(
+  return withRefresh(
     ['create:treatment'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form input.
@@ -85,7 +85,7 @@ export async function registerTreatment(input: CreateTreatmentInput) {
 }
 
 export async function updateTreatment(id: string, input: UpdateTreatmentInput) {
-  return withAuthentication(
+  return withRefresh(
     ['update:treatment'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form/ID input.
@@ -127,7 +127,7 @@ export async function updateTreatment(id: string, input: UpdateTreatmentInput) {
 }
 
 export async function deleteTreatment(id: string) {
-  return withAuthentication(
+  return withRefresh(
     ['delete:treatment'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate ID input.

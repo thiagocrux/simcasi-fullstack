@@ -1,50 +1,40 @@
+import { NextResponse } from 'next/server';
+
 import {
   makeFindRolesUseCase,
   makeRegisterRoleUseCase,
 } from '@/core/infrastructure/factories/role.factory';
-import { authenticateRequest } from '@/core/infrastructure/middleware/authentication.middleware';
-import { authorize } from '@/core/infrastructure/middleware/authorization.middleware';
-import { handleApiError } from '@/lib/apiErrorHandler';
-import { NextRequest, NextResponse } from 'next/server';
+import { withAuthentication } from '@/lib/api-utils';
 
-export async function GET(request: NextRequest) {
-  try {
-    const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['read:role']);
+export const GET = withAuthentication(['read:role'], async (request) => {
+  const { searchParams } = new URL(request.url);
+  const page = Number(searchParams.get('page')) || 1;
+  const limit = Number(searchParams.get('limit')) || 10;
 
-    const { searchParams } = new URL(request.url);
-    const page = Number(searchParams.get('page')) || 1;
-    const limit = Number(searchParams.get('limit')) || 10;
-    const useCase = makeFindRolesUseCase();
-    const result = await useCase.execute({
-      skip: (page - 1) * limit,
-      take: limit,
-      search: searchParams.get('search') || undefined,
-      includeDeleted: searchParams.get('includeDeleted') === 'true',
-    });
+  const useCase = makeFindRolesUseCase();
+  const result = await useCase.execute({
+    skip: (page - 1) * limit,
+    take: limit,
+    search: searchParams.get('search') || undefined,
+    includeDeleted: searchParams.get('includeDeleted') === 'true',
+  });
 
-    return NextResponse.json(result);
-  } catch (error) {
-    return handleApiError(error);
-  }
-}
+  return NextResponse.json(result);
+});
 
-export async function POST(request: NextRequest) {
-  try {
-    const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['create:role']);
-
+export const POST = withAuthentication(
+  ['create:role'],
+  async (request, { auth }) => {
     const body = await request.json();
     const useCase = makeRegisterRoleUseCase();
+
     const role = await useCase.execute({
       ...body,
       createdBy: auth.userId,
-      ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
-      userAgent: request.headers.get('user-agent') || 'unknown',
+      ipAddress: auth.ipAddress,
+      userAgent: auth.userAgent,
     });
 
     return NextResponse.json(role, { status: 201 });
-  } catch (error) {
-    return handleApiError(error);
   }
-}
+);

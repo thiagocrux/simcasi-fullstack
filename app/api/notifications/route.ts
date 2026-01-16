@@ -1,17 +1,14 @@
+import { NextResponse } from 'next/server';
+
 import {
   makeFindNotificationsUseCase,
   makeRegisterNotificationUseCase,
 } from '@/core/infrastructure/factories/notification.factory';
-import { authenticateRequest } from '@/core/infrastructure/middleware/authentication.middleware';
-import { authorize } from '@/core/infrastructure/middleware/authorization.middleware';
-import { handleApiError } from '@/lib/apiErrorHandler';
-import { NextRequest, NextResponse } from 'next/server';
+import { withAuthentication } from '@/lib/api-utils';
 
-export async function GET(request: NextRequest) {
-  try {
-    const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['read:notification']);
-
+export const GET = withAuthentication(
+  ['read:notification'],
+  async (request) => {
     const { searchParams } = new URL(request.url);
     const useCase = makeFindNotificationsUseCase();
 
@@ -27,27 +24,22 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(result);
-  } catch (error) {
-    return handleApiError(error);
   }
-}
+);
 
-export async function POST(request: NextRequest) {
-  try {
-    const auth = await authenticateRequest(request);
-    await authorize(auth.roleId, ['create:notification']);
-
+export const POST = withAuthentication(
+  ['create:notification'],
+  async (request, { auth }) => {
     const body = await request.json();
     const useCase = makeRegisterNotificationUseCase();
+
     const notification = await useCase.execute({
       ...body,
       userId: auth.userId,
-      ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
-      userAgent: request.headers.get('user-agent') || 'unknown',
+      ipAddress: auth.ipAddress,
+      userAgent: auth.userAgent,
     });
 
     return NextResponse.json(notification, { status: 201 });
-  } catch (error) {
-    return handleApiError(error);
   }
-}
+);

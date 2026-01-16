@@ -16,10 +16,10 @@ import {
   makeRegisterUserUseCase,
   makeUpdateUserUseCase,
 } from '@/core/infrastructure/factories/user.factory';
-import { withAuthentication } from '@/lib/action-utils';
+import { withRefresh } from '@/lib/action-utils';
 
 export async function getAllUsers() {
-  return withAuthentication(['read:user'], async () => {
+  return withRefresh(['read:user'], async () => {
     // 1. Initialize use case.
     const findUsersUseCase = makeFindUsersUseCase();
 
@@ -29,7 +29,7 @@ export async function getAllUsers() {
 }
 
 export async function getUser(id: string) {
-  return withAuthentication(['read:user'], async () => {
+  return withRefresh(['read:user'], async () => {
     // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
 
@@ -49,7 +49,7 @@ export async function getUser(id: string) {
 }
 
 export async function registerUser(input: CreateUserInput) {
-  return withAuthentication(
+  return withRefresh(
     ['create:user'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form input.
@@ -82,7 +82,7 @@ export async function registerUser(input: CreateUserInput) {
 }
 
 export async function updateUser(id: string, input: UpdateUserInput) {
-  return withAuthentication(
+  return withRefresh(
     ['update:user'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form/ID input.
@@ -124,7 +124,7 @@ export async function updateUser(id: string, input: UpdateUserInput) {
 }
 
 export async function deleteUser(id: string) {
-  return withAuthentication(
+  return withRefresh(
     ['delete:user'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate ID input.

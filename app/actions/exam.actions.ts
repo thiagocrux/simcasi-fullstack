@@ -16,10 +16,10 @@ import {
   makeRegisterExamUseCase,
   makeUpdateExamUseCase,
 } from '@/core/infrastructure/factories/exam.factory';
-import { withAuthentication } from '@/lib/action-utils';
+import { withRefresh } from '@/lib/action-utils';
 
 export async function getAllExams() {
-  return withAuthentication(['read:exam'], async () => {
+  return withRefresh(['read:exam'], async () => {
     // 1. Initialize use case.
     const findExamsUseCase = makeFindExamsUseCase();
 
@@ -29,7 +29,7 @@ export async function getAllExams() {
 }
 
 export async function getExam(id: string) {
-  return withAuthentication(['read:exam'], async () => {
+  return withRefresh(['read:exam'], async () => {
     // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
 
@@ -49,7 +49,7 @@ export async function getExam(id: string) {
 }
 
 export async function registerExam(input: CreateExamInput) {
-  return withAuthentication(
+  return withRefresh(
     ['create:exam'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form input.
@@ -83,7 +83,7 @@ export async function registerExam(input: CreateExamInput) {
 }
 
 export async function updateExam(id: string, input: UpdateExamInput) {
-  return withAuthentication(
+  return withRefresh(
     ['update:exam'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form/ID input.
@@ -125,7 +125,7 @@ export async function updateExam(id: string, input: UpdateExamInput) {
 }
 
 export async function deleteExam(id: string) {
-  return withAuthentication(
+  return withRefresh(
     ['delete:exam'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate ID input.

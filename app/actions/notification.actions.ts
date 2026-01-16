@@ -16,10 +16,10 @@ import {
   makeRegisterNotificationUseCase,
   makeUpdateNotificationUseCase,
 } from '@/core/infrastructure/factories/notification.factory';
-import { withAuthentication } from '@/lib/action-utils';
+import { withRefresh } from '@/lib/action-utils';
 
 export async function getAllNotifications() {
-  return withAuthentication(['read:notification'], async () => {
+  return withRefresh(['read:notification'], async () => {
     // 1. Initialize use case.
     const findNotificationsUseCase = makeFindNotificationsUseCase();
 
@@ -29,7 +29,7 @@ export async function getAllNotifications() {
 }
 
 export async function getNotification(id: string) {
-  return withAuthentication(['read:notification'], async () => {
+  return withRefresh(['read:notification'], async () => {
     // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
 
@@ -51,7 +51,7 @@ export async function getNotification(id: string) {
 }
 
 export async function registerNotification(input: CreateNotificationInput) {
-  return withAuthentication(
+  return withRefresh(
     ['create:notification'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form input.
@@ -88,7 +88,7 @@ export async function updateNotification(
   id: string,
   input: UpdateNotificationInput
 ) {
-  return withAuthentication(
+  return withRefresh(
     ['update:notification'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form/ID input.
@@ -130,7 +130,7 @@ export async function updateNotification(
 }
 
 export async function deleteNotification(id: string) {
-  return withAuthentication(
+  return withRefresh(
     ['delete:notification'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate ID input.
