@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * Next.js Middleware.
+ * Next.js Proxy (previously Middleware).
  * Acts as a centralized entry point to handle authentication and route protection.
  * Runs on the Edge Runtime.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Define public routes that do not require authentication.
@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Token verification (Simplified for Middleware/Edge performance).
+  // 2. Token verification (Simplified for Proxy/Edge performance).
   // We check for the presence of the access token cookie to decide on redirection.
   // Full session validation is performed at the Use Case level (Application Layer).
   const token = request.cookies.get('access_token')?.value;
