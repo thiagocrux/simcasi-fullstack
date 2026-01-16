@@ -1,6 +1,6 @@
 import { Patient } from '@/core/domain/entities/patient.entity';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
-import { Prisma } from '@/prisma/generated/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaPatientRepository implements PatientRepository {

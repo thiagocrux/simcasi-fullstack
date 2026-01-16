@@ -4,7 +4,7 @@ import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { ObservationsTable } from '@/app/components/features/observations/ObservationsTable';
 import { mockObservations } from '@/lib/mock.utils';
-import { Observation } from '@/prisma/generated/client';
+import { Observation } from '@prisma/client';
 
 export const metadata: Metadata = {
   title: 'Lista de observações | SIMCASI',

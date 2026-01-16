@@ -1,6 +1,6 @@
 import { Notification } from '@/core/domain/entities/notification.entity';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
-import { Prisma } from '@/prisma/generated/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaNotificationRepository implements NotificationRepository {

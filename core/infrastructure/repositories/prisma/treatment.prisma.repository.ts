@@ -1,6 +1,6 @@
 import { Treatment } from '@/core/domain/entities/treatment.entity';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
-import { Prisma } from '@/prisma/generated/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaTreatmentRepository implements TreatmentRepository {

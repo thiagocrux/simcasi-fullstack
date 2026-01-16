@@ -1,6 +1,6 @@
 import { Role } from '@/core/domain/entities/role.entity';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
-import { Prisma } from '@/prisma/generated/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaRoleRepository implements RoleRepository {

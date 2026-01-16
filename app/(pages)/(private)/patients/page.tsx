@@ -4,7 +4,7 @@ import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { PatientsTable } from '@/app/components/features/patients/PatientsTable';
 import { mockPatients } from '@/lib/mock.utils';
-import { Patient } from '@/prisma/generated/client';
+import { Patient } from '@prisma/client';
 
 export const metadata: Metadata = {
   title: 'Lista de pacientes | SIMCASI',

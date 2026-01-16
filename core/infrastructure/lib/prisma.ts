@@ -1,15 +1,19 @@
-import { PrismaClient } from '@/prisma/generated/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
+import { Pool } from 'pg';
 
 /**
  * Prisma client singleton to avoid multiple connections.
- * In development, it attaches the client to the global object to prevent
- * connection exhaustion during hot reloads (Fast Refresh).
  */
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
+    adapter,
     log:
       process.env.NODE_ENV === 'development'
         ? ['query', 'error', 'warn']

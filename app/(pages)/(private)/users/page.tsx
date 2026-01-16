@@ -4,7 +4,7 @@ import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { UsersTable } from '@/app/components/features/users/UsersTable';
 import { mockUsers } from '@/lib/mock.utils';
-import { User } from '@/prisma/generated/client';
+import { User } from '@prisma/client';
 
 export const metadata: Metadata = {
   title: 'Lista de usuários | SIMCASI',

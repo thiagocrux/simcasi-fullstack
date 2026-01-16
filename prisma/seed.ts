@@ -1,8 +1,9 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import crypto from 'crypto';
+import { Pool } from 'pg';
 
 import { ROLES } from '@/core/domain/constants/role.constants';
-import { PrismaClient } from './generated/client';
+import { PrismaClient } from '@prisma/client';
 
 import {
   PERMISSIONS,
@@ -11,7 +12,8 @@ import {
 } from '@/core/domain/constants/permission.constants';
 
 const connectionString = `${process.env.DATABASE_URL}`;
-const adapter = new PrismaPg({ connectionString });
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {

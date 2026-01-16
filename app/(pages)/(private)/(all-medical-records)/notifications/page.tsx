@@ -4,7 +4,7 @@ import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { NotificationsTable } from '@/app/components/features/notifications/NotificationsTable';
 import { mockNotifications } from '@/lib/mock.utils';
-import { Notification } from '@/prisma/generated/client';
+import { Notification } from '@prisma/client';
 
 export const metadata: Metadata = {
   title: 'Lista de notificações | SIMCASI',

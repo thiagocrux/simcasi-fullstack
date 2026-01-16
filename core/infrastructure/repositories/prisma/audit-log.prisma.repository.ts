@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AuditLog } from '@/core/domain/entities/audit-log.entity';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
-import { Prisma } from '@/prisma/generated/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaAuditLogRepository implements AuditLogRepository {

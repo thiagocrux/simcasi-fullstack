@@ -1,6 +1,6 @@
 import { Exam } from '@/core/domain/entities/exam.entity';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
-import { Prisma } from '@/prisma/generated/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaExamRepository implements ExamRepository {

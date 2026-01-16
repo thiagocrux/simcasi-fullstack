@@ -1,6 +1,6 @@
 import { Permission } from '@/core/domain/entities/permission.entity';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
-import { Prisma } from '@/prisma/generated/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaPermissionRepository implements PermissionRepository {

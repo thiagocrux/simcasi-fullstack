@@ -1,6 +1,6 @@
 import { Observation } from '@/core/domain/entities/observation.entity';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
-import { Prisma } from '@/prisma/generated/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaObservationRepository implements ObservationRepository {

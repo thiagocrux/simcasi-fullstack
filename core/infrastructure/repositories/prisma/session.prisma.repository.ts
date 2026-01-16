@@ -1,6 +1,6 @@
 import { Session } from '@/core/domain/entities/session.entity';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
-import { Prisma } from '@/prisma/generated/client';
+import { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaSessionRepository implements SessionRepository {
