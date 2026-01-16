@@ -6,6 +6,14 @@ import { Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
+import {
+  createObservation,
+  updateObservation,
+} from '@/app/actions/observation.actions';
+import {
+  CreateObservationInput,
+  observationSchema,
+} from '@/core/application/validation/schemas/observation.schema';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
 import { Button } from '../../ui/button';
@@ -15,23 +23,17 @@ import { Field, FieldGroup, FieldLabel } from '../../ui/field';
 import { Input } from '../../ui/input';
 import { Spinner } from '../../ui/spinner';
 
-import {
-  createObservation,
-  updateObservation,
-} from '@/app/actions/observation.actions';
-
-import {
-  CreateObservationInput,
-  observationSchema,
-} from '@/core/application/validation/schemas/observation.schema';
-
 interface ObservationFormProps {
   isEditMode?: boolean;
+  observationId?: string | null;
+  patientId: string;
   className?: string;
 }
 
 export function ObservationForm({
   isEditMode = false,
+  observationId = null,
+  patientId,
   className,
 }: ObservationFormProps) {
   const router = useRouter();
@@ -44,14 +46,17 @@ export function ObservationForm({
   } = useForm<CreateObservationInput>({
     resolver: zodResolver(observationSchema),
     defaultValues: {
+      patientId,
       observations: '',
-      partnerBeingTreated: false,
+      hasPartnerBeingTreated: false,
     },
   });
 
   const observationMutation = useMutation({
     mutationFn: (input: CreateObservationInput) =>
-      isEditMode ? updateObservation(input) : createObservation(input),
+      isEditMode && observationId
+        ? updateObservation(observationId, input)
+        : createObservation(input),
     onSuccess: () => {
       // TODO: Implement success case
     },
@@ -90,21 +95,23 @@ export function ObservationForm({
               <div className="flex items-center gap-3">
                 <Controller
                   control={control}
-                  name="partnerBeingTreated"
+                  name="hasPartnerBeingTreated"
                   render={({ field }) => (
                     <Checkbox
-                      id="partnerBeingTreated"
+                      id="hasPartnerBeingTreated"
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
                   )}
                 />
-                <FieldLabel htmlFor="partnerBeingTreated">
+                <FieldLabel htmlFor="hasPartnerBeingTreated">
                   Parceiro em tratamento
                 </FieldLabel>
               </div>
-              {formErrors.partnerBeingTreated && (
-                <FieldError message={formErrors.partnerBeingTreated.message} />
+              {formErrors.hasPartnerBeingTreated && (
+                <FieldError
+                  message={formErrors.hasPartnerBeingTreated.message}
+                />
               )}
             </Field>
           </FieldGroup>

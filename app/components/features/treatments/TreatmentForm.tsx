@@ -6,6 +6,10 @@ import { Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
+import {
+  createTreatment,
+  updateTreatment,
+} from '@/app/actions/treatment.actions';
 import { Datepicker } from '../../common/Datepicker';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
@@ -16,22 +20,21 @@ import { Input } from '../../ui/input';
 import { Spinner } from '../../ui/spinner';
 
 import {
-  createTreatment,
-  updateTreatment,
-} from '@/app/actions/treatment.actions';
-
-import {
   CreateTreatmentInput,
   treatmentSchema,
 } from '@/core/application/validation/schemas/treatment.schema';
 
 interface TreatmentFormProps {
   isEditMode?: boolean;
+  treatmentId?: string | null;
+  patientId: string;
   className?: string;
 }
 
 export function TreatmentForm({
   isEditMode = false,
+  treatmentId = null,
+  patientId,
   className,
 }: TreatmentFormProps) {
   const router = useRouter();
@@ -44,6 +47,7 @@ export function TreatmentForm({
   } = useForm<CreateTreatmentInput>({
     resolver: zodResolver(treatmentSchema),
     defaultValues: {
+      patientId,
       medication: '',
       healthCenter: '',
       startDate: '',
@@ -55,7 +59,9 @@ export function TreatmentForm({
 
   const treatmentMutation = useMutation({
     mutationFn: (input: CreateTreatmentInput) =>
-      isEditMode ? updateTreatment(input) : createTreatment(input),
+      isEditMode && treatmentId
+        ? updateTreatment(treatmentId, input)
+        : createTreatment(input),
     onSuccess: () => {
       // TODO: Implement success case
     },

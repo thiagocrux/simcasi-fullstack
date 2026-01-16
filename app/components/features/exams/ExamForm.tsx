@@ -2,11 +2,11 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
 import { createExam, updateExam } from '@/app/actions/exam.actions';
-import { Save } from 'lucide-react';
 import { Datepicker } from '../../common/Datepicker';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
@@ -24,10 +24,17 @@ import {
 
 interface ExamFormProps {
   isEditMode?: boolean;
+  examId?: string | null;
+  patientId: string;
   className?: string;
 }
 
-export function ExamForm({ isEditMode = false, className }: ExamFormProps) {
+export function ExamForm({
+  isEditMode = false,
+  examId = null,
+  patientId,
+  className,
+}: ExamFormProps) {
   const router = useRouter();
 
   const {
@@ -38,6 +45,7 @@ export function ExamForm({ isEditMode = false, className }: ExamFormProps) {
   } = useForm<CreateExamInput>({
     resolver: zodResolver(examSchema),
     defaultValues: {
+      patientId,
       treponemalTestType: '',
       treponemalTestResult: '',
       treponemalTestDate: '',
@@ -53,7 +61,7 @@ export function ExamForm({ isEditMode = false, className }: ExamFormProps) {
 
   const examMutation = useMutation({
     mutationFn: (input: CreateExamInput) =>
-      isEditMode ? updateExam(input) : createExam(input),
+      isEditMode && examId ? updateExam(examId, input) : createExam(input),
     onSuccess: () => {
       // TODO: Implement success case.
     },

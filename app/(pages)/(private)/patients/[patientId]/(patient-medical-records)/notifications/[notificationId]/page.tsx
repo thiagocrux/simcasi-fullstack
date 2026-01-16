@@ -4,7 +4,9 @@ import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { NotificationForm } from '@/app/components/features/notifications/NotificationForm';
 
-type NotificationFormPageProps = { params: { notificationId: string } };
+type NotificationFormPageProps = {
+  params: Promise<{ notificationId: string; patientId: string }>;
+};
 
 export async function generateMetadata({
   params,
@@ -25,7 +27,7 @@ export async function generateMetadata({
 export default async function NotificationFormPage({
   params,
 }: NotificationFormPageProps) {
-  const { notificationId } = await params;
+  const { notificationId, patientId } = await params;
   const isEditMode = !!notificationId && notificationId !== 'new';
 
   return (
@@ -44,7 +46,11 @@ export default async function NotificationFormPage({
               : 'editar a notificação no sistema.'
           }`}
         />
-        <NotificationForm isEditMode={isEditMode} />
+        <NotificationForm
+          isEditMode={isEditMode}
+          notificationId={notificationId ?? null}
+          patientId={patientId}
+        />
       </div>
     </>
   );

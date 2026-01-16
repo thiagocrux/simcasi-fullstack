@@ -2,9 +2,14 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
+import { Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
+import {
+  createNotification,
+  updateNotification,
+} from '@/app/actions/notification.actions';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
 import { Button } from '../../ui/button';
@@ -15,22 +20,21 @@ import { Spinner } from '../../ui/spinner';
 import { Textarea } from '../../ui/textarea';
 
 import {
-  createNotification,
-  updateNotification,
-} from '@/app/actions/notification.actions';
-
-import {
   CreateNotificationInput,
   notificationSchema,
 } from '@/core/application/validation/schemas/notification.schema';
 
 interface NotificationFormProps {
-  isEditMode: boolean;
+  isEditMode?: boolean;
+  notificationId?: string | null;
+  patientId: string;
   className?: string;
 }
 
 export function NotificationForm({
-  isEditMode,
+  isEditMode = false,
+  notificationId = null,
+  patientId,
   className,
 }: NotificationFormProps) {
   const router = useRouter();
@@ -42,6 +46,7 @@ export function NotificationForm({
   } = useForm<CreateNotificationInput>({
     resolver: zodResolver(notificationSchema),
     defaultValues: {
+      patientId,
       sinan: '',
       observations: '',
     },
@@ -49,7 +54,9 @@ export function NotificationForm({
 
   const notificationMutation = useMutation({
     mutationFn: (input: CreateNotificationInput) =>
-      isEditMode ? updateNotification(input) : createNotification(input),
+      isEditMode && notificationId
+        ? updateNotification(notificationId, input)
+        : createNotification(input),
     onSuccess: () => {
       // TODO: Implement success case
     },
@@ -105,8 +112,8 @@ export function NotificationForm({
           className="mt-8 w-full cursor-pointer"
           disabled={isSubmitting}
         >
-          {isSubmitting && <Spinner />}
-          Salvar
+          {isSubmitting ? <Spinner /> : <Save />}
+          {isEditMode ? 'Atualizar' : 'Salvar'}
         </Button>
       </form>
     </Card>

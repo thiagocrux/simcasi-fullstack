@@ -4,7 +4,9 @@ import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { ExamForm } from '@/app/components/features/exams/ExamForm';
 
-type ExamFormPageProps = { params: { examId: string } };
+type ExamFormPageProps = {
+  params: Promise<{ examId: string; patientId: string }>;
+};
 
 export async function generateMetadata({
   params,
@@ -21,7 +23,7 @@ export async function generateMetadata({
 }
 
 export default async function ExamFormPage({ params }: ExamFormPageProps) {
-  const { examId } = await params;
+  const { examId, patientId } = await params;
   const isEditMode = !!examId && examId !== 'new';
 
   return (
@@ -38,7 +40,11 @@ export default async function ExamFormPage({ params }: ExamFormPageProps) {
               : 'editar o exame no sistema.'
           }`}
         />
-        <ExamForm isEditMode={isEditMode} />
+        <ExamForm
+          isEditMode={isEditMode}
+          examId={examId ?? null}
+          patientId={patientId}
+        />
       </div>
     </>
   );

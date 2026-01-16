@@ -48,7 +48,7 @@ export async function getUser(id: string) {
   });
 }
 
-export async function registerUser(input: CreateUserInput) {
+export async function createUser(input: CreateUserInput) {
   return withRefresh(
     ['create:user'],
     async ({ userId, ipAddress, userAgent }) => {

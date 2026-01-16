@@ -6,7 +6,11 @@ import { Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
-import { signInUser } from '@/app/actions/session.actions';
+import { createUser, updateUser } from '@/app/actions/user.actions';
+import {
+  CreateUserFormInput,
+  userFormSchema,
+} from '@/core/application/validation/schemas/user.schema';
 import { ROLE_OPTIONS } from '@/core/domain/constants/role.constants';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
@@ -15,13 +19,6 @@ import { Button } from '../../ui/button';
 import { Card } from '../../ui/card';
 import { Field, FieldGroup, FieldLabel } from '../../ui/field';
 import { Input } from '../../ui/input';
-import { Spinner } from '../../ui/spinner';
-
-import {
-  CreateUserFormInput,
-  userFormSchema,
-} from '@/core/application/validation/schemas/user.schema';
-
 import {
   Select,
   SelectContent,
@@ -29,13 +26,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../ui/select';
+import { Spinner } from '../../ui/spinner';
 
 interface UserFormProps {
   isEditMode?: boolean;
+  userId?: string | null;
   className?: string;
 }
 
-export function UserForm({ isEditMode = false, className }: UserFormProps) {
+export function UserForm({
+  isEditMode = false,
+  userId = null,
+  className,
+}: UserFormProps) {
   const router = useRouter();
 
   const {
@@ -45,11 +48,18 @@ export function UserForm({ isEditMode = false, className }: UserFormProps) {
     control,
   } = useForm<CreateUserFormInput>({
     resolver: zodResolver(userFormSchema),
-    defaultValues: { email: '', password: '', passwordConfirmation: '' },
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      passwordConfirmation: '',
+      roleId: '',
+    },
   });
 
-  const signInUserMutation = useMutation({
-    mutationFn: (input: CreateUserFormInput) => signInUser(input),
+  const userMutation = useMutation({
+    mutationFn: (input: CreateUserFormInput) =>
+      isEditMode && userId ? updateUser(userId, input) : createUser(input),
     onSuccess: () => {
       // TODO: Implement success case.
     },
@@ -60,7 +70,7 @@ export function UserForm({ isEditMode = false, className }: UserFormProps) {
   });
 
   async function onSubmit(input: CreateUserFormInput) {
-    signInUserMutation.mutate(input);
+    userMutation.mutate(input);
   }
 
   return (
@@ -98,7 +108,7 @@ export function UserForm({ isEditMode = false, className }: UserFormProps) {
 
             <Field>
               <Controller
-                name="role"
+                name="roleId"
                 control={control}
                 render={({ field }) => (
                   <>
@@ -106,7 +116,7 @@ export function UserForm({ isEditMode = false, className }: UserFormProps) {
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger
                         className={
-                          formErrors.role
+                          formErrors.roleId
                             ? 'border-destructive! focus:ring-destructive/30!'
                             : ''
                         }
@@ -121,8 +131,8 @@ export function UserForm({ isEditMode = false, className }: UserFormProps) {
                         ))}
                       </SelectContent>
                     </Select>
-                    {formErrors.role && (
-                      <FieldError message={formErrors.role.message} />
+                    {formErrors.roleId && (
+                      <FieldError message={formErrors.roleId.message} />
                     )}
                   </>
                 )}

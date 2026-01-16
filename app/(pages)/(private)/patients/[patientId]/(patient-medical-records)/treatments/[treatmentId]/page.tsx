@@ -4,7 +4,9 @@ import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { TreatmentForm } from '@/app/components/features/treatments/TreatmentForm';
 
-type TreatmentFormPageProps = { params: { treatmentId: string } };
+type TreatmentFormPageProps = {
+  params: Promise<{ treatmentId: string; patientId: string }>;
+};
 
 export async function generateMetadata({
   params,
@@ -25,7 +27,7 @@ export async function generateMetadata({
 export default async function TreatmentFormPage({
   params,
 }: TreatmentFormPageProps) {
-  const { treatmentId } = await params;
+  const { treatmentId, patientId } = await params;
   const isEditMode = !!treatmentId && treatmentId !== 'new';
 
   return (
@@ -44,7 +46,11 @@ export default async function TreatmentFormPage({
               : 'editar o tratamento no sistema.'
           }`}
         />
-        <TreatmentForm isEditMode={isEditMode} />
+        <TreatmentForm
+          isEditMode={isEditMode}
+          treatmentId={treatmentId ?? null}
+          patientId={patientId}
+        />
       </div>
     </>
   );

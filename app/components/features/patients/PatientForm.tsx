@@ -6,17 +6,11 @@ import { Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
-import { createPatient } from '@/app/actions/patient.actions';
-import { Datepicker } from '../../common/Datepicker';
-import { FieldError } from '../../common/FieldError';
-import { FieldGroupHeading } from '../../common/FieldGroupHeading';
-import { Button } from '../../ui/button';
-import { Card } from '../../ui/card';
-import { Checkbox } from '../../ui/checkbox';
-import { Input } from '../../ui/input';
-import { Spinner } from '../../ui/spinner';
-import { Textarea } from '../../ui/textarea';
-
+import { createPatient, updatePatient } from '@/app/actions/patient.actions';
+import {
+  CreatePatientInput,
+  patientSchema,
+} from '@/core/application/validation/schemas/patient.schema';
 import {
   GENDER_OPTIONS,
   NATIONALITY_OPTIONS,
@@ -25,19 +19,19 @@ import {
   SEX_OPTIONS,
   SEXUALITY_OPTIONS,
 } from '@/core/domain/constants/patient.constants';
-
-import {
-  CreatePatientInput,
-  patientSchema,
-} from '@/core/application/validation/schemas/patient.schema';
-
+import { Datepicker } from '../../common/Datepicker';
+import { FieldError } from '../../common/FieldError';
+import { FieldGroupHeading } from '../../common/FieldGroupHeading';
+import { Button } from '../../ui/button';
+import { Card } from '../../ui/card';
+import { Checkbox } from '../../ui/checkbox';
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
 } from '../../ui/field';
-
+import { Input } from '../../ui/input';
 import {
   Select,
   SelectContent,
@@ -45,14 +39,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../ui/select';
+import { Spinner } from '../../ui/spinner';
+import { Textarea } from '../../ui/textarea';
 
 interface PatientFormProps {
   isEditMode?: boolean;
+  patientId?: string | null;
   className?: string;
 }
 
 export function PatientForm({
   isEditMode = false,
+  patientId = null,
   className,
 }: PatientFormProps) {
   const router = useRouter();
@@ -92,8 +90,11 @@ export function PatientForm({
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: (input: CreatePatientInput) => createPatient(input),
+  const patientMutation = useMutation({
+    mutationFn: (input: CreatePatientInput) =>
+      isEditMode && patientId
+        ? updatePatient(patientId, input)
+        : createPatient(input),
     onSuccess: () => {
       // TODO: Implement success case
     },
@@ -103,7 +104,7 @@ export function PatientForm({
   });
 
   async function onSubmit(input: CreatePatientInput) {
-    mutation.mutate(input);
+    patientMutation.mutate(input);
   }
 
   return (

@@ -22,7 +22,7 @@ export async function generateMetadata({
 
 export default async function UserFormPage({ params }: UserFormPageProps) {
   const { userId } = await params;
-  const isEditMode = userId && userId !== 'new';
+  const isEditMode = !!userId && userId !== 'new';
 
   return (
     <>
@@ -40,7 +40,7 @@ export default async function UserFormPage({ params }: UserFormPageProps) {
               : 'editar o usuário no sistema.'
           }`}
         />
-        <UserForm />
+        <UserForm isEditMode={isEditMode} userId={userId} />
       </div>
     </>
   );

@@ -4,7 +4,9 @@ import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { ObservationForm } from '@/app/components/features/observations/ObservationForm';
 
-type ObservationFormPageProps = { params: { observationId: string } };
+type ObservationFormPageProps = {
+  params: Promise<{ observationId: string; patientId: string }>;
+};
 
 export async function generateMetadata({
   params,
@@ -25,7 +27,7 @@ export async function generateMetadata({
 export default async function ObservationFormPage({
   params,
 }: ObservationFormPageProps) {
-  const { observationId } = await params;
+  const { observationId, patientId } = await params;
   const isEditMode = !!observationId && observationId !== 'new';
 
   return (
@@ -44,7 +46,11 @@ export default async function ObservationFormPage({
               : 'editar a observação no sistema.'
           }`}
         />
-        <ObservationForm isEditMode={isEditMode} />
+        <ObservationForm
+          isEditMode={isEditMode}
+          observationId={observationId ?? null}
+          patientId={patientId}
+        />
       </div>
     </>
   );

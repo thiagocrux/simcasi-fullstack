@@ -4,7 +4,7 @@ import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { PatientForm } from '@/app/components/features/patients/PatientForm';
 
-type PatientFormPageProps = { params: { patientId: string } };
+type PatientFormPageProps = { params: Promise<{ patientId: string }> };
 
 export async function generateMetadata({
   params,
@@ -44,7 +44,7 @@ export default async function PatientFormPage({
               : 'editar o paciente no sistema.'
           }`}
         />
-        <PatientForm />
+        <PatientForm isEditMode={isEditMode} patientId={patientId ?? null} />
       </div>
     </>
   );
