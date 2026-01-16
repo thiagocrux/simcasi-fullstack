@@ -1,7 +1,15 @@
 'use server';
 
 import { IdSchema } from '@/core/application/validation/schemas/common.schema';
-import { mockApiCall } from '@/lib/mock';
+import {
+  makeDeletePatientUseCase,
+  makeFindPatientsUseCase,
+  makeGetPatientByIdUseCase,
+  makeRegisterPatientUseCase,
+  makeUpdatePatientUseCase,
+} from '@/core/infrastructure/factories/patient.factory';
+import { handleActionError, protectAction } from '@/lib/action-utils';
+import { revalidatePath } from 'next/cache';
 
 import {
   CreatePatientInput,
@@ -11,16 +19,25 @@ import {
 
 export async function getAllPatients() {
   try {
-    // TODO: Replace with the real request and increment logic if needed.
-    const response = await mockApiCall();
-    return response;
+    // 1. Protect action with required permissions.
+    await protectAction(['read:patient']);
+
+    // 2. Initialize use case.
+    const findPatientsUseCase = makeFindPatientsUseCase();
+
+    // 3. Execute use case.
+    const patients = await findPatientsUseCase.execute({});
+
+    // 4. Return success result.
+    return { success: true, data: patients };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return { success: false, ...error.response?.data.error };
+    return handleActionError(error);
   }
 }
 
 export async function getPatient(id: string) {
+  // 1. Validate ID input.
   const parsed = IdSchema.safeParse(id);
 
   if (!parsed.success) {
@@ -28,100 +45,100 @@ export async function getPatient(id: string) {
   }
 
   try {
-    // TODO: Replace with the real request and increment logic if needed.
-    const response = await mockApiCall();
-    return response;
+    // 2. Protect action with required permissions.
+    await protectAction(['read:patient']);
+
+    // 3. Initialize use case.
+    const getPatientByIdUseCase = makeGetPatientByIdUseCase();
+
+    // 4. Execute use case.
+    const patient = await getPatientByIdUseCase.execute({ id: parsed.data });
+
+    // 5. Return success result.
+    return { success: true, data: patient };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return { success: false, ...error.response?.data.error };
+    return handleActionError(error);
   }
 }
 
-export async function createPatient(input: CreatePatientInput) {
+export async function registerPatient(input: CreatePatientInput) {
   try {
-    const parsed = patientSchema.safeParse({
-      susCardNumber: input.susCardNumber,
-      name: input.name,
-      cpf: input.cpf,
-      socialName: input.socialName,
-      birthDate: input.birthDate,
-      race: input.race,
-      sex: input.sex,
-      gender: input.gender,
-      sexuality: input.sexuality,
-      nationality: input.nationality,
-      schooling: input.schooling,
-      phone: input.phone,
-      email: input.email,
-      motherName: input.motherName,
-      fatherName: input.fatherName,
-      isDeceased: input.isDeceased,
-      monitoringType: input.monitoringType,
-      zipCode: input.zipCode,
-      state: input.state,
-      city: input.city,
-      neighborhood: input.neighborhood,
-      street: input.street,
-      houseNumber: input.houseNumber,
-      complement: input.complement,
-    });
+    // 1. Protect action and get audit metadata.
+    const { userId, ipAddress, userAgent } = await protectAction([
+      'create:patient',
+    ]);
+
+    // 2. Validate form input.
+    const parsed = patientSchema.safeParse(input);
 
     if (!parsed.success) {
       return { success: false, errors: parsed.error.flatten().fieldErrors };
     }
 
-    // TODO: Replace with the real request and increment logic if needed.
-    const response = await mockApiCall();
-    return response;
+    // 3. Initialize use case.
+    const registerPatientUseCase = makeRegisterPatientUseCase();
+
+    // 4. Execute use case with audit data.
+    const patient = await registerPatientUseCase.execute({
+      ...parsed.data,
+      userId,
+      ipAddress,
+      userAgent,
+    });
+
+    // 5. Revalidate cache and return result.
+    revalidatePath('/patients');
+    return { success: true, data: patient };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return { success: false, ...error.response?.data.error };
+    return handleActionError(error);
   }
 }
 
-export async function updatePatient(input: UpdatePatientInput) {
+export async function updatePatient(id: string, input: UpdatePatientInput) {
   try {
-    const parsed = patientSchema.safeParse({
-      susCardNumber: input.susCardNumber,
-      name: input.name,
-      cpf: input.cpf,
-      socialName: input.socialName,
-      birthDate: input.birthDate,
-      race: input.race,
-      sex: input.sex,
-      gender: input.gender,
-      sexuality: input.sexuality,
-      nationality: input.nationality,
-      schooling: input.schooling,
-      phone: input.phone,
-      email: input.email,
-      motherName: input.motherName,
-      fatherName: input.fatherName,
-      isDeceased: input.isDeceased,
-      monitoringType: input.monitoringType,
-      zipCode: input.zipCode,
-      state: input.state,
-      city: input.city,
-      neighborhood: input.neighborhood,
-      street: input.street,
-      houseNumber: input.houseNumber,
-      complement: input.complement,
-    });
+    // 1. Protect action and get audit metadata.
+    const { userId, ipAddress, userAgent } = await protectAction([
+      'update:patient',
+    ]);
 
-    if (!parsed.success) {
-      return { success: false, errors: parsed.error.flatten().fieldErrors };
+    // 2. Validate form/ID input.
+    const parsedId = IdSchema.safeParse(id);
+    const parsedData = patientSchema.partial().safeParse(input);
+
+    if (!parsedId.success) {
+      return { success: false, errors: parsedId.error.flatten().fieldErrors };
     }
 
-    // TODO: Replace with the real request and increment logic if needed.
-    const response = await mockApiCall();
-    return response;
+    if (!parsedData.success) {
+      return { success: false, errors: parsedData.error.flatten().fieldErrors };
+    }
+
+    // 3. Initialize use case.
+    const updatePatientUseCase = makeUpdatePatientUseCase();
+
+    // 4. Execute use case with audit data.
+    const patient = await updatePatientUseCase.execute({
+      ...parsedData.data,
+      id: parsedId.data,
+      userId,
+      ipAddress,
+      userAgent,
+    });
+
+    // 5. Revalidate cache and return result.
+    revalidatePath(`/patients/${parsedId.data}`);
+    revalidatePath('/patients');
+    return { success: true, data: patient };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return { success: false, ...error.response?.data.error };
+    return handleActionError(error);
   }
 }
 
 export async function deletePatient(id: string) {
+  // 1. Validate ID input.
   const parsed = IdSchema.safeParse(id);
 
   if (!parsed.success) {
@@ -129,11 +146,27 @@ export async function deletePatient(id: string) {
   }
 
   try {
-    // TODO: Replace with the real request and increment logic if needed.
-    const response = await mockApiCall();
-    return response;
+    // 2. Protect action and get audit metadata.
+    const { userId, ipAddress, userAgent } = await protectAction([
+      'delete:patient',
+    ]);
+
+    // 3. Initialize use case.
+    const deletePatientUseCase = makeDeletePatientUseCase();
+
+    // 4. Execute use case with audit data.
+    await deletePatientUseCase.execute({
+      id: parsed.data,
+      userId,
+      ipAddress,
+      userAgent,
+    });
+
+    // 5. Revalidate cache and return result.
+    revalidatePath('/patients');
+    return { success: true };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    return { success: false, ...error.response?.data.error };
+    return handleActionError(error);
   }
 }

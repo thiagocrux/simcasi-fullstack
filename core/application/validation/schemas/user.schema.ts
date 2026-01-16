@@ -13,8 +13,8 @@ export const userSchema = z.object({
     .string()
     .nonempty(messages.REQUIRED_FIELD('Senha'))
     .regex(regex.PASSWORD, messages.INVALID_PASSWORD),
-  role: z.enum(
-    ROLE_OPTIONS.map((option) => option.value),
+  roleId: z.enum(
+    ROLE_OPTIONS.map((option) => option.value) as [string, ...string[]],
     messages.REQUIRED_FIELD('Cargo')
   ),
 });
