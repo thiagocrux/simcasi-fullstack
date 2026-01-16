@@ -16,10 +16,10 @@ import {
   makeRegisterUserUseCase,
   makeUpdateUserUseCase,
 } from '@/core/infrastructure/factories/user.factory';
-import { withRefresh } from '@/lib/actions.utils';
+import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
 export async function getAllUsers() {
-  return withRefresh(['read:user'], async () => {
+  return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
     // 1. Initialize use case.
     const findUsersUseCase = makeFindUsersUseCase();
 
@@ -29,7 +29,7 @@ export async function getAllUsers() {
 }
 
 export async function getUser(id: string) {
-  return withRefresh(['read:user'], async () => {
+  return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
     // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
 
@@ -49,7 +49,7 @@ export async function getUser(id: string) {
 }
 
 export async function createUser(input: CreateUserInput) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['create:user'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form input.
@@ -82,7 +82,7 @@ export async function createUser(input: CreateUserInput) {
 }
 
 export async function updateUser(id: string, input: UpdateUserInput) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['update:user'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form/ID input.
@@ -124,7 +124,7 @@ export async function updateUser(id: string, input: UpdateUserInput) {
 }
 
 export async function deleteUser(id: string) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['delete:user'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate ID input.

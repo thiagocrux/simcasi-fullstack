@@ -16,10 +16,10 @@ import {
   makeRegisterExamUseCase,
   makeUpdateExamUseCase,
 } from '@/core/infrastructure/factories/exam.factory';
-import { withRefresh } from '@/lib/actions.utils';
+import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
 export async function getAllExams() {
-  return withRefresh(['read:exam'], async () => {
+  return withSecuredActionAndAutomaticRetry(['read:exam'], async () => {
     // 1. Initialize use case.
     const findExamsUseCase = makeFindExamsUseCase();
 
@@ -29,7 +29,7 @@ export async function getAllExams() {
 }
 
 export async function getExam(id: string) {
-  return withRefresh(['read:exam'], async () => {
+  return withSecuredActionAndAutomaticRetry(['read:exam'], async () => {
     // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
 
@@ -49,7 +49,7 @@ export async function getExam(id: string) {
 }
 
 export async function createExam(input: CreateExamInput) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['create:exam'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form input.
@@ -83,7 +83,7 @@ export async function createExam(input: CreateExamInput) {
 }
 
 export async function updateExam(id: string, input: UpdateExamInput) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['update:exam'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form/ID input.
@@ -125,7 +125,7 @@ export async function updateExam(id: string, input: UpdateExamInput) {
 }
 
 export async function deleteExam(id: string) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['delete:exam'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate ID input.

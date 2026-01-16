@@ -16,10 +16,10 @@ import {
   makeRegisterObservationUseCase,
   makeUpdateObservationUseCase,
 } from '@/core/infrastructure/factories/observation.factory';
-import { withRefresh } from '@/lib/actions.utils';
+import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
 export async function getAllObservations() {
-  return withRefresh(['read:observation'], async () => {
+  return withSecuredActionAndAutomaticRetry(['read:observation'], async () => {
     // 1. Initialize use case.
     const findObservationsUseCase = makeFindObservationsUseCase();
 
@@ -29,7 +29,7 @@ export async function getAllObservations() {
 }
 
 export async function getObservation(id: string) {
-  return withRefresh(['read:observation'], async () => {
+  return withSecuredActionAndAutomaticRetry(['read:observation'], async () => {
     // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
 
@@ -51,7 +51,7 @@ export async function getObservation(id: string) {
 }
 
 export async function createObservation(input: CreateObservationInput) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['create:observation'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form input.
@@ -88,7 +88,7 @@ export async function updateObservation(
   id: string,
   input: UpdateObservationInput
 ) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['update:observation'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form/ID input.
@@ -130,7 +130,7 @@ export async function updateObservation(
 }
 
 export async function deleteObservation(id: string) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['delete:observation'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate ID input.

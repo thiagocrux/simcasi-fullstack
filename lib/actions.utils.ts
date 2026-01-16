@@ -80,14 +80,23 @@ export async function authenticateAction(): Promise<AuthenticationContext> {
 }
 
 /**
- * Wrapper for Server Actions that require Authentication and Authorization.
- * Standardizes the flow, handles automatic token refresh, and provides audit metadata.
+ * Higher-order function to execute Server Actions with built-in security and resilience.
+ *
+ * Resilience Strategy (Automatic Retry):
+ * If the execution fails due to an expired session (InvalidTokenError), this wrapper
+ * attempts to silently refresh the session using the refresh token. If successful,
+ * it retries the action exactly once transparently for the user.
+ *
+ * Security Workflow:
+ * 1. Authenticates the user session via cookies/headers.
+ * 2. Authorizes access based on the required permissions.
+ * 3. Injects execution context (userId, ipAddress, userAgent) into the handler.
  *
  * @param permissions - List of required permissions.
  * @param actionFn - The business logic to execute.
  * @returns The result of the action or a standardized error response.
  */
-export async function withRefresh<T>(
+export async function withSecuredActionAndAutomaticRetry<T>(
   permissions: string[],
   actionFn: (
     context: AuthenticationContext & {

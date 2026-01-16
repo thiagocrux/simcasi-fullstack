@@ -16,10 +16,10 @@ import {
   makeRegisterPatientUseCase,
   makeUpdatePatientUseCase,
 } from '@/core/infrastructure/factories/patient.factory';
-import { withRefresh } from '@/lib/actions.utils';
+import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
 export async function getAllPatients() {
-  return withRefresh(['read:patient'], async () => {
+  return withSecuredActionAndAutomaticRetry(['read:patient'], async () => {
     // 1. Initialize use case.
     const findPatientsUseCase = makeFindPatientsUseCase();
 
@@ -29,7 +29,7 @@ export async function getAllPatients() {
 }
 
 export async function getPatient(id: string) {
-  return withRefresh(['read:patient'], async () => {
+  return withSecuredActionAndAutomaticRetry(['read:patient'], async () => {
     // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
 
@@ -49,7 +49,7 @@ export async function getPatient(id: string) {
 }
 
 export async function createPatient(input: CreatePatientInput) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['create:patient'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form input.
@@ -82,7 +82,7 @@ export async function createPatient(input: CreatePatientInput) {
 }
 
 export async function updatePatient(id: string, input: UpdatePatientInput) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['update:patient'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form/ID input.
@@ -125,7 +125,7 @@ export async function updatePatient(id: string, input: UpdatePatientInput) {
 }
 
 export async function deletePatient(id: string) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['delete:patient'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate ID input.

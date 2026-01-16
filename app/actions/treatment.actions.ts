@@ -16,10 +16,10 @@ import {
   makeRegisterTreatmentUseCase,
   makeUpdateTreatmentUseCase,
 } from '@/core/infrastructure/factories/treatment.factory';
-import { withRefresh } from '@/lib/actions.utils';
+import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
 export async function getAllTreatments() {
-  return withRefresh(['read:treatment'], async () => {
+  return withSecuredActionAndAutomaticRetry(['read:treatment'], async () => {
     // 1. Initialize use case.
     const findTreatmentsUseCase = makeFindTreatmentsUseCase();
 
@@ -29,7 +29,7 @@ export async function getAllTreatments() {
 }
 
 export async function getTreatment(id: string) {
-  return withRefresh(['read:treatment'], async () => {
+  return withSecuredActionAndAutomaticRetry(['read:treatment'], async () => {
     // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
 
@@ -51,7 +51,7 @@ export async function getTreatment(id: string) {
 }
 
 export async function createTreatment(input: CreateTreatmentInput) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['create:treatment'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form input.
@@ -85,7 +85,7 @@ export async function createTreatment(input: CreateTreatmentInput) {
 }
 
 export async function updateTreatment(id: string, input: UpdateTreatmentInput) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['update:treatment'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate form/ID input.
@@ -127,7 +127,7 @@ export async function updateTreatment(id: string, input: UpdateTreatmentInput) {
 }
 
 export async function deleteTreatment(id: string) {
-  return withRefresh(
+  return withSecuredActionAndAutomaticRetry(
     ['delete:treatment'],
     async ({ userId, ipAddress, userAgent }) => {
       // 1. Validate ID input.
