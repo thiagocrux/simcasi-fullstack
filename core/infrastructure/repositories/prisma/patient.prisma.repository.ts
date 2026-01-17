@@ -111,37 +111,13 @@ export class PrismaPatientRepository implements PatientRepository {
   }
 
   /**
-   * Creates a new patient record or restores an existing soft-deleted record with same CPF/SUS.
-   * @param data The patient data to create or update.
-   * @returns The newly created or restored patient.
+   * Creates a new patient record in the database.
+   * @param data The patient data to create.
+   * @returns The newly created patient.
    */
   async create(
     data: Omit<Patient, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
   ): Promise<Patient> {
-    // Check if a record with the same unique fields already exists (even if deleted)
-    const existing = await prisma.patient.findFirst({
-      where: {
-        OR: [{ cpf: data.cpf }, { susCardNumber: data.susCardNumber }],
-      },
-    });
-
-    if (existing) {
-      if (existing.deletedAt) {
-        // If it exists but is deleted, we restore it with the new data
-        const restored = await prisma.patient.update({
-          where: { id: existing.id },
-          data: {
-            ...data,
-            deletedAt: null,
-            updatedAt: new Date(),
-          },
-        });
-        return restored as Patient;
-      }
-      // If it exists and is NOT deleted, the database will throw a unique constraint error anyway,
-      // but we could also throw a domain-specific error here if preferred.
-    }
-
     const patient = await prisma.patient.create({
       data,
     });

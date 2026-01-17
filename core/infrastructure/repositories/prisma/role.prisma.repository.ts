@@ -77,9 +77,10 @@ export class PrismaRoleRepository implements RoleRepository {
   }
 
   /**
-   * Creates a new role or restores a soft-deleted one with the same code.
-   * @param data The role data.
-   * @returns The newly created or restored role.
+   * Creates a new role record in the database.
+   * This method performs a simple insert and will fail if a role with the same code already exists.
+   * @param data The role data including optional permission IDs.
+   * @returns The newly created role entity.
    */
   async create(
     data: Omit<Role, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> & {
@@ -87,30 +88,6 @@ export class PrismaRoleRepository implements RoleRepository {
     }
   ): Promise<Role> {
     const { permissionIds, ...roleData } = data;
-    const existing = await prisma.role.findFirst({
-      where: { code: roleData.code },
-    });
-
-    if (existing && existing.deletedAt) {
-      return (await prisma.role.update({
-        where: { id: existing.id },
-        data: {
-          ...roleData,
-          deletedAt: null,
-          updatedAt: new Date(),
-          /**
-           * Synchronize many-to-many relationships using Prisma's nested writes.
-           * Using deleteMany + create ensures the associations match the provided array exactly.
-           */
-          permission: permissionIds
-            ? {
-                deleteMany: {},
-                create: permissionIds.map((id) => ({ permissionId: id })),
-              }
-            : undefined,
-        },
-      })) as Role;
-    }
 
     const role = await prisma.role.create({
       data: {

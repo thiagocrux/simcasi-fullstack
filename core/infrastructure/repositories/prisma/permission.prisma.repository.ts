@@ -83,9 +83,10 @@ export class PrismaPermissionRepository implements PermissionRepository {
   }
 
   /**
-   * Creates a new permission or restores a soft-deleted one with the same code.
-   * @param data The permission data.
-   * @returns The newly created or restored permission.
+   * Creates a new permission record in the database.
+   * This is a simple insert operation; it does not handle restoration of deleted records.
+   * @param data The permission data including optional role IDs.
+   * @returns The newly created permission entity.
    */
   async create(
     data: Omit<Permission, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> & {
@@ -93,30 +94,6 @@ export class PrismaPermissionRepository implements PermissionRepository {
     }
   ): Promise<Permission> {
     const { roleIds, ...permissionData } = data;
-    const existing = await prisma.permission.findFirst({
-      where: { code: permissionData.code },
-    });
-
-    if (existing && existing.deletedAt) {
-      return (await prisma.permission.update({
-        where: { id: existing.id },
-        data: {
-          ...permissionData,
-          deletedAt: null,
-          updatedAt: new Date(),
-          /**
-           * Synchronize many-to-many relationships using Prisma's nested writes.
-           * Using deleteMany + create ensures the associations match the provided array exactly.
-           */
-          roles: roleIds
-            ? {
-                deleteMany: {},
-                create: roleIds.map((id) => ({ roleId: id })),
-              }
-            : undefined,
-        },
-      })) as Permission;
-    }
 
     const permission = await prisma.permission.create({
       data: {

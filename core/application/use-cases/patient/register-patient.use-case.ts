@@ -12,10 +12,10 @@ import { UseCase } from '../use-case.interface';
  * Use case to register a new patient.
  *
  * Rules:
- * 1. Check if an active patient with the same CPF exists.
- * 2. Check if an active patient with the same SUS card exists.
- * 3. If a deleted patient exists with the same unique data, the repository will handle restoration.
- * 4. Registers an audit log for the creation.
+ * 1. Check if an active patient with the same CPF or SUS card exists (Conflict).
+ * 2. If a soft-deleted record exists with the same CPF or SUS card, restore it and update with new data.
+ * 3. Otherwise, create a new patient record.
+ * 4. Log the appropriate audit action (CREATE or RESTORE).
  */
 export class RegisterPatientUseCase implements UseCase<
   RegisterPatientInput,
@@ -29,7 +29,7 @@ export class RegisterPatientUseCase implements UseCase<
   async execute(input: RegisterPatientInput): Promise<RegisterPatientOutput> {
     const { userId, ipAddress, userAgent, ...patientData } = input;
 
-    // 1. Validate input.
+    // 1. Validate input data using Zod schema.
     const validation = patientSchema.safeParse(patientData);
     if (!validation.success) {
       throw new ValidationError(
@@ -38,34 +38,64 @@ export class RegisterPatientUseCase implements UseCase<
       );
     }
 
-    // 2. Validate if an active patient already has this CPF.
+    // 2. Search for existing patient by CPF (including soft-deleted).
     const existingByCpf = await this.patientRepository.findByCpf(
-      patientData.cpf
+      patientData.cpf,
+      true
     );
-    if (existingByCpf) {
+
+    if (existingByCpf && !existingByCpf.deletedAt) {
       throw new ConflictError(
         `Patient with CPF ${patientData.cpf} is already registered and active.`
       );
     }
 
-    // 3. Validate if an active patient already has this SUS card number.
+    // 3. Search for existing patient by SUS Card Number (including soft-deleted).
     const existingBySus = await this.patientRepository.findBySusCardNumber(
-      patientData.susCardNumber
+      patientData.susCardNumber,
+      true
     );
-    if (existingBySus) {
+
+    if (existingBySus && !existingBySus.deletedAt) {
       throw new ConflictError(
         `Patient with SUS Card Number ${patientData.susCardNumber} is already registered and active.`
       );
     }
 
-    // 4. Delegate creation to repository (which handles restoration logic).
+    // 4. Determine if we should restore an existing record or create a new one.
+    // We prioritize the record found by CPF if both exist and are deleted (unlikely but possible).
+    const deletedPatient = existingByCpf || existingBySus;
+
+    if (deletedPatient) {
+      // Perform restoration by updating the record and clearing deletedAt.
+      const patient = await this.patientRepository.update(deletedPatient.id, {
+        ...validation.data,
+        birthDate: new Date(validation.data.birthDate),
+        deletedAt: null,
+      });
+
+      // 5. Audit the RESTORE action.
+      await this.auditLogRepository.create({
+        userId: userId || 'SYSTEM',
+        action: 'RESTORE',
+        entityName: 'PATIENT',
+        entityId: patient.id,
+        newValues: patientData,
+        ipAddress,
+        userAgent,
+      });
+
+      return patient;
+    }
+
+    // 6. Create a new patient record if no existing record (active or deleted) was found.
     const patient = await this.patientRepository.create({
       ...validation.data,
       birthDate: new Date(validation.data.birthDate),
       createdBy: userId || 'SYSTEM',
     });
 
-    // 5. Audit the creation.
+    // 7. Audit the CREATE action.
     await this.auditLogRepository.create({
       userId: userId || 'SYSTEM',
       action: 'CREATE',
