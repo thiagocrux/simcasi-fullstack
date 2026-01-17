@@ -4,10 +4,10 @@ import { makeRestoreRoleUseCase } from '@/core/infrastructure/factories/role.fac
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * POST - /api/roles/[id]/restore
+ * PATCH - /api/roles/[id]/restore
  * Restore a soft-deleted role
  */
-export const POST = withAuthentication(
+export const PATCH = withAuthentication(
   ['update:role'],
   async (request, { params, auth }) => {
     const { id } = await (params as Promise<{ id: string }>);

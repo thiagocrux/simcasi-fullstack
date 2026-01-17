@@ -4,10 +4,10 @@ import { makeRestorePatientUseCase } from '@/core/infrastructure/factories/patie
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * POST - /api/patients/[id]/restore
+ * PATCH - /api/patients/[id]/restore
  * Restore a soft-deleted patient
  */
-export const POST = withAuthentication(
+export const PATCH = withAuthentication(
   ['update:patient'],
   async (request, { params, auth }) => {
     const { id } = await (params as Promise<{ id: string }>);

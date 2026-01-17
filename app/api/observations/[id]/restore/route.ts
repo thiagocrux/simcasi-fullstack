@@ -4,10 +4,10 @@ import { makeRestoreObservationUseCase } from '@/core/infrastructure/factories/o
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * POST - /api/observations/[id]/restore
+ * PATCH - /api/observations/[id]/restore
  * Restore a soft-deleted observation
  */
-export const POST = withAuthentication(
+export const PATCH = withAuthentication(
   ['update:observation'],
   async (request, { params, auth }) => {
     const { id } = await (params as Promise<{ id: string }>);

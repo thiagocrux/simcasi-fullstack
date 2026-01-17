@@ -4,10 +4,10 @@ import { makeRestoreUserUseCase } from '@/core/infrastructure/factories/user.fac
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * POST - /api/users/[id]/restore
+ * PATCH - /api/users/[id]/restore
  * Restore a soft-deleted user
  */
-export const POST = withAuthentication(
+export const PATCH = withAuthentication(
   ['update:user'],
   async (request, { params, auth }) => {
     const { id } = await (params as Promise<{ id: string }>);

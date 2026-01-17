@@ -4,10 +4,10 @@ import { makeRestoreTreatmentUseCase } from '@/core/infrastructure/factories/tre
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * POST - /api/treatments/[id]/restore
+ * PATCH - /api/treatments/[id]/restore
  * Restore a soft-deleted treatment
  */
-export const POST = withAuthentication(
+export const PATCH = withAuthentication(
   ['update:treatment'],
   async (request, { params, auth }) => {
     const { id } = await (params as Promise<{ id: string }>);

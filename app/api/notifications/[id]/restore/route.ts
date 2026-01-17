@@ -1,25 +1,25 @@
 import { NextResponse } from 'next/server';
 
-import { makeRestorePermissionUseCase } from '@/core/infrastructure/factories/permission.factory';
+import { makeRestoreNotificationUseCase } from '@/core/infrastructure/factories/notification.factory';
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * PATCH - /api/permissions/[id]/restore
- * Restore a soft-deleted permission
+ * PATCH - /api/notifications/[id]/restore
+ * Restore a soft-deleted notification
  */
 export const PATCH = withAuthentication(
-  ['update:permission'],
+  ['update:notification'],
   async (request, { params, auth }) => {
     const { id } = await (params as Promise<{ id: string }>);
 
-    const useCase = makeRestorePermissionUseCase();
-    await useCase.execute({
+    const restoreUseCase = makeRestoreNotificationUseCase();
+    const restored = await restoreUseCase.execute({
       id,
       userId: auth.userId,
       ipAddress: auth.ipAddress,
       userAgent: auth.userAgent,
     });
 
-    return new NextResponse(null, { status: 204 });
+    return NextResponse.json(restored);
   }
 );

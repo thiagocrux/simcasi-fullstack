@@ -4,10 +4,10 @@ import { makeRestoreExamUseCase } from '@/core/infrastructure/factories/exam.fac
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * POST - /api/exams/[id]/restore
+ * PATCH - /api/exams/[id]/restore
  * Restore a soft-deleted exam
  */
-export const POST = withAuthentication(
+export const PATCH = withAuthentication(
   ['update:exam'],
   async (request, { params, auth }) => {
     const { id } = await (params as Promise<{ id: string }>);
