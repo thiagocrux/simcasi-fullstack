@@ -29,7 +29,10 @@ export class RegisterRoleUseCase implements UseCase<
     }
 
     // 2. Delegate to the repository (handles restoration if the code was soft-deleted).
-    const role = await this.roleRepository.create(roleData);
+    const role = await this.roleRepository.create({
+      code: roleData.code,
+      permissionIds: roleData.permissionIds,
+    });
 
     // 3. Create audit log.
     await this.auditLogRepository.create({

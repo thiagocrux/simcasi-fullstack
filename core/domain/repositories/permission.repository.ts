@@ -33,7 +33,9 @@ export interface PermissionRepository {
    * Creates a new permission record.
    */
   create(
-    data: Omit<Permission, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
+    data: Omit<Permission, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> & {
+      roleIds?: string[];
+    }
   ): Promise<Permission>;
 
   /**
@@ -41,7 +43,9 @@ export interface PermissionRepository {
    */
   update(
     id: string,
-    data: Partial<Omit<Permission, 'id' | 'createdAt'>>
+    data: Partial<Omit<Permission, 'id' | 'createdAt'>> & {
+      roleIds?: string[];
+    }
   ): Promise<Permission>;
 
   /**

@@ -30,7 +30,9 @@ export interface RoleRepository {
    * Creates a new role record.
    */
   create(
-    data: Omit<Role, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
+    data: Omit<Role, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> & {
+      permissionIds?: string[];
+    }
   ): Promise<Role>;
 
   /**
@@ -38,7 +40,9 @@ export interface RoleRepository {
    */
   update(
     id: string,
-    data: Partial<Omit<Role, 'id' | 'createdAt'>>
+    data: Partial<Omit<Role, 'id' | 'createdAt'>> & {
+      permissionIds?: string[];
+    }
   ): Promise<Role>;
 
   /**

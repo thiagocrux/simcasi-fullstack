@@ -82,25 +82,45 @@ export class PrismaRoleRepository implements RoleRepository {
    * @returns The newly created or restored role.
    */
   async create(
-    data: Omit<Role, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
+    data: Omit<Role, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> & {
+      permissionIds?: string[];
+    }
   ): Promise<Role> {
+    const { permissionIds, ...roleData } = data;
     const existing = await prisma.role.findFirst({
-      where: { code: data.code },
+      where: { code: roleData.code },
     });
 
     if (existing && existing.deletedAt) {
       return (await prisma.role.update({
         where: { id: existing.id },
         data: {
-          ...data,
+          ...roleData,
           deletedAt: null,
           updatedAt: new Date(),
+          /**
+           * Synchronize many-to-many relationships using Prisma's nested writes.
+           * Using deleteMany + create ensures the associations match the provided array exactly.
+           */
+          permission: permissionIds
+            ? {
+                deleteMany: {},
+                create: permissionIds.map((id) => ({ permissionId: id })),
+              }
+            : undefined,
         },
       })) as Role;
     }
 
     const role = await prisma.role.create({
-      data,
+      data: {
+        ...roleData,
+        permission: permissionIds
+          ? {
+              create: permissionIds.map((id) => ({ permissionId: id })),
+            }
+          : undefined,
+      },
     });
 
     return role as Role;
@@ -114,13 +134,26 @@ export class PrismaRoleRepository implements RoleRepository {
    */
   async update(
     id: string,
-    data: Partial<Omit<Role, 'id' | 'createdAt'>>
+    data: Partial<Omit<Role, 'id' | 'createdAt'>> & {
+      permissionIds?: string[];
+    }
   ): Promise<Role> {
+    const { permissionIds, ...roleData } = data;
     const role = await prisma.role.update({
       where: { id },
       data: {
-        ...data,
+        ...roleData,
         updatedAt: new Date(),
+        /**
+         * Synchronize many-to-many relationships using Prisma's nested writes.
+         * Using deleteMany + create ensures the associations match the provided array exactly.
+         */
+        permission: permissionIds
+          ? {
+              deleteMany: {},
+              create: permissionIds.map((id) => ({ permissionId: id })),
+            }
+          : undefined,
       },
     });
     return role as Role;
