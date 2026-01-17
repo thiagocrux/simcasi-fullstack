@@ -14,23 +14,40 @@ import {
   makeFindPatientsUseCase,
   makeGetPatientByIdUseCase,
   makeRegisterPatientUseCase,
+  makeRestorePatientUseCase,
   makeUpdatePatientUseCase,
 } from '@/core/infrastructure/factories/patient.factory';
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
-export async function getAllPatients() {
+/**
+ * Fetch a paginated list of patients with optional search filtering.
+ */
+export async function getAllPatients(params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  includeDeleted?: boolean;
+}) {
   return withSecuredActionAndAutomaticRetry(['read:patient'], async () => {
-    // 1. Initialize use case.
-    const findPatientsUseCase = makeFindPatientsUseCase();
+    const useCase = makeFindPatientsUseCase();
+    const skip =
+      params?.page && params?.limit ? (params.page - 1) * params.limit : 0;
+    const take = params?.limit || 20;
 
-    // 2. Execute use case.
-    return await findPatientsUseCase.execute({});
+    return await useCase.execute({
+      skip,
+      take,
+      search: params?.search,
+      includeDeleted: params?.includeDeleted,
+    });
   });
 }
 
+/**
+ * Retrieve detailed information for a single patient by their unique ID.
+ */
 export async function getPatient(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:patient'], async () => {
-    // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
 
     if (!parsed.success) {
@@ -40,19 +57,19 @@ export async function getPatient(id: string) {
       );
     }
 
-    // 2. Initialize use case.
-    const getPatientByIdUseCase = makeGetPatientByIdUseCase();
-
-    // 3. Execute use case.
-    return await getPatientByIdUseCase.execute({ id: parsed.data });
+    const useCase = makeGetPatientByIdUseCase();
+    return await useCase.execute({ id: parsed.data });
   });
 }
 
+/**
+ * Register a new patient in the system.
+ * Handles automatic restoration if a record with the same CPF or SUS card was previously soft-deleted.
+ */
 export async function createPatient(input: CreatePatientInput) {
   return withSecuredActionAndAutomaticRetry(
     ['create:patient'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form input.
       const parsed = patientSchema.safeParse(input);
 
       if (!parsed.success) {
@@ -62,30 +79,27 @@ export async function createPatient(input: CreatePatientInput) {
         );
       }
 
-      // 2. Initialize use case.
-      const registerPatientUseCase = makeRegisterPatientUseCase();
-
-      // 3. Execute use case with audit data.
-      const patient = await registerPatientUseCase.execute({
+      const useCase = makeRegisterPatientUseCase();
+      const patient = await useCase.execute({
         ...parsed.data,
         userId,
         ipAddress,
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/patients');
-
       return patient;
     }
   );
 }
 
+/**
+ * Update an existing patient's demographic or contact information.
+ */
 export async function updatePatient(id: string, input: UpdatePatientInput) {
   return withSecuredActionAndAutomaticRetry(
     ['update:patient'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form/ID input.
       const parsedId = IdSchema.safeParse(id);
       const parsedData = patientSchema.partial().safeParse(input);
 
@@ -103,32 +117,28 @@ export async function updatePatient(id: string, input: UpdatePatientInput) {
         );
       }
 
-      // 2. Initialize use case.
-      const updatePatientUseCase = makeUpdatePatientUseCase();
-
-      // 3. Execute use case with audit data.
-      const patient = await updatePatientUseCase.execute({
-        ...parsedData.data,
+      const useCase = makeUpdatePatientUseCase();
+      const patient = await useCase.execute({
         id: parsedId.data,
+        ...parsedData.data,
         userId,
         ipAddress,
         userAgent,
       });
 
-      // 4. Revalidate cache.
-      revalidatePath(`/patients/${parsedId.data}`);
       revalidatePath('/patients');
-
       return patient;
     }
   );
 }
 
+/**
+ * Delete a patient and their related health records (soft-delete).
+ */
 export async function deletePatient(id: string) {
   return withSecuredActionAndAutomaticRetry(
     ['delete:patient'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate ID input.
       const parsed = IdSchema.safeParse(id);
 
       if (!parsed.success) {
@@ -138,21 +148,44 @@ export async function deletePatient(id: string) {
         );
       }
 
-      // 2. Initialize use case.
-      const deletePatientUseCase = makeDeletePatientUseCase();
-
-      // 3. Execute use case with audit data.
-      await deletePatientUseCase.execute({
+      const useCase = makeDeletePatientUseCase();
+      await useCase.execute({
         id: parsed.data,
         userId,
         ipAddress,
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/patients');
+    }
+  );
+}
 
-      return { success: true };
+/**
+ * Restore a soft-deleted patient and their previously associated health records.
+ */
+export async function restorePatient(id: string) {
+  return withSecuredActionAndAutomaticRetry(
+    ['update:patient'],
+    async ({ userId, ipAddress, userAgent }) => {
+      const parsed = IdSchema.safeParse(id);
+
+      if (!parsed.success) {
+        throw new ValidationError(
+          'ID inválido',
+          parsed.error.flatten().fieldErrors
+        );
+      }
+
+      const useCase = makeRestorePatientUseCase();
+      await useCase.execute({
+        id: parsed.data,
+        userId,
+        ipAddress,
+        userAgent,
+      });
+
+      revalidatePath('/patients');
     }
   );
 }
