@@ -5,6 +5,85 @@
     "description": "# Syphilis Cases Monitoring System (SIMCASI)\n\nThis API provides resources for tracking, monitoring, and governance of syphilis cases in a hospital environment.\n\n### Audit and Governance\nAll write operations (`POST`, `PATCH`, `DELETE`) require audit metadata:\n* `ipAddress`: Client's IP address.\n* `userAgent`: Device/browser identifier.\n",
     "version": "1.0.0"
   },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Securing system access through identity verification and token management."
+    },
+    {
+      "name": "Users",
+      "description": "Provisioning and managing user identities and their baseline attributes."
+    },
+    {
+      "name": "Roles",
+      "description": "Configuring logical groups of permissions to define organizational responsibilities."
+    },
+    {
+      "name": "Permissions",
+      "description": "Mapping technical actions to system capabilities for fine-grained authorization."
+    },
+    {
+      "name": "Patients",
+      "description": "Managing the lifecycle of patient clinical identities and demographic data."
+    },
+    {
+      "name": "Exams",
+      "description": "Tracking laboratory diagnostics and titration results to monitor infection status."
+    },
+    {
+      "name": "Treatments",
+      "description": "Managing pharmacological histories and dose administration for active cases."
+    },
+    {
+      "name": "Notifications",
+      "description": "Managing statutory health reporting and epidemiological surveillance records."
+    },
+    {
+      "name": "Observations",
+      "description": "Documenting qualitative clinical progress and provider insights."
+    },
+    {
+      "name": "Audit Logs",
+      "description": "Maintaining untamperable records of system activities for accountability."
+    },
+    {
+      "name": "Sessions",
+      "description": "Overseeing active authenticated instances and enforcing connection policies."
+    },
+    {
+      "name": "System",
+      "description": "Monitoring service availability and infrastructure health."
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "Identity & Access Management",
+      "tags": [
+        "Authentication",
+        "Users",
+        "Roles",
+        "Permissions",
+        "Sessions"
+      ]
+    },
+    {
+      "name": "Clinical Monitoring",
+      "tags": [
+        "Patients",
+        "Exams",
+        "Treatments",
+        "Notifications",
+        "Observations"
+      ]
+    },
+    {
+      "name": "Governance & Operations",
+      "tags": [
+        "Audit Logs",
+        "System"
+      ]
+    }
+  ],
   "servers": [
     {
       "url": "/api",
@@ -17,7 +96,7 @@
         "summary": "Login",
         "description": "Handles user authentication through email and password, initiates a secure stateful session, and provides both access and refresh JWT tokens together with essential user information.",
         "tags": [
-          "Auth"
+          "Authentication"
         ],
         "requestBody": {
           "required": true,
@@ -73,7 +152,7 @@
         },
         "responses": {
           "200": {
-            "description": "Authentication successful",
+            "description": "Authentication successful (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -118,7 +197,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -168,7 +247,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -225,7 +304,7 @@
         "summary": "Refresh token",
         "description": "Performs secure token rotation by validating the current refresh token and issuing a new access/refresh pair, thereby extending the user’s session lifecycle.",
         "tags": [
-          "Auth"
+          "Authentication"
         ],
         "requestBody": {
           "required": true,
@@ -272,7 +351,7 @@
         },
         "responses": {
           "200": {
-            "description": "Token refreshed",
+            "description": "Token refreshed (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -317,7 +396,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -374,7 +453,7 @@
         "summary": "Logout",
         "description": "Securely terminates the active session and blacklists the associated refresh token, preventing any subsequent reuse.",
         "tags": [
-          "Auth"
+          "Authentication"
         ],
         "security": [
           {
@@ -422,10 +501,10 @@
         },
         "responses": {
           "204": {
-            "description": "Successfully logged out"
+            "description": "Successfully logged out (No Content)."
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -545,7 +624,7 @@
         ],
         "responses": {
           "200": {
-            "description": "A list of users",
+            "description": "A list of users (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -618,7 +697,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -668,7 +747,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -805,7 +884,7 @@
         },
         "responses": {
           "201": {
-            "description": "User created",
+            "description": "User created (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -865,7 +944,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -915,7 +994,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -965,7 +1044,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1015,7 +1094,7 @@
             }
           },
           "409": {
-            "description": "Business rule conflict (e.g., duplicate record).",
+            "description": "Business rule conflict or duplicate record (ConflictError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1065,7 +1144,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1153,7 +1232,7 @@
         ],
         "responses": {
           "200": {
-            "description": "User details",
+            "description": "User details (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1213,7 +1292,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1263,7 +1342,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1313,7 +1392,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1449,7 +1528,7 @@
         },
         "responses": {
           "200": {
-            "description": "User updated",
+            "description": "User updated (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1509,7 +1588,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1559,7 +1638,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1609,7 +1688,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1659,7 +1738,7 @@
             }
           },
           "409": {
-            "description": "Business rule conflict (e.g., duplicate record).",
+            "description": "Business rule conflict or duplicate record (ConflictError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1709,7 +1788,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1822,10 +1901,10 @@
         },
         "responses": {
           "204": {
-            "description": "User deleted"
+            "description": "User deleted (No Content)."
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1875,7 +1954,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1925,7 +2004,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2040,7 +2119,7 @@
         },
         "responses": {
           "200": {
-            "description": "User restored",
+            "description": "User restored (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2100,7 +2179,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2150,7 +2229,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2200,7 +2279,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2320,7 +2399,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of patients",
+            "description": "List of patients (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2496,7 +2575,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2546,7 +2625,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2777,7 +2856,7 @@
         },
         "responses": {
           "201": {
-            "description": "Patient registered",
+            "description": "Patient registered (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2940,7 +3019,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2990,7 +3069,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3040,7 +3119,7 @@
             }
           },
           "409": {
-            "description": "Business rule conflict (e.g., duplicate record).",
+            "description": "Business rule conflict or duplicate record (ConflictError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3090,7 +3169,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3178,7 +3257,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Patient details",
+            "description": "Patient details (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3341,7 +3420,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3391,7 +3470,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3441,7 +3520,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3643,7 +3722,7 @@
         },
         "responses": {
           "200": {
-            "description": "Patient updated",
+            "description": "Patient updated (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3806,7 +3885,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3856,7 +3935,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3906,7 +3985,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3956,7 +4035,7 @@
             }
           },
           "409": {
-            "description": "Business rule conflict (e.g., duplicate record).",
+            "description": "Business rule conflict or duplicate record (ConflictError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4006,7 +4085,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4119,10 +4198,10 @@
         },
         "responses": {
           "204": {
-            "description": "Patient deleted"
+            "description": "Patient deleted (No Content)."
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4172,7 +4251,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4222,7 +4301,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4337,7 +4416,7 @@
         },
         "responses": {
           "200": {
-            "description": "Patient restored",
+            "description": "Patient restored (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4500,7 +4579,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4550,7 +4629,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4600,7 +4679,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4720,7 +4799,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of roles",
+            "description": "List of roles (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4781,7 +4860,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4831,7 +4910,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4958,7 +5037,7 @@
         },
         "responses": {
           "201": {
-            "description": "Role created",
+            "description": "Role created (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5006,7 +5085,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5056,7 +5135,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5106,7 +5185,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5156,7 +5235,7 @@
             }
           },
           "409": {
-            "description": "Business rule conflict (e.g., duplicate record).",
+            "description": "Business rule conflict or duplicate record (ConflictError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5206,7 +5285,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5294,7 +5373,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Role details",
+            "description": "Role details (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5342,7 +5421,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5392,7 +5471,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5442,7 +5521,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5574,7 +5653,7 @@
         },
         "responses": {
           "200": {
-            "description": "Role updated",
+            "description": "Role updated (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5622,7 +5701,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5672,7 +5751,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5722,7 +5801,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5772,7 +5851,7 @@
             }
           },
           "409": {
-            "description": "Business rule conflict (e.g., duplicate record).",
+            "description": "Business rule conflict or duplicate record (ConflictError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5822,7 +5901,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5935,10 +6014,10 @@
         },
         "responses": {
           "204": {
-            "description": "Role deleted"
+            "description": "Role deleted (No Content)."
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5988,7 +6067,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6038,7 +6117,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6152,7 +6231,7 @@
         },
         "responses": {
           "200": {
-            "description": "Role restored",
+            "description": "Role restored (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6200,7 +6279,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6250,7 +6329,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6300,7 +6379,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6420,7 +6499,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of permissions",
+            "description": "List of permissions (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6481,7 +6560,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6531,7 +6610,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6658,7 +6737,7 @@
         },
         "responses": {
           "201": {
-            "description": "Permission created",
+            "description": "Permission created (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6706,7 +6785,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6756,7 +6835,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6806,7 +6885,7 @@
             }
           },
           "409": {
-            "description": "Business rule conflict (e.g., duplicate record).",
+            "description": "Business rule conflict or duplicate record (ConflictError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6856,7 +6935,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6944,7 +7023,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Permission details",
+            "description": "Permission details (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6992,7 +7071,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7042,7 +7121,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7092,7 +7171,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7224,7 +7303,7 @@
         },
         "responses": {
           "200": {
-            "description": "Permission updated",
+            "description": "Permission updated (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7272,7 +7351,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7322,7 +7401,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7372,7 +7451,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7422,7 +7501,7 @@
             }
           },
           "409": {
-            "description": "Business rule conflict (e.g., duplicate record).",
+            "description": "Business rule conflict or duplicate record (ConflictError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7472,7 +7551,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7585,10 +7664,10 @@
         },
         "responses": {
           "204": {
-            "description": "Permission deleted"
+            "description": "Permission deleted (No Content)."
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7638,7 +7717,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7688,7 +7767,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7803,7 +7882,7 @@
         },
         "responses": {
           "200": {
-            "description": "Permission restored",
+            "description": "Permission restored (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7851,7 +7930,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7901,7 +7980,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7951,7 +8030,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8081,7 +8160,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of exams",
+            "description": "List of exams (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8196,7 +8275,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8246,7 +8325,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8408,7 +8487,7 @@
         },
         "responses": {
           "201": {
-            "description": "Exam registered",
+            "description": "Exam registered (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8510,7 +8589,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8560,7 +8639,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8610,7 +8689,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8660,7 +8739,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8748,7 +8827,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Exam details",
+            "description": "Exam details (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8850,7 +8929,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8900,7 +8979,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8950,7 +9029,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9107,7 +9186,7 @@
         },
         "responses": {
           "200": {
-            "description": "Exam updated",
+            "description": "Exam updated (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9209,7 +9288,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9259,7 +9338,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9309,7 +9388,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9359,7 +9438,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9472,10 +9551,10 @@
         },
         "responses": {
           "204": {
-            "description": "Exam deleted"
+            "description": "Exam deleted (No Content)."
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9525,7 +9604,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9575,7 +9654,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9690,7 +9769,7 @@
         },
         "responses": {
           "200": {
-            "description": "Exam restored",
+            "description": "Exam restored (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9792,7 +9871,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9842,7 +9921,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9892,7 +9971,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10022,7 +10101,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of treatments",
+            "description": "List of treatments (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10117,7 +10196,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10167,7 +10246,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10311,7 +10390,7 @@
         },
         "responses": {
           "201": {
-            "description": "Treatment registered",
+            "description": "Treatment registered (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10393,7 +10472,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10443,7 +10522,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10493,7 +10572,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10543,7 +10622,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10631,7 +10710,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Treatment details",
+            "description": "Treatment details (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10713,7 +10792,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10763,7 +10842,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10813,7 +10892,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10956,7 +11035,7 @@
         },
         "responses": {
           "200": {
-            "description": "Treatment updated",
+            "description": "Treatment updated (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11038,7 +11117,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11088,7 +11167,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11138,7 +11217,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11188,7 +11267,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11301,10 +11380,10 @@
         },
         "responses": {
           "204": {
-            "description": "Treatment deleted"
+            "description": "Treatment deleted (No Content)."
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11354,7 +11433,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11404,7 +11483,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11519,7 +11598,7 @@
         },
         "responses": {
           "200": {
-            "description": "Treatment restored",
+            "description": "Treatment restored (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11601,7 +11680,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11651,7 +11730,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11701,7 +11780,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11831,7 +11910,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of notifications",
+            "description": "List of notifications (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11907,7 +11986,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11957,7 +12036,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12084,7 +12163,7 @@
         },
         "responses": {
           "201": {
-            "description": "Notification registered",
+            "description": "Notification registered (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12147,7 +12226,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12197,7 +12276,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12247,7 +12326,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12297,7 +12376,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12385,7 +12464,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Notification details",
+            "description": "Notification details (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12448,7 +12527,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12498,7 +12577,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12548,7 +12627,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12677,7 +12756,7 @@
         },
         "responses": {
           "200": {
-            "description": "Notification updated",
+            "description": "Notification updated (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12740,7 +12819,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12790,7 +12869,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12840,7 +12919,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12890,7 +12969,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13003,10 +13082,10 @@
         },
         "responses": {
           "204": {
-            "description": "Notification deleted"
+            "description": "Notification deleted (No Content)."
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13056,7 +13135,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13106,7 +13185,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13221,7 +13300,7 @@
         },
         "responses": {
           "200": {
-            "description": "Notification restored",
+            "description": "Notification restored (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13284,7 +13363,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13334,7 +13413,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13384,7 +13463,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13514,7 +13593,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of observations",
+            "description": "List of observations (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13588,7 +13667,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13638,7 +13717,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13765,7 +13844,7 @@
         },
         "responses": {
           "201": {
-            "description": "Observation registered",
+            "description": "Observation registered (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13826,7 +13905,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13876,7 +13955,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13926,7 +14005,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13976,7 +14055,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14064,7 +14143,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Observation details",
+            "description": "Observation details (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14125,7 +14204,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14175,7 +14254,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14225,7 +14304,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14353,7 +14432,7 @@
         },
         "responses": {
           "200": {
-            "description": "Observation updated",
+            "description": "Observation updated (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14414,7 +14493,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14464,7 +14543,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14514,7 +14593,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14564,7 +14643,7 @@
             }
           },
           "422": {
-            "description": "The request payload contains invalid data.",
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14677,10 +14756,10 @@
         },
         "responses": {
           "204": {
-            "description": "Observation deleted"
+            "description": "Observation deleted (No Content)."
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14730,7 +14809,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14780,7 +14859,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14895,7 +14974,7 @@
         },
         "responses": {
           "200": {
-            "description": "Observation restored",
+            "description": "Observation restored (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14956,7 +15035,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15006,7 +15085,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15056,7 +15135,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15214,7 +15293,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of audit logs",
+            "description": "List of audit logs (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15288,7 +15367,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15338,7 +15417,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15426,7 +15505,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Audit log details",
+            "description": "Audit log details (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15487,7 +15566,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15537,7 +15616,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15587,7 +15666,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15717,7 +15796,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of active sessions",
+            "description": "List of active sessions (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15797,7 +15876,7 @@
             }
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15847,7 +15926,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15962,10 +16041,10 @@
         },
         "responses": {
           "204": {
-            "description": "Session revoked"
+            "description": "Session revoked (No Content)."
           },
           "401": {
-            "description": "Authentication required or invalid credentials.",
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -16015,7 +16094,7 @@
             }
           },
           "403": {
-            "description": "Access denied due to insufficient permissions.",
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -16065,7 +16144,7 @@
             }
           },
           "404": {
-            "description": "The requested resource was not found.",
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -16127,7 +16206,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Service is operational",
+            "description": "Service is operational (OK).",
             "content": {
               "application/json": {
                 "schema": {

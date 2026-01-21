@@ -14,7 +14,7 @@ collection:
       - $ref: '../components/parameters.yaml#/IncludeDeleted'
     responses:
       '200':
-        description: List of patients
+        description: List of patients (OK).
         content:
           application/json:
             schema:
@@ -41,7 +41,7 @@ collection:
             $ref: '../components/schemas/patient.yaml#/PatientCreateRequest'
     responses:
       '201':
-        description: Patient registered
+        description: Patient registered (Created).
         content:
           application/json:
             schema:
@@ -74,7 +74,7 @@ item:
         description: Unique identifier for the patient.
     responses:
       '200':
-        description: Patient details
+        description: Patient details (OK).
         content:
           application/json:
             schema:
@@ -110,7 +110,7 @@ item:
             $ref: '../components/schemas/patient.yaml#/PatientUpdateRequest'
     responses:
       '200':
-        description: Patient updated
+        description: Patient updated (OK).
         content:
           application/json:
             schema:
@@ -150,7 +150,7 @@ item:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '204':
-        description: Patient deleted
+        description: Patient deleted (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -183,7 +183,7 @@ restore:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '200':
-        description: Patient restored
+        description: Patient restored (OK).
         content:
           application/json:
             schema:

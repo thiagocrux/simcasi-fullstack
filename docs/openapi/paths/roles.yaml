@@ -14,7 +14,7 @@ collection:
       - $ref: '../components/parameters.yaml#/IncludeDeleted'
     responses:
       '200':
-        description: List of roles
+        description: List of roles (OK).
         content:
           application/json:
             schema:
@@ -41,7 +41,7 @@ collection:
             $ref: '../components/schemas/role.yaml#/RoleCreateRequest'
     responses:
       '201':
-        description: Role created
+        description: Role created (Created).
         content:
           application/json:
             schema:
@@ -76,7 +76,7 @@ item:
           format: uuid
     responses:
       '200':
-        description: Role details
+        description: Role details (OK).
         content:
           application/json:
             schema:
@@ -112,7 +112,7 @@ item:
             $ref: '../components/schemas/role.yaml#/RoleUpdateRequest'
     responses:
       '200':
-        description: Role updated
+        description: Role updated (OK).
         content:
           application/json:
             schema:
@@ -152,7 +152,7 @@ item:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '204':
-        description: Role deleted
+        description: Role deleted (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -184,7 +184,7 @@ restore:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '200':
-        description: Role restored
+        description: Role restored (OK).
         content:
           application/json:
             schema:

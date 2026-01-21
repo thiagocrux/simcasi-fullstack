@@ -3,7 +3,7 @@ login:
     summary: Login
     description: Handles user authentication through email and password, initiates a secure stateful session, and provides both access and refresh JWT tokens together with essential user information.
     tags:
-      - Auth
+      - Authentication
     requestBody:
       required: true
       content:
@@ -12,7 +12,7 @@ login:
             $ref: '../components/schemas/auth.yaml#/LoginRequest'
     responses:
       '200':
-        description: Authentication successful
+        description: Authentication successful (OK).
         content:
           application/json:
             schema:
@@ -27,7 +27,7 @@ refresh:
     summary: Refresh token
     description: Performs secure token rotation by validating the current refresh token and issuing a new access/refresh pair, thereby extending the user’s session lifecycle.
     tags:
-      - Auth
+      - Authentication
     requestBody:
       required: true
       content:
@@ -36,7 +36,7 @@ refresh:
             $ref: '../components/schemas/auth.yaml#/RefreshRequest'
     responses:
       '200':
-        description: Token refreshed
+        description: Token refreshed (OK).
         content:
           application/json:
             schema:
@@ -49,7 +49,7 @@ logout:
     summary: Logout
     description: Securely terminates the active session and blacklists the associated refresh token, preventing any subsequent reuse.
     tags:
-      - Auth
+      - Authentication
     security:
       - BearerAuth: []
     parameters:
@@ -62,6 +62,6 @@ logout:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '204':
-        description: Successfully logged out
+        description: Successfully logged out (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'

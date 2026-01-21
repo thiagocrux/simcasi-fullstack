@@ -21,7 +21,7 @@ collection:
         description: Filter sessions by a specific user.
     responses:
       '200':
-        description: List of active sessions
+        description: List of active sessions (OK).
         content:
           application/json:
             schema:
@@ -56,7 +56,7 @@ item:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '204':
-        description: Session revoked
+        description: Session revoked (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':

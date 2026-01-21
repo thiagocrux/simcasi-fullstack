@@ -21,7 +21,7 @@ collection:
         description: Filter notifications by a specific patient.
     responses:
       '200':
-        description: List of notifications
+        description: List of notifications (OK).
         content:
           application/json:
             schema:
@@ -48,7 +48,7 @@ collection:
             $ref: '../components/schemas/notification.yaml#/NotificationCreateRequest'
     responses:
       '201':
-        description: Notification registered
+        description: Notification registered (Created).
         content:
           application/json:
             schema:
@@ -81,7 +81,7 @@ item:
         description: Unique identifier for the notification.
     responses:
       '200':
-        description: Notification details
+        description: Notification details (OK).
         content:
           application/json:
             schema:
@@ -117,7 +117,7 @@ item:
             $ref: '../components/schemas/notification.yaml#/NotificationUpdateRequest'
     responses:
       '200':
-        description: Notification updated
+        description: Notification updated (OK).
         content:
           application/json:
             schema:
@@ -155,7 +155,7 @@ item:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '204':
-        description: Notification deleted
+        description: Notification deleted (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -188,7 +188,7 @@ restore:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '200':
-        description: Notification restored
+        description: Notification restored (OK).
         content:
           application/json:
             schema:

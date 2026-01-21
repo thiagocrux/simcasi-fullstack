@@ -21,7 +21,7 @@ collection:
         description: Filter treatments by a specific patient.
     responses:
       '200':
-        description: List of treatments
+        description: List of treatments (OK).
         content:
           application/json:
             schema:
@@ -48,7 +48,7 @@ collection:
             $ref: '../components/schemas/treatment.yaml#/TreatmentCreateRequest'
     responses:
       '201':
-        description: Treatment registered
+        description: Treatment registered (Created).
         content:
           application/json:
             schema:
@@ -81,7 +81,7 @@ item:
         description: Unique identifier for the treatment.
     responses:
       '200':
-        description: Treatment details
+        description: Treatment details (OK).
         content:
           application/json:
             schema:
@@ -117,7 +117,7 @@ item:
             $ref: '../components/schemas/treatment.yaml#/TreatmentUpdateRequest'
     responses:
       '200':
-        description: Treatment updated
+        description: Treatment updated (OK).
         content:
           application/json:
             schema:
@@ -155,7 +155,7 @@ item:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '204':
-        description: Treatment deleted
+        description: Treatment deleted (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -188,7 +188,7 @@ restore:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '200':
-        description: Treatment restored
+        description: Treatment restored (OK).
         content:
           application/json:
             schema:

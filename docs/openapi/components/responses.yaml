@@ -1,33 +1,33 @@
 UnauthorizedError:
-  description: Authentication required or invalid credentials.
+  description: Authentication required or invalid credentials (UnauthorizedError).
   content:
     application/json:
       schema:
         $ref: './schemas/error.yaml#/Error'
 
 ForbiddenError:
-  description: Access denied due to insufficient permissions.
+  description: Access denied due to insufficient permissions (ForbiddenError).
   content:
     application/json:
       schema:
         $ref: './schemas/error.yaml#/Error'
 
 NotFoundError:
-  description: The requested resource was not found.
+  description: The requested resource was not found (NotFoundError).
   content:
     application/json:
       schema:
         $ref: './schemas/error.yaml#/Error'
 
 ValidationError:
-  description: The request payload contains invalid data.
+  description: The request payload contains invalid data (ValidationError).
   content:
     application/json:
       schema:
         $ref: './schemas/error.yaml#/Error'
 
 ConflictError:
-  description: Business rule conflict (e.g., duplicate record).
+  description: Business rule conflict or duplicate record (ConflictError).
   content:
     application/json:
       schema:

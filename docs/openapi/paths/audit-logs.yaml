@@ -40,7 +40,7 @@ collection:
         description: Filter by affected entity ID.
     responses:
       '200':
-        description: List of audit logs
+        description: List of audit logs (OK).
         content:
           application/json:
             schema:
@@ -69,7 +69,7 @@ item:
         description: Unique identifier for the audit log.
     responses:
       '200':
-        description: Audit log details
+        description: Audit log details (OK).
         content:
           application/json:
             schema:

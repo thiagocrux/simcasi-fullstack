@@ -14,7 +14,7 @@ collection:
       - $ref: '../components/parameters.yaml#/IncludeDeleted'
     responses:
       '200':
-        description: A list of users
+        description: A list of users (OK).
         content:
           application/json:
             schema:
@@ -40,7 +40,7 @@ collection:
             $ref: '../components/schemas/user.yaml#/UserCreateRequest'
     responses:
       '201':
-        description: User created
+        description: User created (Created).
         content:
           application/json:
             schema:
@@ -75,7 +75,7 @@ item:
           format: uuid
     responses:
       '200':
-        description: User details
+        description: User details (OK).
         content:
           application/json:
             schema:
@@ -110,7 +110,7 @@ item:
             $ref: '../components/schemas/user.yaml#/UserUpdateRequest'
     responses:
       '200':
-        description: User updated
+        description: User updated (OK).
         content:
           application/json:
             schema:
@@ -149,7 +149,7 @@ item:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '204':
-        description: User deleted
+        description: User deleted (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -182,7 +182,7 @@ restore:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '200':
-        description: User restored
+        description: User restored (OK).
         content:
           application/json:
             schema:

@@ -14,7 +14,7 @@ collection:
       - $ref: '../components/parameters.yaml#/IncludeDeleted'
     responses:
       '200':
-        description: List of permissions
+        description: List of permissions (OK).
         content:
           application/json:
             schema:
@@ -41,7 +41,7 @@ collection:
             $ref: '../components/schemas/permission.yaml#/PermissionCreateRequest'
     responses:
       '201':
-        description: Permission created
+        description: Permission created (Created).
         content:
           application/json:
             schema:
@@ -74,7 +74,7 @@ item:
           format: uuid
     responses:
       '200':
-        description: Permission details
+        description: Permission details (OK).
         content:
           application/json:
             schema:
@@ -110,7 +110,7 @@ item:
             $ref: '../components/schemas/permission.yaml#/PermissionUpdateRequest'
     responses:
       '200':
-        description: Permission updated
+        description: Permission updated (OK).
         content:
           application/json:
             schema:
@@ -150,7 +150,7 @@ item:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '204':
-        description: Permission deleted
+        description: Permission deleted (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -183,7 +183,7 @@ restore:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '200':
-        description: Permission restored
+        description: Permission restored (OK).
         content:
           application/json:
             schema:

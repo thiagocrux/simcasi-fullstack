@@ -21,7 +21,7 @@ collection:
         description: Filter exams by a specific patient.
     responses:
       '200':
-        description: List of exams
+        description: List of exams (OK).
         content:
           application/json:
             schema:
@@ -48,7 +48,7 @@ collection:
             $ref: '../components/schemas/exam.yaml#/ExamCreateRequest'
     responses:
       '201':
-        description: Exam registered
+        description: Exam registered (Created).
         content:
           application/json:
             schema:
@@ -81,7 +81,7 @@ item:
         description: Unique identifier for the exam.
     responses:
       '200':
-        description: Exam details
+        description: Exam details (OK).
         content:
           application/json:
             schema:
@@ -117,7 +117,7 @@ item:
             $ref: '../components/schemas/exam.yaml#/ExamUpdateRequest'
     responses:
       '200':
-        description: Exam updated
+        description: Exam updated (OK).
         content:
           application/json:
             schema:
@@ -155,7 +155,7 @@ item:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '204':
-        description: Exam deleted
+        description: Exam deleted (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -188,7 +188,7 @@ restore:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '200':
-        description: Exam restored
+        description: Exam restored (OK).
         content:
           application/json:
             schema:

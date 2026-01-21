@@ -12,6 +12,52 @@ info:
     * `userAgent`: Device/browser identifier.
   version: 1.0.0
 
+tags:
+  - name: Authentication
+    description: Securing system access through identity verification and token management.
+  - name: Users
+    description: Provisioning and managing user identities and their baseline attributes.
+  - name: Roles
+    description: Configuring logical groups of permissions to define organizational responsibilities.
+  - name: Permissions
+    description: Mapping technical actions to system capabilities for fine-grained authorization.
+  - name: Patients
+    description: Managing the lifecycle of patient clinical identities and demographic data.
+  - name: Exams
+    description: Tracking laboratory diagnostics and titration results to monitor infection status.
+  - name: Treatments
+    description: Managing pharmacological histories and dose administration for active cases.
+  - name: Notifications
+    description: Managing statutory health reporting and epidemiological surveillance records.
+  - name: Observations
+    description: Documenting qualitative clinical progress and provider insights.
+  - name: Audit Logs
+    description: Maintaining untamperable records of system activities for accountability.
+  - name: Sessions
+    description: Overseeing active authenticated instances and enforcing connection policies.
+  - name: System
+    description: Monitoring service availability and infrastructure health.
+
+x-tagGroups:
+  - name: Identity & Access Management
+    tags:
+      - Authentication
+      - Users
+      - Roles
+      - Permissions
+      - Sessions
+  - name: Clinical Monitoring
+    tags:
+      - Patients
+      - Exams
+      - Treatments
+      - Notifications
+      - Observations
+  - name: Governance & Operations
+    tags:
+      - Audit Logs
+      - System
+
 servers:
   - url: /api
     description: Local / Relative Server

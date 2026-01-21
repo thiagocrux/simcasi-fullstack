@@ -7,7 +7,7 @@ check:
     security: []
     responses:
       '200':
-        description: Service is operational
+        description: Service is operational (OK).
         content:
           application/json:
             schema:

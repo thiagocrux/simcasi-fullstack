@@ -21,7 +21,7 @@ collection:
         description: Filter observations by a specific patient.
     responses:
       '200':
-        description: List of observations
+        description: List of observations (OK).
         content:
           application/json:
             schema:
@@ -48,7 +48,7 @@ collection:
             $ref: '../components/schemas/observation.yaml#/ObservationCreateRequest'
     responses:
       '201':
-        description: Observation registered
+        description: Observation registered (Created).
         content:
           application/json:
             schema:
@@ -81,7 +81,7 @@ item:
           format: uuid
     responses:
       '200':
-        description: Observation details
+        description: Observation details (OK).
         content:
           application/json:
             schema:
@@ -117,7 +117,7 @@ item:
             $ref: '../components/schemas/observation.yaml#/ObservationUpdateRequest'
     responses:
       '200':
-        description: Observation updated
+        description: Observation updated (OK).
         content:
           application/json:
             schema:
@@ -155,7 +155,7 @@ item:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '204':
-        description: Observation deleted
+        description: Observation deleted (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -188,7 +188,7 @@ restore:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
     responses:
       '200':
-        description: Observation restored
+        description: Observation restored (OK).
         content:
           application/json:
             schema:
