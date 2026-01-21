@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 
 /**
- * Reorganizes the Postman collection with nested folder structure
- * matching the OpenAPI x-tagGroups organization.
+ * Reorganizes the Postman collection to group endpoints by category
+ * and removes unnecessary folder nesting from the generated output.
  */
 const fs = require('fs');
 const path = require('path');
@@ -14,7 +14,7 @@ const inputFile = path.join(
 );
 const outputFile = inputFile;
 
-// Tag groups from OpenAPI specification with proper naming
+// Groups and naming convention from the OpenAPI spec
 const tagGroups = {
   'Identity & Access Management': [
     { key: 'auth', name: 'Authentication' },
@@ -36,19 +36,50 @@ const tagGroups = {
   ],
 };
 
+/**
+ * Removes unnecessary folder nesting in the collection.
+ * Moves requests up one level if they're in a redundant subfolder.
+ */
+function flattenResourceFolders(folder) {
+  if (!folder.item || folder.item.length === 0) {
+    return folder;
+  }
+
+  const flattenedItems = [];
+
+  folder.item.forEach((item) => {
+    if (item.request) {
+      // It's a request, keep it
+      flattenedItems.push(item);
+    } else if (item.item && item.item.length > 0) {
+      // It's a folder with more items inside - flatten it
+      const flattened = flattenResourceFolders(item);
+      flattenedItems.push(...(flattened.item || []));
+    } else {
+      // Keep as is
+      flattenedItems.push(item);
+    }
+  });
+
+  return {
+    ...folder,
+    item: flattenedItems,
+  };
+}
+
 function organizeCollection() {
   console.log('📂 Reading Postman collection...');
   const collection = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
 
-  console.log('🔄 Reorganizing folders...');
+  console.log('🔄 Organizing by groups...');
 
-  // Create a map of tag name to folder
+  // Build a map to find folders by their original tag key
   const folderMap = new Map();
   collection.item.forEach((folder) => {
     folderMap.set(folder.name, folder);
   });
 
-  // Create new organized structure
+  // Rebuild collection structure with group hierarchy
   const newItems = [];
 
   for (const [groupName, tags] of Object.entries(tagGroups)) {
@@ -61,9 +92,9 @@ function organizeCollection() {
     tags.forEach((tag) => {
       const folder = folderMap.get(tag.key);
       if (folder) {
-        // Rename folder to proper name
         folder.name = tag.name;
-        groupFolder.item.push(folder);
+        const flattenedFolder = flattenResourceFolders(folder);
+        groupFolder.item.push(flattenedFolder);
       }
     });
 
@@ -74,10 +105,10 @@ function organizeCollection() {
 
   collection.item = newItems;
 
-  console.log('💾 Writing reorganized collection...');
+  console.log('💾 Writing to file...');
   fs.writeFileSync(outputFile, JSON.stringify(collection, null, 4), 'utf8');
 
-  console.log('✅ Postman collection reorganized successfully!');
+  console.log('✅ Done!');
   console.log(
     `   - Identity & Access Management (${tagGroups['Identity & Access Management'].length} resources)`
   );
