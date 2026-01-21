@@ -6,7 +6,7 @@
  * - Use `PERMISSIONS_BY_ROLE` to map roles to the permissions they are granted.
  *
  * IMPORTANT: The existence of a permission code represents a capability (e.g. `update:user`),
- * but **business rules** (for example, "a user may only update their own account") must be
+ * but **business rules** (for example, "an user may only update their own account") must be
  * enforced in the application or domain layer (use cases, services, policies), not solely
  * by checking permission strings.
  */

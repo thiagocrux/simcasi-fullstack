@@ -1,4 +1,5 @@
-import { ConflictError } from '@/core/domain/errors/app.error';
+import { permissionSchema } from '@/core/application/validation/schemas/permission.schema';
+import { ConflictError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import {
@@ -24,7 +25,16 @@ export class RegisterPermissionUseCase implements UseCase<
   ): Promise<RegisterPermissionOutput> {
     const { userId, ipAddress, userAgent, ...data } = input;
 
-    // 1. Check if the permission code already exists, including soft-deleted ones.
+    // 1. Validate input data using Zod schema.
+    const validation = permissionSchema.safeParse(data);
+    if (!validation.success) {
+      throw new ValidationError(
+        'Invalid register permission data.',
+        validation.error.flatten().fieldErrors
+      );
+    }
+
+    // 2. Check if the permission code already exists, including soft-deleted ones.
     const permissionExists = await this.permissionRepository.findByCode(
       data.code,
       true
@@ -40,12 +50,12 @@ export class RegisterPermissionUseCase implements UseCase<
       const restoredPermission = await this.permissionRepository.update(
         permissionExists.id,
         {
-          ...data,
+          ...validation.data,
           deletedAt: null,
         }
       );
 
-      // 2. Log 'RESTORE' action for audit trailing.
+      // 3. Log 'RESTORE' action for audit trailing.
       await this.auditLogRepository.create({
         userId: userId || 'SYSTEM',
         action: 'RESTORE',
@@ -59,10 +69,10 @@ export class RegisterPermissionUseCase implements UseCase<
       return restoredPermission;
     }
 
-    // 3. If no record was found, create a brand new permission.
-    const permission = await this.permissionRepository.create(data);
+    // 4. If no record was found, create a brand new permission.
+    const permission = await this.permissionRepository.create(validation.data);
 
-    // 4. Log 'CREATE' action for audit trailing.
+    // 5. Log 'CREATE' action for audit trailing.
     await this.auditLogRepository.create({
       userId: userId || 'SYSTEM',
       action: 'CREATE',

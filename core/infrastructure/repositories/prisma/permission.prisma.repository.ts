@@ -24,6 +24,21 @@ export class PrismaPermissionRepository implements PermissionRepository {
   }
 
   /**
+   * Finds multiple permissions by their IDs.
+   * @param ids The list of permission IDs.
+   * @returns A list of found permissions.
+   */
+  async findByIds(ids: string[]): Promise<Permission[]> {
+    const permissions = await prisma.permission.findMany({
+      where: {
+        id: { in: ids },
+        deletedAt: null,
+      },
+    });
+    return permissions as Permission[];
+  }
+
+  /**
    * Finds a permission by its unique code.
    * @param code The permission code (e.g., 'USER_CREATE').
    * @param includeDeleted Whether to include soft-deleted records.

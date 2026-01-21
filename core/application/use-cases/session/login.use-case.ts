@@ -8,7 +8,7 @@ import { SessionOutput } from '../../contracts/session/session-output.contract';
 import { UseCase } from '../use-case.interface';
 
 /**
- * Use case to authenticate a user and generate tokens.
+ * Use case to authenticate an user and generate tokens.
  */
 export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
   constructor(

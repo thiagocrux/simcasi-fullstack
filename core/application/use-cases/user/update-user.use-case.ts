@@ -6,6 +6,7 @@ import {
 } from '@/core/domain/errors/app.error';
 import { HashProvider } from '@/core/domain/providers/hash.provider';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
+import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import {
   UpdateUserInput,
@@ -22,6 +23,7 @@ export class UpdateUserUseCase implements UseCase<
 > {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly roleRepository: RoleRepository,
     private readonly hashProvider: HashProvider,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
@@ -41,10 +43,18 @@ export class UpdateUserUseCase implements UseCase<
     // 2. Check if the user exists.
     const existing = await this.userRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('User');
+      throw new NotFoundError('User', id);
     }
 
-    // 3. Check for duplicates if the email is being changed.
+    // 3. Check if the role exists (if provided).
+    if (data.roleId) {
+      const role = await this.roleRepository.findById(data.roleId);
+      if (!role) {
+        throw new NotFoundError('Role', data.roleId);
+      }
+    }
+
+    // 4. Check for duplicates if the email is being changed.
     if (data.email && data.email !== existing.email) {
       const duplicate = await this.userRepository.findByEmail(data.email);
       if (duplicate) {

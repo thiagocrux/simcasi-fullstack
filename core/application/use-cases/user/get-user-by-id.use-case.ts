@@ -7,7 +7,7 @@ import {
 import { UseCase } from '../use-case.interface';
 
 /**
- * Use case to retrieve a user by ID.
+ * Use case to retrieve an user by ID.
  */
 export class GetUserByIdUseCase implements UseCase<
   GetUserInput,

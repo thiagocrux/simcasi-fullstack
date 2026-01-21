@@ -11,6 +11,12 @@ export interface PermissionRepository {
   findById(id: string, includeDeleted?: boolean): Promise<Permission | null>;
 
   /**
+   * Searches for multiple permissions by their IDs.
+   * Useful for validating associations.
+   */
+  findByIds(ids: string[]): Promise<Permission[]>;
+
+  /**
    * Searches for a permission by its unique code (e.g., 'READ_PATIENT').
    * Essential for 'Restore' logic in case of unique constraint conflicts.
    */

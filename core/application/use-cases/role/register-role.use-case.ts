@@ -1,5 +1,11 @@
-import { ConflictError } from '@/core/domain/errors/app.error';
+import { roleSchema } from '@/core/application/validation/schemas/role.schema';
+import {
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
+import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import {
   RegisterRoleInput,
@@ -16,14 +22,33 @@ export class RegisterRoleUseCase implements UseCase<
 > {
   constructor(
     private readonly roleRepository: RoleRepository,
+    private readonly permissionRepository: PermissionRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
   async execute(input: RegisterRoleInput): Promise<RegisterRoleOutput> {
     const { ipAddress, userAgent, userId, ...roleData } = input;
 
-    // 1. Check if the role code already exists, including soft-deleted records.
-    // This allows us to reuse codes that were previously removed from the system.
+    // 1. Validate input data using Zod schema.
+    const validation = roleSchema.safeParse(roleData);
+    if (!validation.success) {
+      throw new ValidationError(
+        'Invalid register role data.',
+        validation.error.flatten().fieldErrors
+      );
+    }
+
+    // 2. Validate if permissions exist.
+    if (roleData.permissionIds && roleData.permissionIds.length > 0) {
+      const foundPermissions = await this.permissionRepository.findByIds(
+        roleData.permissionIds
+      );
+      if (foundPermissions.length !== roleData.permissionIds.length) {
+        throw new NotFoundError('One or more permissions');
+      }
+    }
+
+    // 3. Check if the role code already exists, including soft-deleted records.
     const roleExists = await this.roleRepository.findByCode(
       roleData.code,
       true
@@ -43,7 +68,7 @@ export class RegisterRoleUseCase implements UseCase<
         deletedAt: null,
       });
 
-      // 2. Log the 'RESTORE' action for audit trailing.
+      // 4. Log the 'RESTORE' action for audit trailing.
       await this.auditLogRepository.create({
         userId: userId || 'SYSTEM',
         action: 'RESTORE',
@@ -57,13 +82,13 @@ export class RegisterRoleUseCase implements UseCase<
       return restoredRole;
     }
 
-    // 3. If no record was found with that code, create a completely new one.
+    // 5. If no record was found with that code, create a completely new one.
     const role = await this.roleRepository.create({
       code: roleData.code,
       permissionIds: roleData.permissionIds,
     });
 
-    // 4. Log the 'CREATE' action for audit trailing.
+    // 6. Log the 'CREATE' action for audit trailing.
     await this.auditLogRepository.create({
       userId: userId || 'SYSTEM',
       action: 'CREATE',

@@ -2,12 +2,12 @@ import { User } from '../entities/user.entity';
 
 export interface UserRepository {
   /**
-   * Searches for a user by ID, including logically deleted ones if requested.
+   * Searches for an user by ID, including logically deleted ones if requested.
    */
   findById(id: string, includeDeleted?: boolean): Promise<User | null>;
 
   /**
-   * Searches for a user by email. Useful for authentication and 'Restore' logic.
+   * Searches for an user by email. Useful for authentication and 'Restore' logic.
    */
   findByEmail(email: string, includeDeleted?: boolean): Promise<User | null>;
 

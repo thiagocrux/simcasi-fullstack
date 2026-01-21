@@ -5,13 +5,19 @@ import { RegisterRoleUseCase } from '@/core/application/use-cases/role/register-
 import { RestoreRoleUseCase } from '@/core/application/use-cases/role/restore-role.use-case';
 import { UpdateRoleUseCase } from '@/core/application/use-cases/role/update-role.use-case';
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
+import { PrismaPermissionRepository } from '../repositories/prisma/permission.prisma.repository';
 import { PrismaRoleRepository } from '../repositories/prisma/role.prisma.repository';
 
 const roleRepository = new PrismaRoleRepository();
+const permissionRepository = new PrismaPermissionRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
 
 export function makeRegisterRoleUseCase() {
-  return new RegisterRoleUseCase(roleRepository, auditLogRepository);
+  return new RegisterRoleUseCase(
+    roleRepository,
+    permissionRepository,
+    auditLogRepository
+  );
 }
 
 export function makeFindRolesUseCase() {
@@ -23,7 +29,11 @@ export function makeGetRoleByIdUseCase() {
 }
 
 export function makeUpdateRoleUseCase() {
-  return new UpdateRoleUseCase(roleRepository, auditLogRepository);
+  return new UpdateRoleUseCase(
+    roleRepository,
+    permissionRepository,
+    auditLogRepository
+  );
 }
 
 export function makeDeleteRoleUseCase() {

@@ -9,7 +9,7 @@ import {
 import { UseCase } from '../use-case.interface';
 
 /**
- * Use case to soft delete a user and revoke all their sessions.
+ * Use case to soft delete an user and revoke all their sessions.
  */
 export class DeleteUserUseCase implements UseCase<
   DeleteUserInput,

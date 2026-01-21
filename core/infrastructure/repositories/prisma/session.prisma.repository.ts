@@ -130,7 +130,7 @@ export class PrismaSessionRepository implements SessionRepository {
   }
 
   /**
-   * Revokes all active sessions for a user EXCEPT for the specified one.
+   * Revokes all active sessions for an user EXCEPT for the specified one.
    * @param sessionId The session ID to keep active.
    * @param userId The user ID.
    */

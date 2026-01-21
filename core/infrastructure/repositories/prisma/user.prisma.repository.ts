@@ -5,7 +5,7 @@ import { prisma } from '../../lib/prisma';
 
 export class PrismaUserRepository implements UserRepository {
   /**
-   * Finds a user by their unique ID.
+   * Finds an user by their unique ID.
    * @param id The user ID.
    * @param includeDeleted Whether to include soft-deleted records.
    * @returns The user or null if not found.
@@ -22,7 +22,7 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   /**
-   * Finds a user by their unique email.
+   * Finds an user by their unique email.
    * @param email The user email.
    * @param includeDeleted Whether to include soft-deleted records.
    * @returns The user or null if not found.
@@ -143,7 +143,7 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   /**
-   * Performs a soft delete on a user.
+   * Performs a soft delete on an user.
    * @param id The user ID.
    */
   async softDelete(id: string): Promise<void> {
