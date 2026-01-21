@@ -10,6 +10,8 @@ collection:
       - $ref: '../components/parameters.yaml#/Authorization'
       - $ref: '../components/parameters.yaml#/Page'
       - $ref: '../components/parameters.yaml#/Limit'
+      - $ref: '../components/parameters.yaml#/Search'
+      - $ref: '../components/parameters.yaml#/IncludeDeleted'
     responses:
       '200':
         description: List of roles

@@ -19,6 +19,23 @@ Limit:
     minimum: 1
     maximum: 100
 
+Search:
+  name: search
+  in: query
+  description: Filter search string for relevant record fields.
+  required: false
+  schema:
+    type: string
+
+IncludeDeleted:
+  name: includeDeleted
+  in: query
+  description: Flag to include soft-deleted records in the results.
+  required: false
+  schema:
+    type: boolean
+    default: false
+
 Authorization:
   name: Authorization
   in: header

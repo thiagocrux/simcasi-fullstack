@@ -10,17 +10,8 @@ collection:
       - $ref: '../components/parameters.yaml#/Authorization'
       - $ref: '../components/parameters.yaml#/Page'
       - $ref: '../components/parameters.yaml#/Limit'
-      - name: search
-        in: query
-        description: Search term to filter users by name or email.
-        schema:
-          type: string
-      - name: includeDeleted
-        in: query
-        description: If true, includes soft-deleted records.
-        schema:
-          type: boolean
-          default: false
+      - $ref: '../components/parameters.yaml#/Search'
+      - $ref: '../components/parameters.yaml#/IncludeDeleted'
     responses:
       '200':
         description: A list of users

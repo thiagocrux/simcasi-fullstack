@@ -526,7 +526,8 @@
           {
             "name": "search",
             "in": "query",
-            "description": "Search term to filter users by name or email.",
+            "description": "Filter search string for relevant record fields.",
+            "required": false,
             "schema": {
               "type": "string"
             }
@@ -534,7 +535,8 @@
           {
             "name": "includeDeleted",
             "in": "query",
-            "description": "If true, includes soft-deleted records.",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
             "schema": {
               "type": "boolean",
               "default": false
@@ -2294,6 +2296,25 @@
               "default": 10,
               "minimum": 1,
               "maximum": 100
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Filter search string for relevant record fields.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -4676,6 +4697,25 @@
               "minimum": 1,
               "maximum": 100
             }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Filter search string for relevant record fields.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           }
         ],
         "responses": {
@@ -6357,6 +6397,25 @@
               "minimum": 1,
               "maximum": 100
             }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Filter search string for relevant record fields.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           }
         ],
         "responses": {
@@ -7988,6 +8047,25 @@
               "default": 10,
               "minimum": 1,
               "maximum": 100
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Filter search string for relevant record fields.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           },
           {
@@ -9913,6 +9991,25 @@
             }
           },
           {
+            "name": "search",
+            "in": "query",
+            "description": "Filter search string for relevant record fields.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
             "name": "patientId",
             "in": "query",
             "required": false,
@@ -11703,6 +11800,25 @@
             }
           },
           {
+            "name": "search",
+            "in": "query",
+            "description": "Filter search string for relevant record fields.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
             "name": "patientId",
             "in": "query",
             "required": false,
@@ -13367,6 +13483,25 @@
             }
           },
           {
+            "name": "search",
+            "in": "query",
+            "description": "Filter search string for relevant record fields.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
             "name": "patientId",
             "in": "query",
             "required": false,
@@ -15020,6 +15155,25 @@
             }
           },
           {
+            "name": "search",
+            "in": "query",
+            "description": "Filter search string for relevant record fields.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
             "name": "userId",
             "in": "query",
             "required": false,
@@ -15529,6 +15683,25 @@
               "default": 10,
               "minimum": 1,
               "maximum": 100
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Filter search string for relevant record fields.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           },
           {
