@@ -14,7 +14,9 @@
     "prisma:migrate:reset": "prisma migrate reset",
     "prisma:studio": "prisma studio",
     "prisma:seed": "prisma db seed",
-    "docs:bundle": "swagger-cli bundle docs/openapi/index.yaml --outfile public/openapi.json --type json --dereference"
+    "docs:bundle": "swagger-cli bundle docs/openapi/index.yaml --outfile public/openapi.json --type json --dereference",
+    "docs:postman": "openapi2postmanv2 -s public/openapi.json -o public/simcasi.postman_collection.json -p && node scripts/organize-postman-collection.js",
+    "docs:generate": "pnpm docs:bundle && pnpm docs:postman"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -68,6 +70,7 @@
     "eslint-config-next": "16.0.3",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
+    "openapi-to-postmanv2": "^5.8.0",
     "prisma": "^7.0.0",
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",
