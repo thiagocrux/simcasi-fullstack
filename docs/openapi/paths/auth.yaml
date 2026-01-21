@@ -5,6 +5,7 @@ login:
     description: Handles user authentication through email and password, initiates a secure stateful session, and provides both access and refresh JWT tokens together with essential user information.
     tags:
       - Authentication
+    security: []
     requestBody:
       required: true
       content:
@@ -49,6 +50,7 @@ refresh:
     description: Performs secure token rotation by validating the current refresh token and issuing a new access/refresh pair, thereby extending the user's session lifecycle.
     tags:
       - Authentication
+    security: []
     requestBody:
       required: true
       content:
