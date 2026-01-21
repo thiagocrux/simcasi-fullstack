@@ -460,18 +460,6 @@
             "BearerAuth": []
           }
         ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          }
-        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -569,16 +557,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "page",
             "in": "query",
@@ -807,18 +785,6 @@
         "security": [
           {
             "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
           }
         ],
         "requestBody": {
@@ -1210,16 +1176,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -1455,16 +1411,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -1852,16 +1798,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -2069,16 +2005,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -2344,16 +2270,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "page",
             "in": "query",
@@ -2685,18 +2601,6 @@
         "security": [
           {
             "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
           }
         ],
         "requestBody": {
@@ -3235,16 +3139,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -3583,16 +3477,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -4149,16 +4033,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -4366,16 +4240,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -4745,16 +4609,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "page",
             "in": "query",
             "description": "Page number for pagination.",
@@ -4970,18 +4824,6 @@
         "security": [
           {
             "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
           }
         ],
         "requestBody": {
@@ -5351,16 +5193,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -5584,16 +5416,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -5965,16 +5787,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -6182,16 +5994,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -6445,16 +6247,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "page",
             "in": "query",
             "description": "Page number for pagination.",
@@ -6670,18 +6462,6 @@
         "security": [
           {
             "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
           }
         ],
         "requestBody": {
@@ -7001,16 +6781,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -7234,16 +7004,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -7615,16 +7375,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -7832,16 +7582,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -8095,16 +7835,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "page",
             "in": "query",
@@ -8385,18 +8115,6 @@
         "security": [
           {
             "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
           }
         ],
         "requestBody": {
@@ -8805,16 +8523,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -9092,16 +8800,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -9502,16 +9200,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -9719,16 +9407,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -10037,16 +9715,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "page",
             "in": "query",
             "description": "Page number for pagination.",
@@ -10306,18 +9974,6 @@
         "security": [
           {
             "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
           }
         ],
         "requestBody": {
@@ -10688,16 +10344,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -10955,16 +10601,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -11331,16 +10967,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -11548,16 +11174,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -11846,16 +11462,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "page",
             "in": "query",
             "description": "Page number for pagination.",
@@ -12096,18 +11702,6 @@
         "security": [
           {
             "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
           }
         ],
         "requestBody": {
@@ -12442,16 +12036,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -12690,16 +12274,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -13033,16 +12607,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -13250,16 +12814,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -13529,16 +13083,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "page",
             "in": "query",
             "description": "Page number for pagination.",
@@ -13777,18 +13321,6 @@
         "security": [
           {
             "BearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
           }
         ],
         "requestBody": {
@@ -14121,16 +13653,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -14367,16 +13889,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -14707,16 +14219,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -14924,16 +14426,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",
@@ -15200,16 +14692,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "page",
             "in": "query",
@@ -15483,16 +14965,6 @@
         ],
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
-          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -15731,16 +15203,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "page",
             "in": "query",
@@ -15991,16 +15453,6 @@
           }
         ],
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "Required Bearer token for authentication. Format: Bearer <token>",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer eyJhbGciOiJIUzI1Ni..."
-            }
-          },
           {
             "name": "id",
             "in": "path",

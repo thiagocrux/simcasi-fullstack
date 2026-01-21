@@ -52,8 +52,6 @@ logout:
       - Authentication
     security:
       - BearerAuth: []
-    parameters:
-      - $ref: '../components/parameters.yaml#/Authorization'
     requestBody:
       required: true
       content:

@@ -7,7 +7,6 @@ collection:
     security:
       - BearerAuth: []
     parameters:
-      - $ref: '../components/parameters.yaml#/Authorization'
       - $ref: '../components/parameters.yaml#/Page'
       - $ref: '../components/parameters.yaml#/Limit'
       - $ref: '../components/parameters.yaml#/Search'
@@ -31,8 +30,6 @@ collection:
       - Patients
     security:
       - BearerAuth: []
-    parameters:
-      - $ref: '../components/parameters.yaml#/Authorization'
     requestBody:
       required: true
       content:
@@ -64,7 +61,6 @@ item:
     security:
       - BearerAuth: []
     parameters:
-      - $ref: '../components/parameters.yaml#/Authorization'
       - name: id
         in: path
         required: true
@@ -94,7 +90,6 @@ item:
     security:
       - BearerAuth: []
     parameters:
-      - $ref: '../components/parameters.yaml#/Authorization'
       - name: id
         in: path
         required: true
@@ -134,7 +129,6 @@ item:
     security:
       - BearerAuth: []
     parameters:
-      - $ref: '../components/parameters.yaml#/Authorization'
       - name: id
         in: path
         required: true
@@ -167,7 +161,6 @@ restore:
     security:
       - BearerAuth: []
     parameters:
-      - $ref: '../components/parameters.yaml#/Authorization'
       - name: id
         in: path
         required: true

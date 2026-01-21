@@ -35,12 +35,3 @@ IncludeDeleted:
   schema:
     type: boolean
     default: false
-
-Authorization:
-  name: Authorization
-  in: header
-  description: 'Required Bearer token for authentication. Format: Bearer <token>'
-  required: true
-  schema:
-    type: string
-    example: 'Bearer eyJhbGciOiJIUzI1Ni...'
