@@ -10,7 +10,7 @@ const path = require('path');
 
 const inputFile = path.join(
   __dirname,
-  '../public/simcasi.postman_collection.json'
+  '../public/docs/simcasi.postman_collection.json'
 );
 const outputFile = inputFile;
 
