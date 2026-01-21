@@ -1,9 +1,14 @@
 Error:
   type: object
   required:
+    - name
     - message
     - code
   properties:
+    name:
+      type: string
+      description: Technical name of the error class.
+      example: 'ValidationError'
     message:
       type: string
       description: A human-readable message describing the error.

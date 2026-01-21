@@ -29,6 +29,7 @@ export function handleApiError(error: any) {
   if (error instanceof AppError) {
     return NextResponse.json(
       {
+        name: error.name,
         message: error.message,
         code: error.code,
       },

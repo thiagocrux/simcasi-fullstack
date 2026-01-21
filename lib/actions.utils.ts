@@ -17,6 +17,7 @@ export function handleActionError(caughtError: any) {
   if (caughtError instanceof AppError) {
     return {
       success: false,
+      name: caughtError.name,
       message: caughtError.message,
       code: caughtError.code,
       errors: (caughtError as any).errors, // For Zod validation errors if attached
