@@ -1445,7 +1445,7 @@
       },
       "patch": {
         "summary": "Update an user",
-        "description": "Updates profile information for an existing user record. Only provided fields are modified.",
+        "description": "Updates profile information for an existing user record. Only provided fields are updated.",
         "tags": [
           "Users"
         ],
@@ -5574,7 +5574,7 @@
       },
       "patch": {
         "summary": "Update a role",
-        "description": "Modifies role properties and synchronizes permissions.",
+        "description": "Modifies role properties and synchronizes permissions. Only provided fields are updated.",
         "tags": [
           "Roles"
         ],
@@ -7224,7 +7224,7 @@
       },
       "patch": {
         "summary": "Update a permission",
-        "description": "Modifies permission properties.",
+        "description": "Modifies permission properties. Only provided fields are updated.",
         "tags": [
           "Permissions"
         ],
@@ -9082,7 +9082,7 @@
       },
       "patch": {
         "summary": "Update an exam",
-        "description": "Modifies existing exam results or clinical observations.",
+        "description": "Modifies existing exam results or clinical observations. Only provided fields are updated.",
         "tags": [
           "Exams"
         ],
@@ -10945,7 +10945,7 @@
       },
       "patch": {
         "summary": "Update a treatment",
-        "description": "Modifies existing treatment records or clinical details.",
+        "description": "Modifies existing treatment records or clinical details. Only provided fields are updated.",
         "tags": [
           "Treatments"
         ],
@@ -12680,7 +12680,7 @@
       },
       "patch": {
         "summary": "Update a notification",
-        "description": "Modifies the notification number or clinical notes.",
+        "description": "Modifies the notification number or clinical notes. Only provided fields are updated.",
         "tags": [
           "Notifications"
         ],
@@ -14357,7 +14357,7 @@
       },
       "patch": {
         "summary": "Update an observation",
-        "description": "Modifies existing clinical observations or partner status.",
+        "description": "Modifies existing clinical observations or partner status. Only provided fields are updated.",
         "tags": [
           "Observations"
         ],

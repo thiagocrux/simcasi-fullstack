@@ -88,7 +88,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
   patch:
     summary: Update an user
-    description: Updates profile information for an existing user record. Only provided fields are modified.
+    description: Updates profile information for an existing user record. Only provided fields are updated.
     tags:
       - Users
     security:

@@ -90,7 +90,7 @@ item:
 
   patch:
     summary: Update a role
-    description: Modifies role properties and synchronizes permissions.
+    description: Modifies role properties and synchronizes permissions. Only provided fields are updated.
     tags:
       - Roles
     security:

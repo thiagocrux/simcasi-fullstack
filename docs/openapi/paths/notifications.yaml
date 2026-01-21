@@ -95,7 +95,7 @@ item:
 
   patch:
     summary: Update a notification
-    description: Modifies the notification number or clinical notes.
+    description: Modifies the notification number or clinical notes. Only provided fields are updated.
     tags:
       - Notifications
     security:

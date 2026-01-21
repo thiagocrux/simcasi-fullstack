@@ -95,7 +95,7 @@ item:
 
   patch:
     summary: Update an observation
-    description: Modifies existing clinical observations or partner status.
+    description: Modifies existing clinical observations or partner status. Only provided fields are updated.
     tags:
       - Observations
     security:

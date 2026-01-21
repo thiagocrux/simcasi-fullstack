@@ -95,7 +95,7 @@ item:
 
   patch:
     summary: Update a treatment
-    description: Modifies existing treatment records or clinical details.
+    description: Modifies existing treatment records or clinical details. Only provided fields are updated.
     tags:
       - Treatments
     security:

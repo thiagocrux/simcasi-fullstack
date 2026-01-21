@@ -95,7 +95,7 @@ item:
 
   patch:
     summary: Update an exam
-    description: Modifies existing exam results or clinical observations.
+    description: Modifies existing exam results or clinical observations. Only provided fields are updated.
     tags:
       - Exams
     security:
