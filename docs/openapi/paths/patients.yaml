@@ -1,5 +1,6 @@
 collection:
   get:
+    operationId: findPatients
     summary: Find patients
     description: Searches for patients using name, CPF, or SUS card filters, supporting paginated results and administrative visibility of deleted records.
     tags:
@@ -13,7 +14,7 @@ collection:
       - $ref: '../components/parameters.yaml#/IncludeDeleted'
     responses:
       '200':
-        description: List of patients (OK).
+        description: Paginated list of patients successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -24,6 +25,7 @@ collection:
         $ref: '../components/responses.yaml#/ForbiddenError'
 
   post:
+    operationId: createPatient
     summary: Register a patient
     description: Initializes a comprehensive medical profile including demographic, geographic, and tracking classification data.
     tags:
@@ -36,9 +38,39 @@ collection:
         application/json:
           schema:
             $ref: '../components/schemas/patient.yaml#/PatientCreateRequest'
+          examples:
+            newPatient:
+              summary: Register new patient with complete clinical and demographic data
+              value:
+                susCardNumber: '898001234567890'
+                name: Ana Carolina Oliveira Santos
+                cpf: '12345678900'
+                socialName: Carol Oliveira
+                birthDate: '1990-03-15'
+                race: PARDA
+                sex: FEMALE
+                gender: CISGENDER_WOMAN
+                sexuality: HETEROSEXUAL
+                nationality: BRAZILIAN
+                schooling: COMPLETE_HIGH_SCHOOL
+                phone: '+5511987654321'
+                email: ana.oliveira@email.com
+                motherName: Mariana Santos Oliveira
+                fatherName: Carlos Alberto Oliveira
+                isDeceased: false
+                monitoringType: PREGNANT
+                zipCode: '01234-567'
+                state: SP
+                city: São Paulo
+                neighborhood: Centro
+                street: Rua das Flores
+                houseNumber: '123'
+                complement: Apto 45
+                ipAddress: 192.168.1.110
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '201':
-        description: Patient registered (Created).
+        description: Patient successfully registered and persisted (Created).
         content:
           application/json:
             schema:
@@ -54,6 +86,7 @@ collection:
 
 item:
   get:
+    operationId: getPatient
     summary: Get a patient
     description: Retrieves the full clinical and demographic identity of a patient, including audit metadata.
     tags:
@@ -64,13 +97,13 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the patient.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the patient.
     responses:
       '200':
-        description: Patient details (OK).
+        description: Patient details successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -83,6 +116,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
   patch:
+    operationId: updatePatient
     summary: Update a patient
     description: Modifies existing patient demographic or residential information. Only provided fields are updated.
     tags:
@@ -93,19 +127,34 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the patient.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the patient.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/patient.yaml#/PatientUpdateRequest'
+          examples:
+            updatePatientContact:
+              summary: Update patient contact information and address
+              value:
+                phoneNumber: '+5511999887766'
+                email: ana.santos.novo@email.com
+                addressCity: Santos
+                addressState: SP
+                addressZipCode: '11050-200'
+                addressNeighborhood: Gonzaga
+                addressStreet: Avenida Ana Costa
+                addressNumber: '456'
+                complement: Bloco B Apto 78
+                ipAddress: 192.168.1.110
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '200':
-        description: Patient updated (OK).
+        description: Patient successfully updated with provided changes (OK).
         content:
           application/json:
             schema:
@@ -122,6 +171,7 @@ item:
         $ref: '../components/responses.yaml#/ValidationError'
 
   delete:
+    operationId: deletePatient
     summary: Delete a patient
     description: Flags a patient record as deleted (soft-delete), preserving clinical history while restricting active monitoring.
     tags:
@@ -132,19 +182,25 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the patient.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the patient.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            deletePatient:
+              summary: Soft-delete patient record with audit trail
+              value:
+                ipAddress: 192.168.1.110
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '204':
-        description: Patient deleted (No Content).
+        description: Patient successfully soft-deleted from active monitoring (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -154,6 +210,7 @@ item:
 
 restore:
   post:
+    operationId: restorePatient
     summary: Restore a patient
     description: Reverses a soft-delete operation, returning the patient to active monitoring status.
     tags:
@@ -164,19 +221,25 @@ restore:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the patient.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the patient.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            restorePatient:
+              summary: Restore deleted patient with audit trail
+              value:
+                ipAddress: 192.168.1.110
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '200':
-        description: Patient restored (OK).
+        description: Patient successfully restored to active monitoring (OK).
         content:
           application/json:
             schema:

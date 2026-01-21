@@ -1,5 +1,6 @@
 collection:
   get:
+    operationId: findObservations
     summary: Find observations
     description: Lists paginated clinical evolution entries and qualitative progress notes for patients, including sexual partner treatment status.
     tags:
@@ -20,7 +21,7 @@ collection:
         description: Filter observations by a specific patient.
     responses:
       '200':
-        description: List of observations (OK).
+        description: Paginated list of observations successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -31,6 +32,7 @@ collection:
         $ref: '../components/responses.yaml#/ForbiddenError'
 
   post:
+    operationId: createObservation
     summary: Register an observation
     description: Commits a new clinical evolution entry, documenting symptom updates and verifying partner treatment protocols.
     tags:
@@ -43,9 +45,18 @@ collection:
         application/json:
           schema:
             $ref: '../components/schemas/observation.yaml#/ObservationCreateRequest'
+          examples:
+            newObservation:
+              summary: Register clinical observation with partner treatment status
+              value:
+                patientId: 7e8f9a0b-1234-5678-9abc-def012345678
+                observations: Paciente retornou para consulta de acompanhamento após 15 dias do início do tratamento. Relata ausência de sintomas e boa adesão ao tratamento. Exame físico sem alterações. Parceiro(a) em tratamento concomitante conforme protocolo.
+                hasPartnerBeingTreated: true
+                ipAddress: 192.168.1.130
+                userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
     responses:
       '201':
-        description: Observation registered (Created).
+        description: Observation successfully registered with clinical notes (Created).
         content:
           application/json:
             schema:
@@ -61,6 +72,7 @@ collection:
 
 item:
   get:
+    operationId: getObservation
     summary: Get an observation
     description: Retrieves a single clinical observation.
     tags:
@@ -77,7 +89,7 @@ item:
           format: uuid
     responses:
       '200':
-        description: Observation details (OK).
+        description: Observation details successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -90,6 +102,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
   patch:
+    operationId: updateObservation
     summary: Update an observation
     description: Modifies existing clinical observations or partner status. Only provided fields are updated.
     tags:
@@ -110,9 +123,17 @@ item:
         application/json:
           schema:
             $ref: '../components/schemas/observation.yaml#/ObservationUpdateRequest'
+          examples:
+            updateObservationPartnerStatus:
+              summary: Update observation with partner treatment completion
+              value:
+                observations: Paciente retornou para consulta de acompanhamento após 15 dias do início do tratamento. Relata ausência de sintomas e boa adesão ao tratamento. Exame físico sem alterações. Parceiro(a) completou tratamento conforme protocolo com sucesso.
+                hasPartnerBeingTreated: true
+                ipAddress: 192.168.1.130
+                userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
     responses:
       '200':
-        description: Observation updated (OK).
+        description: Observation successfully updated with provided changes (OK).
         content:
           application/json:
             schema:
@@ -127,6 +148,7 @@ item:
         $ref: '../components/responses.yaml#/ValidationError'
 
   delete:
+    operationId: deleteObservation
     summary: Delete an observation
     description: Flags an observation as deleted (soft-delete).
     tags:
@@ -147,9 +169,15 @@ item:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            deleteObservation:
+              summary: Soft-delete observation record with audit trail
+              value:
+                ipAddress: 192.168.1.130
+                userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
     responses:
       '204':
-        description: Observation deleted (No Content).
+        description: Observation successfully soft-deleted from active records (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -159,6 +187,7 @@ item:
 
 restore:
   post:
+    operationId: restoreObservation
     summary: Restore an observation
     description: Reverses soft-delete for an observation.
     tags:
@@ -179,9 +208,15 @@ restore:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            restoreObservation:
+              summary: Restore deleted observation with audit trail
+              value:
+                ipAddress: 192.168.1.130
+                userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
     responses:
       '200':
-        description: Observation restored (OK).
+        description: Observation successfully restored to active records (OK).
         content:
           application/json:
             schema:

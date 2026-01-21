@@ -1,5 +1,6 @@
 collection:
   get:
+    operationId: findPermissions
     summary: Find permissions
     description: Retrieves all technical capabilities mapped in the ecosystem.
     tags:
@@ -13,7 +14,7 @@ collection:
       - $ref: '../components/parameters.yaml#/IncludeDeleted'
     responses:
       '200':
-        description: List of permissions (OK).
+        description: Paginated list of permissions successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -24,6 +25,7 @@ collection:
         $ref: '../components/responses.yaml#/ForbiddenError'
 
   post:
+    operationId: createPermission
     summary: Register a permission
     description: Declares a new system capability.
     tags:
@@ -36,9 +38,19 @@ collection:
         application/json:
           schema:
             $ref: '../components/schemas/permission.yaml#/PermissionCreateRequest'
+          examples:
+            newPermission:
+              summary: Create new permission with role assignments
+              value:
+                code: APPROVE_TREATMENT_PROTOCOL
+                roleIds:
+                  - role-admin-123
+                  - role-medical-coordinator-456
+                ipAddress: 192.168.1.100
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '201':
-        description: Permission created (Created).
+        description: Permission successfully created and registered (Created).
         content:
           application/json:
             schema:
@@ -54,6 +66,7 @@ collection:
 
 item:
   get:
+    operationId: getPermission
     summary: Get a permission
     description: Fetches full data for a single permission.
     tags:
@@ -70,7 +83,7 @@ item:
           format: uuid
     responses:
       '200':
-        description: Permission details (OK).
+        description: Permission details successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -83,6 +96,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
   patch:
+    operationId: updatePermission
     summary: Update a permission
     description: Modifies permission properties. Only provided fields are updated.
     tags:
@@ -103,9 +117,20 @@ item:
         application/json:
           schema:
             $ref: '../components/schemas/permission.yaml#/PermissionUpdateRequest'
+          examples:
+            updatePermissionRoles:
+              summary: Update permission code and synchronize roles
+              value:
+                code: APPROVE_ADVANCED_TREATMENT_PROTOCOL
+                roleIds:
+                  - role-admin-123
+                  - role-medical-coordinator-456
+                  - role-supervisor-789
+                ipAddress: 192.168.1.100
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '200':
-        description: Permission updated (OK).
+        description: Permission successfully updated with provided changes (OK).
         content:
           application/json:
             schema:
@@ -122,6 +147,7 @@ item:
         $ref: '../components/responses.yaml#/ValidationError'
 
   delete:
+    operationId: deletePermission
     summary: Delete a permission
     description: Flags a permission as deleted (soft-delete).
     tags:
@@ -142,9 +168,15 @@ item:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            deletePermission:
+              summary: Soft-delete permission with audit trail
+              value:
+                ipAddress: 192.168.1.100
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '204':
-        description: Permission deleted (No Content).
+        description: Permission successfully soft-deleted from active capabilities (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -154,6 +186,7 @@ item:
 
 restore:
   post:
+    operationId: restorePermission
     summary: Restore a permission
     description: Reverses soft-delete for a permission.
     tags:
@@ -174,9 +207,15 @@ restore:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            restorePermission:
+              summary: Restore deleted permission with audit trail
+              value:
+                ipAddress: 192.168.1.100
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '200':
-        description: Permission restored (OK).
+        description: Permission successfully restored to active capabilities (OK).
         content:
           application/json:
             schema:

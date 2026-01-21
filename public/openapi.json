@@ -93,6 +93,7 @@
   "paths": {
     "/auth/login": {
       "post": {
+        "operationId": "loginUser",
         "summary": "Login",
         "description": "Handles user authentication through email and password, initiates a secure stateful session, and provides both access and refresh JWT tokens together with essential user information.",
         "tags": [
@@ -146,13 +147,24 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "validCredentials": {
+                  "summary": "Valid user credentials",
+                  "value": {
+                    "email": "dr.silva@simcasi.gov.br",
+                    "password": "SecurePass#2026",
+                    "ipAddress": "192.168.1.100",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Authentication successful (OK).",
+            "description": "User successfully authenticated with tokens issued (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -189,6 +201,21 @@
                           "format": "uuid",
                           "description": "Unique identifier for the assigned RBAC role."
                         }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "successfulLogin": {
+                    "summary": "Successful authentication response",
+                    "value": {
+                      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YzA4ZjVlYi0xMjM0LTU2NzgtOWFiYy1kZWYwMTIzNDU2NzgiLCJlbWFpbCI6ImRyLnNpbHZhQHNpbWNhc2kuZ292LmJyIiwiaWF0IjoxNzM3NTA0MDAwLCJleHAiOjE3Mzc1MDc2MDB9.Xj8K9L2mN3pQ4rS5tU6vW7xY8zA9bC0dE1fG2hI3jK4",
+                      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YzA4ZjVlYi0xMjM0LTU2NzgtOWFiYy1kZWYwMTIzNDU2NzgiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTczNzUwNDAwMCwiZXhwIjoxNzM4MTA4ODAwfQ.A1bC2dE3fG4hI5jK6lM7nO8pQ9rS0tU1vW2xY3zA4b",
+                      "user": {
+                        "id": "9c08f5eb-1234-5678-9abc-def012345678",
+                        "name": "Dr. João Silva",
+                        "email": "dr.silva@simcasi.gov.br",
+                        "roleId": "a1b2c3d4-5678-90ab-cdef-1234567890ab"
                       }
                     }
                   }
@@ -301,8 +328,9 @@
     },
     "/auth/refresh": {
       "post": {
+        "operationId": "refreshToken",
         "summary": "Refresh token",
-        "description": "Performs secure token rotation by validating the current refresh token and issuing a new access/refresh pair, thereby extending the user’s session lifecycle.",
+        "description": "Performs secure token rotation by validating the current refresh token and issuing a new access/refresh pair, thereby extending the user's session lifecycle.",
         "tags": [
           "Authentication"
         ],
@@ -345,13 +373,23 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "validRefreshToken": {
+                  "summary": "Valid refresh token request",
+                  "value": {
+                    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YzA4ZjVlYi0xMjM0LTU2NzgtOWFiYy1kZWYwMTIzNDU2NzgiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTczNzUwNDAwMCwiZXhwIjoxNzM4MTA4ODAwfQ.A1bC2dE3fG4hI5jK6lM7nO8pQ9rS0tU1vW2xY3zA4b",
+                    "ipAddress": "192.168.1.100",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Token refreshed (OK).",
+            "description": "New token pair successfully issued and rotated (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -450,6 +488,7 @@
     },
     "/auth/logout": {
       "post": {
+        "operationId": "logoutUser",
         "summary": "Logout",
         "description": "Securely terminates the active session and blacklists the associated refresh token, preventing any subsequent reuse.",
         "tags": [
@@ -467,20 +506,20 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "ipAddress",
-                  "userAgent"
+                  "sessionId"
                 ],
                 "properties": {
-                  "ipAddress": {
+                  "sessionId": {
                     "type": "string",
-                    "format": "ipv4",
-                    "description": "Client's IP address for security tracking.",
-                    "example": "127.0.0.1"
-                  },
-                  "userAgent": {
-                    "type": "string",
-                    "description": "Device and browser identifier string.",
-                    "example": "Mozilla/5.0"
+                    "description": "Unique identifier of the session to terminate."
+                  }
+                }
+              },
+              "examples": {
+                "logoutRequest": {
+                  "summary": "Logout request with session identifier",
+                  "value": {
+                    "sessionId": "9c08f5eb-1234-5678-9abc-def012345678"
                   }
                 }
               }
@@ -489,7 +528,7 @@
         },
         "responses": {
           "204": {
-            "description": "Successfully logged out (No Content)."
+            "description": "Session successfully terminated and tokens invalidated (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -546,6 +585,7 @@
     },
     "/users": {
       "get": {
+        "operationId": "findUsers",
         "summary": "Find users",
         "description": "Retrieves a paginated list of users with optional filtering by name or email, including soft-deleted accounts if requested.",
         "tags": [
@@ -602,7 +642,7 @@
         ],
         "responses": {
           "200": {
-            "description": "A list of users (OK).",
+            "description": "Paginated list of users successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -777,7 +817,8 @@
         }
       },
       "post": {
-        "summary": "Register an user",
+        "operationId": "createUser",
+        "summary": "Register a user",
         "description": "Persists a new user record with credentials and links it to a specific RBAC role.",
         "tags": [
           "Users"
@@ -844,13 +885,26 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "newUser": {
+                  "summary": "Create new user with role",
+                  "value": {
+                    "name": "Dr. Maria Santos",
+                    "email": "dr.santos@simcasi.gov.br",
+                    "password": "SecurePassword#2026",
+                    "roleId": "a1b2c3d4-5678-90ab-cdef-1234567890ab",
+                    "ipAddress": "192.168.1.105",
+                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "User created (Created).",
+            "description": "User successfully created and persisted (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1164,7 +1218,8 @@
     },
     "/users/{id}": {
       "get": {
-        "summary": "Get an user",
+        "operationId": "getUser",
+        "summary": "Get a user",
         "description": "Fetches complete profile data and metadata for a single user record identified by its UUID.",
         "tags": [
           "Users"
@@ -1188,7 +1243,7 @@
         ],
         "responses": {
           "200": {
-            "description": "User details (OK).",
+            "description": "User details successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1400,7 +1455,8 @@
         }
       },
       "patch": {
-        "summary": "Update an user",
+        "operationId": "updateUser",
+        "summary": "Update a user",
         "description": "Updates profile information for an existing user record. Only provided fields are updated.",
         "tags": [
           "Users"
@@ -1468,13 +1524,24 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "updateUserEmail": {
+                  "summary": "Update user email and role",
+                  "value": {
+                    "email": "joao.santos.novo@hospital.com.br",
+                    "roleId": "role-supervisor-789",
+                    "ipAddress": "192.168.1.105",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "User updated (OK).",
+            "description": "User successfully updated with provided changes (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -1786,8 +1853,9 @@
         }
       },
       "delete": {
-        "summary": "Delete an user",
-        "description": "Flag an user record as deleted (soft-delete), removing access without erasing historical data.",
+        "operationId": "deleteUser",
+        "summary": "Delete a user",
+        "description": "Flag a user record as deleted (soft-delete), removing access without erasing historical data.",
         "tags": [
           "Users"
         ],
@@ -1831,13 +1899,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "deleteUser": {
+                  "summary": "Soft-delete user with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.105",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "204": {
-            "description": "User deleted (No Content)."
+            "description": "User successfully soft-deleted from active records (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -1994,7 +2071,8 @@
     },
     "/users/{id}/restore": {
       "post": {
-        "summary": "Restore an user",
+        "operationId": "restoreUser",
+        "summary": "Restore a user",
         "description": "Reverses a soft-delete operation, restoring the user's active status and system access.",
         "tags": [
           "Users"
@@ -2039,13 +2117,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "restoreUser": {
+                  "summary": "Restore deleted user with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.105",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "User restored (OK).",
+            "description": "User successfully restored to active status (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2259,6 +2346,7 @@
     },
     "/patients": {
       "get": {
+        "operationId": "findPatients",
         "summary": "Find patients",
         "description": "Searches for patients using name, CPF, or SUS card filters, supporting paginated results and administrative visibility of deleted records.",
         "tags": [
@@ -2315,7 +2403,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of patients (OK).",
+            "description": "Paginated list of patients successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2593,6 +2681,7 @@
         }
       },
       "post": {
+        "operationId": "createPatient",
         "summary": "Register a patient",
         "description": "Initializes a comprehensive medical profile including demographic, geographic, and tracking classification data.",
         "tags": [
@@ -2754,13 +2843,46 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "newPatient": {
+                  "summary": "Register new patient with complete clinical and demographic data",
+                  "value": {
+                    "susCardNumber": "898001234567890",
+                    "name": "Ana Carolina Oliveira Santos",
+                    "cpf": "12345678900",
+                    "socialName": "Carol Oliveira",
+                    "birthDate": "1990-03-15",
+                    "race": "PARDA",
+                    "sex": "FEMALE",
+                    "gender": "CISGENDER_WOMAN",
+                    "sexuality": "HETEROSEXUAL",
+                    "nationality": "BRAZILIAN",
+                    "schooling": "COMPLETE_HIGH_SCHOOL",
+                    "phone": "+5511987654321",
+                    "email": "ana.oliveira@email.com",
+                    "motherName": "Mariana Santos Oliveira",
+                    "fatherName": "Carlos Alberto Oliveira",
+                    "isDeceased": false,
+                    "monitoringType": "PREGNANT",
+                    "zipCode": "01234-567",
+                    "state": "SP",
+                    "city": "São Paulo",
+                    "neighborhood": "Centro",
+                    "street": "Rua das Flores",
+                    "houseNumber": "123",
+                    "complement": "Apto 45",
+                    "ipAddress": "192.168.1.110",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Patient registered (Created).",
+            "description": "Patient successfully registered and persisted (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3127,6 +3249,7 @@
     },
     "/patients/{id}": {
       "get": {
+        "operationId": "getPatient",
         "summary": "Get a patient",
         "description": "Retrieves the full clinical and demographic identity of a patient, including audit metadata.",
         "tags": [
@@ -3142,16 +3265,16 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the patient.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the patient."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Patient details (OK).",
+            "description": "Patient details successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3466,6 +3589,7 @@
         }
       },
       "patch": {
+        "operationId": "updatePatient",
         "summary": "Update a patient",
         "description": "Modifies existing patient demographic or residential information. Only provided fields are updated.",
         "tags": [
@@ -3481,11 +3605,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the patient.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the patient."
+            }
           }
         ],
         "requestBody": {
@@ -3600,13 +3724,31 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "updatePatientContact": {
+                  "summary": "Update patient contact information and address",
+                  "value": {
+                    "phoneNumber": "+5511999887766",
+                    "email": "ana.santos.novo@email.com",
+                    "addressCity": "Santos",
+                    "addressState": "SP",
+                    "addressZipCode": "11050-200",
+                    "addressNeighborhood": "Gonzaga",
+                    "addressStreet": "Avenida Ana Costa",
+                    "addressNumber": "456",
+                    "complement": "Bloco B Apto 78",
+                    "ipAddress": "192.168.1.110",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Patient updated (OK).",
+            "description": "Patient successfully updated with provided changes (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4021,6 +4163,7 @@
         }
       },
       "delete": {
+        "operationId": "deletePatient",
         "summary": "Delete a patient",
         "description": "Flags a patient record as deleted (soft-delete), preserving clinical history while restricting active monitoring.",
         "tags": [
@@ -4036,11 +4179,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the patient.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the patient."
+            }
           }
         ],
         "requestBody": {
@@ -4066,13 +4209,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "deletePatient": {
+                  "summary": "Soft-delete patient record with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.110",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "204": {
-            "description": "Patient deleted (No Content)."
+            "description": "Patient successfully soft-deleted from active monitoring (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -4229,6 +4381,7 @@
     },
     "/patients/{id}/restore": {
       "post": {
+        "operationId": "restorePatient",
         "summary": "Restore a patient",
         "description": "Reverses a soft-delete operation, returning the patient to active monitoring status.",
         "tags": [
@@ -4244,11 +4397,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the patient.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the patient."
+            }
           }
         ],
         "requestBody": {
@@ -4274,13 +4427,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "restorePatient": {
+                  "summary": "Restore deleted patient with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.110",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Patient restored (OK).",
+            "description": "Patient successfully restored to active monitoring (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4597,6 +4759,7 @@
     },
     "/roles": {
       "get": {
+        "operationId": "findRoles",
         "summary": "Find roles",
         "description": "Lists all functional access profiles available in the system.",
         "tags": [
@@ -4653,7 +4816,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of roles (OK).",
+            "description": "Paginated list of roles successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4816,6 +4979,7 @@
         }
       },
       "post": {
+        "operationId": "createRole",
         "summary": "Register a role",
         "description": "Defines a new profile and its initial set of permissions (Many-to-Many).",
         "tags": [
@@ -4873,13 +5037,28 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "newRole": {
+                  "summary": "Create new role with assigned permissions",
+                  "value": {
+                    "code": "MEDICAL_COORDINATOR",
+                    "permissionIds": [
+                      "perm-123-view-patients",
+                      "perm-456-manage-treatments",
+                      "perm-789-view-reports"
+                    ],
+                    "ipAddress": "192.168.1.100",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Role created (Created).",
+            "description": "Role successfully created with linked permissions (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5181,6 +5360,7 @@
     },
     "/roles/{id}": {
       "get": {
+        "operationId": "getRole",
         "summary": "Get a role",
         "description": "Fetches full data for a single role, including linked permissions.",
         "tags": [
@@ -5205,7 +5385,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Role details (OK).",
+            "description": "Role details successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5405,6 +5585,7 @@
         }
       },
       "patch": {
+        "operationId": "updateRole",
         "summary": "Update a role",
         "description": "Modifies role properties and synchronizes permissions. Only provided fields are updated.",
         "tags": [
@@ -5469,13 +5650,29 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "updateRolePermissions": {
+                  "summary": "Update role code and synchronize permissions",
+                  "value": {
+                    "code": "SENIOR_MEDICAL_COORDINATOR",
+                    "permissionIds": [
+                      "perm-123-view-patients",
+                      "perm-456-manage-treatments",
+                      "perm-789-view-reports",
+                      "perm-101-manage-users"
+                    ],
+                    "ipAddress": "192.168.1.100",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Role updated (OK).",
+            "description": "Role successfully updated with provided changes (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5775,6 +5972,7 @@
         }
       },
       "delete": {
+        "operationId": "deleteRole",
         "summary": "Delete a role",
         "description": "Flags a role as deleted (soft-delete).",
         "tags": [
@@ -5820,13 +6018,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "deleteRole": {
+                  "summary": "Soft-delete role with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.100",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "204": {
-            "description": "Role deleted (No Content)."
+            "description": "Role successfully soft-deleted from active profiles (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -5983,6 +6190,7 @@
     },
     "/roles/{id}/restore": {
       "post": {
+        "operationId": "restoreRole",
         "summary": "Restore a role",
         "description": "Reverses soft-delete for a role.",
         "tags": [
@@ -5998,6 +6206,7 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the role.",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -6027,13 +6236,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "restoreRole": {
+                  "summary": "Restore deleted role with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.100",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Role restored (OK).",
+            "description": "Role successfully restored to active profiles (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6235,6 +6453,7 @@
     },
     "/permissions": {
       "get": {
+        "operationId": "findPermissions",
         "summary": "Find permissions",
         "description": "Retrieves all technical capabilities mapped in the ecosystem.",
         "tags": [
@@ -6291,7 +6510,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of permissions (OK).",
+            "description": "Paginated list of permissions successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6454,6 +6673,7 @@
         }
       },
       "post": {
+        "operationId": "createPermission",
         "summary": "Register a permission",
         "description": "Declares a new system capability.",
         "tags": [
@@ -6511,13 +6731,27 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "newPermission": {
+                  "summary": "Create new permission with role assignments",
+                  "value": {
+                    "code": "APPROVE_TREATMENT_PROTOCOL",
+                    "roleIds": [
+                      "role-admin-123",
+                      "role-medical-coordinator-456"
+                    ],
+                    "ipAddress": "192.168.1.100",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Permission created (Created).",
+            "description": "Permission successfully created and registered (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6769,6 +7003,7 @@
     },
     "/permissions/{id}": {
       "get": {
+        "operationId": "getPermission",
         "summary": "Get a permission",
         "description": "Fetches full data for a single permission.",
         "tags": [
@@ -6793,7 +7028,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Permission details (OK).",
+            "description": "Permission details successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6993,6 +7228,7 @@
         }
       },
       "patch": {
+        "operationId": "updatePermission",
         "summary": "Update a permission",
         "description": "Modifies permission properties. Only provided fields are updated.",
         "tags": [
@@ -7057,13 +7293,28 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "updatePermissionRoles": {
+                  "summary": "Update permission code and synchronize roles",
+                  "value": {
+                    "code": "APPROVE_ADVANCED_TREATMENT_PROTOCOL",
+                    "roleIds": [
+                      "role-admin-123",
+                      "role-medical-coordinator-456",
+                      "role-supervisor-789"
+                    ],
+                    "ipAddress": "192.168.1.100",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Permission updated (OK).",
+            "description": "Permission successfully updated with provided changes (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7363,6 +7614,7 @@
         }
       },
       "delete": {
+        "operationId": "deletePermission",
         "summary": "Delete a permission",
         "description": "Flags a permission as deleted (soft-delete).",
         "tags": [
@@ -7408,13 +7660,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "deletePermission": {
+                  "summary": "Soft-delete permission with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.100",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "204": {
-            "description": "Permission deleted (No Content)."
+            "description": "Permission successfully soft-deleted from active capabilities (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -7571,6 +7832,7 @@
     },
     "/permissions/{id}/restore": {
       "post": {
+        "operationId": "restorePermission",
         "summary": "Restore a permission",
         "description": "Reverses soft-delete for a permission.",
         "tags": [
@@ -7616,13 +7878,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "restorePermission": {
+                  "summary": "Restore deleted permission with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.100",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Permission restored (OK).",
+            "description": "Permission successfully restored to active capabilities (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -7824,6 +8095,7 @@
     },
     "/exams": {
       "get": {
+        "operationId": "findExams",
         "summary": "Find exams",
         "description": "Accesses the history of treponemal and nontreponemal tests (titration) for monitoring diagnosis and treatment efficacy.",
         "tags": [
@@ -7890,7 +8162,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of exams (OK).",
+            "description": "Paginated list of exams successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8107,6 +8379,7 @@
         }
       },
       "post": {
+        "operationId": "createExam",
         "summary": "Register an exam",
         "description": "Records new laboratory results, linking titration levels and test methodologies to a specific patient's clinical timeline.",
         "tags": [
@@ -8199,13 +8472,33 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "vdrlTest": {
+                  "summary": "Complete treponemal and nontreponemal test registration",
+                  "value": {
+                    "patientId": "7e8f9a0b-1234-5678-9abc-def012345678",
+                    "treponemalTestType": "TPHA",
+                    "treponemalTestResult": "REACTIVE",
+                    "treponemalTestDate": "2026-01-20",
+                    "treponemalTestLocation": "Laboratório Central Hospital Municipal São Paulo",
+                    "nontreponemalVdrlTest": true,
+                    "nontreponemalTestTitration": "1:32",
+                    "nontreponemalTestDate": "2026-01-20",
+                    "otherNontreponemalTest": "RPR",
+                    "otherNontreponemalTestDate": "2026-01-21",
+                    "referenceObservations": "Primeiro exame com resultado reagente. Titulação elevada sugere infecção ativa. Paciente será notificado para início imediato do tratamento.",
+                    "ipAddress": "192.168.1.115",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Exam registered (Created).",
+            "description": "Exam successfully registered with laboratory results (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8511,6 +8804,7 @@
     },
     "/exams/{id}": {
       "get": {
+        "operationId": "getExam",
         "summary": "Get an exam",
         "description": "Retrieves technical specifications and titration results from a single exam.",
         "tags": [
@@ -8526,16 +8820,16 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the exam.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the exam."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Exam details (OK).",
+            "description": "Exam details successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -8789,6 +9083,7 @@
         }
       },
       "patch": {
+        "operationId": "updateExam",
         "summary": "Update an exam",
         "description": "Modifies existing exam results or clinical observations. Only provided fields are updated.",
         "tags": [
@@ -8804,11 +9099,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the exam.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the exam."
+            }
           }
         ],
         "requestBody": {
@@ -8878,13 +9173,25 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "updateExamTitration": {
+                  "summary": "Update nontreponemal test titration after treatment",
+                  "value": {
+                    "nontreponemalTestTitration": "1:8",
+                    "nontreponemalTestDate": "2026-02-15",
+                    "referenceObservations": "Redução da titulação após 2 semanas de tratamento. Indicativo de resposta positiva à terapia. Manter acompanhamento mensal.",
+                    "ipAddress": "192.168.1.115",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Exam updated (OK).",
+            "description": "Exam successfully updated with provided changes (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9188,6 +9495,7 @@
         }
       },
       "delete": {
+        "operationId": "deleteExam",
         "summary": "Delete an exam",
         "description": "Flags an exam as deleted (soft-delete).",
         "tags": [
@@ -9203,11 +9511,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the exam.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the exam."
+            }
           }
         ],
         "requestBody": {
@@ -9233,13 +9541,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "deleteExam": {
+                  "summary": "Soft-delete exam record with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.115",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "204": {
-            "description": "Exam deleted (No Content)."
+            "description": "Exam successfully soft-deleted from active records (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -9396,6 +9713,7 @@
     },
     "/exams/{id}/restore": {
       "post": {
+        "operationId": "restoreExam",
         "summary": "Restore an exam",
         "description": "Reverses soft-delete for an exam.",
         "tags": [
@@ -9411,11 +9729,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the exam.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the exam."
+            }
           }
         ],
         "requestBody": {
@@ -9441,13 +9759,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "restoreExam": {
+                  "summary": "Restore deleted exam with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.115",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Exam restored (OK).",
+            "description": "Exam successfully restored to active records (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9703,6 +10030,7 @@
     },
     "/treatments": {
       "get": {
+        "operationId": "findTreatments",
         "summary": "Find treatments",
         "description": "Lists documented pharmacological cycles (medication, dosage, start dates) administered at health centers for patient monitoring.",
         "tags": [
@@ -9769,7 +10097,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of treatments (OK).",
+            "description": "Paginated list of treatments successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -9966,6 +10294,7 @@
         }
       },
       "post": {
+        "operationId": "createTreatment",
         "summary": "Register a treatment",
         "description": "Records administrative pharmacotherapy data, including medication dosage, facility location, and partner notification details.",
         "tags": [
@@ -10040,13 +10369,29 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "newTreatment": {
+                  "summary": "Register new treatment with medication protocol",
+                  "value": {
+                    "patientId": "7e8f9a0b-1234-5678-9abc-def012345678",
+                    "medication": "Benzilpenicilina Benzatina 2.400.000 UI",
+                    "healthCenter": "UBS Centro - São Paulo",
+                    "startDate": "2026-01-22",
+                    "dosage": "2.400.000 UI IM dose única (1.200.000 UI em cada nádega)",
+                    "observations": "Paciente orientado sobre possibilidade de reação de Jarisch-Herxheimer. Retorno agendado para acompanhamento em 30 dias.",
+                    "partnerInformation": "Parceiro(a) notificado(a) e encaminhado(a) para tratamento concomitante.",
+                    "ipAddress": "192.168.1.120",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Treatment registered (Created).",
+            "description": "Treatment successfully registered with pharmacotherapy data (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10332,6 +10677,7 @@
     },
     "/treatments/{id}": {
       "get": {
+        "operationId": "getTreatment",
         "summary": "Get a treatment",
         "description": "Retrieves full data for a single treatment.",
         "tags": [
@@ -10347,16 +10693,16 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the treatment.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the treatment."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Treatment details (OK).",
+            "description": "Treatment details successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10590,6 +10936,7 @@
         }
       },
       "patch": {
+        "operationId": "updateTreatment",
         "summary": "Update a treatment",
         "description": "Modifies existing treatment records or clinical details. Only provided fields are updated.",
         "tags": [
@@ -10605,11 +10952,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the treatment.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the treatment."
+            }
           }
         ],
         "requestBody": {
@@ -10665,13 +11012,24 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "updateTreatmentObservations": {
+                  "summary": "Update treatment observations after follow-up",
+                  "value": {
+                    "observations": "Paciente compareceu ao retorno de 30 dias. Nenhum efeito adverso relatado. Evolução satisfatória. Novo exame de controle solicitado para 3 meses.",
+                    "partnerInformation": "Parceiro(a) completou tratamento conforme protocolo.",
+                    "ipAddress": "192.168.1.120",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Treatment updated (OK).",
+            "description": "Treatment successfully updated with provided changes (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -10955,6 +11313,7 @@
         }
       },
       "delete": {
+        "operationId": "deleteTreatment",
         "summary": "Delete a treatment",
         "description": "Flags a treatment as deleted (soft-delete).",
         "tags": [
@@ -10970,11 +11329,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the treatment.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the treatment."
+            }
           }
         ],
         "requestBody": {
@@ -11000,13 +11359,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "deleteTreatment": {
+                  "summary": "Soft-delete treatment record with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.120",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "204": {
-            "description": "Treatment deleted (No Content)."
+            "description": "Treatment successfully soft-deleted from active records (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -11163,6 +11531,7 @@
     },
     "/treatments/{id}/restore": {
       "post": {
+        "operationId": "restoreTreatment",
         "summary": "Restore a treatment",
         "description": "Reverses soft-delete for a treatment.",
         "tags": [
@@ -11178,11 +11547,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the treatment.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the treatment."
+            }
           }
         ],
         "requestBody": {
@@ -11208,13 +11577,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "restoreTreatment": {
+                  "summary": "Restore deleted treatment with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.120",
+                    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Treatment restored (OK).",
+            "description": "Treatment successfully restored to active records (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11450,6 +11828,7 @@
     },
     "/notifications": {
       "get": {
+        "operationId": "findNotifications",
         "summary": "Find notifications",
         "description": "Filters and retrieves official notification records linked to patients, tracking health authority notification status.",
         "tags": [
@@ -11516,7 +11895,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of notifications (OK).",
+            "description": "Paginated list of notifications successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11694,6 +12073,7 @@
         }
       },
       "post": {
+        "operationId": "createNotification",
         "summary": "Register a notification",
         "description": "Commits a new notification number and case observations to the database for regulatory compliance tracking.",
         "tags": [
@@ -11751,13 +12131,25 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "newNotification": {
+                  "summary": "Register new SINAN notification for regulatory compliance",
+                  "value": {
+                    "patientId": "7e8f9a0b-1234-5678-9abc-def012345678",
+                    "sinan": "2026.01.SP.12345678",
+                    "observations": "Caso de sífilis adquirida em paciente gestante. Notificação compulsória conforme Portaria GM/MS nº 1.271/2014. Parceiro(a) também será notificado e tratado.",
+                    "ipAddress": "192.168.1.125",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Notification registered (Created).",
+            "description": "Notification successfully registered for regulatory compliance (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12024,6 +12416,7 @@
     },
     "/notifications/{id}": {
       "get": {
+        "operationId": "getNotification",
         "summary": "Get a notification",
         "description": "Retrieves a single notification record's full details.",
         "tags": [
@@ -12039,16 +12432,16 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the notification.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the notification."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Notification details (OK).",
+            "description": "Notification details successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12263,6 +12656,7 @@
         }
       },
       "patch": {
+        "operationId": "updateNotification",
         "summary": "Update a notification",
         "description": "Modifies the notification number or clinical notes. Only provided fields are updated.",
         "tags": [
@@ -12278,11 +12672,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the notification.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the notification."
+            }
           }
         ],
         "requestBody": {
@@ -12324,13 +12718,23 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "updateNotificationObservations": {
+                  "summary": "Update SINAN notification observations",
+                  "value": {
+                    "observations": "Caso de sífilis adquirida em paciente gestante. Notificação compulsória conforme Portaria GM/MS nº 1.271/2014. Parceiro(a) notificado e em tratamento. Adição: Paciente apresentou melhora clínica após início do tratamento.",
+                    "ipAddress": "192.168.1.125",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Notification updated (OK).",
+            "description": "Notification successfully updated with provided changes (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12595,6 +12999,7 @@
         }
       },
       "delete": {
+        "operationId": "deleteNotification",
         "summary": "Delete a notification",
         "description": "Flags a notification record as deleted (soft-delete).",
         "tags": [
@@ -12610,11 +13015,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the notification.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the notification."
+            }
           }
         ],
         "requestBody": {
@@ -12640,13 +13045,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "deleteNotification": {
+                  "summary": "Soft-delete notification record with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.125",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "204": {
-            "description": "Notification deleted (No Content)."
+            "description": "Notification successfully soft-deleted from active records (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -12803,6 +13217,7 @@
     },
     "/notifications/{id}/restore": {
       "post": {
+        "operationId": "restoreNotification",
         "summary": "Restore a notification",
         "description": "Reverses soft-delete for a notification.",
         "tags": [
@@ -12818,11 +13233,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the notification.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the notification."
+            }
           }
         ],
         "requestBody": {
@@ -12848,13 +13263,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "restoreNotification": {
+                  "summary": "Restore deleted notification with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.125",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Notification restored (OK).",
+            "description": "Notification successfully restored to active records (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13071,6 +13495,7 @@
     },
     "/observations": {
       "get": {
+        "operationId": "findObservations",
         "summary": "Find observations",
         "description": "Lists paginated clinical evolution entries and qualitative progress notes for patients, including sexual partner treatment status.",
         "tags": [
@@ -13137,7 +13562,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of observations (OK).",
+            "description": "Paginated list of observations successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13313,6 +13738,7 @@
         }
       },
       "post": {
+        "operationId": "createObservation",
         "summary": "Register an observation",
         "description": "Commits a new clinical evolution entry, documenting symptom updates and verifying partner treatment protocols.",
         "tags": [
@@ -13370,13 +13796,25 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "newObservation": {
+                  "summary": "Register clinical observation with partner treatment status",
+                  "value": {
+                    "patientId": "7e8f9a0b-1234-5678-9abc-def012345678",
+                    "observations": "Paciente retornou para consulta de acompanhamento após 15 dias do início do tratamento. Relata ausência de sintomas e boa adesão ao tratamento. Exame físico sem alterações. Parceiro(a) em tratamento concomitante conforme protocolo.",
+                    "hasPartnerBeingTreated": true,
+                    "ipAddress": "192.168.1.130",
+                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Observation registered (Created).",
+            "description": "Observation successfully registered with clinical notes (Created).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13641,6 +14079,7 @@
     },
     "/observations/{id}": {
       "get": {
+        "operationId": "getObservation",
         "summary": "Get an observation",
         "description": "Retrieves a single clinical observation.",
         "tags": [
@@ -13665,7 +14104,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Observation details (OK).",
+            "description": "Observation details successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -13878,6 +14317,7 @@
         }
       },
       "patch": {
+        "operationId": "updateObservation",
         "summary": "Update an observation",
         "description": "Modifies existing clinical observations or partner status. Only provided fields are updated.",
         "tags": [
@@ -13938,13 +14378,24 @@
                     }
                   }
                 ]
+              },
+              "examples": {
+                "updateObservationPartnerStatus": {
+                  "summary": "Update observation with partner treatment completion",
+                  "value": {
+                    "observations": "Paciente retornou para consulta de acompanhamento após 15 dias do início do tratamento. Relata ausência de sintomas e boa adesão ao tratamento. Exame físico sem alterações. Parceiro(a) completou tratamento conforme protocolo com sucesso.",
+                    "hasPartnerBeingTreated": true,
+                    "ipAddress": "192.168.1.130",
+                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Observation updated (OK).",
+            "description": "Observation successfully updated with provided changes (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14207,6 +14658,7 @@
         }
       },
       "delete": {
+        "operationId": "deleteObservation",
         "summary": "Delete an observation",
         "description": "Flags an observation as deleted (soft-delete).",
         "tags": [
@@ -14252,13 +14704,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "deleteObservation": {
+                  "summary": "Soft-delete observation record with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.130",
+                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "204": {
-            "description": "Observation deleted (No Content)."
+            "description": "Observation successfully soft-deleted from active records (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -14415,6 +14876,7 @@
     },
     "/observations/{id}/restore": {
       "post": {
+        "operationId": "restoreObservation",
         "summary": "Restore an observation",
         "description": "Reverses soft-delete for an observation.",
         "tags": [
@@ -14460,13 +14922,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "restoreObservation": {
+                  "summary": "Restore deleted observation with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.130",
+                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Observation restored (OK).",
+            "description": "Observation successfully restored to active records (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14681,6 +15152,7 @@
     },
     "/audit-logs": {
       "get": {
+        "operationId": "findAuditLogs",
         "summary": "Find audit logs",
         "description": "Retrieves a paginated history of all state-altering operations, including technical identifiers, old/new value snapshots, and authorship metadata.",
         "tags": [
@@ -14775,7 +15247,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of audit logs (OK).",
+            "description": "Paginated list of audit logs successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -14953,6 +15425,7 @@
     },
     "/audit-logs/{id}": {
       "get": {
+        "operationId": "getAuditLog",
         "summary": "Get an audit log",
         "description": "Fetches a single forensic record containing the complete diff of a specific transaction, including client metadata (IP/User Agent).",
         "tags": [
@@ -14968,16 +15441,16 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the audit log.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the audit log."
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Audit log details (OK).",
+            "description": "Audit log details successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15192,6 +15665,7 @@
     },
     "/sessions": {
       "get": {
+        "operationId": "findSessions",
         "summary": "Find sessions",
         "description": "Lists currently active user sessions.",
         "tags": [
@@ -15258,7 +15732,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of active sessions (OK).",
+            "description": "Paginated list of active sessions successfully retrieved (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -15442,6 +15916,7 @@
     },
     "/sessions/{id}": {
       "delete": {
+        "operationId": "revokeSession",
         "summary": "Revoke a session",
         "description": "Terminates an active user session by revoking its security tokens and forcing a re-authentication flow.",
         "tags": [
@@ -15457,11 +15932,11 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "description": "Unique identifier for the session.",
             "schema": {
               "type": "string",
               "format": "uuid"
-            },
-            "description": "Unique identifier for the session."
+            }
           }
         ],
         "requestBody": {
@@ -15487,13 +15962,22 @@
                     "example": "Mozilla/5.0"
                   }
                 }
+              },
+              "examples": {
+                "revokeSession": {
+                  "summary": "Revoke active session with audit trail",
+                  "value": {
+                    "ipAddress": "192.168.1.100",
+                    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                  }
+                }
               }
             }
           }
         },
         "responses": {
           "204": {
-            "description": "Session revoked (No Content)."
+            "description": "Session successfully revoked and tokens invalidated (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -15650,6 +16134,7 @@
     },
     "/health": {
       "get": {
+        "operationId": "getApiHealthStatus",
         "summary": "API health status",
         "description": "Verifies the operational status of the API service and its connection to the primary persistence layer (Database).",
         "tags": [
@@ -15658,7 +16143,7 @@
         "security": [],
         "responses": {
           "200": {
-            "description": "Service is operational (OK).",
+            "description": "Service operational and database connection verified (OK).",
             "content": {
               "application/json": {
                 "schema": {

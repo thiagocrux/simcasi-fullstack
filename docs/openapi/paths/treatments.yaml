@@ -1,5 +1,6 @@
 collection:
   get:
+    operationId: findTreatments
     summary: Find treatments
     description: Lists documented pharmacological cycles (medication, dosage, start dates) administered at health centers for patient monitoring.
     tags:
@@ -20,7 +21,7 @@ collection:
         description: Filter treatments by a specific patient.
     responses:
       '200':
-        description: List of treatments (OK).
+        description: Paginated list of treatments successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -31,6 +32,7 @@ collection:
         $ref: '../components/responses.yaml#/ForbiddenError'
 
   post:
+    operationId: createTreatment
     summary: Register a treatment
     description: Records administrative pharmacotherapy data, including medication dosage, facility location, and partner notification details.
     tags:
@@ -43,9 +45,22 @@ collection:
         application/json:
           schema:
             $ref: '../components/schemas/treatment.yaml#/TreatmentCreateRequest'
+          examples:
+            newTreatment:
+              summary: Register new treatment with medication protocol
+              value:
+                patientId: 7e8f9a0b-1234-5678-9abc-def012345678
+                medication: Benzilpenicilina Benzatina 2.400.000 UI
+                healthCenter: UBS Centro - São Paulo
+                startDate: '2026-01-22'
+                dosage: 2.400.000 UI IM dose única (1.200.000 UI em cada nádega)
+                observations: Paciente orientado sobre possibilidade de reação de Jarisch-Herxheimer. Retorno agendado para acompanhamento em 30 dias.
+                partnerInformation: Parceiro(a) notificado(a) e encaminhado(a) para tratamento concomitante.
+                ipAddress: 192.168.1.120
+                userAgent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
     responses:
       '201':
-        description: Treatment registered (Created).
+        description: Treatment successfully registered with pharmacotherapy data (Created).
         content:
           application/json:
             schema:
@@ -61,6 +76,7 @@ collection:
 
 item:
   get:
+    operationId: getTreatment
     summary: Get a treatment
     description: Retrieves full data for a single treatment.
     tags:
@@ -71,13 +87,13 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the treatment.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the treatment.
     responses:
       '200':
-        description: Treatment details (OK).
+        description: Treatment details successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -90,6 +106,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
   patch:
+    operationId: updateTreatment
     summary: Update a treatment
     description: Modifies existing treatment records or clinical details. Only provided fields are updated.
     tags:
@@ -100,19 +117,27 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the treatment.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the treatment.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/treatment.yaml#/TreatmentUpdateRequest'
+          examples:
+            updateTreatmentObservations:
+              summary: Update treatment observations after follow-up
+              value:
+                observations: Paciente compareceu ao retorno de 30 dias. Nenhum efeito adverso relatado. Evolução satisfatória. Novo exame de controle solicitado para 3 meses.
+                partnerInformation: Parceiro(a) completou tratamento conforme protocolo.
+                ipAddress: 192.168.1.120
+                userAgent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
     responses:
       '200':
-        description: Treatment updated (OK).
+        description: Treatment successfully updated with provided changes (OK).
         content:
           application/json:
             schema:
@@ -127,6 +152,7 @@ item:
         $ref: '../components/responses.yaml#/ValidationError'
 
   delete:
+    operationId: deleteTreatment
     summary: Delete a treatment
     description: Flags a treatment as deleted (soft-delete).
     tags:
@@ -137,19 +163,25 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the treatment.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the treatment.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            deleteTreatment:
+              summary: Soft-delete treatment record with audit trail
+              value:
+                ipAddress: 192.168.1.120
+                userAgent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
     responses:
       '204':
-        description: Treatment deleted (No Content).
+        description: Treatment successfully soft-deleted from active records (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -159,6 +191,7 @@ item:
 
 restore:
   post:
+    operationId: restoreTreatment
     summary: Restore a treatment
     description: Reverses soft-delete for a treatment.
     tags:
@@ -169,19 +202,25 @@ restore:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the treatment.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the treatment.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            restoreTreatment:
+              summary: Restore deleted treatment with audit trail
+              value:
+                ipAddress: 192.168.1.120
+                userAgent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
     responses:
       '200':
-        description: Treatment restored (OK).
+        description: Treatment successfully restored to active records (OK).
         content:
           application/json:
             schema:

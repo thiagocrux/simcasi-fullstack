@@ -1,5 +1,6 @@
 collection:
   get:
+    operationId: findSessions
     summary: Find sessions
     description: Lists currently active user sessions.
     tags:
@@ -20,7 +21,7 @@ collection:
         description: Filter sessions by a specific user.
     responses:
       '200':
-        description: List of active sessions (OK).
+        description: Paginated list of active sessions successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -32,6 +33,7 @@ collection:
 
 item:
   delete:
+    operationId: revokeSession
     summary: Revoke a session
     description: Terminates an active user session by revoking its security tokens and forcing a re-authentication flow.
     tags:
@@ -42,19 +44,25 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the session.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the session.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            revokeSession:
+              summary: Revoke active session with audit trail
+              value:
+                ipAddress: 192.168.1.100
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '204':
-        description: Session revoked (No Content).
+        description: Session successfully revoked and tokens invalidated (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':

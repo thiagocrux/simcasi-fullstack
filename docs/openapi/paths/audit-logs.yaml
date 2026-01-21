@@ -1,5 +1,6 @@
 collection:
   get:
+    operationId: findAuditLogs
     summary: Find audit logs
     description: Retrieves a paginated history of all state-altering operations, including technical identifiers, old/new value snapshots, and authorship metadata.
     tags:
@@ -39,7 +40,7 @@ collection:
         description: Filter by affected entity ID.
     responses:
       '200':
-        description: List of audit logs (OK).
+        description: Paginated list of audit logs successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -51,6 +52,7 @@ collection:
 
 item:
   get:
+    operationId: getAuditLog
     summary: Get an audit log
     description: Fetches a single forensic record containing the complete diff of a specific transaction, including client metadata (IP/User Agent).
     tags:
@@ -61,13 +63,13 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the audit log.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the audit log.
     responses:
       '200':
-        description: Audit log details (OK).
+        description: Audit log details successfully retrieved (OK).
         content:
           application/json:
             schema:

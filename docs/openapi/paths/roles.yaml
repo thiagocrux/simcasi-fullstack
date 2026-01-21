@@ -1,5 +1,6 @@
 collection:
   get:
+    operationId: findRoles
     summary: Find roles
     description: Lists all functional access profiles available in the system.
     tags:
@@ -13,7 +14,7 @@ collection:
       - $ref: '../components/parameters.yaml#/IncludeDeleted'
     responses:
       '200':
-        description: List of roles (OK).
+        description: Paginated list of roles successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -24,6 +25,7 @@ collection:
         $ref: '../components/responses.yaml#/ForbiddenError'
 
   post:
+    operationId: createRole
     summary: Register a role
     description: Defines a new profile and its initial set of permissions (Many-to-Many).
     tags:
@@ -36,9 +38,20 @@ collection:
         application/json:
           schema:
             $ref: '../components/schemas/role.yaml#/RoleCreateRequest'
+          examples:
+            newRole:
+              summary: Create new role with assigned permissions
+              value:
+                code: MEDICAL_COORDINATOR
+                permissionIds:
+                  - perm-123-view-patients
+                  - perm-456-manage-treatments
+                  - perm-789-view-reports
+                ipAddress: 192.168.1.100
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '201':
-        description: Role created (Created).
+        description: Role successfully created with linked permissions (Created).
         content:
           application/json:
             schema:
@@ -56,6 +69,7 @@ collection:
 
 item:
   get:
+    operationId: getRole
     summary: Get a role
     description: Fetches full data for a single role, including linked permissions.
     tags:
@@ -72,7 +86,7 @@ item:
           format: uuid
     responses:
       '200':
-        description: Role details (OK).
+        description: Role details successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -85,6 +99,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
   patch:
+    operationId: updateRole
     summary: Update a role
     description: Modifies role properties and synchronizes permissions. Only provided fields are updated.
     tags:
@@ -105,9 +120,21 @@ item:
         application/json:
           schema:
             $ref: '../components/schemas/role.yaml#/RoleUpdateRequest'
+          examples:
+            updateRolePermissions:
+              summary: Update role code and synchronize permissions
+              value:
+                code: SENIOR_MEDICAL_COORDINATOR
+                permissionIds:
+                  - perm-123-view-patients
+                  - perm-456-manage-treatments
+                  - perm-789-view-reports
+                  - perm-101-manage-users
+                ipAddress: 192.168.1.100
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '200':
-        description: Role updated (OK).
+        description: Role successfully updated with provided changes (OK).
         content:
           application/json:
             schema:
@@ -124,6 +151,7 @@ item:
         $ref: '../components/responses.yaml#/ValidationError'
 
   delete:
+    operationId: deleteRole
     summary: Delete a role
     description: Flags a role as deleted (soft-delete).
     tags:
@@ -144,9 +172,15 @@ item:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            deleteRole:
+              summary: Soft-delete role with audit trail
+              value:
+                ipAddress: 192.168.1.100
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '204':
-        description: Role deleted (No Content).
+        description: Role successfully soft-deleted from active profiles (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -156,6 +190,7 @@ item:
 
 restore:
   post:
+    operationId: restoreRole
     summary: Restore a role
     description: Reverses soft-delete for a role.
     tags:
@@ -166,6 +201,7 @@ restore:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the role.
         schema:
           type: string
           format: uuid
@@ -175,9 +211,15 @@ restore:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            restoreRole:
+              summary: Restore deleted role with audit trail
+              value:
+                ipAddress: 192.168.1.100
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '200':
-        description: Role restored (OK).
+        description: Role successfully restored to active profiles (OK).
         content:
           application/json:
             schema:

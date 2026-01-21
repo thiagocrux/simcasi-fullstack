@@ -1,5 +1,6 @@
 collection:
   get:
+    operationId: findNotifications
     summary: Find notifications
     description: Filters and retrieves official notification records linked to patients, tracking health authority notification status.
     tags:
@@ -20,7 +21,7 @@ collection:
         description: Filter notifications by a specific patient.
     responses:
       '200':
-        description: List of notifications (OK).
+        description: Paginated list of notifications successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -31,6 +32,7 @@ collection:
         $ref: '../components/responses.yaml#/ForbiddenError'
 
   post:
+    operationId: createNotification
     summary: Register a notification
     description: Commits a new notification number and case observations to the database for regulatory compliance tracking.
     tags:
@@ -43,9 +45,18 @@ collection:
         application/json:
           schema:
             $ref: '../components/schemas/notification.yaml#/NotificationCreateRequest'
+          examples:
+            newNotification:
+              summary: Register new SINAN notification for regulatory compliance
+              value:
+                patientId: 7e8f9a0b-1234-5678-9abc-def012345678
+                sinan: '2026.01.SP.12345678'
+                observations: Caso de sífilis adquirida em paciente gestante. Notificação compulsória conforme Portaria GM/MS nº 1.271/2014. Parceiro(a) também será notificado e tratado.
+                ipAddress: 192.168.1.125
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '201':
-        description: Notification registered (Created).
+        description: Notification successfully registered for regulatory compliance (Created).
         content:
           application/json:
             schema:
@@ -61,6 +72,7 @@ collection:
 
 item:
   get:
+    operationId: getNotification
     summary: Get a notification
     description: Retrieves a single notification record's full details.
     tags:
@@ -71,13 +83,13 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the notification.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the notification.
     responses:
       '200':
-        description: Notification details (OK).
+        description: Notification details successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -90,6 +102,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
   patch:
+    operationId: updateNotification
     summary: Update a notification
     description: Modifies the notification number or clinical notes. Only provided fields are updated.
     tags:
@@ -100,19 +113,26 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the notification.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the notification.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/notification.yaml#/NotificationUpdateRequest'
+          examples:
+            updateNotificationObservations:
+              summary: Update SINAN notification observations
+              value:
+                observations: 'Caso de sífilis adquirida em paciente gestante. Notificação compulsória conforme Portaria GM/MS nº 1.271/2014. Parceiro(a) notificado e em tratamento. Adição: Paciente apresentou melhora clínica após início do tratamento.'
+                ipAddress: 192.168.1.125
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '200':
-        description: Notification updated (OK).
+        description: Notification successfully updated with provided changes (OK).
         content:
           application/json:
             schema:
@@ -127,6 +147,7 @@ item:
         $ref: '../components/responses.yaml#/ValidationError'
 
   delete:
+    operationId: deleteNotification
     summary: Delete a notification
     description: Flags a notification record as deleted (soft-delete).
     tags:
@@ -137,19 +158,25 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the notification.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the notification.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            deleteNotification:
+              summary: Soft-delete notification record with audit trail
+              value:
+                ipAddress: 192.168.1.125
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '204':
-        description: Notification deleted (No Content).
+        description: Notification successfully soft-deleted from active records (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -159,6 +186,7 @@ item:
 
 restore:
   post:
+    operationId: restoreNotification
     summary: Restore a notification
     description: Reverses soft-delete for a notification.
     tags:
@@ -169,19 +197,25 @@ restore:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the notification.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the notification.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            restoreNotification:
+              summary: Restore deleted notification with audit trail
+              value:
+                ipAddress: 192.168.1.125
+                userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
       '200':
-        description: Notification restored (OK).
+        description: Notification successfully restored to active records (OK).
         content:
           application/json:
             schema:

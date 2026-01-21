@@ -1,5 +1,6 @@
 collection:
   get:
+    operationId: findExams
     summary: Find exams
     description: Accesses the history of treponemal and nontreponemal tests (titration) for monitoring diagnosis and treatment efficacy.
     tags:
@@ -20,7 +21,7 @@ collection:
         description: Filter exams by a specific patient.
     responses:
       '200':
-        description: List of exams (OK).
+        description: Paginated list of exams successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -31,6 +32,7 @@ collection:
         $ref: '../components/responses.yaml#/ForbiddenError'
 
   post:
+    operationId: createExam
     summary: Register an exam
     description: Records new laboratory results, linking titration levels and test methodologies to a specific patient's clinical timeline.
     tags:
@@ -43,9 +45,26 @@ collection:
         application/json:
           schema:
             $ref: '../components/schemas/exam.yaml#/ExamCreateRequest'
+          examples:
+            vdrlTest:
+              summary: Complete treponemal and nontreponemal test registration
+              value:
+                patientId: 7e8f9a0b-1234-5678-9abc-def012345678
+                treponemalTestType: TPHA
+                treponemalTestResult: REACTIVE
+                treponemalTestDate: '2026-01-20'
+                treponemalTestLocation: Laboratório Central Hospital Municipal São Paulo
+                nontreponemalVdrlTest: true
+                nontreponemalTestTitration: '1:32'
+                nontreponemalTestDate: '2026-01-20'
+                otherNontreponemalTest: RPR
+                otherNontreponemalTestDate: '2026-01-21'
+                referenceObservations: Primeiro exame com resultado reagente. Titulação elevada sugere infecção ativa. Paciente será notificado para início imediato do tratamento.
+                ipAddress: 192.168.1.115
+                userAgent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
     responses:
       '201':
-        description: Exam registered (Created).
+        description: Exam successfully registered with laboratory results (Created).
         content:
           application/json:
             schema:
@@ -61,6 +80,7 @@ collection:
 
 item:
   get:
+    operationId: getExam
     summary: Get an exam
     description: Retrieves technical specifications and titration results from a single exam.
     tags:
@@ -71,13 +91,13 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the exam.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the exam.
     responses:
       '200':
-        description: Exam details (OK).
+        description: Exam details successfully retrieved (OK).
         content:
           application/json:
             schema:
@@ -90,6 +110,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
   patch:
+    operationId: updateExam
     summary: Update an exam
     description: Modifies existing exam results or clinical observations. Only provided fields are updated.
     tags:
@@ -100,19 +121,28 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the exam.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the exam.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/exam.yaml#/ExamUpdateRequest'
+          examples:
+            updateExamTitration:
+              summary: Update nontreponemal test titration after treatment
+              value:
+                nontreponemalTestTitration: '1:8'
+                nontreponemalTestDate: '2026-02-15'
+                referenceObservations: Redução da titulação após 2 semanas de tratamento. Indicativo de resposta positiva à terapia. Manter acompanhamento mensal.
+                ipAddress: 192.168.1.115
+                userAgent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
     responses:
       '200':
-        description: Exam updated (OK).
+        description: Exam successfully updated with provided changes (OK).
         content:
           application/json:
             schema:
@@ -127,6 +157,7 @@ item:
         $ref: '../components/responses.yaml#/ValidationError'
 
   delete:
+    operationId: deleteExam
     summary: Delete an exam
     description: Flags an exam as deleted (soft-delete).
     tags:
@@ -137,19 +168,25 @@ item:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the exam.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the exam.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            deleteExam:
+              summary: Soft-delete exam record with audit trail
+              value:
+                ipAddress: 192.168.1.115
+                userAgent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
     responses:
       '204':
-        description: Exam deleted (No Content).
+        description: Exam successfully soft-deleted from active records (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
@@ -159,6 +196,7 @@ item:
 
 restore:
   post:
+    operationId: restoreExam
     summary: Restore an exam
     description: Reverses soft-delete for an exam.
     tags:
@@ -169,19 +207,25 @@ restore:
       - name: id
         in: path
         required: true
+        description: Unique identifier for the exam.
         schema:
           type: string
           format: uuid
-        description: Unique identifier for the exam.
     requestBody:
       required: true
       content:
         application/json:
           schema:
             $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+          examples:
+            restoreExam:
+              summary: Restore deleted exam with audit trail
+              value:
+                ipAddress: 192.168.1.115
+                userAgent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
     responses:
       '200':
-        description: Exam restored (OK).
+        description: Exam successfully restored to active records (OK).
         content:
           application/json:
             schema:
