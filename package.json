@@ -14,9 +14,10 @@
     "prisma:migrate:reset": "prisma migrate reset",
     "prisma:studio": "prisma studio",
     "prisma:seed": "prisma db seed",
-    "docs:bundle": "swagger-cli bundle docs/openapi/index.yaml --outfile public/openapi.json --type json --dereference",
-    "docs:postman": "openapi2postmanv2 -s public/openapi.json -o public/simcasi.postman_collection.json -p && node scripts/organize-postman-collection.js",
-    "docs:generate": "pnpm docs:bundle && pnpm docs:postman"
+    "docs:bundle": "swagger-cli bundle docs/openapi/index.yaml --outfile public/docs/openapi.json --type json --dereference",
+    "docs:postman": "openapi2postmanv2 -s public/docs/openapi.json -o public/docs/simcasi.postman_collection.json -p && node scripts/organize-postman-collection.js",
+    "docs:generate": "pnpm docs:bundle && pnpm docs:postman",
+    "docs:open": "node scripts/open-docs.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
