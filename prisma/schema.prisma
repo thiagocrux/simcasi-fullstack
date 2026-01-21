@@ -86,7 +86,7 @@ model RolePermission {
 // - Soft deletes: `deleted_at` used for logical deletion.
 // - Uniqueness invariants: `email` is unique across ALL records (active and deleted).
 // LOGIC:
-// - If an user attempts to register with an email that exists on a deleted account, the backend should RESTORE the old account instead of inserting a new one.
+// - If a user attempts to register with an email that exists on a deleted account, the backend should RESTORE the old account instead of inserting a new one.
 // - Insert of duplicate `email` (even on soft-deleted records) will fail with a UNIQUE constraint error.
 // Impact / Considerations:
 // - Audit/restore flows MUST enforce password resets and session invalidation when restoring accounts.

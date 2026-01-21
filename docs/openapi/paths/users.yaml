@@ -23,7 +23,7 @@ collection:
       '403':
         $ref: '../components/responses.yaml#/ForbiddenError'
   post:
-    summary: Register an user
+    summary: Register a user
     description: Persists a new user record with credentials and links it to a specific RBAC role.
     tags:
       - Users
@@ -55,7 +55,7 @@ collection:
 
 item:
   get:
-    summary: Get an user
+    summary: Get a user
     description: Fetches complete profile data and metadata for a single user record identified by its UUID.
     tags:
       - Users
@@ -83,7 +83,7 @@ item:
       '404':
         $ref: '../components/responses.yaml#/NotFoundError'
   patch:
-    summary: Update an user
+    summary: Update a user
     description: Updates profile information for an existing user record. Only provided fields are updated.
     tags:
       - Users
@@ -121,8 +121,8 @@ item:
       '422':
         $ref: '../components/responses.yaml#/ValidationError'
   delete:
-    summary: Delete an user
-    description: Flag an user record as deleted (soft-delete), removing access without erasing historical data.
+    summary: Delete a user
+    description: Flag a user record as deleted (soft-delete), removing access without erasing historical data.
     tags:
       - Users
     security:
@@ -153,7 +153,7 @@ item:
 
 restore:
   post:
-    summary: Restore an user
+    summary: Restore a user
     description: Reverses a soft-delete operation, restoring the user's active status and system access.
     tags:
       - Users
