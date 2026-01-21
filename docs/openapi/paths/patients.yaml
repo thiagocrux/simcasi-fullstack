@@ -1,0 +1,194 @@
+collection:
+  get:
+    summary: Find patients
+    description: Searches for patients using name, CPF, or SUS card filters, supporting paginated results and administrative visibility of deleted records.
+    tags:
+      - Patients
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - $ref: '../components/parameters.yaml#/Page'
+      - $ref: '../components/parameters.yaml#/Limit'
+    responses:
+      '200':
+        description: List of patients
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/patient.yaml#/PatientListResponse'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+
+  post:
+    summary: Register a patient
+    description: Initializes a comprehensive medical profile including demographic, geographic, and tracking classification data.
+    tags:
+      - Patients
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/patient.yaml#/PatientCreateRequest'
+    responses:
+      '201':
+        description: Patient registered
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/patient.yaml#/Patient'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '409':
+        $ref: '../components/responses.yaml#/ConflictError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+item:
+  get:
+    summary: Get a patient
+    description: Retrieves the full clinical and demographic identity of a patient, including audit metadata.
+    tags:
+      - Patients
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the patient.
+    responses:
+      '200':
+        description: Patient details
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/patient.yaml#/Patient'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+  patch:
+    summary: Update a patient
+    description: Modifies existing patient demographic or residential information. Only provided fields are updated.
+    tags:
+      - Patients
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the patient.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/patient.yaml#/PatientUpdateRequest'
+    responses:
+      '200':
+        description: Patient updated
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/patient.yaml#/Patient'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '409':
+        $ref: '../components/responses.yaml#/ConflictError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+  delete:
+    summary: Delete a patient
+    description: Flags a patient record as deleted (soft-delete), preserving clinical history while restricting active monitoring.
+    tags:
+      - Patients
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the patient.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '204':
+        description: Patient deleted
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+restore:
+  post:
+    summary: Restore a patient
+    description: Reverses a soft-delete operation, returning the patient to active monitoring status.
+    tags:
+      - Patients
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the patient.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '200':
+        description: Patient restored
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/patient.yaml#/Patient'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'

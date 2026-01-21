@@ -1,0 +1,74 @@
+User:
+  allOf:
+    - $ref: './commons.yaml#/BaseEntity'
+    - type: object
+      properties:
+        name:
+          type: string
+          description: User's full name.
+          example: 'Thiago Silva'
+        email:
+          type: string
+          format: email
+          description: User's unique electronic mail address.
+          example: 'dr.thiago@simcasi.gov.br'
+        roleId:
+          type: string
+          format: uuid
+          description: Unique identifier for the assigned RBAC role.
+          example: '8db3d722-6e2a-11ee-8c99-0242ac120002'
+
+UserCreateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      required:
+        - name
+        - email
+        - password
+        - roleId
+      properties:
+        name:
+          type: string
+          description: User's full name.
+        email:
+          type: string
+          format: email
+          description: User's unique electronic mail address.
+        password:
+          type: string
+          format: password
+          description: Secret authentication string (will be hashed in storage).
+        roleId:
+          type: string
+          format: uuid
+          description: Unique identifier for the assigned system role.
+
+UserUpdateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      properties:
+        name:
+          type: string
+          description: User's updated full name.
+        email:
+          type: string
+          format: email
+          description: User's updated electronic mail address.
+        roleId:
+          type: string
+          format: uuid
+          description: Unique identifier for the new assigned system role.
+
+UserListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/User'
+      description: Array of user profile objects matching the search criteria.
+    total:
+      type: integer
+      description: Total count of records available for the given filters.

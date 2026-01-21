@@ -1,0 +1,63 @@
+collection:
+  get:
+    summary: Find sessions
+    description: Lists currently active user sessions.
+    tags:
+      - Sessions
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - $ref: '../components/parameters.yaml#/Page'
+      - $ref: '../components/parameters.yaml#/Limit'
+      - name: userId
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: Filter sessions by a specific user.
+    responses:
+      '200':
+        description: List of active sessions
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/session.yaml#/SessionListResponse'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+
+item:
+  delete:
+    summary: Revoke a session
+    description: Terminates an active user session by revoking its security tokens and forcing a re-authentication flow.
+    tags:
+      - Sessions
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the session.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '204':
+        description: Session revoked
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'

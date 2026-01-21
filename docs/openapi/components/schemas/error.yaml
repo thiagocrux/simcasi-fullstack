@@ -1,0 +1,26 @@
+Error:
+  type: object
+  required:
+    - message
+    - code
+  properties:
+    message:
+      type: string
+      description: A human-readable message describing the error.
+      example: 'Invalid input data.'
+    code:
+      type: string
+      description: A machine-readable string identifying the specific error type.
+      example: 'VALIDATION_ERROR'
+    errors:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
+      description: Detailed validation errors, organized by field name.
+      example:
+        email:
+          - 'Invalid email address.'
+        password:
+          - 'Password is too short.'

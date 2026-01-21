@@ -1,0 +1,199 @@
+collection:
+  get:
+    summary: Find treatments
+    description: Lists documented pharmacological cycles (medication, dosage, start dates) administered at health centers for patient monitoring.
+    tags:
+      - Treatments
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - $ref: '../components/parameters.yaml#/Page'
+      - $ref: '../components/parameters.yaml#/Limit'
+      - name: patientId
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: Filter treatments by a specific patient.
+    responses:
+      '200':
+        description: List of treatments
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/treatment.yaml#/TreatmentListResponse'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+
+  post:
+    summary: Register a treatment
+    description: Records administrative pharmacotherapy data, including medication dosage, facility location, and partner notification details.
+    tags:
+      - Treatments
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/treatment.yaml#/TreatmentCreateRequest'
+    responses:
+      '201':
+        description: Treatment registered
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/treatment.yaml#/Treatment'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+item:
+  get:
+    summary: Get a treatment
+    description: Retrieves full data for a single treatment.
+    tags:
+      - Treatments
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the treatment.
+    responses:
+      '200':
+        description: Treatment details
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/treatment.yaml#/Treatment'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+  patch:
+    summary: Update a treatment
+    description: Modifies existing treatment records or clinical details.
+    tags:
+      - Treatments
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the treatment.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/treatment.yaml#/TreatmentUpdateRequest'
+    responses:
+      '200':
+        description: Treatment updated
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/treatment.yaml#/Treatment'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+  delete:
+    summary: Delete a treatment
+    description: Flags a treatment as deleted (soft-delete).
+    tags:
+      - Treatments
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the treatment.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '204':
+        description: Treatment deleted
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+restore:
+  post:
+    summary: Restore a treatment
+    description: Reverses soft-delete for a treatment.
+    tags:
+      - Treatments
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the treatment.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '200':
+        description: Treatment restored
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/treatment.yaml#/Treatment'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'

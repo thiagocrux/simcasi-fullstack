@@ -1,0 +1,14 @@
+check:
+  get:
+    summary: API health status
+    description: Verifies the operational status of the API service and its connection to the primary persistence layer (Database).
+    tags:
+      - System
+    security: []
+    responses:
+      '200':
+        description: Service is operational
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/health.yaml#/HealthStatus'

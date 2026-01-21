@@ -1,0 +1,59 @@
+AuditMetadata:
+  type: object
+  required:
+    - ipAddress
+    - userAgent
+  properties:
+    ipAddress:
+      type: string
+      format: ipv4
+      description: Client's IP address for security tracking.
+      example: '127.0.0.1'
+    userAgent:
+      type: string
+      description: Device and browser identifier string.
+      example: 'Mozilla/5.0'
+
+PaginationParams:
+  type: object
+  properties:
+    page:
+      type: integer
+      minimum: 1
+      default: 1
+      description: Results page numbering for paginated queries.
+    limit:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 10
+      description: Items per results page for paginated queries.
+    search:
+      type: string
+      description: Filter search string for relevant record fields.
+    includeDeleted:
+      type: boolean
+      default: false
+      description: Flag to include soft-deleted records in the results.
+
+BaseEntity:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the record (UUID).
+    createdAt:
+      type: string
+      format: date-time
+      description: Timestamp of record creation in ISO 8601 format.
+    updatedAt:
+      type: string
+      format: date-time
+      nullable: true
+      description: Timestamp of the last record update in ISO 8601 format.
+    deletedAt:
+      type: string
+      format: date-time
+      nullable: true
+      description: Timestamp of soft-deletion in ISO 8601 format, if applicable.

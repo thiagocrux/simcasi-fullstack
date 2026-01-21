@@ -1,0 +1,199 @@
+collection:
+  get:
+    summary: Find notifications
+    description: Filters and retrieves official notification records linked to patients, tracking health authority notification status.
+    tags:
+      - Notifications
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - $ref: '../components/parameters.yaml#/Page'
+      - $ref: '../components/parameters.yaml#/Limit'
+      - name: patientId
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: Filter notifications by a specific patient.
+    responses:
+      '200':
+        description: List of notifications
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/notification.yaml#/NotificationListResponse'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+
+  post:
+    summary: Register a notification
+    description: Commits a new notification number and case observations to the database for regulatory compliance tracking.
+    tags:
+      - Notifications
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/notification.yaml#/NotificationCreateRequest'
+    responses:
+      '201':
+        description: Notification registered
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/notification.yaml#/Notification'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+item:
+  get:
+    summary: Get a notification
+    description: Retrieves a single notification record's full details.
+    tags:
+      - Notifications
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the notification.
+    responses:
+      '200':
+        description: Notification details
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/notification.yaml#/Notification'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+  patch:
+    summary: Update a notification
+    description: Modifies the notification number or clinical notes.
+    tags:
+      - Notifications
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the notification.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/notification.yaml#/NotificationUpdateRequest'
+    responses:
+      '200':
+        description: Notification updated
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/notification.yaml#/Notification'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+  delete:
+    summary: Delete a notification
+    description: Flags a notification record as deleted (soft-delete).
+    tags:
+      - Notifications
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the notification.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '204':
+        description: Notification deleted
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+restore:
+  post:
+    summary: Restore a notification
+    description: Reverses soft-delete for a notification.
+    tags:
+      - Notifications
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the notification.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '200':
+        description: Notification restored
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/notification.yaml#/Notification'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'

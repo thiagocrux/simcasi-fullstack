@@ -1,0 +1,199 @@
+collection:
+  get:
+    summary: Find exams
+    description: Accesses the history of treponemal and nontreponemal tests (titration) for monitoring diagnosis and treatment efficacy.
+    tags:
+      - Exams
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - $ref: '../components/parameters.yaml#/Page'
+      - $ref: '../components/parameters.yaml#/Limit'
+      - name: patientId
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: Filter exams by a specific patient.
+    responses:
+      '200':
+        description: List of exams
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/exam.yaml#/ExamListResponse'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+
+  post:
+    summary: Register an exam
+    description: Records new laboratory results, linking titration levels and test methodologies to a specific patient's clinical timeline.
+    tags:
+      - Exams
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/exam.yaml#/ExamCreateRequest'
+    responses:
+      '201':
+        description: Exam registered
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/exam.yaml#/Exam'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+item:
+  get:
+    summary: Get an exam
+    description: Retrieves technical specifications and titration results from a single exam.
+    tags:
+      - Exams
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the exam.
+    responses:
+      '200':
+        description: Exam details
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/exam.yaml#/Exam'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+  patch:
+    summary: Update an exam
+    description: Modifies existing exam results or clinical observations.
+    tags:
+      - Exams
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the exam.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/exam.yaml#/ExamUpdateRequest'
+    responses:
+      '200':
+        description: Exam updated
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/exam.yaml#/Exam'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+  delete:
+    summary: Delete an exam
+    description: Flags an exam as deleted (soft-delete).
+    tags:
+      - Exams
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the exam.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '204':
+        description: Exam deleted
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+restore:
+  post:
+    summary: Restore an exam
+    description: Reverses soft-delete for an exam.
+    tags:
+      - Exams
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the exam.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '200':
+        description: Exam restored
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/exam.yaml#/Exam'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'

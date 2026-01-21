@@ -1,0 +1,61 @@
+LoginRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: User's unique electronic mail address used for authentication.
+          example: 'dr.thiago@simcasi.gov.br'
+        password:
+          type: string
+          format: password
+          description: Secret authentication string (will be hashed in storage).
+          example: 'StrongPassword#2026'
+
+RefreshRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Long-lived token used to obtain new access tokens and rotate the session.
+
+AuthResponse:
+  type: object
+  properties:
+    accessToken:
+      type: string
+      description: Short-lived JWT used for authorizing authenticated requests.
+    refreshToken:
+      type: string
+      description: Long-lived token used to obtain new access tokens.
+    user:
+      $ref: '#/UserBase'
+      description: Basic profile information for the authenticated user.
+
+UserBase:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the user (UUID).
+    name:
+      type: string
+      description: Full name of the user.
+    email:
+      type: string
+      format: email
+      description: Electronic mail address of the user.
+    roleId:
+      type: string
+      format: uuid
+      description: Unique identifier for the assigned RBAC role.

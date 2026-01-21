@@ -1,0 +1,29 @@
+Page:
+  name: page
+  in: query
+  description: Page number for pagination.
+  required: false
+  schema:
+    type: integer
+    default: 1
+    minimum: 1
+
+Limit:
+  name: limit
+  in: query
+  description: Number of items per page.
+  required: false
+  schema:
+    type: integer
+    default: 10
+    minimum: 1
+    maximum: 100
+
+Authorization:
+  name: Authorization
+  in: header
+  description: 'Required Bearer token for authentication. Format: Bearer <token>'
+  required: true
+  schema:
+    type: string
+    example: 'Bearer eyJhbGciOiJIUzI1Ni...'

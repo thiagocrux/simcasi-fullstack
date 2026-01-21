@@ -1,0 +1,199 @@
+collection:
+  get:
+    summary: Find observations
+    description: Lists paginated clinical evolution entries and qualitative progress notes for patients, including sexual partner treatment status.
+    tags:
+      - Observations
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - $ref: '../components/parameters.yaml#/Page'
+      - $ref: '../components/parameters.yaml#/Limit'
+      - name: patientId
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: Filter observations by a specific patient.
+    responses:
+      '200':
+        description: List of observations
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/observation.yaml#/ObservationListResponse'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+
+  post:
+    summary: Register an observation
+    description: Commits a new clinical evolution entry, documenting symptom updates and verifying partner treatment protocols.
+    tags:
+      - Observations
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/observation.yaml#/ObservationCreateRequest'
+    responses:
+      '201':
+        description: Observation registered
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/observation.yaml#/Observation'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+item:
+  get:
+    summary: Get an observation
+    description: Retrieves a single clinical observation.
+    tags:
+      - Observations
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the observation.
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Observation details
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/observation.yaml#/Observation'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+  patch:
+    summary: Update an observation
+    description: Modifies existing clinical observations or partner status.
+    tags:
+      - Observations
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the observation.
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/observation.yaml#/ObservationUpdateRequest'
+    responses:
+      '200':
+        description: Observation updated
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/observation.yaml#/Observation'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+  delete:
+    summary: Delete an observation
+    description: Flags an observation as deleted (soft-delete).
+    tags:
+      - Observations
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the observation.
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '204':
+        description: Observation deleted
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+restore:
+  post:
+    summary: Restore an observation
+    description: Reverses soft-delete for an observation.
+    tags:
+      - Observations
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the observation.
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '200':
+        description: Observation restored
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/observation.yaml#/Observation'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'

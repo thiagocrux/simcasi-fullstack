@@ -1,0 +1,36 @@
+Session:
+  allOf:
+    - $ref: './commons.yaml#/BaseEntity'
+    - type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+          description: Unique identifier for the associated user.
+        issuedAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp for session issuance.
+        expiresAt:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp for session expiration.
+        ipAddress:
+          type: string
+          format: ipv4
+          description: IP address recorded at the start of the session.
+        userAgent:
+          type: string
+          description: User agent recorded at the start of the session.
+
+SessionListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Session'
+      description: Array of operational session records.
+    total:
+      type: integer
+      description: Total count of sessions.

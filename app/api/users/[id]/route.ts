@@ -48,7 +48,7 @@ export const PATCH = withAuthentication(
 
 /**
  * DELETE - /api/users/[id]
- * Soft delete a user
+ * Soft delete an user
  */
 export const DELETE = withAuthentication(
   ['delete:user'],

@@ -1,0 +1,54 @@
+AuditLog:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Technical identifier (UUID v4).
+    userId:
+      type: string
+      format: uuid
+      description: ID of the user who performed the action.
+    action:
+      type: string
+      description: Type of action performed (e.g., CREATE, UPDATE, DELETE, RESTORE).
+      example: 'UPDATE'
+    entityName:
+      type: string
+      description: The entity affected by the action (e.g., Patient, User).
+      example: 'Patient'
+    entityId:
+      type: string
+      format: uuid
+      description: Unique identifier of the affected entity.
+    oldValues:
+      type: object
+      nullable: true
+      description: Snapshot of the state before the changes.
+    newValues:
+      type: object
+      nullable: true
+      description: Snapshot of the state after the changes.
+    ipAddress:
+      type: string
+      format: ipv4
+      description: Client's IP address recorded at the time of action.
+    userAgent:
+      type: string
+      description: Client's user agent recorded at the time of action.
+    createdAt:
+      type: string
+      format: date-time
+      description: Date and time when the log was generated.
+
+AuditLogListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/AuditLog'
+      description: Array of forensic records.
+    total:
+      type: integer
+      description: Total count of logs.

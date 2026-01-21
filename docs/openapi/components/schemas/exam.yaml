@@ -1,0 +1,139 @@
+Exam:
+  allOf:
+    - $ref: './commons.yaml#/BaseEntity'
+    - type: object
+      properties:
+        patientId:
+          type: string
+          format: uuid
+          description: Linked patient unique identifier.
+        treponemalTestType:
+          type: string
+          description: Methodology used for treponemal test (e.g., RAPID_TEST).
+          example: 'RAPID_TEST'
+        treponemalTestResult:
+          type: string
+          description: Clinical result of the treponemal test.
+          example: 'REAGENT'
+        treponemalTestDate:
+          type: string
+          format: date-time
+          description: Date and time when the test was performed.
+        treponemalTestLocation:
+          type: string
+          description: Healthcare facility where treponemal test was performed.
+        nontreponemalVdrlTest:
+          type: string
+          description: Type of nontreponemal test methodology (e.g., VDRL).
+          example: 'VDRL'
+        nontreponemalTestTitration:
+          type: string
+          description: Dilution titer result (e.g., 1/16).
+          example: '1/16'
+        nontreponemalTestDate:
+          type: string
+          format: date-time
+          description: Date and time when the nontreponemal test was performed.
+        otherNontreponemalTest:
+          type: string
+          nullable: true
+          description: Alternative nontreponemal test identifier, if any.
+        otherNontreponemalTestDate:
+          type: string
+          format: date-time
+          nullable: true
+          description: ISO 8601 timestamp for alternative test execution.
+        referenceObservations:
+          type: string
+          description: Clinical and reference observations regarding the exam.
+        createdBy:
+          type: string
+          format: uuid
+          description: ID of the user who created this record.
+
+ExamCreateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      required:
+        - patientId
+        - treponemalTestType
+        - treponemalTestResult
+        - treponemalTestDate
+        - treponemalTestLocation
+        - nontreponemalVdrlTest
+        - nontreponemalTestTitration
+        - nontreponemalTestDate
+        - referenceObservations
+      properties:
+        patientId:
+          type: string
+          format: uuid
+        treponemalTestType:
+          type: string
+        treponemalTestResult:
+          type: string
+        treponemalTestDate:
+          type: string
+          format: date-time
+        treponemalTestLocation:
+          type: string
+        nontreponemalVdrlTest:
+          type: string
+        nontreponemalTestTitration:
+          type: string
+        nontreponemalTestDate:
+          type: string
+          format: date-time
+        otherNontreponemalTest:
+          type: string
+          nullable: true
+        otherNontreponemalTestDate:
+          type: string
+          format: date-time
+          nullable: true
+        referenceObservations:
+          type: string
+
+ExamUpdateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      properties:
+        treponemalTestType:
+          type: string
+        treponemalTestResult:
+          type: string
+        treponemalTestDate:
+          type: string
+          format: date-time
+        treponemalTestLocation:
+          type: string
+        nontreponemalVdrlTest:
+          type: string
+        nontreponemalTestTitration:
+          type: string
+        nontreponemalTestDate:
+          type: string
+          format: date-time
+        otherNontreponemalTest:
+          type: string
+          nullable: true
+        otherNontreponemalTestDate:
+          type: string
+          format: date-time
+          nullable: true
+        referenceObservations:
+          type: string
+
+ExamListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Exam'
+      description: Array of exam records.
+    total:
+      type: integer
+      description: Total count of exams.

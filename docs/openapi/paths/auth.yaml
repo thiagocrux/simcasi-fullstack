@@ -1,0 +1,67 @@
+login:
+  post:
+    summary: Login
+    description: Handles user authentication through email and password, initiates a secure stateful session, and provides both access and refresh JWT tokens together with essential user information.
+    tags:
+      - Auth
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/auth.yaml#/LoginRequest'
+    responses:
+      '200':
+        description: Authentication successful
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/auth.yaml#/AuthResponse'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+refresh:
+  post:
+    summary: Refresh token
+    description: Performs secure token rotation by validating the current refresh token and issuing a new access/refresh pair, thereby extending the user’s session lifecycle.
+    tags:
+      - Auth
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/auth.yaml#/RefreshRequest'
+    responses:
+      '200':
+        description: Token refreshed
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/auth.yaml#/AuthResponse'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+
+logout:
+  post:
+    summary: Logout
+    description: Securely terminates the active session and blacklists the associated refresh token, preventing any subsequent reuse.
+    tags:
+      - Auth
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '204':
+        description: Successfully logged out
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'

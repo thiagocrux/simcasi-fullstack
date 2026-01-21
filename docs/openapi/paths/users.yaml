@@ -1,0 +1,204 @@
+collection:
+  get:
+    summary: Find users
+    description: Retrieves a paginated list of users with optional filtering by name or email, including soft-deleted accounts if requested.
+    tags:
+      - Users
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - $ref: '../components/parameters.yaml#/Page'
+      - $ref: '../components/parameters.yaml#/Limit'
+      - name: search
+        in: query
+        description: Search term to filter users by name or email.
+        schema:
+          type: string
+      - name: includeDeleted
+        in: query
+        description: If true, includes soft-deleted records.
+        schema:
+          type: boolean
+          default: false
+    responses:
+      '200':
+        description: A list of users
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/user.yaml#/UserListResponse'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+  post:
+    summary: Register an user
+    description: Persists a new user record with credentials and links it to a specific RBAC role.
+    tags:
+      - Users
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/user.yaml#/UserCreateRequest'
+    responses:
+      '201':
+        description: User created
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/user.yaml#/User'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '409':
+        $ref: '../components/responses.yaml#/ConflictError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+item:
+  get:
+    summary: Get an user
+    description: Fetches complete profile data and metadata for a single user record identified by its UUID.
+    tags:
+      - Users
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the user.
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: User details
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/user.yaml#/User'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+  patch:
+    summary: Update an user
+    description: Updates profile information for an existing user record. Only provided fields are modified.
+    tags:
+      - Users
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the user.
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/user.yaml#/UserUpdateRequest'
+    responses:
+      '200':
+        description: User updated
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/user.yaml#/User'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '409':
+        $ref: '../components/responses.yaml#/ConflictError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+  delete:
+    summary: Delete an user
+    description: Flag an user record as deleted (soft-delete), removing access without erasing historical data.
+    tags:
+      - Users
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the user.
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '204':
+        description: User deleted
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+restore:
+  post:
+    summary: Restore an user
+    description: Reverses a soft-delete operation, restoring the user's active status and system access.
+    tags:
+      - Users
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the user.
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '200':
+        description: User restored
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/user.yaml#/User'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'

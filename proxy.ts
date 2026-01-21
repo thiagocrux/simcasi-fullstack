@@ -10,7 +10,10 @@ export async function proxy(request: NextRequest) {
 
   // 1. Define public routes that do not require authentication.
   const isPublicPage = pathname.startsWith('/auth');
-  const isPublicApi = pathname.startsWith('/api/auth');
+  const isPublicApi =
+    pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/api/docs') ||
+    pathname === '/api/health';
   const isStaticFile = pathname.includes('.') || pathname.startsWith('/_next');
 
   if (isPublicPage || isPublicApi || isStaticFile) {

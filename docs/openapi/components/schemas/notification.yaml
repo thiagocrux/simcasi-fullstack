@@ -1,0 +1,61 @@
+Notification:
+  allOf:
+    - $ref: './commons.yaml#/BaseEntity'
+    - type: object
+      properties:
+        patientId:
+          type: string
+          format: uuid
+          description: Linked patient unique identifier.
+        sinan:
+          type: string
+          description: Official notification number (Epidemiological Surveillance).
+          example: '2026-0001'
+        observations:
+          type: string
+          nullable: true
+          description: Additional case notes for the official report.
+        createdBy:
+          type: string
+          format: uuid
+          description: ID of the user who created this record.
+
+NotificationCreateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      required:
+        - patientId
+        - sinan
+      properties:
+        patientId:
+          type: string
+          format: uuid
+        sinan:
+          type: string
+        observations:
+          type: string
+          nullable: true
+
+NotificationUpdateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      properties:
+        sinan:
+          type: string
+        observations:
+          type: string
+          nullable: true
+
+NotificationListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Notification'
+      description: Array of notification records.
+    total:
+      type: integer
+      description: Total count of records.

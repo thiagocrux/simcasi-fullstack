@@ -1,0 +1,80 @@
+collection:
+  get:
+    summary: Find audit logs
+    description: Retrieves a paginated history of all state-altering operations, including technical identifiers, old/new value snapshots, and authorship metadata.
+    tags:
+      - Audit Logs
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - $ref: '../components/parameters.yaml#/Page'
+      - $ref: '../components/parameters.yaml#/Limit'
+      - name: userId
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: Filter logs by a specific user.
+      - name: action
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Filter by action type (CREATE, UPDATE, etc.).
+      - name: entityName
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Filter by affected entity type.
+      - name: entityId
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uuid
+        description: Filter by affected entity ID.
+    responses:
+      '200':
+        description: List of audit logs
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/audit-log.yaml#/AuditLogListResponse'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+
+item:
+  get:
+    summary: Get an audit log
+    description: Fetches a single forensic record containing the complete diff of a specific transaction, including client metadata (IP/User Agent).
+    tags:
+      - Audit Logs
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+        description: Unique identifier for the audit log.
+    responses:
+      '200':
+        description: Audit log details
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/audit-log.yaml#/AuditLog'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'

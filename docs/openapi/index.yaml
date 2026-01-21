@@ -1,0 +1,94 @@
+openapi: 3.0.3
+info:
+  title: SIMCASI API
+  description: |
+    # Syphilis Cases Monitoring System (SIMCASI)
+
+    This API provides resources for tracking, monitoring, and governance of syphilis cases in a hospital environment.
+
+    ### Audit and Governance
+    All write operations (`POST`, `PATCH`, `DELETE`) require audit metadata:
+    * `ipAddress`: Client's IP address.
+    * `userAgent`: Device/browser identifier.
+  version: 1.0.0
+
+servers:
+  - url: /api
+    description: Local / Relative Server
+
+paths:
+  /auth/login:
+    $ref: './paths/auth.yaml#/login'
+  /auth/refresh:
+    $ref: './paths/auth.yaml#/refresh'
+  /auth/logout:
+    $ref: './paths/auth.yaml#/logout'
+  /users:
+    $ref: './paths/users.yaml#/collection'
+  /users/{id}:
+    $ref: './paths/users.yaml#/item'
+  /users/{id}/restore:
+    $ref: './paths/users.yaml#/restore'
+  /patients:
+    $ref: './paths/patients.yaml#/collection'
+  /patients/{id}:
+    $ref: './paths/patients.yaml#/item'
+  /patients/{id}/restore:
+    $ref: './paths/patients.yaml#/restore'
+  /roles:
+    $ref: './paths/roles.yaml#/collection'
+  /roles/{id}:
+    $ref: './paths/roles.yaml#/item'
+  /roles/{id}/restore:
+    $ref: './paths/roles.yaml#/restore'
+  /permissions:
+    $ref: './paths/permissions.yaml#/collection'
+  /permissions/{id}:
+    $ref: './paths/permissions.yaml#/item'
+  /permissions/{id}/restore:
+    $ref: './paths/permissions.yaml#/restore'
+  /exams:
+    $ref: './paths/exams.yaml#/collection'
+  /exams/{id}:
+    $ref: './paths/exams.yaml#/item'
+  /exams/{id}/restore:
+    $ref: './paths/exams.yaml#/restore'
+  /treatments:
+    $ref: './paths/treatments.yaml#/collection'
+  /treatments/{id}:
+    $ref: './paths/treatments.yaml#/item'
+  /treatments/{id}/restore:
+    $ref: './paths/treatments.yaml#/restore'
+  /notifications:
+    $ref: './paths/notifications.yaml#/collection'
+  /notifications/{id}:
+    $ref: './paths/notifications.yaml#/item'
+  /notifications/{id}/restore:
+    $ref: './paths/notifications.yaml#/restore'
+  /observations:
+    $ref: './paths/observations.yaml#/collection'
+  /observations/{id}:
+    $ref: './paths/observations.yaml#/item'
+  /observations/{id}/restore:
+    $ref: './paths/observations.yaml#/restore'
+  /audit-logs:
+    $ref: './paths/audit-logs.yaml#/collection'
+  /audit-logs/{id}:
+    $ref: './paths/audit-logs.yaml#/item'
+  /sessions:
+    $ref: './paths/sessions.yaml#/collection'
+  /sessions/{id}:
+    $ref: './paths/sessions.yaml#/item'
+  /health:
+    $ref: './paths/health.yaml#/check'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT Bearer Token.
+        Access `/auth/login` to obtain an access token.
+        The token must be sent in the `Authorization` header as `Bearer <token>`.

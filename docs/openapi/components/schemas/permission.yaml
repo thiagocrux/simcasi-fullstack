@@ -1,0 +1,51 @@
+Permission:
+  allOf:
+    - $ref: './commons.yaml#/BaseEntity'
+    - type: object
+      properties:
+        code:
+          type: string
+          description: Unique identifier code for the permission (e.g., read:patient).
+          example: 'read:patient'
+
+PermissionCreateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      required:
+        - code
+      properties:
+        code:
+          type: string
+          description: Unique identifier code for the permission.
+        roleIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: List of role IDs to link with this permission.
+
+PermissionUpdateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      properties:
+        code:
+          type: string
+        roleIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+PermissionListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Permission'
+      description: Array of permission objects.
+    total:
+      type: integer
+      description: Total count of permissions.

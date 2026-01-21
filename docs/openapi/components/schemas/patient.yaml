@@ -1,0 +1,274 @@
+Patient:
+  allOf:
+    - $ref: './commons.yaml#/BaseEntity'
+    - type: object
+      properties:
+        name:
+          type: string
+          description: Full legal name of the patient.
+          example: 'Maria Socorro'
+        cpf:
+          type: string
+          description: Brazilian Taxpayer ID format (CPF).
+          example: '123.456.789-01'
+        susCardNumber:
+          type: string
+          description: National Health Card ID (CNS).
+          example: '123456789012345'
+        socialName:
+          type: string
+          nullable: true
+          description: Preferred or social name chosen by the patient.
+        birthDate:
+          type: string
+          format: date-time
+          description: Patient's date of birth in ISO 8601 format.
+        race:
+          type: string
+          description: Patient's self-declared color or race.
+          example: 'Pardo'
+        sex:
+          type: string
+          description: Biological sex assigned at birth.
+          example: 'F'
+        gender:
+          type: string
+          description: Current gender identity of the patient.
+          example: 'Feminine'
+        sexuality:
+          type: string
+          description: Patient's sexual orientation.
+          example: 'Heterosexual'
+        nationality:
+          type: string
+          description: Country of patient's origin.
+          example: 'Brasileira'
+        schooling:
+          type: string
+          description: Highest level of education reached.
+          example: 'Ensino Médio Completo'
+        phone:
+          type: string
+          nullable: true
+          description: Primary contact telephone number.
+        email:
+          type: string
+          nullable: true
+          format: email
+          description: Primary contact email address.
+        motherName:
+          type: string
+          description: Full name of the patient's mother.
+        fatherName:
+          type: string
+          nullable: true
+          description: Full name of the patient's father.
+        isDeceased:
+          type: boolean
+          description: Flag indicating if the patient is deceased.
+        monitoringType:
+          type: string
+          description: Clinical follow-up classification (e.g., GENERAL, PRE_NATAL).
+          example: 'GENERAL'
+        zipCode:
+          type: string
+          nullable: true
+          description: Postal code (CEP).
+        state:
+          type: string
+          description: Brazilian Federation Unit (UF).
+          example: 'SP'
+        city:
+          type: string
+          description: Name of the municipality.
+        neighborhood:
+          type: string
+          description: District or neighborhood name.
+        street:
+          type: string
+          description: Public road or street name.
+        houseNumber:
+          type: string
+          description: Residence or venue number.
+        complement:
+          type: string
+          nullable: true
+          description: Additional address details (apartment, block, etc.).
+        createdBy:
+          type: string
+          format: uuid
+          description: ID of the user who registered this patient.
+
+PatientCreateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      required:
+        - name
+        - susCardNumber
+        - cpf
+        - birthDate
+        - race
+        - sex
+        - gender
+        - sexuality
+        - nationality
+        - schooling
+        - motherName
+        - isDeceased
+        - monitoringType
+        - state
+        - city
+        - neighborhood
+        - street
+        - houseNumber
+      properties:
+        name:
+          type: string
+          description: Full legal name.
+        susCardNumber:
+          type: string
+          description: National Health Card ID (CNS).
+        cpf:
+          type: string
+          description: Brazilian Taxpayer ID.
+        socialName:
+          type: string
+          nullable: true
+          description: Preferred or social name.
+        birthDate:
+          type: string
+          format: date-time
+          description: Patient's date of birth.
+        race:
+          type: string
+          description: Declared color or race.
+        sex:
+          type: string
+          description: Biological sex.
+        gender:
+          type: string
+          description: Gender identity.
+        sexuality:
+          type: string
+          description: Sexual orientation.
+        nationality:
+          type: string
+          description: Country of origin.
+        schooling:
+          type: string
+          description: Level of education.
+        phone:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+          format: email
+        motherName:
+          type: string
+          description: Full mother's name.
+        fatherName:
+          type: string
+          nullable: true
+        isDeceased:
+          type: boolean
+          description: Death status flag.
+        monitoringType:
+          type: string
+          description: Patient follow-up classification.
+        zipCode:
+          type: string
+          nullable: true
+        state:
+          type: string
+          description: Brazilian federation unit (UF).
+        city:
+          type: string
+          description: Municipality name.
+        neighborhood:
+          type: string
+          description: District or neighborhood name.
+        street:
+          type: string
+          description: Public road name.
+        houseNumber:
+          type: string
+          description: Residence number.
+        complement:
+          type: string
+          nullable: true
+
+PatientUpdateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      properties:
+        name:
+          type: string
+        susCardNumber:
+          type: string
+        cpf:
+          type: string
+        socialName:
+          type: string
+          nullable: true
+        birthDate:
+          type: string
+          format: date-time
+        race:
+          type: string
+        sex:
+          type: string
+        gender:
+          type: string
+        sexuality:
+          type: string
+        nationality:
+          type: string
+        schooling:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+          format: email
+        motherName:
+          type: string
+        fatherName:
+          type: string
+          nullable: true
+        isDeceased:
+          type: boolean
+        monitoringType:
+          type: string
+        zipCode:
+          type: string
+          nullable: true
+        state:
+          type: string
+        city:
+          type: string
+        neighborhood:
+          type: string
+        street:
+          type: string
+        houseNumber:
+          type: string
+        complement:
+          type: string
+          nullable: true
+
+PatientListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Patient'
+      description: Array of patient records matching filters.
+    total:
+      type: integer
+      description: Total count of records.

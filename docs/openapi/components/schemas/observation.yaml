@@ -1,0 +1,58 @@
+Observation:
+  allOf:
+    - $ref: './commons.yaml#/BaseEntity'
+    - type: object
+      properties:
+        patientId:
+          type: string
+          format: uuid
+          description: Linked patient unique identifier.
+        hasPartnerBeingTreated:
+          type: boolean
+          description: Indicates if the patient's sexual partner is undergoing treatment.
+        observations:
+          type: string
+          description: Clinical observations or case notes.
+        createdBy:
+          type: string
+          format: uuid
+          description: ID of the user who created this record.
+
+ObservationCreateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      required:
+        - patientId
+        - hasPartnerBeingTreated
+        - observations
+      properties:
+        patientId:
+          type: string
+          format: uuid
+        hasPartnerBeingTreated:
+          type: boolean
+        observations:
+          type: string
+
+ObservationUpdateRequest:
+  allOf:
+    - $ref: './commons.yaml#/AuditMetadata'
+    - type: object
+      properties:
+        hasPartnerBeingTreated:
+          type: boolean
+        observations:
+          type: string
+
+ObservationListResponse:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Observation'
+      description: Array of observation records.
+    total:
+      type: integer
+      description: Total count of records.

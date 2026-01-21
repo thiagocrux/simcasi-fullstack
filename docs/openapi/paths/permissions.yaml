@@ -1,0 +1,194 @@
+collection:
+  get:
+    summary: Find permissions
+    description: Retrieves all technical capabilities mapped in the ecosystem.
+    tags:
+      - Permissions
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - $ref: '../components/parameters.yaml#/Page'
+      - $ref: '../components/parameters.yaml#/Limit'
+    responses:
+      '200':
+        description: List of permissions
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/permission.yaml#/PermissionListResponse'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+
+  post:
+    summary: Register a permission
+    description: Declares a new system capability.
+    tags:
+      - Permissions
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/permission.yaml#/PermissionCreateRequest'
+    responses:
+      '201':
+        description: Permission created
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/permission.yaml#/Permission'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '409':
+        $ref: '../components/responses.yaml#/ConflictError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+item:
+  get:
+    summary: Get a permission
+    description: Fetches full data for a single permission.
+    tags:
+      - Permissions
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the permission.
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Permission details
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/permission.yaml#/Permission'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+  patch:
+    summary: Update a permission
+    description: Modifies permission properties.
+    tags:
+      - Permissions
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the permission.
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/permission.yaml#/PermissionUpdateRequest'
+    responses:
+      '200':
+        description: Permission updated
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/permission.yaml#/Permission'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+      '409':
+        $ref: '../components/responses.yaml#/ConflictError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+  delete:
+    summary: Delete a permission
+    description: Flags a permission as deleted (soft-delete).
+    tags:
+      - Permissions
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the permission.
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '204':
+        description: Permission deleted
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+restore:
+  post:
+    summary: Restore a permission
+    description: Reverses soft-delete for a permission.
+    tags:
+      - Permissions
+    security:
+      - BearerAuth: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/Authorization'
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the permission.
+        schema:
+          type: string
+          format: uuid
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/commons.yaml#/AuditMetadata'
+    responses:
+      '200':
+        description: Permission restored
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/permission.yaml#/Permission'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
