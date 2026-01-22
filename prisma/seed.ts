@@ -1,8 +1,10 @@
 import { PrismaPg } from '@prisma/adapter-pg';
+import { hashSync } from 'bcryptjs';
 import crypto from 'crypto';
 import { Pool } from 'pg';
 
 import { ROLES } from '@/core/domain/constants/role.constants';
+import { SECURITY_CONSTANTS } from '@/core/domain/constants/security.constants';
 import { PrismaClient } from '@prisma/client';
 
 import {
@@ -98,9 +100,10 @@ async function main() {
 
     // Create or update the bootstrap user if configured.
     if (seedEmail && seedPassword) {
-      const salt = crypto.randomBytes(16).toString('hex');
-      const derived = crypto.scryptSync(seedPassword, salt, 64);
-      const passwordHash = `${salt}:${derived.toString('hex')}`;
+      const passwordHash = hashSync(
+        seedPassword,
+        SECURITY_CONSTANTS.HASH_SALT_ROUNDS
+      );
 
       const adminRoleRecord = await transaction.role.findUnique({
         where: { code: 'admin' },

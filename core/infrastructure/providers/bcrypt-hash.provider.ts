@@ -1,3 +1,4 @@
+import { SECURITY_CONSTANTS } from '@/core/domain/constants/security.constants';
 import { HashProvider } from '@/core/domain/providers/hash.provider';
 import { compare, hash } from 'bcryptjs';
 
@@ -5,7 +6,7 @@ import { compare, hash } from 'bcryptjs';
  * Concrete implementation of HashProvider using bcryptjs.
  */
 export class BcryptHashProvider implements HashProvider {
-  private readonly saltRounds = 12;
+  private readonly saltRounds = SECURITY_CONSTANTS.HASH_SALT_ROUNDS;
 
   /**
    * Hashes a plain text string.
