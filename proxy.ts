@@ -21,9 +21,13 @@ export async function proxy(request: NextRequest) {
   }
 
   // 2. Token verification (Simplified for Proxy/Edge performance).
-  // We check for the presence of the access token cookie to decide on redirection.
-  // Full session validation is performed at the Use Case level (Application Layer).
-  const token = request.cookies.get('access_token')?.value;
+  // We check for the presence of the access token in cookies or Authorization header.
+  const authHeader = request.headers.get('authorization');
+  let token = request.cookies.get('access_token')?.value;
+
+  if (!token && authHeader?.toLowerCase().startsWith('bearer ')) {
+    token = authHeader.substring(7).trim();
+  }
 
   if (!token) {
     // Return 401 Unauthorized for API requests.

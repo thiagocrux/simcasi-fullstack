@@ -17,9 +17,17 @@ export async function authenticateRequest(
   request: NextRequest
 ): Promise<AuthenticationContext> {
   const authHeader = request.headers.get('authorization');
-  const token =
-    authHeader?.replace('Bearer ', '') ||
-    request.cookies.get('access_token')?.value;
+  let token = request.cookies.get('access_token')?.value;
+
+  // Prioritize Authorization Header.
+  if (authHeader) {
+    if (authHeader.toLowerCase().startsWith('bearer ')) {
+      token = authHeader.substring(7).trim();
+    } else {
+      // Fallback for tools/clients that might send the token directly without "Bearer".
+      token = authHeader.trim();
+    }
+  }
 
   if (!token) {
     throw new InvalidTokenError('Authentication token is missing.');

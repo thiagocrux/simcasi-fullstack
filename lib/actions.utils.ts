@@ -14,23 +14,29 @@ import { authorize } from '@/core/infrastructure/middleware/authorization.middle
  * Standard error handler for Server Actions.
  */
 export function handleActionError(caughtError: any) {
-  if (caughtError instanceof AppError) {
+  // Use property check as a fallback for instanceof, common in Next.js HMR/Turbopack.
+  const isAppError =
+    caughtError instanceof AppError ||
+    (caughtError?.statusCode && caughtError?.code);
+
+  if (isAppError) {
     return {
       success: false,
-      name: caughtError.name,
+      name: caughtError.name || 'AppError',
       message: caughtError.message,
       code: caughtError.code,
-      errors: (caughtError as any).errors, // For Zod validation errors if attached
+      errors: (caughtError as any).errors, // For Zod validation errors if attached.
     };
   }
 
-  // Handle JWT expiration explicitly if it escapes authenticateAction refresh attempt
+  // Handle JWT expiration explicitly if it escapes authenticateAction refresh attempt.
   if (
     caughtError.code === 'ERR_JWT_EXPIRED' ||
     caughtError.name === 'JWTExpired'
   ) {
     return {
       success: false,
+      name: 'UnauthorizedError',
       message: 'Sua sessão expirou. Por favor, faça login novamente.',
       code: 'SESSION_EXPIRED',
     };
@@ -40,6 +46,7 @@ export function handleActionError(caughtError: any) {
 
   return {
     success: false,
+    name: 'InternalServerError',
     message: caughtError.message || 'Erro interno do servidor',
     code: 'INTERNAL_ERROR',
   };
@@ -68,9 +75,11 @@ export async function authenticateAction(): Promise<AuthenticationContext> {
   const headerList = await headers();
 
   const authorizationHeader = headerList.get('authorization');
-  const accessToken =
-    authorizationHeader?.replace('Bearer ', '') ||
-    cookieStore.get('access_token')?.value;
+  let accessToken = cookieStore.get('access_token')?.value;
+
+  if (authorizationHeader?.toLowerCase().startsWith('bearer ')) {
+    accessToken = authorizationHeader.substring(7);
+  }
 
   if (!accessToken) {
     throw new InvalidTokenError('Sessão não encontrada.');
@@ -165,7 +174,7 @@ export async function withSecuredActionAndAutomaticRetry<T>(
             maxAge: 60 * 60 * 24 * 7, // 7 days
           });
 
-          // 2. RETRY the original action with the new session
+          // 2. Retry the original action with the new session
           const retryResult = await execute();
           return {
             success: true,

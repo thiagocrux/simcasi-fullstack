@@ -26,21 +26,32 @@ type ApiHandler = (
  * Standard error handler for Next.js API Route Handlers.
  */
 export function handleApiError(error: any) {
-  if (error instanceof AppError) {
+  // Use property check as a fallback for instanceof, common in Next.js HMR/Turbopack.
+  const isAppError =
+    error instanceof AppError || (error?.statusCode && error?.code);
+
+  if (isAppError) {
+    const statusCode = error.statusCode || 400;
+
+    if (statusCode === 500) {
+      console.error('[API_ERROR_500]', error);
+    }
+
     return NextResponse.json(
       {
-        name: error.name,
+        name: error.name || 'AppError',
         message: error.message,
         code: error.code,
       },
-      { status: error.statusCode }
+      { status: statusCode }
     );
   }
 
-  // Handle specific JWT/Jose errors if needed, or other common generic errors
-  if (error.code === 'ERR_JWT_EXPIRED') {
+  // Handle specific JWT/Jose errors if needed, or other common generic errors.
+  if (error.code === 'ERR_JWT_EXPIRED' || error.name === 'JWTExpired') {
     return NextResponse.json(
       {
+        name: 'UnauthorizedError',
         message: 'Token has expired',
         code: 'INVALID_TOKEN',
       },
@@ -48,10 +59,11 @@ export function handleApiError(error: any) {
     );
   }
 
-  console.error('[API_ERROR]', error);
+  console.error('[API_INTERNAL_ERROR]', error);
 
   return NextResponse.json(
     {
+      name: 'InternalServerError',
       message: 'Internal server error',
       code: 'INTERNAL_ERROR',
     },
@@ -68,8 +80,17 @@ export function handleApiError(error: any) {
  */
 export function withAuthentication(permissions: string[], handler: ApiHandler) {
   return async (request: NextRequest, { params }: { params: any }) => {
-    const execute = async () => {
-      const authContext = await authenticateRequest(request);
+    const execute = async (tokenOverride?: string) => {
+      const authContext = await authenticateRequest(
+        tokenOverride
+          ? new NextRequest(request, {
+              headers: {
+                ...Object.fromEntries(request.headers),
+                authorization: `Bearer ${tokenOverride}`,
+              },
+            })
+          : request
+      );
       await authorize(authContext.roleId, permissions);
       const { ipAddress, userAgent } = await getAuditMetadata();
 
@@ -86,7 +107,7 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
     try {
       return await execute();
     } catch (caughtError: any) {
-      // Check for token expiration
+      // Check for token expiration.
       const isTokenExpired =
         caughtError.code === 'ERR_JWT_EXPIRED' ||
         caughtError.name === 'JWTExpired' ||
@@ -110,7 +131,7 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
               userAgent,
             });
 
-            // Set new cookies
+            // Set new cookies.
             cookieStore.set('access_token', newAccessToken, {
               httpOnly: true,
               secure: process.env.NODE_ENV === 'production',
@@ -127,11 +148,12 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
               maxAge: 60 * 60 * 24 * 7,
             });
 
-            // Retry original handler
-            return await execute();
+            // Retry original handler with the new access token.
+            return await execute(newAccessToken);
           } catch (refreshError: any) {
             cookieStore.delete('access_token');
             cookieStore.delete('refresh_token');
+            return handleApiError(refreshError);
           }
         }
       }

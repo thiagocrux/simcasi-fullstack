@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { AppError } from '@/core/domain/errors/app.error';
 import { makeLoginUseCase } from '@/core/infrastructure/factories/session.factory';
+import { handleApiError } from '@/lib/api.utils';
 
 /**
  * POST - /api/auth/login
@@ -24,29 +24,16 @@ export async function POST(request: NextRequest) {
 
     const response = NextResponse.json(result);
 
-    // Set Refresh Token in an HTTP-only cookie for Web clients
+    // Set Refresh Token in an HTTP-only cookie for Web clients.
     response.cookies.set('refresh_token', result.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      // Max age should match the token provider's refresh expiry.
-      // For now, let's set a reasonable default or leave it to the session.
     });
 
     return response;
   } catch (error) {
-    if (error instanceof AppError) {
-      return NextResponse.json(
-        { message: error.message, code: error.code },
-        { status: error.statusCode }
-      );
-    }
-
-    console.error('[LOGIN_API_ERROR]', error);
-    return NextResponse.json(
-      { message: 'Internal server error', code: 'INTERNAL_ERROR' },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
