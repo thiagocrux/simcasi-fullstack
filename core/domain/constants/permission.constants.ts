@@ -59,8 +59,6 @@ export const PERMISSIONS = [
   // audit-log
   'create:audit-log',
   'read:audit-log',
-  'update:audit-log',
-  'delete:audit-log',
 ];
 
 /**
