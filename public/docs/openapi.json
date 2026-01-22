@@ -99,6 +99,7 @@
         "tags": [
           "Authentication"
         ],
+        "security": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -333,6 +334,11 @@
         "description": "Performs secure token rotation by validating the current refresh token and issuing a new access/refresh pair, thereby extending the user's session lifecycle.",
         "tags": [
           "Authentication"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
         ],
         "requestBody": {
           "required": true,

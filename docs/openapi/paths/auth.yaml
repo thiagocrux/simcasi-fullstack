@@ -50,7 +50,8 @@ refresh:
     description: Performs secure token rotation by validating the current refresh token and issuing a new access/refresh pair, thereby extending the user's session lifecycle.
     tags:
       - Authentication
-    security: []
+    security:
+      - BearerAuth: []
     requestBody:
       required: true
       content:
