@@ -3,12 +3,13 @@
 
 /**
  * Post-processing script for Postman collection.
+ *
  * Handles:
  * 1. Reorganizing endpoints by category groups
  * 2. Flattening unnecessary folder nesting
  * 3. Adding login script with token persistence
- * 4. Setting up default Bearer authentication
- * 5. Configuring public endpoints with "No Auth"
+ * 4. Configuring request bodies for dynamic variables
+ * 5. Setting up explicit authentication for each endpoint
  */
 
 const fs = require('fs');
@@ -43,6 +44,7 @@ const tagGroups = {
 
 /**
  * Removes unnecessary folder nesting in the collection.
+ *
  * Moves requests up one level if they're in a redundant subfolder.
  */
 function flattenResourceFolders(folder) {
@@ -73,7 +75,7 @@ function flattenResourceFolders(folder) {
 }
 
 /**
- * Reorganizes the collection by grouping endpoints according to tagGroups
+ * Reorganizes the collection by grouping endpoints according to tagGroups.
  */
 function organizeByGroups(collection) {
   console.log('🔄 Organizing endpoints by groups...');
@@ -122,7 +124,7 @@ function organizeByGroups(collection) {
 }
 
 /**
- * Adds test script to Login endpoint that saves tokens to environment variables
+ * Adds test script to Login endpoint that saves tokens to environment variables.
  */
 function addLoginScript(collection) {
   console.log('📝 Adding login token script...');
@@ -172,7 +174,7 @@ if (pm.response.code === 200) {
 }
 
 /**
- * Configures request bodies for specific endpoints to use variables
+ * Configures request bodies for specific endpoints to use variables.
  */
 function configureRequestBodies(collection) {
   console.log('📦 Configuring request bodies...');
@@ -213,8 +215,9 @@ function configureRequestBodies(collection) {
 
 /**
  * Configures authentication explicitly for each endpoint by traversing the collection.
- * - Public endpoints (Login, System Health) -> No Auth
- * - Refresh Token -> No Auth (token goes in body)
+ *
+ * Rules applied:
+ * - Public endpoints (Login, Health Check, Refresh Token) -> No Auth
  * - Protected endpoints -> Bearer {{accessToken}}
  */
 function configureAuthentication(collection) {
@@ -261,7 +264,7 @@ function configureAuthentication(collection) {
 }
 
 /**
- * Main function that orchestrates all post-processing steps
+ * Main function that orchestrates all post-processing steps.
  */
 function processCollection() {
   try {
