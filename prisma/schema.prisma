@@ -27,7 +27,7 @@ model Role {
   id        String    @id @default(uuid()) @db.Uuid
   code      String    @unique
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   permission RolePermission[]
@@ -50,7 +50,7 @@ model Permission {
   id        String    @id @default(uuid()) @db.Uuid
   code      String    @unique
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   roles RolePermission[]
@@ -97,7 +97,7 @@ model User {
   password  String
   roleId    String    @map("role_id") @db.Uuid
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   role Role @relation(fields: [roleId], references: [id], onDelete: Restrict)
@@ -132,7 +132,7 @@ model Session {
   ipAddress String    @map("ip_address") @db.Inet
   userAgent String    @map("user_agent")
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime? @map("updated_at") @db.Timestamptz(6)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   user User @relation(fields: [userId], references: [id], onDelete: Restrict)
@@ -187,7 +187,7 @@ model Patient {
   complement     String?
   createdBy      String    @map("created_by") @db.Uuid
   createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt      DateTime? @map("updated_at") @db.Timestamptz(6)
+  updatedAt      DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt      DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   user User @relation(fields: [createdBy], references: [id], onDelete: Restrict)
@@ -228,7 +228,7 @@ model Exam {
   referenceObservations      String    @map("reference_observations")
   createdBy                  String    @map("created_by") @db.Uuid
   createdAt                  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                  DateTime? @map("updated_at") @db.Timestamptz(6)
+  updatedAt                  DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt                  DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
@@ -258,7 +258,7 @@ model Notification {
   observations String?
   createdBy    String    @map("created_by") @db.Uuid
   createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime? @map("updated_at") @db.Timestamptz(6)
+  updatedAt    DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt    DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
@@ -288,7 +288,7 @@ model Observation {
   hasPartnerBeingTreated Boolean   @default(false) @map("has_partner_being_treated")
   createdBy              String    @map("created_by") @db.Uuid
   createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt              DateTime? @map("updated_at") @db.Timestamptz(6)
+  updatedAt              DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt              DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
@@ -322,7 +322,7 @@ model Treatment {
   partnerInformation String?   @map("partner_information")
   createdBy          String    @map("created_by") @db.Uuid
   createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt          DateTime? @map("updated_at") @db.Timestamptz(6)
+  updatedAt          DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt          DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
