@@ -43,3 +43,10 @@ next-env.d.ts
 
 # github
 /.github/copilot-instructions.md
+
+# local temporary files
+/.local/
+
+
+# Local references and private files
+/.local/
