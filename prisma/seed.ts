@@ -19,9 +19,9 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log('Starting seed for permissions and roles...');
+  console.log('🚀 Starting seed for permissions and roles...');
 
-  // Create permissions (idempotent upserts)
+  // Create permissions (idempotent upserts).
   for (const permission of PERMISSIONS) {
     await prisma.permission.upsert({
       where: { code: permission },
@@ -53,20 +53,20 @@ async function main() {
 
   if (seedEmail && !seedPassword && !isProduction) {
     seedPassword = crypto.randomBytes(12).toString('base64url');
-    console.log('Generated dev seed user password:', seedPassword);
+    console.log('\n🔑 Generated dev seed user password:', seedPassword);
   }
 
   await prisma.$transaction(async (transaction) => {
     // Use for...of to ensure we retrieve the upserted roleId for the join table.
     for (const role of ROLES) {
-      // Create or update the role
+      // Create or update the role.
       const { id: roleId } = await transaction.role.upsert({
         where: { code: role },
         update: {},
         create: { code: role },
       });
 
-      // Grant the configured permissions to the role
+      // Grant the configured permissions to the role.
       const rolePermissions = PERMISSIONS_BY_ROLE[role] ?? [];
 
       for (const permission of rolePermissions) {
@@ -131,7 +131,7 @@ async function main() {
   });
 
   // Note: dev/test bootstrap user is now created when PRISMA_SEED_EMAIL/PRISMA_SEED_PASSWORD are set.
-  console.log('Seeding completed successfully.');
+  console.log('\n✅ Seeding completed successfully!');
 }
 
 main()
@@ -139,7 +139,10 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (error) => {
-    console.error('Error during seeding. Transaction rollback ensured.', error);
+    console.error(
+      '\n❌ Error during seeding. Transaction rollback ensured.',
+      error
+    );
     await prisma.$disconnect();
     process.exit(1);
   });

@@ -20,7 +20,7 @@ const collectionPath = path.join(
   '../public/docs/simcasi.postman_collection.json'
 );
 
-// Groups and naming convention from the OpenAPI spec
+// Groups and naming convention from the OpenAPI spec.
 const tagGroups = {
   'Identity & Access Management': [
     { key: 'auth', name: 'Authentication' },
@@ -56,14 +56,14 @@ function flattenResourceFolders(folder) {
 
   folder.item.forEach((item) => {
     if (item.request) {
-      // It's a request, keep it
+      // It's a request, keep it.
       flattenedItems.push(item);
     } else if (item.item && item.item.length > 0) {
-      // It's a folder with more items inside - flatten it
+      // It's a folder with more items inside - flatten it.
       const flattened = flattenResourceFolders(item);
       flattenedItems.push(...(flattened.item || []));
     } else {
-      // Keep as is
+      // Keep as is.
       flattenedItems.push(item);
     }
   });
@@ -78,13 +78,15 @@ function flattenResourceFolders(folder) {
  * Reorganizes the collection by grouping endpoints according to tagGroups.
  */
 function organizeByGroups(collection) {
-  console.log('🔄 Organizing endpoints by groups...');
+  console.log('\n🔄 Organizing endpoints by groups...');
 
   // Build a map to find folders by their original tag key
   const folderMap = new Map();
-  collection.item.forEach((folder) => {
-    folderMap.set(folder.name, folder);
-  });
+  if (collection.item) {
+    collection.item.forEach((folder) => {
+      folderMap.set(folder.name, folder);
+    });
+  }
 
   // Rebuild collection structure with group hierarchy
   const newItems = [];
@@ -124,10 +126,10 @@ function organizeByGroups(collection) {
 }
 
 /**
- * Adds test script to Login endpoint that saves tokens to environment variables.
+ * Adds test script to Login and Refresh Token endpoints that saves tokens to environment variables.
  */
-function addLoginScript(collection) {
-  console.log('📝 Adding login token script...');
+function addTokenPersistenceScripts(collection) {
+  console.log('\n📝 Adding token persistence scripts...');
 
   const identityFolder = collection.item.find(
     (item) => item.name === 'Identity & Access Management'
@@ -139,45 +141,51 @@ function addLoginScript(collection) {
   );
   if (!authFolder) return;
 
-  const loginEndpoint = authFolder.item.find((item) => item.name === 'Login');
-  if (!loginEndpoint) return;
+  const tokenEndpoints = authFolder.item.filter((item) =>
+    ['Login', 'Refresh token'].includes(item.name)
+  );
 
-  const loginTestScript = `
+  const persistenceScript = `
 if (pm.response.code === 200) {
   const responseBody = pm.response.json();
 
   // Save tokens to environment variables
-  pm.environment.set('accessToken', responseBody.accessToken);
-  pm.environment.set('refreshToken', responseBody.refreshToken);
+  if (responseBody.accessToken) {
+    pm.environment.set('accessToken', responseBody.accessToken);
+  }
+  if (responseBody.refreshToken) {
+    pm.environment.set('refreshToken', responseBody.refreshToken);
+  }
 
   console.log('✓ Tokens saved successfully to environment variables');
 }
 `;
 
-  if (!loginEndpoint.event) {
-    loginEndpoint.event = [];
-  }
+  tokenEndpoints.forEach((endpoint) => {
+    if (!endpoint.event) {
+      endpoint.event = [];
+    }
 
-  // Remove existing script if any
-  loginEndpoint.event = loginEndpoint.event.filter((e) => e.listen !== 'test');
+    // Remove existing script if any
+    endpoint.event = endpoint.event.filter((e) => e.listen !== 'test');
 
-  // Add new script
-  loginEndpoint.event.push({
-    listen: 'test',
-    script: {
-      exec: loginTestScript.trim().split('\n'),
-      type: 'text/javascript',
-    },
+    // Add new script
+    endpoint.event.push({
+      listen: 'test',
+      script: {
+        exec: persistenceScript.trim().split('\n'),
+        type: 'text/javascript',
+      },
+    });
+    console.log(`   ✓ Persistence script added to ${endpoint.name}`);
   });
-
-  console.log('   ✓ Login script added');
 }
 
 /**
  * Configures request bodies for specific endpoints to use variables.
  */
 function configureRequestBodies(collection) {
-  console.log('📦 Configuring request bodies...');
+  console.log('\n📦 Configuring request bodies...');
 
   function traverse(items) {
     if (!items) return;
@@ -221,9 +229,9 @@ function configureRequestBodies(collection) {
  * - Protected endpoints -> Bearer {{accessToken}}
  */
 function configureAuthentication(collection) {
-  console.log('🔐 Configuring authentication...');
+  console.log('\n🔐 Configuring authentication...');
 
-  // Remove root level auth to prevent inheritance
+  // Remove root level auth to prevent inheritance.
   if (collection.auth) {
     delete collection.auth;
     console.log('   ✓ Removed root level authentication');
@@ -268,13 +276,12 @@ function configureAuthentication(collection) {
  */
 function processCollection() {
   try {
-    console.log('📂 Reading Postman collection...\n');
+    console.log('📂 Reading Postman collection...');
     const collection = JSON.parse(fs.readFileSync(collectionPath, 'utf8'));
 
     // Apply all transformations
     organizeByGroups(collection);
-    console.log();
-    addLoginScript(collection);
+    addTokenPersistenceScripts(collection);
     configureRequestBodies(collection);
     configureAuthentication(collection);
 
@@ -286,9 +293,9 @@ function processCollection() {
       'utf8'
     );
 
-    console.log('\n✅ Postman Collection processed successfully!\n');
+    console.log('\n✅ Postman Collection processed successfully!');
   } catch (error) {
-    console.error('❌ Error processing Postman Collection:', error.message);
+    console.error('\n❌ Error processing Postman Collection:', error.message);
     process.exit(1);
   }
 }
