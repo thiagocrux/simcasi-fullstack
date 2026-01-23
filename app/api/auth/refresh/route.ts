@@ -43,12 +43,20 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json(result);
 
     // Update Refresh Token in cookie
-    response.cookies.set('refresh_token', result.refreshToken, {
+    const cookieOptions: NonNullable<
+      Parameters<NextResponse['cookies']['set']>[2]
+    > = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-    });
+    };
+
+    if (result.rememberMe && result.refreshTokenExpiresIn) {
+      cookieOptions.maxAge = result.refreshTokenExpiresIn;
+    }
+
+    response.cookies.set('refresh_token', result.refreshToken, cookieOptions);
 
     return response;
   } catch (error) {

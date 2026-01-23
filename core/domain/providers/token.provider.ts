@@ -24,4 +24,16 @@ export interface TokenProvider {
    * Returns the expiry date for a refresh token.
    */
   getRefreshExpiryDate(): Date;
+
+  /**
+   * Returns the refresh token expiration time in seconds.
+   * Useful for cookie 'maxAge' configuration.
+   */
+  getRefreshExpirationInSeconds(): number;
+
+  /**
+   * Returns the access token expiration time in seconds.
+   * Useful for frontend side session management.
+   */
+  getAccessExpirationInSeconds(): number;
 }

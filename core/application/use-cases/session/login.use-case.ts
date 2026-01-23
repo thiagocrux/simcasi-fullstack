@@ -55,11 +55,15 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
     const refreshToken = await this.tokenProvider.generateRefreshToken({
       sub: user.id,
       sid: session.id,
+      rememberMe: input.rememberMe,
     });
 
     return {
       accessToken,
       refreshToken,
+      rememberMe: input.rememberMe,
+      accessTokenExpiresIn: this.tokenProvider.getAccessExpirationInSeconds(),
+      refreshTokenExpiresIn: this.tokenProvider.getRefreshExpirationInSeconds(),
       user: {
         id: user.id,
         name: user.name,

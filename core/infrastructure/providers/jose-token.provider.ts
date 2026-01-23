@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { SECURITY_CONSTANTS } from '@/core/domain/constants/security.constants';
 import { TokenProvider } from '@/core/domain/providers/token.provider';
 import { SignJWT, jwtVerify } from 'jose';
 
@@ -13,8 +14,12 @@ export class JoseTokenProvider implements TokenProvider {
   constructor() {
     const secretKey = process.env.JWT_SECRET || 'default_secret_key_change_me';
     this.secret = new TextEncoder().encode(secretKey);
-    this.accessExpiration = process.env.JWT_ACCESS_EXPIRATION || '15m';
-    this.refreshExpiration = process.env.JWT_REFRESH_EXPIRATION || '7d';
+    this.accessExpiration =
+      process.env.JWT_ACCESS_TOKEN_EXPIRATION ||
+      SECURITY_CONSTANTS.DEFAULT_ACCESS_TOKEN_EXPIRATION;
+    this.refreshExpiration =
+      process.env.JWT_REFRESH_TOKEN_EXPIRATION ||
+      SECURITY_CONSTANTS.DEFAULT_REFRESH_TOKEN_EXPIRATION;
   }
 
   /**
@@ -59,10 +64,12 @@ export class JoseTokenProvider implements TokenProvider {
 
   /**
    * Returns the expiry date for a refresh token.
-   * Based on the configuration in JWT_REFRESH_EXPIRATION (default 7d).
+   * Based on the configuration in JWT_REFRESH_TOKEN_EXPIRATION (default in security.constants).
    */
   getRefreshExpiryDate(): Date {
-    const expiration = process.env.JWT_REFRESH_EXPIRATION || '7d';
+    const expiration =
+      process.env.JWT_REFRESH_TOKEN_EXPIRATION ||
+      SECURITY_CONSTANTS.DEFAULT_REFRESH_TOKEN_EXPIRATION;
     const amount = parseInt(expiration);
     const unit = expiration.slice(-1);
 
@@ -74,9 +81,62 @@ export class JoseTokenProvider implements TokenProvider {
     } else if (unit === 'm') {
       date.setMinutes(date.getMinutes() + amount);
     } else {
+      // Final fallback if parsing fails
       date.setDate(date.getDate() + 7);
     }
 
     return date;
+  }
+
+  /**
+   * Returns the refresh token expiration time in seconds.
+   * Based on the configuration in JWT_REFRESH_TOKEN_EXPIRATION (default in security.constants).
+   */
+  getRefreshExpirationInSeconds(): number {
+    const expiration =
+      process.env.JWT_REFRESH_TOKEN_EXPIRATION ||
+      SECURITY_CONSTANTS.DEFAULT_REFRESH_TOKEN_EXPIRATION;
+    const amount = parseInt(expiration);
+    const unit = expiration.slice(-1);
+
+    switch (unit) {
+      case 'd':
+        return amount * 24 * 60 * 60;
+      case 'h':
+        return amount * 60 * 60;
+      case 'm':
+        return amount * 60;
+      case 's':
+        return amount;
+      default:
+        // Default based on constants
+        return 7 * 24 * 60 * 60;
+    }
+  }
+
+  /**
+   * Returns the access token expiration time in seconds.
+   * Based on the configuration in JWT_ACCESS_TOKEN_EXPIRATION (default in security.constants).
+   */
+  getAccessExpirationInSeconds(): number {
+    const expiration =
+      process.env.JWT_ACCESS_TOKEN_EXPIRATION ||
+      SECURITY_CONSTANTS.DEFAULT_ACCESS_TOKEN_EXPIRATION;
+    const amount = parseInt(expiration);
+    const unit = expiration.slice(-1);
+
+    switch (unit) {
+      case 'd':
+        return amount * 24 * 60 * 60;
+      case 'h':
+        return amount * 60 * 60;
+      case 'm':
+        return amount * 60;
+      case 's':
+        return amount;
+      default:
+        // Default (15 minutes)
+        return 15 * 60;
+    }
   }
 }

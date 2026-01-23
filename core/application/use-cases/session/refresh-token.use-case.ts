@@ -29,6 +29,7 @@ export class RefreshTokenUseCase implements UseCase<
     const decoded = await this.tokenProvider.verifyToken<{
       sub: string;
       sid: string;
+      rememberMe?: boolean;
     }>(input.refreshToken);
 
     if (!decoded || !decoded.sub || !decoded.sid) {
@@ -79,11 +80,15 @@ export class RefreshTokenUseCase implements UseCase<
     const newRefreshToken = await this.tokenProvider.generateRefreshToken({
       sub: user.id,
       sid: newSession.id,
+      rememberMe: decoded.rememberMe,
     });
 
     return {
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
+      rememberMe: decoded.rememberMe,
+      accessTokenExpiresIn: this.tokenProvider.getAccessExpirationInSeconds(),
+      refreshTokenExpiresIn: this.tokenProvider.getRefreshExpirationInSeconds(),
       user: {
         id: user.id,
         name: user.name,

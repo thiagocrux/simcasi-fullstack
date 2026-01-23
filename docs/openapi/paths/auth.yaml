@@ -18,6 +18,7 @@ login:
               value:
                 email: dr.silva@simcasi.gov.br
                 password: SecurePass#2026
+                rememberMe: true
                 ipAddress: 192.168.1.100
                 userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
@@ -33,6 +34,9 @@ login:
                 value:
                   accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YzA4ZjVlYi0xMjM0LTU2NzgtOWFiYy1kZWYwMTIzNDU2NzgiLCJlbWFpbCI6ImRyLnNpbHZhQHNpbWNhc2kuZ292LmJyIiwiaWF0IjoxNzM3NTA0MDAwLCJleHAiOjE3Mzc1MDc2MDB9.Xj8K9L2mN3pQ4rS5tU6vW7xY8zA9bC0dE1fG2hI3jK4
                   refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YzA4ZjVlYi0xMjM0LTU2NzgtOWFiYy1kZWYwMTIzNDU2NzgiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTczNzUwNDAwMCwiZXhwIjoxNzM4MTA4ODAwfQ.A1bC2dE3fG4hI5jK6lM7nO8pQ9rS0tU1vW2xY3zA4b
+                  rememberMe: true
+                  accessTokenExpiresIn: 3600
+                  refreshTokenExpiresIn: 604800
                   user:
                     id: 9c08f5eb-1234-5678-9abc-def012345678
                     name: Dr. João Silva
