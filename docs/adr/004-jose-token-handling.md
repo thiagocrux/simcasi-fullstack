@@ -1,4 +1,4 @@
-# ADR 003: Choice of jose for Token Handling
+# ADR 004: Choice of jose for Token Handling
 
 - **Status:** Accepted
 - **Date:** 2026-01-14

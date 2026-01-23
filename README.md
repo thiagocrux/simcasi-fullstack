@@ -441,9 +441,10 @@ This ensures testability, maintainability, and independence from frameworks.
 
 The project documents its major architectural decisions using the ADR pattern. Refer to [docs/adr/](docs/adr/) for details on:
 
-- **ADR 001**: Adoption of Clean Architecture.
-- **ADR 002**: Adoption of Prisma ORM.
-- **ADR 003**: Choice of `jose` for Token Handling.
+- **ADR 001**: Adoption of Next.js.
+- **ADR 002**: Adoption of Clean Architecture.
+- **ADR 003**: Adoption of Prisma ORM.
+- **ADR 004**: Choice of `jose` for Token Handling.
 
 ### Key Patterns
 

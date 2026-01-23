@@ -1,4 +1,4 @@
-# ADR 001: Adoption of Clean Architecture
+# ADR 002: Adoption of Clean Architecture
 
 - **Status:** Accepted
 - **Date:** 2026-01-14

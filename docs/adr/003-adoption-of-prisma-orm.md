@@ -1,4 +1,4 @@
-# ADR 002: Adoption of Prisma ORM
+# ADR 003: Adoption of Prisma ORM
 
 - **Status:** Accepted
 - **Date:** 2025-12-11
