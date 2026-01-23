@@ -437,6 +437,14 @@ The codebase respects the principles of Clean Architecture:
 
 This ensures testability, maintainability, and independence from frameworks.
 
+### ADRs (Architecture Decision Records)
+
+The project documents its major architectural decisions using the ADR pattern. Refer to [docs/adr/](docs/adr/) for details on:
+
+- **ADR 001**: Adoption of Clean Architecture.
+- **ADR 002**: Adoption of Prisma ORM.
+- **ADR 003**: Choice of `jose` for Token Handling.
+
 ### Key Patterns
 
 - **Repository Pattern** — All data access is abstracted through repositories that implement domain interfaces
