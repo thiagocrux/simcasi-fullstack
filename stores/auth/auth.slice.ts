@@ -21,10 +21,16 @@ const initialState: AuthState = {
   isHydrated: false,
 };
 
+/**
+ * Redux slice for managing authentication state.
+ */
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    /**
+     * Sets the user credentials and permissions.
+     */
     setCredentials: (
       state,
       action: PayloadAction<{ user: User; permissions: string[] }>
@@ -34,21 +40,28 @@ export const authSlice = createSlice({
       state.isAuthenticated = true;
       state.isHydrated = true;
 
-      // Persist to localStorage.
+      // Persist the authentication state to local storage.
       if (typeof window !== 'undefined') {
         localStorage.setItem('simcasi_auth', JSON.stringify(action.payload));
       }
     },
+    /**
+     * Clears the user credentials and logs them out.
+     */
     logout: (state) => {
       state.user = null;
       state.permissions = [];
       state.isAuthenticated = false;
       state.isHydrated = true;
 
+      // Remove the authentication state from local storage.
       if (typeof window !== 'undefined') {
         localStorage.removeItem('simcasi_auth');
       }
     },
+    /**
+     * Hydrates the store from local storage.
+     */
     hydrateStore: (state) => {
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem('simcasi_auth');
@@ -59,6 +72,7 @@ export const authSlice = createSlice({
             state.permissions = parsed.permissions;
             state.isAuthenticated = true;
           } catch (error) {
+            // Log an error if hydration fails.
             console.error('Failed to hydrate auth store.', error);
           }
         }

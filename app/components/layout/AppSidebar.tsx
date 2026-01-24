@@ -25,6 +25,7 @@ import {
 import { AppSidebarContent } from './AppSidebarContent';
 import { AppSidebarUser } from './AppSidebarUser';
 
+import { useUser } from '@/hooks/useUser';
 import {
   Sidebar,
   SidebarContent,
@@ -37,12 +38,6 @@ import {
 } from '../ui/sidebar';
 
 const data = {
-  // TODO: Add user data dynamically on sign in; implement with Redux.
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
   dashboard: [
     {
       title: 'Dashboard',
@@ -85,7 +80,6 @@ const data = {
       icon: Syringe,
     },
   ],
-  // TODO: Show section only to users with admin role.
   userManagement: [
     {
       title: 'Usuários',
@@ -111,7 +105,6 @@ const data = {
       icon: DoorOpen,
     },
   ],
-  // TODO: Show section only to users with admin role.
   audit: [
     {
       title: 'Registros de auditoria',
@@ -143,8 +136,18 @@ const data = {
   ],
 };
 
+/**
+ * Main sidebar component for the application.
+ */
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
+  const { user } = useUser();
+
+  const userData = {
+    name: user?.name || 'Carregando...',
+    email: user?.email || '',
+    avatar: '', // TODO: Implement avatar URL in user entity.
+  };
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -183,7 +186,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <AppSidebarContent label="Auditorias" items={data.audit} />
       </SidebarContent>
       <SidebarFooter>
-        <AppSidebarUser user={data.user} dropdownItems={data.settings} />
+        <AppSidebarUser user={userData} dropdownItems={data.settings} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

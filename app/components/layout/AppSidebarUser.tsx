@@ -3,6 +3,9 @@
 import { ChevronsUpDown, LogOut, type LucideIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import { signOutUser } from '@/app/actions/session.actions';
+import { useAppDispatch } from '@/hooks/redux.hooks';
+import { logout } from '@/stores/auth/auth.slice';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 import {
@@ -35,9 +38,27 @@ interface AppSidebarUserProps {
   }[];
 }
 
+/**
+ * Sidebar component for rendering user data and account actions.
+ */
 export function AppSidebarUser({ user, dropdownItems }: AppSidebarUserProps) {
   const { isMobile } = useSidebar();
   const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  /**
+   * Handles user logout.
+   */
+  const handleLogout = async () => {
+    // 1. Clear Redux state.
+    dispatch(logout());
+
+    // 2. Clear cookies and server-side session.
+    await signOutUser();
+
+    // 3. Redirect to login page.
+    router.push('/auth/login');
+  };
 
   return (
     <SidebarMenu>
@@ -50,7 +71,9 @@ export function AppSidebarUser({ user, dropdownItems }: AppSidebarUserProps) {
             >
               <Avatar className="rounded-lg w-8 h-8">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {user.name.charAt(0).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div className="flex-1 grid text-sm text-left leading-tight">
                 <span className="font-medium truncate">{user.name}</span>
@@ -69,7 +92,9 @@ export function AppSidebarUser({ user, dropdownItems }: AppSidebarUserProps) {
               <div className="flex items-center gap-2 px-1 py-1.5 text-sm text-left">
                 <Avatar className="rounded-lg w-8 h-8">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {user.name.charAt(0).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 grid text-sm text-left leading-tight">
                   <span className="font-medium truncate">{user.name}</span>
@@ -91,8 +116,11 @@ export function AppSidebarUser({ user, dropdownItems }: AppSidebarUserProps) {
               ))}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="text-destructive cursor-pointer"
+            >
+              <LogOut className="text-destructive" />
               Sair
             </DropdownMenuItem>
           </DropdownMenuContent>
