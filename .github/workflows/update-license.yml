@@ -1,0 +1,47 @@
+name: Update License Year
+
+on:
+  schedule:
+    - cron: '0 0 1 1 *' # Runs at 00:00 on January 1st every year
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+
+jobs:
+  update-license:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Update License Year
+        run: |
+          CURRENT_YEAR=$(date +%Y)
+          # Replaces "Copyright (c) 2024-XXXX" with "Copyright (c) 2024-CURRENT_YEAR"
+          sed -i "s/Copyright (c) 2024-[0-9]\{4\}/Copyright (c) 2024-$CURRENT_YEAR/g" LICENSE
+
+      - name: Check for Changes
+        id: git-check
+        run: |
+          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: steps.git-check.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update license year to $(date +%Y)'
+          committer: GitHub <noreply@github.com>
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          signoff: false
+          branch: chore/update-license-year
+          delete-branch: true
+          title: 'chore: update license year to $(date +%Y)'
+          body: |
+            This is an automated PR to update the license year in the LICENSE file.
+            It ensures the project remains legally up-to-date.
+          labels: |
+            documentation
+            automated pr

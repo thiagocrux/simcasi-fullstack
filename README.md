@@ -202,10 +202,6 @@ Once setup is complete, you can login with:
 
 > 📝 **Note:** Change these credentials in `prisma/seed.ts` before using in production.
 
-### Troubleshooting Quick Start
-
-If any command fails, check the [Troubleshooting](#troubleshooting) section below.
-
 ## Available Scripts
 
 This section documents the main scripts available in `package.json` and what they do.
@@ -675,6 +671,19 @@ When working with the API:
 - **Type Safety** — Ensure TypeScript compilation passes
 - **Atomic Commits** — Keep commits focused and meaningful
 
+## Troubleshooting
+
+### Common Issues
+
+#### Database: `Can't reach database server at 127.0.0.1:5432`
+
+- **Reason**: The application cannot connect to the PostgreSQL instance. This usually happens because the Docker container is stopped or the database hasn't finished its initialization.
+- **Solution**:
+  1.  Check if the Docker container is running: `docker compose ps`.
+  2.  If it's stopped, start it: `docker-compose up -d`.
+  3.  Verify the `DATABASE_URL` in your `.env` file matches the Docker settings (port 5432 is the default).
+  4.  Wait a few seconds after starting Docker for the database to be ready before running commands like `prisma:migrate` or starting the dev server.
+
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+Distributed under the [MIT License](LICENSE).
