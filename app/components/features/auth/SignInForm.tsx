@@ -3,9 +3,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { signInUser } from '@/app/actions/session.actions';
+import { messages } from '@/core/application/validation/messages';
 import {
   CreateSessionInput,
   sessionSchema,
@@ -13,6 +15,7 @@ import {
 import { FieldError } from '../../common/FieldError';
 import { PasswordInput } from '../../common/PasswordInput';
 import { Button } from '../../ui/button';
+import { Checkbox } from '../../ui/checkbox';
 import { Field, FieldGroup, FieldLabel } from '../../ui/field';
 import { Input } from '../../ui/input';
 import { Spinner } from '../../ui/spinner';
@@ -27,25 +30,40 @@ export function SignInForm({ className }: SignInFormProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors: formErrors, isSubmitting },
+    control,
+    formState: { errors: formErrors },
   } = useForm<CreateSessionInput>({
     resolver: zodResolver(sessionSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: '', password: '', rememberMe: false },
   });
 
-  const signInUserMutation = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (input: CreateSessionInput) => signInUser(input),
-    onSuccess: () => {
-      // TODO: Implement success case.
+    onSuccess: (data) => {
+      console.log(data);
+
+      if (data.success) {
+        router.push('/dashboard');
+        return;
+      }
+
+      if (data.success === false) {
+        const errorMessage =
+          data.message === 'Invalid credentials.'
+            ? messages.INVALID_CREDENTIALS
+            : data.message || 'Ocorreu um erro inesperado.';
+
+        toast.error(errorMessage);
+      }
     },
     onError: (error: unknown) => {
-      // TODO: Implement error case.
       console.error('Submit error:', error);
+      toast.error('Erro de comunicação com o servidor.');
     },
   });
 
   async function onSubmit(input: CreateSessionInput) {
-    signInUserMutation.mutate(input);
+    mutate(input);
   }
 
   return (
@@ -76,8 +94,41 @@ export function SignInForm({ className }: SignInFormProps) {
             <FieldError message={formErrors.password.message} />
           )}
         </Field>
+
+        <Field>
+          <div className="flex justify-end items-center gap-2">
+            <Controller
+              name="rememberMe"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <Checkbox
+                    id="rememberMe"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <FieldLabel htmlFor="rememberMe" className="font-normal">
+                    Mantenha-me logado
+                  </FieldLabel>
+                  {formErrors.rememberMe && (
+                    <FieldError message={formErrors.rememberMe.message} />
+                  )}
+                </>
+              )}
+            />
+          </div>
+        </Field>
       </FieldGroup>
 
+      <Button
+        type="submit"
+        size="lg"
+        className="w-full cursor-pointer"
+        disabled={isPending}
+      >
+        {isPending && <Spinner />}
+        Entrar
+      </Button>
       <Button
         type="button"
         variant="link"
@@ -85,16 +136,6 @@ export function SignInForm({ className }: SignInFormProps) {
         onClick={() => router.push('/auth/password-recovery')}
       >
         Esqueceu a senha?
-      </Button>
-
-      <Button
-        type="submit"
-        size="lg"
-        className="w-full cursor-pointer"
-        disabled={isSubmitting}
-      >
-        {isSubmitting && <Spinner />}
-        Entrar
       </Button>
     </form>
   );

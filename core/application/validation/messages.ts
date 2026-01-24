@@ -14,4 +14,5 @@ export const messages = {
     'Por favor, insira um telefone no seguinte formato: +XX (XX) 9XXXX-XXXX.',
   INVALID_UUID:
     'Por favor, insira um UUID válido no formato: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.',
+  INVALID_CREDENTIALS: 'Credenciais inválidas. Por favor, tente novamente.',
 } as const;

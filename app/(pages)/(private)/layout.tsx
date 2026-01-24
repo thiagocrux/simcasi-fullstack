@@ -13,11 +13,14 @@ import {
   BreadcrumbSeparator,
 } from '@/app/components/ui/breadcrumb';
 
+import { signOutUser } from '@/app/actions/session.actions';
+import { Button } from '@/app/components/ui/button';
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from '@/app/components/ui/sidebar';
+import { LogOut } from 'lucide-react';
 
 export default async function RootLayout({
   children,
@@ -51,7 +54,17 @@ export default async function RootLayout({
                 </BreadcrumbList>
               </Breadcrumb>
             </div>
-            <ThemeSwitcher />
+            <div className="flex items-center gap-2">
+              <ThemeSwitcher />
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={signOutUser}
+                className="text-muted-foreground cursor-pointer"
+              >
+                <LogOut />
+              </Button>
+            </div>
           </header>
         </SidebarInset>
         <main className="p-6 w-full h-full">

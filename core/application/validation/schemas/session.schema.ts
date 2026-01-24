@@ -4,11 +4,9 @@ import { messages } from '../messages';
 import { regex } from '../regex';
 
 export const sessionSchema = z.object({
-  email: z.email('E-mail inválido.').nonempty('O e-mail é obrigatório.'),
-  password: z
-    .string()
-    .nonempty(messages.REQUIRED_FIELD('senha'))
-    .regex(regex.PASSWORD, messages.INVALID_PASSWORD),
+  email: z.string().nonempty(messages.REQUIRED_FIELD('E-mail')),
+  password: z.string().nonempty(messages.REQUIRED_FIELD('senha')),
+  rememberMe: z.boolean(),
 });
 
 export type CreateSessionInput = z.infer<typeof sessionSchema>;

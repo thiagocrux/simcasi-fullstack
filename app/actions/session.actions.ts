@@ -24,7 +24,11 @@ export async function signInUser(input: CreateSessionInput) {
     const parsed = sessionSchema.safeParse(input);
 
     if (!parsed.success) {
-      return { success: false, errors: parsed.error.flatten().fieldErrors };
+      return {
+        success: false,
+        message: 'Credenciais inválidas',
+        errors: parsed.error.flatten().fieldErrors,
+      };
     }
 
     // 2. Get audit metadata.
@@ -56,7 +60,7 @@ export async function signInUser(input: CreateSessionInput) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: input.rememberMe ? 60 * 60 * 24 * 7 : undefined, // 7 days
     });
 
     // 6. Return success status.
