@@ -3,9 +3,7 @@
 import { ChevronsUpDown, LogOut, type LucideIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { signOutUser } from '@/app/actions/session.actions';
-import { useAppDispatch } from '@/hooks/redux.hooks';
-import { logout } from '@/stores/auth/auth.slice';
+import { useLogout } from '@/hooks/useLogout';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 import {
@@ -44,21 +42,7 @@ interface AppSidebarUserProps {
 export function AppSidebarUser({ user, dropdownItems }: AppSidebarUserProps) {
   const { isMobile } = useSidebar();
   const router = useRouter();
-  const dispatch = useAppDispatch();
-
-  /**
-   * Handles user logout.
-   */
-  const handleLogout = async () => {
-    // 1. Clear Redux state.
-    dispatch(logout());
-
-    // 2. Clear cookies and server-side session.
-    await signOutUser();
-
-    // 3. Redirect to login page.
-    router.push('/auth/login');
-  };
+  const { handleLogout } = useLogout();
 
   return (
     <SidebarMenu>
