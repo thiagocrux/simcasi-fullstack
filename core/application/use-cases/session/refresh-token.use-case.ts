@@ -5,6 +5,7 @@ import {
   SessionExpiredError,
 } from '@/core/domain/errors/session.error';
 import { TokenProvider } from '@/core/domain/providers/token.provider';
+import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import { RefreshTokenInput } from '../../contracts/session/refresh-token.contract';
@@ -21,6 +22,7 @@ export class RefreshTokenUseCase implements UseCase<
   constructor(
     private readonly userRepository: UserRepository,
     private readonly sessionRepository: SessionRepository,
+    private readonly permissionRepository: PermissionRepository,
     private readonly tokenProvider: TokenProvider
   ) {}
 
@@ -71,7 +73,13 @@ export class RefreshTokenUseCase implements UseCase<
       userAgent: input.userAgent || 'unknown',
     });
 
-    // 6. Generate new tokens with the new session ID.
+    // 6. Fetch permissions for the user's role.
+    const permissions = await this.permissionRepository.findByRoleId(
+      user.roleId
+    );
+    const permissionCodes = permissions.map((p) => p.code);
+
+    // 7. Generate new tokens with the new session ID.
     const newAccessToken = await this.tokenProvider.generateAccessToken({
       sub: user.id,
       roleId: user.roleId,
@@ -95,6 +103,7 @@ export class RefreshTokenUseCase implements UseCase<
         email: user.email,
         roleId: user.roleId,
       },
+      permissions: permissionCodes,
     };
   }
 }

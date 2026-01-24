@@ -47,6 +47,7 @@ export function makeRefreshTokenUseCase() {
   return new RefreshTokenUseCase(
     userRepository,
     sessionRepository,
+    permissionRepository,
     tokenProvider
   );
 }

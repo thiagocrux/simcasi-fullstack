@@ -33,7 +33,7 @@ export function AppHeader({ variant = 'private' }: AppHeaderProps) {
 
   if (variant === 'public') {
     return (
-      <div className="top-4 right-4 absolute flex items-center gap-x-2 z-50">
+      <div className="top-4 right-4 z-50 absolute flex items-center gap-x-2">
         <ThemeSwitcher />
       </div>
     );
