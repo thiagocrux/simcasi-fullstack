@@ -26,6 +26,11 @@ export interface PermissionRepository {
   ): Promise<Permission | null>;
 
   /**
+   * Finds all permissions assigned to a specific role.
+   */
+  findByRoleId(roleId: string): Promise<Permission[]>;
+
+  /**
    * Lists all permissions with support for pagination and filtering.
    */
   findAll(params?: {

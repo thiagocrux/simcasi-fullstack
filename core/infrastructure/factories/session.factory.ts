@@ -7,19 +7,25 @@ import { ValidateSessionUseCase } from '@/core/application/use-cases/session/val
 import { BcryptHashProvider } from '../providers/bcrypt-hash.provider';
 import { JoseTokenProvider } from '../providers/jose-token.provider';
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
+import { PrismaPermissionRepository } from '../repositories/prisma/permission.prisma.repository';
 import { PrismaSessionRepository } from '../repositories/prisma/session.prisma.repository';
 import { PrismaUserRepository } from '../repositories/prisma/user.prisma.repository';
 
 const sessionRepository = new PrismaSessionRepository();
 const userRepository = new PrismaUserRepository();
+const permissionRepository = new PrismaPermissionRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
 const tokenProvider = new JoseTokenProvider();
 const hashProvider = new BcryptHashProvider();
 
+/**
+ * Creates an instance of LoginUseCase.
+ */
 export function makeLoginUseCase() {
   return new LoginUseCase(
     userRepository,
     sessionRepository,
+    permissionRepository,
     hashProvider,
     tokenProvider
   );

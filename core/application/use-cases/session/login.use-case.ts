@@ -1,6 +1,7 @@
 import { UnauthorizedError } from '@/core/domain/errors/app.error';
 import { HashProvider } from '@/core/domain/providers/hash.provider';
 import { TokenProvider } from '@/core/domain/providers/token.provider';
+import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import { LoginInput } from '../../contracts/session/login.contract';
@@ -14,6 +15,7 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly sessionRepository: SessionRepository,
+    private readonly permissionRepository: PermissionRepository,
     private readonly hashProvider: HashProvider,
     private readonly tokenProvider: TokenProvider
   ) {}
@@ -46,7 +48,13 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
       userAgent: input.userAgent || 'unknown',
     });
 
-    // 4. Generate tokens including Session ID (sid).
+    // 4. Fetch permissions for the user's role.
+    const permissions = await this.permissionRepository.findByRoleId(
+      user.roleId
+    );
+    const permissionCodes = permissions.map((p) => p.code);
+
+    // 5. Generate tokens including Session ID (sid).
     const accessToken = await this.tokenProvider.generateAccessToken({
       sub: user.id,
       roleId: user.roleId,
@@ -70,6 +78,7 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
         email: user.email,
         roleId: user.roleId,
       },
+      permissions: permissionCodes,
     };
   }
 }

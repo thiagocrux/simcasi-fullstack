@@ -12,6 +12,8 @@ import {
   CreateSessionInput,
   sessionSchema,
 } from '@/core/application/validation/schemas/session.schema';
+import { useAppDispatch } from '@/hooks/redux.hooks';
+import { setCredentials } from '@/stores/auth/auth.slice';
 import { FieldError } from '../../common/FieldError';
 import { PasswordInput } from '../../common/PasswordInput';
 import { Button } from '../../ui/button';
@@ -26,6 +28,7 @@ interface SignInFormProps {
 
 export function SignInForm({ className }: SignInFormProps) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const {
     register,
@@ -39,10 +42,17 @@ export function SignInForm({ className }: SignInFormProps) {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (input: CreateSessionInput) => signInUser(input),
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       console.log(data);
 
-      if (data.success) {
+      if (data.success && data.data) {
+        // Dispatch credentials to the Redux store.
+        dispatch(
+          setCredentials({
+            user: data.data.user,
+            permissions: data.data.permissions,
+          })
+        );
         router.push('/dashboard');
         return;
       }

@@ -58,6 +58,27 @@ export class PrismaPermissionRepository implements PermissionRepository {
   }
 
   /**
+   * Finds all permissions assigned to a specific role.
+   * @param roleId The role ID.
+   * @returns A list of permissions.
+   */
+  async findByRoleId(roleId: string): Promise<Permission[]> {
+    const permissions = await prisma.permission.findMany({
+      where: {
+        roles: {
+          some: {
+            roleId,
+          },
+        },
+        deletedAt: null,
+      },
+      orderBy: { code: 'asc' },
+    });
+
+    return permissions as Permission[];
+  }
+
+  /**
    * Retrieves a paginated list of permissions.
    * @param params Filtering and pagination parameters.
    * @returns An object containing the list of permissions and the total count.

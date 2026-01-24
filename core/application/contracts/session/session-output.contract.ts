@@ -10,4 +10,5 @@ export interface SessionOutput {
     email: string;
     roleId: string;
   };
+  permissions: string[];
 }

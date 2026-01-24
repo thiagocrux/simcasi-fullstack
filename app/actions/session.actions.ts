@@ -38,11 +38,13 @@ export async function signInUser(input: CreateSessionInput) {
     const loginUseCase = makeLoginUseCase();
 
     // 4. Execute use case.
-    const { accessToken, refreshToken } = await loginUseCase.execute({
+    const result = await loginUseCase.execute({
       ...parsed.data,
       ipAddress,
       userAgent,
     });
+
+    const { accessToken, refreshToken, user, permissions } = result;
 
     // 5. Set authentication cookies.
     const cookieStore = await cookies();
@@ -60,11 +62,17 @@ export async function signInUser(input: CreateSessionInput) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: input.rememberMe ? 60 * 60 * 24 * 7 : undefined, // 7 days
+      maxAge: input.rememberMe ? 60 * 60 * 24 * 7 : undefined, // 7 days.
     });
 
-    // 6. Return success status.
-    return { success: true };
+    // 6. Return success status with data for Redux.
+    return {
+      success: true,
+      data: {
+        user,
+        permissions,
+      },
+    };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return handleActionError(error);
@@ -107,7 +115,7 @@ export async function requestNewPassword(input: RequestNewPasswordInput) {
       return { success: false, errors: parsed.error.flatten().fieldErrors };
     }
 
-    // TODO: Implement new password request logic in a Use Case if available
+    // TODO: Implement new password request logic in a Use Case if available.
     return { success: true };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -123,7 +131,7 @@ export async function resetPassword(input: ResetPasswordInput) {
       return { success: false, errors: parsed.error.flatten().fieldErrors };
     }
 
-    // TODO: Implement password reset logic in a Use Case if available
+    // TODO: Implement password reset logic in a Use Case if available.
     return { success: true };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
