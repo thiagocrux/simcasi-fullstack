@@ -2,6 +2,7 @@ import { notificationSchema } from '@/core/application/validation/schemas/notifi
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   UpdateNotificationInput,
   UpdateNotificationOutput,
@@ -30,7 +31,7 @@ export class UpdateNotificationUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid update notification data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 

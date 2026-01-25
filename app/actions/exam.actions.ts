@@ -12,6 +12,7 @@ import {
   UpdateExamInput,
   examSchema,
 } from '@/core/application/validation/schemas/exam.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { ValidationError } from '@/core/domain/errors/app.error';
 import {
   makeDeleteExamUseCase,
@@ -43,10 +44,7 @@ export async function getExam(id: string) {
     const parsed = IdSchema.safeParse(id);
 
     if (!parsed.success) {
-      throw new ValidationError(
-        'ID inválido',
-        parsed.error.flatten().fieldErrors
-      );
+      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
 
     // 2. Initialize use case.
@@ -67,7 +65,7 @@ export async function createExam(input: CreateExamInput) {
       if (!parsed.success) {
         throw new ValidationError(
           'Dados do exame inválidos',
-          parsed.error.flatten().fieldErrors
+          formatZodError(parsed.error)
         );
       }
 
@@ -101,15 +99,15 @@ export async function updateExam(id: string, input: UpdateExamInput) {
 
       if (!parsedId.success) {
         throw new ValidationError(
-          'ID inválido',
-          parsedId.error.flatten().fieldErrors
+          'Invalid ID.',
+          formatZodError(parsedId.error)
         );
       }
 
       if (!parsedData.success) {
         throw new ValidationError(
           'Dados do exame inválidos',
-          parsedData.error.flatten().fieldErrors
+          formatZodError(parsedData.error)
         );
       }
 
@@ -141,10 +139,7 @@ export async function deleteExam(id: string) {
       const parsed = IdSchema.safeParse(id);
 
       if (!parsed.success) {
-        throw new ValidationError(
-          'ID inválido',
-          parsed.error.flatten().fieldErrors
-        );
+        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
       // 2. Initialize use case.

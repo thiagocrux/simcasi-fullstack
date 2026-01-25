@@ -3,6 +3,7 @@ import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterTreatmentInput,
   RegisterTreatmentOutput,
@@ -32,7 +33,7 @@ export class RegisterTreatmentUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid register treatment data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 

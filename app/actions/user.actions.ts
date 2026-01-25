@@ -16,6 +16,7 @@ import {
   UpdateUserInput,
   userSchema,
 } from '@/core/application/validation/schemas/user.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { ValidationError } from '@/core/domain/errors/app.error';
 import {
   makeDeleteUserUseCase,
@@ -54,10 +55,7 @@ export async function getUser(
     const parsed = IdSchema.safeParse(id);
 
     if (!parsed.success) {
-      throw new ValidationError(
-        'ID inválido',
-        parsed.error.flatten().fieldErrors
-      );
+      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
 
     // 2. Initialize use case.
@@ -80,7 +78,7 @@ export async function createUser(
       if (!parsed.success) {
         throw new ValidationError(
           'Dados do usuário inválidos',
-          parsed.error.flatten().fieldErrors
+          formatZodError(parsed.error)
         );
       }
 
@@ -116,15 +114,15 @@ export async function updateUser(
 
       if (!parsedId.success) {
         throw new ValidationError(
-          'ID inválido',
-          parsedId.error.flatten().fieldErrors
+          'Invalid ID.',
+          formatZodError(parsedId.error)
         );
       }
 
       if (!parsedData.success) {
         throw new ValidationError(
           'Dados do usuário inválidos',
-          parsedData.error.flatten().fieldErrors
+          formatZodError(parsedData.error)
         );
       }
 
@@ -158,10 +156,7 @@ export async function deleteUser(
       const parsed = IdSchema.safeParse(id);
 
       if (!parsed.success) {
-        throw new ValidationError(
-          'ID inválido',
-          parsed.error.flatten().fieldErrors
-        );
+        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
       // 2. Initialize use case.

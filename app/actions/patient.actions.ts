@@ -17,6 +17,7 @@ import {
   UpdatePatientInput,
   patientSchema,
 } from '@/core/application/validation/schemas/patient.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { ValidationError } from '@/core/domain/errors/app.error';
 import {
   makeDeletePatientUseCase,
@@ -59,10 +60,7 @@ export async function getPatient(
     const parsed = IdSchema.safeParse(id);
 
     if (!parsed.success) {
-      throw new ValidationError(
-        'ID inválido',
-        parsed.error.flatten().fieldErrors
-      );
+      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
 
     const useCase = makeGetPatientByIdUseCase();
@@ -85,7 +83,7 @@ export async function createPatient(
       if (!parsed.success) {
         throw new ValidationError(
           'Dados do paciente inválidos',
-          parsed.error.flatten().fieldErrors
+          formatZodError(parsed.error)
         );
       }
 
@@ -118,15 +116,15 @@ export async function updatePatient(
 
       if (!parsedId.success) {
         throw new ValidationError(
-          'ID inválido',
-          parsedId.error.flatten().fieldErrors
+          'Invalid ID.',
+          formatZodError(parsedId.error)
         );
       }
 
       if (!parsedData.success) {
         throw new ValidationError(
           'Dados de atualização inválidos',
-          parsedData.error.flatten().fieldErrors
+          formatZodError(parsedData.error)
         );
       }
 
@@ -157,10 +155,7 @@ export async function deletePatient(
       const parsed = IdSchema.safeParse(id);
 
       if (!parsed.success) {
-        throw new ValidationError(
-          'ID inválido',
-          parsed.error.flatten().fieldErrors
-        );
+        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
       const useCase = makeDeletePatientUseCase();
@@ -186,10 +181,7 @@ export async function restorePatient(id: string) {
       const parsed = IdSchema.safeParse(id);
 
       if (!parsed.success) {
-        throw new ValidationError(
-          'ID inválido',
-          parsed.error.flatten().fieldErrors
-        );
+        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
       const useCase = makeRestorePatientUseCase();

@@ -6,6 +6,7 @@ import {
 } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   UpdatePatientInput,
   UpdatePatientOutput,
@@ -32,7 +33,7 @@ export class UpdatePatientUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid update patient data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 

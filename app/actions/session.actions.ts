@@ -17,6 +17,7 @@ import {
   makeValidateSessionUseCase,
 } from '@/core/infrastructure/factories/session.factory';
 import { getAuditMetadata, handleActionError } from '@/lib/actions.utils';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 
 export async function signInUser(input: CreateSessionInput) {
   try {
@@ -27,7 +28,7 @@ export async function signInUser(input: CreateSessionInput) {
       return {
         success: false,
         message: 'Credenciais inválidas',
-        errors: parsed.error.flatten().fieldErrors,
+        errors: formatZodError(parsed.error),
       };
     }
 
@@ -118,7 +119,7 @@ export async function requestNewPassword(input: RequestNewPasswordInput) {
     const parsed = requestNewPasswordSchema.safeParse(input);
 
     if (!parsed.success) {
-      return { success: false, errors: parsed.error.flatten().fieldErrors };
+      return { success: false, errors: formatZodError(parsed.error) };
     }
 
     // TODO: Implement new password request logic in a Use Case if available.
@@ -134,7 +135,7 @@ export async function resetPassword(input: ResetPasswordInput) {
     const parsed = resetPasswordSchema.safeParse(input);
 
     if (!parsed.success) {
-      return { success: false, errors: parsed.error.flatten().fieldErrors };
+      return { success: false, errors: formatZodError(parsed.error) };
     }
 
     // TODO: Implement password reset logic in a Use Case if available.

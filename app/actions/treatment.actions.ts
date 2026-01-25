@@ -12,6 +12,7 @@ import {
   UpdateTreatmentInput,
   treatmentSchema,
 } from '@/core/application/validation/schemas/treatment.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { ValidationError } from '@/core/domain/errors/app.error';
 import {
   makeDeleteTreatmentUseCase,
@@ -45,10 +46,7 @@ export async function getTreatment(id: string) {
     const parsed = IdSchema.safeParse(id);
 
     if (!parsed.success) {
-      throw new ValidationError(
-        'ID inválido',
-        parsed.error.flatten().fieldErrors
-      );
+      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
 
     // 2. Initialize use case.
@@ -71,7 +69,7 @@ export async function createTreatment(input: CreateTreatmentInput) {
       if (!parsed.success) {
         throw new ValidationError(
           'Dados do tratamento inválidos',
-          parsed.error.flatten().fieldErrors
+          formatZodError(parsed.error)
         );
       }
 
@@ -105,15 +103,15 @@ export async function updateTreatment(id: string, input: UpdateTreatmentInput) {
 
       if (!parsedId.success) {
         throw new ValidationError(
-          'ID inválido',
-          parsedId.error.flatten().fieldErrors
+          'Invalid ID.',
+          formatZodError(parsedId.error)
         );
       }
 
       if (!parsedData.success) {
         throw new ValidationError(
           'Dados do tratamento inválidos',
-          parsedData.error.flatten().fieldErrors
+          formatZodError(parsedData.error)
         );
       }
 
@@ -145,10 +143,7 @@ export async function deleteTreatment(id: string) {
       const parsed = IdSchema.safeParse(id);
 
       if (!parsed.success) {
-        throw new ValidationError(
-          'ID inválido',
-          parsed.error.flatten().fieldErrors
-        );
+        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
       // 2. Initialize use case.

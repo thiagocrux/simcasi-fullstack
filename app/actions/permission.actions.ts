@@ -12,6 +12,7 @@ import {
   UpdatePermissionInputSchema,
   permissionSchema,
 } from '@/core/application/validation/schemas/permission.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { ValidationError } from '@/core/domain/errors/app.error';
 import {
   makeDeletePermissionUseCase,
@@ -42,10 +43,7 @@ export async function getPermission(id: string) {
     const parsed = IdSchema.safeParse(id);
 
     if (!parsed.success) {
-      throw new ValidationError(
-        'ID inválido',
-        parsed.error.flatten().fieldErrors
-      );
+      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
 
     const useCase = makeGetPermissionByIdUseCase();
@@ -66,7 +64,7 @@ export async function createPermission(input: CreatePermissionInputSchema) {
       if (!parsed.success) {
         throw new ValidationError(
           'Dados da permissão inválidos',
-          parsed.error.flatten().fieldErrors
+          formatZodError(parsed.error)
         );
       }
 
@@ -99,15 +97,15 @@ export async function updatePermission(
 
       if (!parsedId.success) {
         throw new ValidationError(
-          'ID inválido',
-          parsedId.error.flatten().fieldErrors
+          'Invalid ID.',
+          formatZodError(parsedId.error)
         );
       }
 
       if (!parsedData.success) {
         throw new ValidationError(
           'Dados de atualização inválidos',
-          parsedData.error.flatten().fieldErrors
+          formatZodError(parsedData.error)
         );
       }
 
@@ -136,10 +134,7 @@ export async function deletePermission(id: string) {
       const parsed = IdSchema.safeParse(id);
 
       if (!parsed.success) {
-        throw new ValidationError(
-          'ID inválido',
-          parsed.error.flatten().fieldErrors
-        );
+        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
       const useCase = makeDeletePermissionUseCase();
@@ -165,10 +160,7 @@ export async function restorePermission(id: string) {
       const parsed = IdSchema.safeParse(id);
 
       if (!parsed.success) {
-        throw new ValidationError(
-          'ID inválido',
-          parsed.error.flatten().fieldErrors
-        );
+        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
       const useCase = makeRestorePermissionUseCase();

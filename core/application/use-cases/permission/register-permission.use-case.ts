@@ -2,6 +2,7 @@ import { permissionSchema } from '@/core/application/validation/schemas/permissi
 import { ConflictError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterPermissionInput,
   RegisterPermissionOutput,
@@ -30,7 +31,7 @@ export class RegisterPermissionUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid register permission data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 

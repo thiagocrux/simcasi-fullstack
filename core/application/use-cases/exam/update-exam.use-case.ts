@@ -2,6 +2,7 @@ import { examSchema } from '@/core/application/validation/schemas/exam.schema';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   UpdateExamInput,
   UpdateExamOutput,
@@ -28,7 +29,7 @@ export class UpdateExamUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid update exam data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 

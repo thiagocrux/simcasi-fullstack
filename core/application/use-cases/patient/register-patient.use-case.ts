@@ -2,6 +2,7 @@ import { patientSchema } from '@/core/application/validation/schemas/patient.sch
 import { ConflictError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterPatientInput,
   RegisterPatientOutput,
@@ -34,7 +35,7 @@ export class RegisterPatientUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid register patient data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 

@@ -1,4 +1,5 @@
 import { userSchema } from '@/core/application/validation/schemas/user.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   ConflictError,
   NotFoundError,
@@ -36,21 +37,21 @@ export class UpdateUserUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid update user data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 
     // 2. Check if the user exists.
     const existing = await this.userRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('User', id);
+      throw new NotFoundError('User');
     }
 
     // 3. Check if the role exists (if provided).
     if (data.roleId) {
       const role = await this.roleRepository.findById(data.roleId);
       if (!role) {
-        throw new NotFoundError('Role', data.roleId);
+        throw new NotFoundError('Role');
       }
     }
 

@@ -6,6 +6,7 @@ import {
 } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   UpdatePermissionInput,
   UpdatePermissionOutput,
@@ -32,7 +33,7 @@ export class UpdatePermissionUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid update permission data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 

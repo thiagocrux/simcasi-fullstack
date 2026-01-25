@@ -2,6 +2,7 @@ import { treatmentSchema } from '@/core/application/validation/schemas/treatment
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   UpdateTreatmentInput,
   UpdateTreatmentOutput,
@@ -28,7 +29,7 @@ export class UpdateTreatmentUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid update treatment data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 

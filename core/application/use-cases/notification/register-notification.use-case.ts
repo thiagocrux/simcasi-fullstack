@@ -3,6 +3,7 @@ import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterNotificationInput,
   RegisterNotificationOutput,
@@ -32,7 +33,7 @@ export class RegisterNotificationUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid register notification data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 

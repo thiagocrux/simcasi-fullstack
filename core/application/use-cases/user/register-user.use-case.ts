@@ -1,4 +1,5 @@
 import { userSchema } from '@/core/application/validation/schemas/user.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   ConflictError,
   NotFoundError,
@@ -34,14 +35,14 @@ export class RegisterUserUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid register user data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 
     // 2. Check if the role exists.
     const role = await this.roleRepository.findById(input.roleId);
     if (!role) {
-      throw new NotFoundError('Role', input.roleId);
+      throw new NotFoundError('Role');
     }
 
     // 3. Check if the email is already in use (by an active user).

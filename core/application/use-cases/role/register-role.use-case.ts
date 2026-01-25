@@ -7,6 +7,7 @@ import {
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterRoleInput,
   RegisterRoleOutput,
@@ -34,7 +35,7 @@ export class RegisterRoleUseCase implements UseCase<
     if (!validation.success) {
       throw new ValidationError(
         'Invalid register role data.',
-        validation.error.flatten().fieldErrors
+        formatZodError(validation.error)
       );
     }
 
