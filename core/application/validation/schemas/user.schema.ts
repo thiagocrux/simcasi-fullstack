@@ -1,6 +1,5 @@
 import * as z from 'zod';
 
-import { ROLE_OPTIONS } from '@/core/domain/constants/role.constants';
 import { messages } from '../messages';
 import { regex } from '../regex';
 
@@ -13,10 +12,9 @@ export const userSchema = z.object({
     .string()
     .nonempty(messages.REQUIRED_FIELD('Senha'))
     .regex(regex.PASSWORD, messages.INVALID_PASSWORD),
-  roleId: z.enum(
-    ROLE_OPTIONS.map((option) => option.value) as [string, ...string[]],
-    messages.REQUIRED_FIELD('Cargo')
-  ),
+  roleId: z
+    .uuid(messages.INVALID_UUID)
+    .nonempty(messages.REQUIRED_FIELD('Cargo')),
 });
 
 export const userFormSchema = userSchema
