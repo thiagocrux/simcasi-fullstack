@@ -57,7 +57,12 @@ export class JoseTokenProvider implements TokenProvider {
     try {
       const { payload } = await jwtVerify(token, this.secret);
       return payload as T;
-    } catch {
+    } catch (error: any) {
+      // Re-throw if it's an expiration error so the UseCase/Action can handle it specifically
+      if (error.code === 'ERR_JWT_EXPIRED' || error.name === 'JWTExpired') {
+        throw error;
+      }
+
       return null;
     }
   }
