@@ -11,9 +11,26 @@ import { AuthenticationContext } from '@/core/infrastructure/middleware/authenti
 import { authorize } from '@/core/infrastructure/middleware/authorization.middleware';
 
 /**
+ * Standard response structure for Server Actions.
+ */
+export type ActionResponse<T> =
+  | {
+      success: true;
+      data: T;
+      message?: string;
+    }
+  | {
+      success: false;
+      name: string;
+      message: string;
+      code: string;
+      errors?: Record<string, string[]>;
+    };
+
+/**
  * Standard error handler for Server Actions.
  */
-export function handleActionError(caughtError: any) {
+export function handleActionError(caughtError: any): ActionResponse<never> {
   // Use property check as a fallback for instanceof, common in Next.js HMR/Turbopack.
   const isAppError =
     caughtError instanceof AppError ||
@@ -69,15 +86,22 @@ export async function getAuditMetadata() {
 /**
  * Authenticates a Server Action using cookies or Authorization header.
  * Simply validates the current token. Refresh logic is handled by the wrapper.
+ *
+ * @param overriddenToken - Optional token to bypass cookie/header lookup (useful for retries).
  */
-export async function authenticateAction(): Promise<AuthenticationContext> {
+export async function authenticateAction(
+  overriddenToken?: string
+): Promise<AuthenticationContext> {
   const cookieStore = await cookies();
   const headerList = await headers();
 
   const authorizationHeader = headerList.get('authorization');
-  let accessToken = cookieStore.get('access_token')?.value;
+  let accessToken = overriddenToken || cookieStore.get('access_token')?.value;
 
-  if (authorizationHeader?.toLowerCase().startsWith('bearer ')) {
+  if (
+    !overriddenToken &&
+    authorizationHeader?.toLowerCase().startsWith('bearer ')
+  ) {
     accessToken = authorizationHeader.substring(7);
   }
 
@@ -114,9 +138,9 @@ export async function withSecuredActionAndAutomaticRetry<T>(
       userAgent: string;
     }
   ) => Promise<T>
-) {
-  const execute = async () => {
-    const authenticationContext = await authenticateAction();
+): Promise<ActionResponse<T>> {
+  const execute = async (overriddenToken?: string) => {
+    const authenticationContext = await authenticateAction(overriddenToken);
     await authorize(authenticationContext.roleId, permissions);
     const { ipAddress, userAgent } = await getAuditMetadata();
 
@@ -138,15 +162,24 @@ export async function withSecuredActionAndAutomaticRetry<T>(
     const isTokenExpired =
       caughtError.code === 'ERR_JWT_EXPIRED' ||
       caughtError.name === 'JWTExpired' ||
-      caughtError.message?.includes('expired');
+      caughtError.message?.toLowerCase().includes('expired') ||
+      caughtError.message?.toLowerCase().includes('expirou') ||
+      (caughtError.statusCode === 401 && caughtError.code === 'INVALID_TOKEN');
 
     if (isTokenExpired) {
+      console.warn(
+        '[AUTH] Access token expirado/inválido detectado:',
+        caughtError.message
+      );
+
       const cookieStore = await cookies();
       const refreshToken = cookieStore.get('refresh_token')?.value;
 
       if (refreshToken) {
+        console.log('[RETRY] Refresh token encontrado. Iniciando renovação...');
         try {
           // Attempt silent refresh
+          console.log('[REFRESH_TOKEN] Executando RefreshTokenUseCase...');
           const refreshTokenUseCase = makeRefreshTokenUseCase();
           const { ipAddress, userAgent } = await getAuditMetadata();
 
@@ -157,34 +190,60 @@ export async function withSecuredActionAndAutomaticRetry<T>(
               userAgent,
             });
 
-          // Set new cookies
-          cookieStore.set('access_token', newAccessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 60 * 15, // 15 minutes
-          });
+          console.log('[REFRESH_TOKEN] Token renovado com sucesso.');
 
-          cookieStore.set('refresh_token', newRefreshToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 60 * 60 * 24 * 7, // 7 days
-          });
+          // Set new cookies (may fail in Server Components/RSC)
+          try {
+            cookieStore.set('access_token', newAccessToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+              path: '/',
+              maxAge: 60 * 15, // 15 minutes
+            });
 
-          // 2. Retry the original action with the new session
-          const retryResult = await execute();
+            cookieStore.set('refresh_token', newRefreshToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+              path: '/',
+              maxAge: 60 * 60 * 24 * 7, // 7 days
+            });
+          } catch (cookieError: any) {
+            console.warn(
+              '[COOKIE] Não foi possível persistir os novos tokens (provavelmente RSC):',
+              cookieError.message
+            );
+          }
+
+          // 2. Retry the original action with the new session (pass token directly)
+          console.log('[RETRY] Tentando executar a ação original novamente...');
+          const retryResult = await execute(newAccessToken);
+          console.log('[RETRY] Ação re-executada com sucesso.');
+
           return {
             success: true,
             data: retryResult,
           };
         } catch (refreshError: any) {
-          // If refresh fails, session is dead. Clean up and let catch block handle it.
-          cookieStore.delete('access_token');
-          cookieStore.delete('refresh_token');
+          console.error(
+            '[REFRESH_TOKEN] Falha ao renovar token:',
+            refreshError.message
+          );
+
+          // If refresh fails, session is dead. Clean up cookies (may fail in RSC)
+          try {
+            cookieStore.delete('access_token');
+            cookieStore.delete('refresh_token');
+          } catch (cookieDeleteError: any) {
+            console.warn(
+              '[COOKIE] Não foi possível remover os cookies (provavelmente RSC):',
+              cookieDeleteError.message
+            );
+          }
         }
+      } else {
+        console.warn('[RETRY] Refresh token não encontrado nos cookies.');
       }
     }
 

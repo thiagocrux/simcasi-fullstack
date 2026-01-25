@@ -49,6 +49,8 @@ export async function signInUser(input: CreateSessionInput) {
     // 5. Set authentication cookies.
     const cookieStore = await cookies();
 
+    console.log('[AUTH] Login bem-sucedido. Configurando cookies...');
+
     cookieStore.set('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -64,6 +66,10 @@ export async function signInUser(input: CreateSessionInput) {
       path: '/',
       maxAge: input.rememberMe ? 60 * 60 * 24 * 7 : undefined, // 7 days.
     });
+
+    console.log(
+      '[AUTH] Cookies configurados. Tempo de vida do access_token: 15min'
+    );
 
     // 6. Return success status with data for Redux.
     return {

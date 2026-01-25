@@ -2,7 +2,15 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { IdSchema } from '@/core/application/validation/schemas/common.schema';
+import { FindUsersOutput } from '@/core/application/contracts/user/find-users.contract';
+import { GetUserOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
+import { RegisterUserOutput } from '@/core/application/contracts/user/register-user.contract';
+import { UpdateUserOutput } from '@/core/application/contracts/user/update-user.contract';
+import {
+  IdSchema,
+  QueryInput,
+  QuerySchema,
+} from '@/core/application/validation/schemas/common.schema';
 import {
   CreateUserInput,
   UpdateUserInput,
@@ -16,19 +24,31 @@ import {
   makeRegisterUserUseCase,
   makeUpdateUserUseCase,
 } from '@/core/infrastructure/factories/user.factory';
-import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
+import {
+  ActionResponse,
+  withSecuredActionAndAutomaticRetry,
+} from '@/lib/actions.utils';
 
-export async function getAllUsers() {
+export async function findUsers(
+  query?: QueryInput & { roleId?: string }
+): Promise<ActionResponse<FindUsersOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
-    // 1. Initialize use case.
+    // 1. Validate query input.
+    const parsed = QuerySchema.extend({
+      roleId: IdSchema.optional(),
+    }).safeParse(query);
+
+    // 2. Initialize use case.
     const findUsersUseCase = makeFindUsersUseCase();
 
-    // 2. Execute use case.
-    return await findUsersUseCase.execute({});
+    // 3. Execute use case.
+    return await findUsersUseCase.execute(parsed.data || {});
   });
 }
 
-export async function getUser(id: string) {
+export async function getUser(
+  id: string
+): Promise<ActionResponse<GetUserOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
     // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
@@ -48,7 +68,9 @@ export async function getUser(id: string) {
   });
 }
 
-export async function createUser(input: CreateUserInput) {
+export async function createUser(
+  input: CreateUserInput
+): Promise<ActionResponse<RegisterUserOutput>> {
   return withSecuredActionAndAutomaticRetry(
     ['create:user'],
     async ({ userId, ipAddress, userAgent }) => {
@@ -81,7 +103,10 @@ export async function createUser(input: CreateUserInput) {
   );
 }
 
-export async function updateUser(id: string, input: UpdateUserInput) {
+export async function updateUser(
+  id: string,
+  input: UpdateUserInput
+): Promise<ActionResponse<UpdateUserOutput>> {
   return withSecuredActionAndAutomaticRetry(
     ['update:user'],
     async ({ userId, ipAddress, userAgent }) => {
@@ -123,7 +148,9 @@ export async function updateUser(id: string, input: UpdateUserInput) {
   );
 }
 
-export async function deleteUser(id: string) {
+export async function deleteUser(
+  id: string
+): Promise<ActionResponse<{ success: boolean }>> {
   return withSecuredActionAndAutomaticRetry(
     ['delete:user'],
     async ({ userId, ipAddress, userAgent }) => {

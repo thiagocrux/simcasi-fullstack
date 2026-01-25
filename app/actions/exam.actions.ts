@@ -2,7 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { IdSchema } from '@/core/application/validation/schemas/common.schema';
+import {
+  IdSchema,
+  QueryInput,
+  QuerySchema,
+} from '@/core/application/validation/schemas/common.schema';
 import {
   CreateExamInput,
   UpdateExamInput,
@@ -18,13 +22,18 @@ import {
 } from '@/core/infrastructure/factories/exam.factory';
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
-export async function getAllExams() {
+export async function findExams(query?: QueryInput & { patientId?: string }) {
   return withSecuredActionAndAutomaticRetry(['read:exam'], async () => {
-    // 1. Initialize use case.
+    // 1. Validate query input.
+    const parsed = QuerySchema.extend({
+      patientId: IdSchema.optional(),
+    }).safeParse(query);
+
+    // 2. Initialize use case.
     const findExamsUseCase = makeFindExamsUseCase();
 
-    // 2. Execute use case.
-    return await findExamsUseCase.execute({});
+    // 3. Execute use case.
+    return await findExamsUseCase.execute(parsed.data || {});
   });
 }
 

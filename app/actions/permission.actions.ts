@@ -2,7 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { IdSchema } from '@/core/application/validation/schemas/common.schema';
+import {
+  IdSchema,
+  QueryInput,
+  QuerySchema,
+} from '@/core/application/validation/schemas/common.schema';
 import {
   CreatePermissionInputSchema,
   UpdatePermissionInputSchema,
@@ -22,10 +26,11 @@ import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 /**
  * Fetch a paginated list of all permissions available in the system.
  */
-export async function getAllPermissions() {
+export async function findPermissions(query?: QueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:permission'], async () => {
+    const parsed = QuerySchema.safeParse(query);
     const useCase = makeFindPermissionsUseCase();
-    return await useCase.execute({});
+    return await useCase.execute(parsed.data || {});
   });
 }
 

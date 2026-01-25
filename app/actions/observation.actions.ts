@@ -2,7 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { IdSchema } from '@/core/application/validation/schemas/common.schema';
+import {
+  IdSchema,
+  QueryInput,
+  QuerySchema,
+} from '@/core/application/validation/schemas/common.schema';
 import {
   CreateObservationInput,
   UpdateObservationInput,
@@ -18,13 +22,20 @@ import {
 } from '@/core/infrastructure/factories/observation.factory';
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
-export async function getAllObservations() {
+export async function findObservations(
+  query?: QueryInput & { patientId?: string }
+) {
   return withSecuredActionAndAutomaticRetry(['read:observation'], async () => {
-    // 1. Initialize use case.
+    // 1. Validate query input.
+    const parsed = QuerySchema.extend({
+      patientId: IdSchema.optional(),
+    }).safeParse(query);
+
+    // 2. Initialize use case.
     const findObservationsUseCase = makeFindObservationsUseCase();
 
-    // 2. Execute use case.
-    return await findObservationsUseCase.execute({});
+    // 3. Execute use case.
+    return await findObservationsUseCase.execute(parsed.data || {});
   });
 }
 

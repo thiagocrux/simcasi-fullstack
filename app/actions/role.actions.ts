@@ -2,7 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { IdSchema } from '@/core/application/validation/schemas/common.schema';
+import {
+  IdSchema,
+  QueryInput,
+  QuerySchema,
+} from '@/core/application/validation/schemas/common.schema';
 import {
   CreateRoleInputSchema,
   UpdateRoleInputSchema,
@@ -23,10 +27,11 @@ import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
  * Fetch a paginated list of all roles.
  * Useful for administrative views and role selection components.
  */
-export async function getAllRoles() {
+export async function findRoles(query?: QueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:role'], async () => {
+    const parsed = QuerySchema.safeParse(query);
     const useCase = makeFindRolesUseCase();
-    return await useCase.execute({});
+    return await useCase.execute(parsed.data || {});
   });
 }
 
