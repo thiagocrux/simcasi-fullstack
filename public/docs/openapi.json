@@ -223,6 +223,17 @@
                           "description": "Unique identifier for the assigned RBAC role."
                         }
                       }
+                    },
+                    "permissions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "List of assigned permission codes for the current user session.",
+                      "example": [
+                        "PATIENT_READ",
+                        "USER_WRITE"
+                      ]
                     }
                   }
                 },
@@ -470,6 +481,17 @@
                           "description": "Unique identifier for the assigned RBAC role."
                         }
                       }
+                    },
+                    "permissions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "List of assigned permission codes for the current user session.",
+                      "example": [
+                        "PATIENT_READ",
+                        "USER_WRITE"
+                      ]
                     }
                   }
                 }

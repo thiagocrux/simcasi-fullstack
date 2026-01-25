@@ -55,6 +55,12 @@ AuthResponse:
     user:
       $ref: '#/UserBase'
       description: Basic profile information for the authenticated user.
+    permissions:
+      type: array
+      items:
+        type: string
+      description: List of assigned permission codes for the current user session.
+      example: ['PATIENT_READ', 'USER_WRITE']
 
 UserBase:
   type: object
