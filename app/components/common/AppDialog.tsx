@@ -1,9 +1,4 @@
-'use client';
-
-import { ReactNode } from 'react';
-
-import { Button } from '../ui/button';
-
+import { Button } from '@/app/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -13,11 +8,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '../ui/dialog';
+} from '@/app/components/ui/dialog';
+import { ReactNode } from 'react';
 
 interface AppDialogProps {
+  isOpen: boolean;
+  children: ReactNode;
   title?: string;
   description?: string;
+  customContent?: ReactNode;
   cancelAction?: {
     label?: string;
     action: () => void;
@@ -26,47 +25,53 @@ interface AppDialogProps {
     label?: string;
     action: () => void;
   };
-  triggerComponent?: ReactNode;
-  children?: ReactNode;
-  showCloseButton?: boolean;
 }
 
 export function AppDialog({
+  isOpen,
+  children,
   title,
   description,
+  customContent,
   cancelAction,
   continueAction,
-  triggerComponent,
-  children,
-  showCloseButton = true,
 }: AppDialogProps) {
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <>{triggerComponent}</>
-      </DialogTrigger>
-      <DialogContent
-        className="sm:max-w-[425px]"
-        showCloseButton={showCloseButton}
-      >
-        <DialogHeader>
-          {title && <DialogTitle>{title}</DialogTitle>}
-          {description && <DialogDescription>{description}</DialogDescription>}
-        </DialogHeader>
-        {children ? <>{children}</> : null}
-        <DialogFooter>
-          {cancelAction && (
-            <DialogClose asChild>
-              <Button variant="outline">{cancelAction?.label}</Button>
-            </DialogClose>
-          )}
-          {continueAction && (
-            <Button onClick={continueAction?.action}>
-              {continueAction?.label}
-            </Button>
-          )}
-        </DialogFooter>
-      </DialogContent>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      {isOpen && (
+        <DialogContent className="sm:max-w-[425px]">
+          {title || description ? (
+            <DialogHeader>
+              {title ? <DialogTitle>{title}</DialogTitle> : null}
+              {description ? (
+                <DialogDescription className="text-sm">
+                  {description}
+                </DialogDescription>
+              ) : null}
+            </DialogHeader>
+          ) : null}
+          {customContent ? <>{customContent}</> : null}
+          <DialogFooter>
+            {cancelAction ? (
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={cancelAction?.action}
+                >
+                  {cancelAction?.label}
+                </Button>
+              </DialogClose>
+            ) : null}
+            {continueAction ? (
+              <Button type="button" onClick={continueAction.action}>
+                {continueAction.label}
+              </Button>
+            ) : null}
+          </DialogFooter>
+        </DialogContent>
+      )}
     </Dialog>
   );
 }

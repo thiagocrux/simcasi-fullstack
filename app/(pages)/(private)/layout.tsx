@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { AppHeader } from '@/app/components/layout/AppHeader';
 import { AppSidebar } from '@/app/components/layout/AppSidebar';
 
+import { AppFooter } from '@/app/components/layout/AppFooter';
 import { SidebarInset, SidebarProvider } from '@/app/components/ui/sidebar';
 
 export default async function PrivateLayout({
@@ -23,10 +24,7 @@ export default async function PrivateLayout({
             <div className="flex justify-center">{children}</div>
           </main>
         </SidebarInset>
-        <footer className="flex justify-between p-6 text-muted-foreground text-xs">
-          <p>@ 2025 Thiago Cruz</p>
-          <p>Sobre o sistema</p>
-        </footer>
+        <AppFooter />
       </div>
     </SidebarProvider>
   );
