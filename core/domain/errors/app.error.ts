@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /**
  * Base class for all application errors.
  */
@@ -54,11 +52,14 @@ export class ConflictError extends AppError {
 
 /**
  * Thrown when input data is invalid. (HTTP 422)
+ *
+ * Use this error to capture field-level validation errors, typically from Zod.
+ * The `errors` property should ideally be a Record<string, string[]>.
  */
 export class ValidationError extends AppError {
-  public readonly errors?: any;
+  public readonly errors?: Record<string, string[]>;
 
-  constructor(message: string, errors?: any) {
+  constructor(message: string, errors?: Record<string, string[]>) {
     super(message, 422);
     this.errors = errors;
   }
