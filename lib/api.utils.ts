@@ -42,6 +42,7 @@ export function handleApiError(error: any) {
         name: error.name || 'AppError',
         message: error.message,
         code: error.code,
+        errors: (error as any).errors,
       },
       { status: statusCode }
     );
@@ -52,8 +53,8 @@ export function handleApiError(error: any) {
     return NextResponse.json(
       {
         name: 'UnauthorizedError',
-        message: 'Token has expired',
-        code: 'INVALID_TOKEN',
+        message: 'Your session has expired. Please log in again.',
+        code: 'SESSION_EXPIRED',
       },
       { status: 401 }
     );
@@ -107,11 +108,13 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
     try {
       return await execute();
     } catch (caughtError: any) {
-      // Check for token expiration.
+      // 1. Check for token expiration at any point during execution
       const isTokenExpired =
         caughtError.code === 'ERR_JWT_EXPIRED' ||
         caughtError.name === 'JWTExpired' ||
-        caughtError.message?.includes('expired');
+        caughtError.message?.toLowerCase().includes('expired') ||
+        (caughtError.statusCode === 401 &&
+          caughtError.code === 'INVALID_TOKEN');
 
       if (isTokenExpired) {
         const cookieStore = await cookies();

@@ -5,7 +5,7 @@ import { AppError } from './app.error';
  * This is useful for the client to identify when it must attempt a refresh.
  */
 export class InvalidTokenError extends AppError {
-  constructor(message = 'O token fornecido é inválido ou expirou.') {
+  constructor(message = 'The token provided is invalid or has expired.') {
     super(message, 401, 'INVALID_TOKEN');
   }
 }
@@ -16,7 +16,7 @@ export class InvalidTokenError extends AppError {
  */
 export class SecurityBreachError extends AppError {
   constructor(
-    message = 'Uma quebra de segurança foi detectada. Todas as sessões foram revogadas.'
+    message = 'A security breach was detected. All sessions have been revoked.'
   ) {
     super(message, 401, 'SECURITY_BREACH');
   }
@@ -26,9 +26,7 @@ export class SecurityBreachError extends AppError {
  * Thrown when a session is explicitly expired and cannot be refreshed.
  */
 export class SessionExpiredError extends AppError {
-  constructor(
-    message = 'Sua sessão expirou. Por favor, faça login novamente.'
-  ) {
+  constructor(message = 'Your session has expired. Please log in again.') {
     super(message, 401, 'SESSION_EXPIRED');
   }
 }
