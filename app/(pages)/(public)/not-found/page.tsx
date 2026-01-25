@@ -23,7 +23,10 @@ export default function NotFoundPage() {
           A página que você está procurando não existe ou foi movida para outro
           endereço
         </p>
-        <Button size="lg" className="flex items-center gap-2 w-min select-none">
+        <Button
+          size="lg"
+          className="flex items-center gap-2 w-min cursor-pointer select-none"
+        >
           <ArrowLeft />
           <Link href="/">Voltar para o início</Link>
         </Button>
