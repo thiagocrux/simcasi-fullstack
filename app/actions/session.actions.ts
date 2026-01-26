@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
 import { cookies } from 'next/headers';
@@ -11,13 +12,15 @@ import {
   resetPasswordSchema,
   sessionSchema,
 } from '@/core/application/validation/schemas/session.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
+import { makeTokenProvider } from '@/core/infrastructure/factories/security.factory';
 import {
   makeLoginUseCase,
   makeLogoutUseCase,
   makeValidateSessionUseCase,
 } from '@/core/infrastructure/factories/session.factory';
 import { getAuditMetadata, handleActionError } from '@/lib/actions.utils';
-import { formatZodError } from '@/core/application/validation/zod.utils';
+import { logger } from '@/lib/logger.utils';
 
 export async function signInUser(input: CreateSessionInput) {
   try {
@@ -49,15 +52,16 @@ export async function signInUser(input: CreateSessionInput) {
 
     // 5. Set authentication cookies.
     const cookieStore = await cookies();
+    const tokenProvider = makeTokenProvider();
 
-    console.log('[AUTH] Login bem-sucedido. Configurando cookies...');
+    logger.info('[AUTH] Login successful. Setting cookies...');
 
     cookieStore.set('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 15, // 15 minutes
+      maxAge: tokenProvider.getAccessExpirationInSeconds(),
     });
 
     cookieStore.set('refresh_token', refreshToken, {
@@ -65,11 +69,15 @@ export async function signInUser(input: CreateSessionInput) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: input.rememberMe ? 60 * 60 * 24 * 7 : undefined, // 7 days.
+      maxAge: input.rememberMe
+        ? tokenProvider.getRefreshExpirationInSeconds()
+        : undefined,
     });
 
-    console.log(
-      '[AUTH] Cookies configurados. Tempo de vida do access_token: 15min'
+    logger.success(
+      `[AUTH] Cookies set. access_token lifetime: ${
+        tokenProvider.getAccessExpirationInSeconds() / 60
+      }min`
     );
 
     // 6. Return success status with data for Redux.
@@ -80,7 +88,6 @@ export async function signInUser(input: CreateSessionInput) {
         permissions,
       },
     };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return handleActionError(error);
   }
@@ -88,28 +95,42 @@ export async function signInUser(input: CreateSessionInput) {
 
 export async function signOutUser() {
   try {
-    // 1. Access cookie store and get current token.
     const cookieStore = await cookies();
     const token = cookieStore.get('access_token')?.value;
 
-    if (token) {
-      // 2. Validate token to get session ID.
-      const validateSessionUseCase = makeValidateSessionUseCase();
-      const { sessionId } = await validateSessionUseCase.execute({ token });
-
-      // 3. Initialize and execute logout use case.
-      const logoutUseCase = makeLogoutUseCase();
-      await logoutUseCase.execute({ sessionId });
-    }
-
-    // 4. Delete authentication cookies.
+    // 1. Delete authentication cookies IMMEDIATELY.
+    // This is the most important step for the user.
     cookieStore.delete('access_token');
     cookieStore.delete('refresh_token');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+    // 2. Effort to invalidate session on the server.
+    // We do this inside a try/catch to ensure that ANY error here
+    // doesn't stop the user from being logged out on the client.
+    if (token) {
+      try {
+        const validateSessionUseCase = makeValidateSessionUseCase();
+        // Here we still try to get the sessionId to clean up the DB.
+        // We catch terminal errors since we've already cleared cookies.
+        const { sessionId } = await validateSessionUseCase.execute({
+          token,
+        });
+
+        const logoutUseCase = makeLogoutUseCase();
+        await logoutUseCase.execute({ sessionId });
+
+        logger.info(`[AUTH] Session ${sessionId} revoked during logout.`);
+      } catch (error: any) {
+        // We log it but don't throw, as the cookies are already gone.
+        logger.warn(
+          '[AUTH] Could not revoke session in DB, but cookies were cleared.',
+          error
+        );
+      }
+    }
   } catch (error: any) {
-    console.error('[SIGNOUT_ERROR]', error);
+    logger.error('[SIGNOUT_ERROR]', error);
   } finally {
-    // 5. Redirect to sign-in page.
+    // 3. Redirect to sign-in page is ALWAYS the final destination.
     redirect('/auth/sign-in');
   }
 }
@@ -124,7 +145,6 @@ export async function requestNewPassword(input: RequestNewPasswordInput) {
 
     // TODO: Implement new password request logic in a Use Case if available.
     return { success: true };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return handleActionError(error);
   }
@@ -140,7 +160,6 @@ export async function resetPassword(input: ResetPasswordInput) {
 
     // TODO: Implement password reset logic in a Use Case if available.
     return { success: true };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     return handleActionError(error);
   }

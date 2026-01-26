@@ -17,6 +17,8 @@ export interface TokenProvider {
 
   /**
    * Verifies and decodes a token.
+   * If the token is expired, it should still return the payload
+   * but the implementation may choose to handle it differently.
    */
   verifyToken<T>(token: string): Promise<T | null>;
 

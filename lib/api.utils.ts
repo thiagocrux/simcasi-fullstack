@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { AppError } from '@/core/domain/errors/app.error';
+import { makeTokenProvider } from '@/core/infrastructure/factories/security.factory';
 import { makeRefreshTokenUseCase } from '@/core/infrastructure/factories/session.factory';
 import {
   AuthenticationContext,
@@ -10,6 +11,7 @@ import {
 } from '@/core/infrastructure/middleware/authentication.middleware';
 import { authorize } from '@/core/infrastructure/middleware/authorization.middleware';
 import { getAuditMetadata } from './actions.utils';
+import { logger } from './logger.utils';
 
 type ApiHandler = (
   request: NextRequest,
@@ -34,7 +36,7 @@ export function handleApiError(error: any) {
     const statusCode = error.statusCode || 400;
 
     if (statusCode === 500) {
-      console.error('[API_ERROR_500]', error);
+      logger.error('[API_ERROR_500]', error);
     }
 
     return NextResponse.json(
@@ -60,7 +62,7 @@ export function handleApiError(error: any) {
     );
   }
 
-  console.error('[API_INTERNAL_ERROR]', error);
+  logger.error('[API_INTERNAL_ERROR]', error);
 
   return NextResponse.json(
     {
@@ -113,18 +115,28 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
         caughtError.code === 'ERR_JWT_EXPIRED' ||
         caughtError.name === 'JWTExpired' ||
         caughtError.message?.toLowerCase().includes('expired') ||
+        caughtError.message?.toLowerCase().includes('expirou') ||
         (caughtError.statusCode === 401 &&
-          caughtError.code === 'INVALID_TOKEN');
+          (caughtError.code === 'INVALID_TOKEN' ||
+            caughtError.code === 'SESSION_EXPIRED'));
 
       if (isTokenExpired) {
+        logger.warn(
+          '[AUTH] Expired or invalid access token detected in the API:',
+          caughtError.message
+        );
+
         const cookieStore = await cookies();
         const refreshToken = cookieStore.get('refresh_token')?.value;
 
         if (refreshToken) {
+          logger.info('[RETRY] Refresh token found. Attempting renewal......');
           try {
             const refreshTokenUseCase = makeRefreshTokenUseCase();
+            const tokenProvider = makeTokenProvider();
             const { ipAddress, userAgent } = await getAuditMetadata();
 
+            logger.info('[REFRESH] Executing RefreshTokenUseCase via API...');
             const {
               accessToken: newAccessToken,
               refreshToken: newRefreshToken,
@@ -134,13 +146,15 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
               userAgent,
             });
 
+            logger.success('[REFRESH] Token successfully renewed..');
+
             // Set new cookies.
             cookieStore.set('access_token', newAccessToken, {
               httpOnly: true,
               secure: process.env.NODE_ENV === 'production',
               sameSite: 'lax',
               path: '/',
-              maxAge: 60 * 15,
+              maxAge: tokenProvider.getAccessExpirationInSeconds(),
             });
 
             cookieStore.set('refresh_token', newRefreshToken, {
@@ -148,16 +162,23 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
               secure: process.env.NODE_ENV === 'production',
               sameSite: 'lax',
               path: '/',
-              maxAge: 60 * 60 * 24 * 7,
+              maxAge: tokenProvider.getRefreshExpirationInSeconds(),
             });
 
             // Retry original handler with the new access token.
+            logger.info('[RETRY] Re-executing original request...');
             return await execute(newAccessToken);
           } catch (refreshError: any) {
+            logger.error(
+              '[REFRESH] Failed to renew token in API:',
+              refreshError.message
+            );
             cookieStore.delete('access_token');
             cookieStore.delete('refresh_token');
             return handleApiError(refreshError);
           }
+        } else {
+          logger.warn('[RETRY] Refresh token not found in cookies.');
         }
       }
 

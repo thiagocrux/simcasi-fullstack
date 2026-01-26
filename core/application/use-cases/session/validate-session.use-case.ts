@@ -24,14 +24,16 @@ export class ValidateSessionUseCase implements UseCase<
 
   async execute(input: ValidateSessionInput): Promise<ValidateSessionOutput> {
     // 1. Cryptographic Validation
+    // The provider now decodes the payload even if expired.
     const decoded = await this.tokenProvider.verifyToken<{
       sub: string;
       roleId: string;
       sid: string;
+      exp?: number;
     }>(input.token);
 
     if (!decoded || !decoded.sub || !decoded.sid) {
-      throw new InvalidTokenError('Invalid or expired token.');
+      throw new InvalidTokenError('Invalid or malformed token.');
     }
 
     // 2. Stateful Validation (Database check)
@@ -39,6 +41,16 @@ export class ValidateSessionUseCase implements UseCase<
 
     if (!session || session.deletedAt) {
       throw new SessionExpiredError('Session has been revoked or expired.');
+    }
+
+    // 3. Expiration Validation
+    // We check if the access token has expired. If so, we throw an error
+    // to trigger the refresh token flow in the infrastructure layer.
+    if (decoded.exp) {
+      const now = Math.floor(Date.now() / 1000);
+      if (now > decoded.exp) {
+        throw new InvalidTokenError('Access token has expired.');
+      }
     }
 
     return {

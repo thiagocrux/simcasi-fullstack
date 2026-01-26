@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { AppError } from '@/core/domain/errors/app.error';
 import { makeRefreshTokenUseCase } from '@/core/infrastructure/factories/session.factory';
+import { logger } from '@/lib/logger.utils';
 
 /**
  * POST - /api/auth/refresh
  * Refresh access token using a refresh token
  */
 export async function POST(request: NextRequest) {
+  logger.info('[API] POST /api/auth/refresh - Iniciando renovação de token');
+
   try {
     let refreshToken = '';
 
@@ -67,7 +70,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error('[REFRESH_API_ERROR]', error);
+    logger.error('[REFRESH_API_ERROR]', error);
+
     return NextResponse.json(
       { message: 'Internal server error', code: 'INTERNAL_ERROR' },
       { status: 500 }

@@ -4,19 +4,18 @@ import { LogoutUseCase } from '@/core/application/use-cases/session/logout.use-c
 import { RefreshTokenUseCase } from '@/core/application/use-cases/session/refresh-token.use-case';
 import { RevokeSessionUseCase } from '@/core/application/use-cases/session/revoke-session.use-case';
 import { ValidateSessionUseCase } from '@/core/application/use-cases/session/validate-session.use-case';
-import { BcryptHashProvider } from '../providers/bcrypt-hash.provider';
-import { JoseTokenProvider } from '../providers/jose-token.provider';
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
 import { PrismaPermissionRepository } from '../repositories/prisma/permission.prisma.repository';
 import { PrismaSessionRepository } from '../repositories/prisma/session.prisma.repository';
 import { PrismaUserRepository } from '../repositories/prisma/user.prisma.repository';
+import { makeHashProvider, makeTokenProvider } from './security.factory';
 
 const sessionRepository = new PrismaSessionRepository();
 const userRepository = new PrismaUserRepository();
 const permissionRepository = new PrismaPermissionRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
-const tokenProvider = new JoseTokenProvider();
-const hashProvider = new BcryptHashProvider();
+const tokenProvider = makeTokenProvider();
+const hashProvider = makeHashProvider();
 
 /**
  * Creates an instance of LoginUseCase.

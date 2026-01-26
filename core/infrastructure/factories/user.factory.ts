@@ -4,15 +4,15 @@ import { GetUserByIdUseCase } from '@/core/application/use-cases/user/get-user-b
 import { RegisterUserUseCase } from '@/core/application/use-cases/user/register-user.use-case';
 import { RestoreUserUseCase } from '@/core/application/use-cases/user/restore-user.use-case';
 import { UpdateUserUseCase } from '@/core/application/use-cases/user/update-user.use-case';
-import { BcryptHashProvider } from '../providers/bcrypt-hash.provider';
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
 import { PrismaRoleRepository } from '../repositories/prisma/role.prisma.repository';
 import { PrismaSessionRepository } from '../repositories/prisma/session.prisma.repository';
 import { PrismaUserRepository } from '../repositories/prisma/user.prisma.repository';
+import { makeHashProvider } from './security.factory';
 
 const repository = new PrismaUserRepository();
 const roleRepository = new PrismaRoleRepository();
-const hashProvider = new BcryptHashProvider();
+const hashProvider = makeHashProvider();
 const auditLogRepository = new PrismaAuditLogRepository();
 const sessionRepository = new PrismaSessionRepository();
 

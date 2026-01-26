@@ -12,7 +12,14 @@ export class JoseTokenProvider implements TokenProvider {
   private readonly refreshExpiration: string;
 
   constructor() {
-    const secretKey = process.env.JWT_SECRET || 'default_secret_key_change_me';
+    const secretKey = process.env.JWT_SECRET;
+
+    if (!secretKey) {
+      throw new Error(
+        'JWT_SECRET is not defined in the environment variables. The system cannot start without a security secret.'
+      );
+    }
+
     this.secret = new TextEncoder().encode(secretKey);
     this.accessExpiration =
       process.env.JWT_ACCESS_TOKEN_EXPIRATION ||
@@ -50,19 +57,24 @@ export class JoseTokenProvider implements TokenProvider {
 
   /**
    * Verifies and decodes a token.
+   * NOTE: For the security architecture of this project, we ALWAYS allow
+   * decoding the payload even if the JWT is expired (cryptographically).
+   * Validation of expiration should be handled by the business logic
+   * or specific Use Cases if needed.
+   *
    * @param token - The token to verify.
    * @returns The decoded payload or null if invalid.
    */
   async verifyToken<T>(token: string): Promise<T | null> {
     try {
-      const { payload } = await jwtVerify(token, this.secret);
+      // We use a date in the past (Unix epoch) to ensure jwtVerify
+      // always considers the token "not yet expired" during the decode phase.
+      const { payload } = await jwtVerify(token, this.secret, {
+        currentDate: new Date(0),
+      });
       return payload as T;
     } catch (error: any) {
-      // Re-throw if it's an expiration error so the UseCase/Action can handle it specifically
-      if (error.code === 'ERR_JWT_EXPIRED' || error.name === 'JWTExpired') {
-        throw error;
-      }
-
+      // We only return null if the token is signature-invalid or malformed.
       return null;
     }
   }

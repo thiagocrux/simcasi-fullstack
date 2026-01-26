@@ -18,5 +18,3 @@ export const logger = consola.create({
     tag: SYSTEM_CONSTANTS.ACRONYM,
   },
 });
-
-export default logger;

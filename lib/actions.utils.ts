@@ -3,6 +3,7 @@ import { cookies, headers } from 'next/headers';
 
 import { AppError } from '@/core/domain/errors/app.error';
 import { InvalidTokenError } from '@/core/domain/errors/session.error';
+import { makeTokenProvider } from '@/core/infrastructure/factories/security.factory';
 import {
   makeRefreshTokenUseCase,
   makeValidateSessionUseCase,
@@ -26,6 +27,8 @@ export type ActionResponse<T> =
       code: string;
       errors?: Record<string, string[]>;
     };
+
+import { logger } from './logger.utils';
 
 /**
  * Standard error handler for Server Actions.
@@ -164,11 +167,13 @@ export async function withSecuredActionAndAutomaticRetry<T>(
       caughtError.name === 'JWTExpired' ||
       caughtError.message?.toLowerCase().includes('expired') ||
       caughtError.message?.toLowerCase().includes('expirou') ||
-      (caughtError.statusCode === 401 && caughtError.code === 'INVALID_TOKEN');
+      (caughtError.statusCode === 401 &&
+        (caughtError.code === 'INVALID_TOKEN' ||
+          caughtError.code === 'SESSION_EXPIRED'));
 
     if (isTokenExpired) {
-      console.warn(
-        '[AUTH] Access token expirado/inválido detectado:',
+      logger.warn(
+        '[AUTH] Access token expirado/inválido detectado na Action:',
         caughtError.message
       );
 
@@ -176,10 +181,12 @@ export async function withSecuredActionAndAutomaticRetry<T>(
       const refreshToken = cookieStore.get('refresh_token')?.value;
 
       if (refreshToken) {
-        console.log('[RETRY] Refresh token encontrado. Iniciando renovação...');
+        logger.info(
+          '[RETRY] Refresh token encontrado. Iniciando renovação via Action...'
+        );
         try {
           // Attempt silent refresh
-          console.log('[REFRESH_TOKEN] Executando RefreshTokenUseCase...');
+          logger.info('[REFRESH] Executando RefreshTokenUseCase...');
           const refreshTokenUseCase = makeRefreshTokenUseCase();
           const { ipAddress, userAgent } = await getAuditMetadata();
 
@@ -190,16 +197,17 @@ export async function withSecuredActionAndAutomaticRetry<T>(
               userAgent,
             });
 
-          console.log('[REFRESH_TOKEN] Token renovado com sucesso.');
+          logger.success('[REFRESH] Token renovado com sucesso.');
 
           // Set new cookies (may fail in Server Components/RSC)
           try {
+            const tokenProvider = makeTokenProvider();
             cookieStore.set('access_token', newAccessToken, {
               httpOnly: true,
               secure: process.env.NODE_ENV === 'production',
               sameSite: 'lax',
               path: '/',
-              maxAge: 60 * 15, // 15 minutes
+              maxAge: tokenProvider.getAccessExpirationInSeconds(),
             });
 
             cookieStore.set('refresh_token', newRefreshToken, {
@@ -207,26 +215,26 @@ export async function withSecuredActionAndAutomaticRetry<T>(
               secure: process.env.NODE_ENV === 'production',
               sameSite: 'lax',
               path: '/',
-              maxAge: 60 * 60 * 24 * 7, // 7 days
+              maxAge: tokenProvider.getRefreshExpirationInSeconds(),
             });
           } catch (cookieError: any) {
-            console.warn(
+            logger.warn(
               '[COOKIE] Não foi possível persistir os novos tokens (provavelmente RSC):',
               cookieError.message
             );
           }
 
           // 2. Retry the original action with the new session (pass token directly)
-          console.log('[RETRY] Tentando executar a ação original novamente...');
+          logger.info('[RETRY] Tentando executar a ação original novamente...');
           const retryResult = await execute(newAccessToken);
-          console.log('[RETRY] Ação re-executada com sucesso.');
+          logger.success('[RETRY] Ação re-executada com sucesso.');
 
           return {
             success: true,
             data: retryResult,
           };
         } catch (refreshError: any) {
-          console.error(
+          logger.error(
             '[REFRESH_TOKEN] Falha ao renovar token:',
             refreshError.message
           );
@@ -236,14 +244,14 @@ export async function withSecuredActionAndAutomaticRetry<T>(
             cookieStore.delete('access_token');
             cookieStore.delete('refresh_token');
           } catch (cookieDeleteError: any) {
-            console.warn(
+            logger.warn(
               '[COOKIE] Não foi possível remover os cookies (provavelmente RSC):',
               cookieDeleteError.message
             );
           }
         }
       } else {
-        console.warn('[RETRY] Refresh token não encontrado nos cookies.');
+        logger.warn('[RETRY] Refresh token não encontrado nos cookies.');
       }
     }
 
