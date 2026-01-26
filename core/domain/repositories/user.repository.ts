@@ -17,9 +17,11 @@ export interface UserRepository {
   findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
-    roleId?: string;
     includeDeleted?: boolean;
+    roleId?: string;
   }): Promise<{ items: User[]; total: number }>;
 
   /**

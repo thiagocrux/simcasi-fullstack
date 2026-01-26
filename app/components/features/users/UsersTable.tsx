@@ -6,7 +6,6 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
@@ -111,11 +110,13 @@ export function UsersTable({
   }, [searchValue]);
 
   const { data: userList } = useQuery({
-    queryKey: ['find-users', pagination, searchValue],
+    queryKey: ['find-users', pagination, searchValue, sorting],
     queryFn: async () =>
       await findUsers({
         skip: pagination.pageIndex * pagination.pageSize,
         take: pagination.pageSize,
+        orderBy: sorting[0]?.id,
+        orderDir: sorting[0]?.desc ? 'desc' : 'asc',
         search: searchValue,
         includeDeleted: false,
       }),
@@ -455,13 +456,13 @@ export function UsersTable({
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
     manualPagination: true,
     manualFiltering: true,
+    manualSorting: true,
     state: {
       sorting,
       columnFilters,
@@ -484,6 +485,8 @@ export function UsersTable({
       take: total,
       search: searchValue,
       includeDeleted: false,
+      orderBy: sorting[0]?.id,
+      orderDir: sorting[0]?.desc ? 'desc' : 'asc',
     });
     if (response.success) {
       exportToCsv(response.data.items, 'data-table-export');

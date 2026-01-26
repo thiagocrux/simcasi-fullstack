@@ -52,12 +52,16 @@ export class PrismaUserRepository implements UserRepository {
     search?: string;
     roleId?: string;
     includeDeleted?: boolean;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
   }): Promise<{ items: User[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
+    const orderBy = params?.orderBy;
+    const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
-    const roleId = params?.roleId;
     const includeDeleted = params?.includeDeleted || false;
+    const roleId = params?.roleId;
 
     const where: Prisma.UserWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
@@ -76,7 +80,7 @@ export class PrismaUserRepository implements UserRepository {
         where,
         skip,
         take,
-        orderBy: { name: 'asc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { name: 'asc' },
       }),
       prisma.user.count({ where }),
     ]);

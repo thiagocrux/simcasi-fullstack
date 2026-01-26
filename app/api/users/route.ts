@@ -18,13 +18,16 @@ export const GET = withAuthentication(['read:user'], async (request) => {
     Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
     PAGINATION.MAX_LIMIT
   );
+
   const useCase = makeFindUsersUseCase();
   const result = await useCase.execute({
     skip: (page - 1) * limit,
     take: limit,
+    orderBy: searchParams.get('orderBy') || undefined,
+    orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'asc',
     search: searchParams.get('search') || undefined,
-    roleId: searchParams.get('roleId') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
+    roleId: searchParams.get('roleId') || undefined,
   });
 
   return NextResponse.json(result);
