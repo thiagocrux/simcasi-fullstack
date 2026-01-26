@@ -24,6 +24,8 @@ export const GET = withAuthentication(['read:patient'], async (request) => {
   const result = await findPatientsUseCase.execute({
     skip: (page - 1) * limit,
     take: limit,
+    orderBy: searchParams.get('orderBy') || undefined,
+    orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
     search,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
   });

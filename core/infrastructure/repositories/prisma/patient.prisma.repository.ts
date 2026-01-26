@@ -71,9 +71,13 @@ export class PrismaPatientRepository implements PatientRepository {
     take?: number;
     search?: string;
     includeDeleted?: boolean;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
   }): Promise<{ items: Patient[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
+    const orderBy = params?.orderBy;
+    const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
     const includeDeleted = params?.includeDeleted || false;
 
@@ -99,7 +103,7 @@ export class PrismaPatientRepository implements PatientRepository {
         where,
         skip,
         take,
-        orderBy: { name: 'asc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { name: 'asc' },
       }),
       prisma.patient.count({ where }),
     ]);

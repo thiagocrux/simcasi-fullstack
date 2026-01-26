@@ -6,7 +6,6 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
@@ -162,11 +161,13 @@ export function PatientsTable({
   }, [searchValue]);
 
   const { data: patientList } = useQuery({
-    queryKey: ['find-patients', pagination, searchValue],
+    queryKey: ['find-patients', pagination, searchValue, sorting],
     queryFn: async () =>
       await findPatients({
         skip: pagination.pageIndex * pagination.pageSize,
         take: pagination.pageSize,
+        orderBy: sorting[0]?.id,
+        orderDir: sorting[0]?.desc ? 'desc' : 'asc',
         search: searchValue,
         includeDeleted: false,
       }),
@@ -179,7 +180,6 @@ export function PatientsTable({
     return [];
   }, [patientList]);
 
-  // TODO: Implement real delete functionality.
   const handleDelete = useCallback((id: string) => {
     deletePatient(id);
   }, []);
@@ -1106,12 +1106,12 @@ export function PatientsTable({
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
     manualPagination: true,
+    manualSorting: true,
     pageCount: patientList?.success
       ? Math.ceil(patientList.data.total / pagination.pageSize)
       : -1,
