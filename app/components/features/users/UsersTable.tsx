@@ -1,8 +1,19 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
-
+import { User } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
+import {
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type PaginationState,
+  type SortingState,
+  type VisibilityState,
+} from '@tanstack/react-table';
 import {
   ArrowDownAZ,
   ArrowUpZA,
@@ -13,30 +24,20 @@ import {
   Pen,
   Trash2,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
-} from '@tanstack/react-table';
-
+import { deleteUser, findUsers } from '@/app/actions/user.actions';
+import { useRoles } from '@/hooks/useRole';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
 import { renderOrFallback } from '@/lib/shared.utils';
-import { User } from '@prisma/client';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
 import { AppTablePagination } from '../../common/AppTablePagination';
 import { AppTableToolbar } from '../../common/AppTableToolbar';
 import { HighlightedText } from '../../common/HighlightedText';
 import { Button } from '../../ui/button';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,7 +46,6 @@ import {
 } from '../../ui/dropdown-menu';
 
 interface UsersTable {
-  data: User[];
   pageSize?: number;
   showFilterInput?: boolean;
   showPrintButton?: boolean;
@@ -74,11 +74,12 @@ const COLUMN_LABELS: Record<Column, string> = {
   deletedAt: 'Deletado em',
 };
 
+const FILTERABLE_COLUMNS: Column[] = ['name', 'email'];
+
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN: Column = 'name';
 
 export function UsersTable({
-  data,
   pageSize = DEFAULT_PAGE_SIZE,
   showFilterInput = true,
   showPrintButton = true,
@@ -86,26 +87,52 @@ export function UsersTable({
   showPaginationInput = false,
 }: UsersTable) {
   const router = useRouter();
+  const { getRoleLabel } = useRoles();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
-  const [filterOption, setFilterOption] = useState<Column>(
+  const [selectedFilterOption, setSelectedFilterOption] = useState<Column>(
     DEFAULT_FILTER_COLUMN
   );
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize,
+  });
 
-  // TODO: Implement real delete functionality.
-  function handleDelete() {
-    console.log(`Delete called for ID: ${data[0].id}`);
-  }
+  const searchValue = useMemo(() => {
+    const filter = columnFilters.find((f) => f.id === selectedFilterOption);
+    return (filter?.value as string) ?? '';
+  }, [columnFilters, selectedFilterOption]);
+
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [searchValue]);
+
+  const { data: userList } = useQuery({
+    queryKey: ['find-users', pagination, searchValue],
+    queryFn: async () =>
+      await findUsers({
+        skip: pagination.pageIndex * pagination.pageSize,
+        take: pagination.pageSize,
+        search: searchValue,
+        includeDeleted: false,
+      }),
+  });
+
+  const users = useMemo(() => {
+    if (userList?.success) {
+      return userList.data.items;
+    }
+    return [];
+  }, [userList]);
+
+  const handleDelete = useCallback((id: string) => {
+    deleteUser(id);
+  }, []);
 
   const columns = useMemo<ColumnDef<Partial<User>>[]>(() => {
-    const filterValue =
-      (columnFilters.find((filter) => filter.id === filterOption)
-        ?.value as string) ?? '';
-
     return [
       {
         accessorKey: 'id',
@@ -131,7 +158,7 @@ export function UsersTable({
             {renderOrFallback(row.getValue('id'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'id' ? filterValue : ''}
+                highlight={selectedFilterOption === 'id' ? searchValue : ''}
               />
             ))}
           </div>
@@ -161,7 +188,7 @@ export function UsersTable({
             {renderOrFallback(row.getValue('name'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'name' ? filterValue : ''}
+                highlight={selectedFilterOption === 'name' ? searchValue : ''}
               />
             ))}
           </div>
@@ -191,7 +218,7 @@ export function UsersTable({
             {renderOrFallback(row.getValue('email'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'email' ? filterValue : ''}
+                highlight={selectedFilterOption === 'email' ? searchValue : ''}
               />
             ))}
           </div>
@@ -220,8 +247,8 @@ export function UsersTable({
           <div className="ml-1">
             {renderOrFallback(row.getValue('roleId'), (value) => (
               <HighlightedText
-                text={value}
-                highlight={filterOption === 'roleId' ? filterValue : ''}
+                text={getRoleLabel(value) ?? value}
+                highlight={selectedFilterOption === 'roleId' ? searchValue : ''}
               />
             ))}
           </div>
@@ -254,7 +281,9 @@ export function UsersTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'createdAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'createdAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -285,7 +314,9 @@ export function UsersTable({
             {renderOrFallback(row.getValue('updatedBy'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'updatedBy' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'updatedBy' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -318,7 +349,9 @@ export function UsersTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'updatedAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'updatedAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -352,7 +385,9 @@ export function UsersTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'deletedAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'deletedAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -392,7 +427,7 @@ export function UsersTable({
                   description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
                   cancelAction={{ action: () => {} }}
                   continueAction={{
-                    action: handleDelete,
+                    action: () => handleDelete(row.getValue('id')),
                   }}
                 >
                   <DropdownMenuItem
@@ -409,12 +444,13 @@ export function UsersTable({
         },
       },
     ];
-  }, [columnFilters, filterOption, handleDelete, router]);
+  }, [searchValue, selectedFilterOption, handleDelete, router, getRoleLabel]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data,
+    data: users as User[],
     columns,
+    rowCount: userList?.success ? userList.data.total : 0,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -423,37 +459,46 @@ export function UsersTable({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
+    manualPagination: true,
+    manualFiltering: true,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-    },
-    initialState: {
-      pagination: {
-        pageSize,
-      },
+      pagination,
     },
   });
 
   const hasRows = table.getRowModel().rows?.length;
 
-  function exportData() {
-    const rows = table.getFilteredRowModel().rows.map((row) => {
-      const { password: _password, ...rest } = row.original;
-      void _password;
-      return rest;
-    });
+  async function exportData() {
+    const total = userList && userList.success ? userList.data.total : 0;
+    if (!total) {
+      return;
+    }
 
-    exportToCsv(rows, 'data-table-export');
+    const response = await findUsers({
+      skip: 0,
+      take: total,
+      search: searchValue,
+      includeDeleted: false,
+    });
+    if (response.success) {
+      exportToCsv(response.data.items, 'data-table-export');
+    }
   }
 
   return (
     <div className="grid grid-cols-1 mx-auto w-full">
       <AppTableToolbar
         table={table}
-        filterOption={filterOption}
-        setFilterOption={(value: string) => setFilterOption(value as Column)}
+        selectedFilterOption={selectedFilterOption}
+        setSelectedFilterOption={(value: string) =>
+          setSelectedFilterOption(value as Column)
+        }
+        availableFilterOptions={FILTERABLE_COLUMNS}
         showColumnToggleButton={showColumnToggleButton}
         showFilterInput={showFilterInput}
         showPrintButton={showPrintButton}

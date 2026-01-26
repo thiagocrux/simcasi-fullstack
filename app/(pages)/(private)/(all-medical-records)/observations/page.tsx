@@ -3,17 +3,12 @@ import { Metadata } from 'next';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { ObservationsTable } from '@/app/components/features/observations/ObservationsTable';
-import { mockObservations } from '@/lib/mock.utils';
-import { Observation } from '@prisma/client';
 
 export const metadata: Metadata = {
   title: 'Lista de observações | SIMCASI',
   description:
     'Visualize todas as observações cadastrados, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todos os observações do SIMCASI.',
 };
-
-// TODO: Replace this mock data with the actual list of observations.
-export const data: Observation[] = mockObservations;
 
 export default function ObservationsPage() {
   return (
@@ -23,7 +18,7 @@ export default function ObservationsPage() {
         title="Lista de observações"
         description="Visualize todas as observações cadastrados, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todas as observações do SIMCASI."
       />
-      <ObservationsTable data={data} />
+      <ObservationsTable />
     </div>
   );
 }

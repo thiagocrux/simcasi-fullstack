@@ -1,8 +1,19 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
-
+import { Treatment } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
+import {
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type PaginationState,
+  type SortingState,
+  type VisibilityState,
+} from '@tanstack/react-table';
 import {
   ArrowDownAZ,
   ArrowUpZA,
@@ -13,30 +24,22 @@ import {
   Pen,
   Trash2,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
-} from '@tanstack/react-table';
-
+  deleteTreatment,
+  findTreatments,
+} from '@/app/actions/treatment.actions';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
 import { renderOrFallback } from '@/lib/shared.utils';
-import { Treatment } from '@prisma/client';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
 import { AppTablePagination } from '../../common/AppTablePagination';
 import { AppTableToolbar } from '../../common/AppTableToolbar';
 import { HighlightedText } from '../../common/HighlightedText';
 import { Button } from '../../ui/button';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,7 +48,6 @@ import {
 } from '../../ui/dropdown-menu';
 
 interface TreatmentsTable {
-  data: Treatment[];
   pageSize?: number;
   showFilterInput?: boolean;
   showPrintButton?: boolean;
@@ -82,11 +84,18 @@ const COLUMN_LABELS: Record<Column, string> = {
   deletedAt: 'Deletado em',
 };
 
+const FILTERABLE_COLUMNS: Column[] = [
+  'medication',
+  'dosage',
+  'healthCenter',
+  'observations',
+  'partnerInformation',
+];
+
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN: Column = 'medication';
 
 export function TreatmentsTable({
-  data,
   pageSize = DEFAULT_PAGE_SIZE,
   showFilterInput = true,
   showPrintButton = true,
@@ -95,25 +104,59 @@ export function TreatmentsTable({
 }: TreatmentsTable) {
   const router = useRouter();
 
+  const [mounted, setMounted] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
-  const [filterOption, setFilterOption] = useState<Column>(
+  const [selectedFilterOption, setSelectedFilterOption] = useState<Column>(
     DEFAULT_FILTER_COLUMN
   );
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize,
+  });
 
-  // TODO: Implement real delete functionality.
-  function handleDelete() {
-    console.log(`Delete called for ID: ${data[0].id}`);
-  }
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const searchValue = useMemo(() => {
+    const filter = columnFilters.find((f) => f.id === selectedFilterOption);
+    return (filter?.value as string) ?? '';
+  }, [columnFilters, selectedFilterOption]);
+
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [searchValue]);
+
+  const { data: treatmentList } = useQuery({
+    queryKey: ['find-treatments', pagination, searchValue, mounted],
+    queryFn: async () => {
+      if (!mounted) return { success: true, data: { items: [], total: 0 } };
+      return await findTreatments({
+        skip: pagination.pageIndex * pagination.pageSize,
+        take: pagination.pageSize,
+        search: searchValue,
+        includeDeleted: false,
+      });
+    },
+    enabled: mounted,
+  });
+
+  const treatments = useMemo(() => {
+    if (treatmentList?.success) {
+      return treatmentList.data.items;
+    }
+    return [];
+  }, [treatmentList]);
+
+  const handleDelete = useCallback((id: string) => {
+    deleteTreatment(id);
+  }, []);
 
   const columns = useMemo<ColumnDef<Partial<Treatment>>[]>(() => {
-    const filterValue =
-      (columnFilters.find((filter) => filter.id === filterOption)
-        ?.value as string) ?? '';
-
     return [
       {
         accessorKey: 'id',
@@ -134,10 +177,12 @@ export function TreatmentsTable({
         ),
         cell: ({ row }) => (
           <div className="ml-1">
-            <HighlightedText
-              text={String(row.getValue('id'))}
-              highlight={filterOption === 'id' ? filterValue : ''}
-            />
+            {renderOrFallback(row.getValue('id'), (value) => (
+              <HighlightedText
+                text={String(value)}
+                highlight={selectedFilterOption === 'id' ? searchValue : ''}
+              />
+            ))}
           </div>
         ),
       },
@@ -163,7 +208,9 @@ export function TreatmentsTable({
             {renderOrFallback(row.getValue('medication'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'medication' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'medication' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -191,7 +238,9 @@ export function TreatmentsTable({
             {renderOrFallback(row.getValue('healthCenter'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'healthCenter' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'healthCenter' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -222,7 +271,9 @@ export function TreatmentsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'startDate' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'startDate' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -251,7 +302,7 @@ export function TreatmentsTable({
             {renderOrFallback(row.getValue('dosage'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'dosage' ? filterValue : ''}
+                highlight={selectedFilterOption === 'dosage' ? searchValue : ''}
               />
             ))}
           </div>
@@ -279,7 +330,9 @@ export function TreatmentsTable({
             {renderOrFallback(row.getValue('observations'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'observations' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'observations' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -308,7 +361,9 @@ export function TreatmentsTable({
               <HighlightedText
                 text={value}
                 highlight={
-                  filterOption === 'partnerInformation' ? filterValue : ''
+                  selectedFilterOption === 'partnerInformation'
+                    ? searchValue
+                    : ''
                 }
               />
             ))}
@@ -336,8 +391,10 @@ export function TreatmentsTable({
           <div className="ml-1">
             {renderOrFallback(row.getValue('patientId'), (value) => (
               <HighlightedText
-                text={value}
-                highlight={filterOption === 'patientId' ? filterValue : ''}
+                text={String(value)}
+                highlight={
+                  selectedFilterOption === 'patientId' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -364,8 +421,10 @@ export function TreatmentsTable({
           <div className="ml-1">
             {renderOrFallback(row.getValue('createdBy'), (value) => (
               <HighlightedText
-                text={value}
-                highlight={filterOption === 'createdBy' ? filterValue : ''}
+                text={String(value)}
+                highlight={
+                  selectedFilterOption === 'createdBy' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -396,7 +455,9 @@ export function TreatmentsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'createdAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'createdAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -428,7 +489,9 @@ export function TreatmentsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'updatedAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'updatedAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -460,13 +523,16 @@ export function TreatmentsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'deletedAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'deletedAt' ? searchValue : ''
+                  }
                 />
               )
             )}
           </div>
         ),
       },
+
       {
         id: 'actions',
         enableHiding: false,
@@ -483,7 +549,7 @@ export function TreatmentsTable({
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() =>
-                    router.push(`/treatments/${row.getValue('id')}/details`)
+                    router.push(`/treatments/${row.original.id}/details`)
                   }
                 >
                   <Eye /> Ver detalhes
@@ -492,9 +558,7 @@ export function TreatmentsTable({
                   className="cursor-pointer"
                   onClick={() =>
                     router.push(
-                      `patients/${row.getValue(
-                        'patientId'
-                      )}/treatments/${row.getValue('id')}`
+                      `/patients/${row.original.patientId}/treatments/${row.original.id}`
                     )
                   }
                 >
@@ -506,7 +570,7 @@ export function TreatmentsTable({
                   description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o tratamento."
                   cancelAction={{ action: () => {} }}
                   continueAction={{
-                    action: handleDelete,
+                    action: () => handleDelete(String(row.original.id)),
                   }}
                 >
                   <DropdownMenuItem
@@ -523,11 +587,11 @@ export function TreatmentsTable({
         },
       },
     ];
-  }, [columnFilters, filterOption, handleDelete, router]);
+  }, [selectedFilterOption, searchValue, router, handleDelete]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data,
+    data: treatments,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -537,32 +601,36 @@ export function TreatmentsTable({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
+    manualPagination: true,
+    pageCount: treatmentList?.success
+      ? Math.ceil(treatmentList.data.total / pagination.pageSize)
+      : -1,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-    },
-    initialState: {
-      pagination: {
-        pageSize,
-      },
+      pagination,
     },
   });
 
-  const hasRows = table.getRowModel().rows?.length;
+  if (!mounted) return null;
 
   function exportData() {
     const rows = table.getFilteredRowModel().rows.map((row) => row.original);
-    exportToCsv(rows, 'data-table-export');
+    exportToCsv(rows, 'treatments-export');
   }
 
   return (
     <div className="grid grid-cols-1 mx-auto w-full">
       <AppTableToolbar
         table={table}
-        filterOption={filterOption}
-        setFilterOption={(value: string) => setFilterOption(value as Column)}
+        selectedFilterOption={selectedFilterOption}
+        setSelectedFilterOption={(value: string) =>
+          setSelectedFilterOption(value as Column)
+        }
+        availableFilterOptions={FILTERABLE_COLUMNS}
         showColumnToggleButton={showColumnToggleButton}
         showFilterInput={showFilterInput}
         showPrintButton={showPrintButton}
@@ -572,7 +640,7 @@ export function TreatmentsTable({
 
       <AppTable table={table} />
 
-      {hasRows ? (
+      {treatments.length > 0 ? (
         <AppTablePagination
           table={table}
           showPaginationInput={showPaginationInput}

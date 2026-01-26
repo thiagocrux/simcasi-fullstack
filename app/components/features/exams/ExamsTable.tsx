@@ -1,8 +1,19 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
-
+import { Exam } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
+import {
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type PaginationState,
+  type SortingState,
+  type VisibilityState,
+} from '@tanstack/react-table';
 import {
   ArrowDownAZ,
   ArrowUpZA,
@@ -13,30 +24,19 @@ import {
   Pen,
   Trash2,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
-} from '@tanstack/react-table';
-
+import { deleteExam, findExams } from '@/app/actions/exam.actions';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
 import { renderOrFallback } from '@/lib/shared.utils';
-import { Exam } from '@prisma/client';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
 import { AppTablePagination } from '../../common/AppTablePagination';
 import { AppTableToolbar } from '../../common/AppTableToolbar';
 import { HighlightedText } from '../../common/HighlightedText';
 import { Button } from '../../ui/button';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,7 +45,6 @@ import {
 } from '../../ui/dropdown-menu';
 
 interface ExamsTable {
-  data: Exam[];
   pageSize?: number;
   showFilterInput?: boolean;
   showPrintButton?: boolean;
@@ -90,11 +89,18 @@ const COLUMN_LABELS: Record<Column, string> = {
   deletedAt: 'Deletado em',
 };
 
+const FILTERABLE_COLUMNS: Column[] = [
+  'treponemalTestType',
+  'nontreponemalVdrlTest',
+  'nontreponemalTestTitration',
+  'referenceObservations',
+  'otherNontreponemalTest',
+];
+
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN: Column = 'treponemalTestType';
 
 export function ExamsTable({
-  data,
   pageSize = DEFAULT_PAGE_SIZE,
   showFilterInput = true,
   showPrintButton = true,
@@ -103,25 +109,59 @@ export function ExamsTable({
 }: ExamsTable) {
   const router = useRouter();
 
+  const [mounted, setMounted] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
-  const [filterOption, setFilterOption] = useState<Column>(
+  const [selectedFilterOption, setSelectedFilterOption] = useState<Column>(
     DEFAULT_FILTER_COLUMN
   );
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize,
+  });
 
-  // TODO: Implement real delete functionality.
-  function handleDelete() {
-    console.log(`Delete called for ID: ${data[0].id}`);
-  }
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const searchValue = useMemo(() => {
+    const filter = columnFilters.find((f) => f.id === selectedFilterOption);
+    return (filter?.value as string) ?? '';
+  }, [columnFilters, selectedFilterOption]);
+
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [searchValue]);
+
+  const { data: examList } = useQuery({
+    queryKey: ['find-exams', pagination, searchValue, mounted],
+    queryFn: async () => {
+      if (!mounted) return { success: true, data: { items: [], total: 0 } };
+      return await findExams({
+        skip: pagination.pageIndex * pagination.pageSize,
+        take: pagination.pageSize,
+        search: searchValue,
+        includeDeleted: false,
+      });
+    },
+    enabled: mounted,
+  });
+
+  const exams = useMemo(() => {
+    if (examList?.success) {
+      return examList.data.items;
+    }
+    return [];
+  }, [examList]);
+
+  const handleDelete = useCallback((id: string) => {
+    deleteExam(id);
+  }, []);
 
   const columns = useMemo<ColumnDef<Partial<Exam>>[]>(() => {
-    const filterValue =
-      (columnFilters.find((filter) => filter.id === filterOption)
-        ?.value as string) ?? '';
-
     return [
       {
         accessorKey: 'id',
@@ -144,8 +184,8 @@ export function ExamsTable({
           <div className="ml-1">
             {renderOrFallback(row.getValue('id'), (value) => (
               <HighlightedText
-                text={value}
-                highlight={filterOption === 'id' ? filterValue : ''}
+                text={String(value)}
+                highlight={selectedFilterOption === 'id' ? searchValue : ''}
               />
             ))}
           </div>
@@ -174,7 +214,9 @@ export function ExamsTable({
               <HighlightedText
                 text={value}
                 highlight={
-                  filterOption === 'treponemalTestType' ? filterValue : ''
+                  selectedFilterOption === 'treponemalTestType'
+                    ? searchValue
+                    : ''
                 }
               />
             ))}
@@ -204,7 +246,9 @@ export function ExamsTable({
               <HighlightedText
                 text={value}
                 highlight={
-                  filterOption === 'treponemalTestResult' ? filterValue : ''
+                  selectedFilterOption === 'treponemalTestResult'
+                    ? searchValue
+                    : ''
                 }
               />
             ))}
@@ -237,7 +281,9 @@ export function ExamsTable({
                 <HighlightedText
                   text={value}
                   highlight={
-                    filterOption === 'treponemalTestDate' ? filterValue : ''
+                    selectedFilterOption === 'treponemalTestDate'
+                      ? searchValue
+                      : ''
                   }
                 />
               )
@@ -270,7 +316,9 @@ export function ExamsTable({
                 <HighlightedText
                   text={value}
                   highlight={
-                    filterOption === 'treponemalTestLocation' ? filterValue : ''
+                    selectedFilterOption === 'treponemalTestLocation'
+                      ? searchValue
+                      : ''
                   }
                 />
               )
@@ -303,7 +351,9 @@ export function ExamsTable({
                 <HighlightedText
                   text={value}
                   highlight={
-                    filterOption === 'nontreponemalVdrlTest' ? filterValue : ''
+                    selectedFilterOption === 'nontreponemalVdrlTest'
+                      ? searchValue
+                      : ''
                   }
                 />
               )
@@ -336,8 +386,8 @@ export function ExamsTable({
                 <HighlightedText
                   text={value}
                   highlight={
-                    filterOption === 'nontreponemalTestTitration'
-                      ? filterValue
+                    selectedFilterOption === 'nontreponemalTestTitration'
+                      ? searchValue
                       : ''
                   }
                 />
@@ -372,7 +422,9 @@ export function ExamsTable({
                 <HighlightedText
                   text={value}
                   highlight={
-                    filterOption === 'nontreponemalTestDate' ? filterValue : ''
+                    selectedFilterOption === 'nontreponemalTestDate'
+                      ? searchValue
+                      : ''
                   }
                 />
               )
@@ -405,7 +457,9 @@ export function ExamsTable({
                 <HighlightedText
                   text={value}
                   highlight={
-                    filterOption === 'otherNontreponemalTest' ? filterValue : ''
+                    selectedFilterOption === 'otherNontreponemalTest'
+                      ? searchValue
+                      : ''
                   }
                 />
               )
@@ -439,8 +493,8 @@ export function ExamsTable({
                 <HighlightedText
                   text={value}
                   highlight={
-                    filterOption === 'otherNontreponemalTestDate'
-                      ? filterValue
+                    selectedFilterOption === 'otherNontreponemalTestDate'
+                      ? searchValue
                       : ''
                   }
                 />
@@ -474,7 +528,9 @@ export function ExamsTable({
                 <HighlightedText
                   text={value}
                   highlight={
-                    filterOption === 'referenceObservations' ? filterValue : ''
+                    selectedFilterOption === 'referenceObservations'
+                      ? searchValue
+                      : ''
                   }
                 />
               )
@@ -503,8 +559,10 @@ export function ExamsTable({
           <div className="ml-1">
             {renderOrFallback(row.getValue('patientId'), (value) => (
               <HighlightedText
-                text={value}
-                highlight={filterOption === 'patientId' ? filterValue : ''}
+                text={String(value)}
+                highlight={
+                  selectedFilterOption === 'patientId' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -531,8 +589,10 @@ export function ExamsTable({
           <div className="ml-1">
             {renderOrFallback(row.getValue('createdBy'), (value) => (
               <HighlightedText
-                text={value}
-                highlight={filterOption === 'createdBy' ? filterValue : ''}
+                text={String(value)}
+                highlight={
+                  selectedFilterOption === 'createdBy' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -563,7 +623,9 @@ export function ExamsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'createdAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'createdAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -595,7 +657,9 @@ export function ExamsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'updatedAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'updatedAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -627,7 +691,9 @@ export function ExamsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'deletedAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'deletedAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -651,7 +717,7 @@ export function ExamsTable({
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() =>
-                    router.push(`/exams/${row.getValue('id')}/details`)
+                    router.push(`/exams/${row.original.id}/details`)
                   }
                 >
                   <Eye /> Ver detalhes
@@ -660,9 +726,7 @@ export function ExamsTable({
                   className="cursor-pointer"
                   onClick={() =>
                     router.push(
-                      `patients/${row.getValue(
-                        'patientId'
-                      )}/exams/${row.getValue('id')}`
+                      `/patients/${row.original.patientId}/exams/${row.original.id}`
                     )
                   }
                 >
@@ -674,7 +738,7 @@ export function ExamsTable({
                   description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o exame."
                   cancelAction={{ action: () => {} }}
                   continueAction={{
-                    action: handleDelete,
+                    action: () => handleDelete(String(row.original.id)),
                   }}
                 >
                   <DropdownMenuItem
@@ -691,11 +755,11 @@ export function ExamsTable({
         },
       },
     ];
-  }, [columnFilters, filterOption, router]);
+  }, [selectedFilterOption, searchValue, router, handleDelete]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data,
+    data: exams,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -705,34 +769,36 @@ export function ExamsTable({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
+    manualPagination: true,
+    pageCount: examList?.success
+      ? Math.ceil(examList.data.total / pagination.pageSize)
+      : -1,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-    },
-    initialState: {
-      pagination: {
-        pageSize,
-      },
+      pagination,
     },
   });
 
-  const hasRows = table.getRowModel().rows?.length;
+  if (!mounted) return null;
 
   function exportData() {
     const rows = table.getFilteredRowModel().rows.map((row) => row.original);
-    exportToCsv(rows, 'data-table-export');
+    exportToCsv(rows, 'exams-export');
   }
 
   return (
     <div className="grid grid-cols-1 mx-auto w-full">
       <AppTableToolbar
         table={table}
-        filterOption={filterOption}
-        setFilterOption={(valueue: string) =>
-          setFilterOption(valueue as Column)
+        selectedFilterOption={selectedFilterOption}
+        setSelectedFilterOption={(value: string) =>
+          setSelectedFilterOption(value as Column)
         }
+        availableFilterOptions={FILTERABLE_COLUMNS}
         showColumnToggleButton={showColumnToggleButton}
         showFilterInput={showFilterInput}
         showPrintButton={showPrintButton}
@@ -742,7 +808,7 @@ export function ExamsTable({
 
       <AppTable table={table} />
 
-      {hasRows ? (
+      {exams.length > 0 ? (
         <AppTablePagination
           table={table}
           showPaginationInput={showPaginationInput}

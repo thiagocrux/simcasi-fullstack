@@ -42,31 +42,30 @@ export function SignInForm({ className }: SignInFormProps) {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (input: CreateSessionInput) => signInUser(input),
-    onSuccess: (data: any) => {
-      console.log(data);
-
-      if (data.success && data.data) {
+    onSuccess: (response) => {
+      if (response.success && response.data) {
         // Dispatch credentials to the Redux store.
         dispatch(
           setCredentials({
-            user: data.data.user,
-            permissions: data.data.permissions,
+            user: response.data.user,
+            permissions: response.data.permissions,
           })
         );
         router.push('/dashboard');
         return;
       }
 
-      if (data.success === false) {
+      if (response.success === false) {
         const errorMessage =
-          data.message === 'Invalid credentials.'
+          response.message === 'Invalid credentials.'
             ? messages.INVALID_CREDENTIALS
-            : data.message || 'Ocorreu um erro inesperado.';
+            : response.message || 'Ocorreu um erro inesperado.';
 
         toast.error(errorMessage);
       }
     },
     onError: (error: unknown) => {
+      // TODO: Replace console with a proper log.
       console.error('Submit error:', error);
       toast.error('Erro de comunicação com o servidor.');
     },

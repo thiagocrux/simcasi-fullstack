@@ -3,17 +3,12 @@ import { Metadata } from 'next';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { NotificationsTable } from '@/app/components/features/notifications/NotificationsTable';
-import { mockNotifications } from '@/lib/mock.utils';
-import { Notification } from '@prisma/client';
 
 export const metadata: Metadata = {
   title: 'Lista de notificações | SIMCASI',
   description:
     'Visualize todas as notificações cadastradas, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todas as notificações do SIMCASI.',
 };
-
-// TODO: Replace this mock data with the actual list of notifications.
-export const data: Notification[] = mockNotifications;
 
 export default function NotificationsPage() {
   return (
@@ -23,7 +18,7 @@ export default function NotificationsPage() {
         title="Lista de notificações"
         description="Visualize todas as notificações cadastradas, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todas as notificações do SIMCASI."
       />
-      <NotificationsTable data={data} />
+      <NotificationsTable />
     </div>
   );
 }

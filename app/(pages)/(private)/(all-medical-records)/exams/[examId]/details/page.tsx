@@ -1,11 +1,14 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+import { deleteExam, getExam } from '@/app/actions/exam.actions';
 import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
-import { mockExams } from '@/lib/mock.utils';
+import { Exam } from '@/core/domain/entities/exam.entity';
+import { ActionResponse } from '@/lib/actions.utils';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Detalhes do exame | SIMCASI',
@@ -21,8 +24,13 @@ export default async function ExamDetailsPage({
 }: ExamDetailsPageProps) {
   const { examId } = await params;
 
-  // --- TODO: Replace the logic below with the actual action call
-  const exam = mockExams.find((exam) => exam.id === examId);
+  const response: ActionResponse<Exam> = await getExam(examId);
+
+  if (!response.success || !response.data) {
+    notFound();
+  }
+
+  const exam = response.data;
 
   const data = [
     {
@@ -32,7 +40,11 @@ export default async function ExamDetailsPage({
         { label: 'Resultado', value: exam?.treponemalTestResult },
         {
           label: 'Data',
-          value: Intl.DateTimeFormat('pt-BR').format(exam?.treponemalTestDate),
+          value: exam?.treponemalTestDate
+            ? Intl.DateTimeFormat('pt-BR').format(
+                new Date(exam.treponemalTestDate)
+              )
+            : '-',
         },
         { label: 'Local', value: exam?.treponemalTestLocation },
       ],
@@ -44,9 +56,11 @@ export default async function ExamDetailsPage({
         { label: 'Titulação', value: exam?.nontreponemalTestTitration },
         {
           label: 'Data',
-          value: Intl.DateTimeFormat('pt-BR').format(
-            exam?.nontreponemalTestDate
-          ),
+          value: exam?.nontreponemalTestDate
+            ? Intl.DateTimeFormat('pt-BR').format(
+                new Date(exam.nontreponemalTestDate)
+              )
+            : '-',
         },
       ],
     },
@@ -61,9 +75,9 @@ export default async function ExamDetailsPage({
           label: 'Data do outro teste não treponêmico',
           value: exam?.otherNontreponemalTestDate
             ? Intl.DateTimeFormat('pt-BR').format(
-                exam?.otherNontreponemalTestDate
+                new Date(exam.otherNontreponemalTestDate)
               )
-            : null,
+            : '-',
         },
         {
           label: 'Observações de referência',
@@ -80,7 +94,7 @@ export default async function ExamDetailsPage({
 
   async function handleDelete() {
     'use server';
-    console.log('handleDelete called!');
+    deleteExam(examId);
   }
 
   return (

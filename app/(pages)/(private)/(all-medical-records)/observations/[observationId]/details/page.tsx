@@ -1,11 +1,17 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+import {
+  deleteObservation,
+  getObservation,
+} from '@/app/actions/observation.actions';
 import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
-import { mockObservations } from '@/lib/mock.utils';
+import { Observation } from '@/core/domain/entities/observation.entity';
+import { ActionResponse } from '@/lib/actions.utils';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Detalhes da observação | SIMCASI',
@@ -22,10 +28,14 @@ export default async function ObservationDetailsPage({
 }: ObservationDetailsPageProps) {
   const { observationId } = await params;
 
-  // --- TODO: Replace the logic below with the actual action call
-  const observation = mockObservations.find(
-    (observation) => observation.id === observationId
-  );
+  const response: ActionResponse<Observation> =
+    await getObservation(observationId);
+
+  if (!response.success || !response.data) {
+    notFound();
+  }
+
+  const observation = response.data;
 
   const data = [
     {
@@ -49,7 +59,7 @@ export default async function ObservationDetailsPage({
 
   async function handleDelete() {
     'use server';
-    console.log('handleDelete called!');
+    deleteObservation(observationId);
   }
 
   return (

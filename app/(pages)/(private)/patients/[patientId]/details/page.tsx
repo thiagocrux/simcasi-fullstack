@@ -1,11 +1,14 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+import { deletePatient, getPatient } from '@/app/actions/patient.actions';
 import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
-import { mockPatients } from '@/lib/mock.utils';
+import { Patient } from '@/core/domain/entities/patient.entity';
+import { ActionResponse } from '@/lib/actions.utils';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Detalhes do paciente | SIMCASI',
@@ -22,8 +25,13 @@ export default async function PatientDetailsPage({
 }: PatientDetailsPageProps) {
   const { patientId } = await params;
 
-  // --- TODO: Replace the logic below with the actual action call
-  const patient = mockPatients.find((patient) => patient.id === patientId);
+  const response: ActionResponse<Patient> = await getPatient(patientId);
+
+  if (!response.success || !response.data) {
+    notFound();
+  }
+
+  const patient = response.data;
 
   const data = [
     {
@@ -38,7 +46,9 @@ export default async function PatientDetailsPage({
         { label: 'Nome social', value: patient?.socialName },
         {
           label: 'Data de nascimento',
-          value: Intl.DateTimeFormat('pt-BR').format(patient?.birthDate),
+          value: patient?.birthDate
+            ? Intl.DateTimeFormat('pt-BR').format(new Date(patient.birthDate))
+            : '-',
         },
         { label: 'Nome da mãe', value: patient?.motherName },
         { label: 'Nome do pai', value: patient?.fatherName },
@@ -91,7 +101,7 @@ export default async function PatientDetailsPage({
 
   async function handleDelete() {
     'use server';
-    console.log('handleDelete called!');
+    deletePatient(patientId);
   }
 
   return (

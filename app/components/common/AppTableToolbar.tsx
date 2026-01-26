@@ -23,9 +23,9 @@ import {
 interface AppTableToolbar {
   table: Table<Partial<unknown>>;
   columnLabelMapper: Record<string, string>;
-  filterOptions?: string[];
-  filterOption?: string;
-  setFilterOption: (value: string) => void;
+  availableFilterOptions?: string[];
+  selectedFilterOption?: string;
+  setSelectedFilterOption: (value: string) => void;
   handleDataExport: () => void;
   showFilterInput?: boolean;
   showPrintButton?: boolean;
@@ -35,13 +35,15 @@ interface AppTableToolbar {
 
 function TableFilter({
   table,
-  filterOption,
-  setFilterOption,
+  selectedFilterOption,
+  availableFilterOptions,
+  setSelectedFilterOption,
   columnLabelMapper,
 }: {
   table: Table<Partial<unknown>>;
-  filterOption: string;
-  setFilterOption: (value: string) => void;
+  selectedFilterOption: string;
+  availableFilterOptions?: string[];
+  setSelectedFilterOption: (value: string) => void;
   columnLabelMapper: Record<string, string>;
 }) {
   return (
@@ -50,22 +52,27 @@ function TableFilter({
         type="text"
         placeholder="Pesquisar por..."
         value={
-          (table.getColumn(filterOption)?.getFilterValue() as string) ?? ''
+          (table.getColumn(selectedFilterOption)?.getFilterValue() as string) ??
+          ''
         }
         onChange={(event) =>
-          table.getColumn(filterOption)?.setFilterValue(event.target.value)
+          table
+            .getColumn(selectedFilterOption)
+            ?.setFilterValue(event.target.value)
         }
         className="w-full"
       />
       <InputGroupAddon
         align="inline-start"
-        onClick={() => table.getColumn(filterOption)?.setFilterValue('')}
+        onClick={() =>
+          table.getColumn(selectedFilterOption)?.setFilterValue('')
+        }
         className="cursor-pointer"
       >
         <Search />
       </InputGroupAddon>
 
-      {table.getColumn(filterOption)?.getFilterValue() ? (
+      {table.getColumn(selectedFilterOption)?.getFilterValue() ? (
         <Button
           type="button"
           size="icon-sm"
@@ -84,22 +91,24 @@ function TableFilter({
               className="-mr-1.25 ml-auto border-t-0 border-r-0 border-b-0 border-l rounded-tl-none rounded-bl-none h-8.5 cursor-pointer"
               size="sm"
             >
-              {columnLabelMapper[filterOption]} <ChevronDown />
+              {columnLabelMapper[selectedFilterOption]} <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {Object.keys(columnLabelMapper).map((key) => (
-              <DropdownMenuItem
-                key={key}
-                className="cursor-pointer"
-                onClick={() => {
-                  table.getColumn(filterOption)?.setFilterValue('');
-                  setFilterOption(key as string);
-                }}
-              >
-                {columnLabelMapper[key as string]}
-              </DropdownMenuItem>
-            ))}
+            {(availableFilterOptions || Object.keys(columnLabelMapper)).map(
+              (key) => (
+                <DropdownMenuItem
+                  key={key}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    table.getColumn(selectedFilterOption)?.setFilterValue('');
+                    setSelectedFilterOption(key as string);
+                  }}
+                >
+                  {columnLabelMapper[key as string]}
+                </DropdownMenuItem>
+              )
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </InputGroupAddon>
@@ -145,8 +154,9 @@ function TableColumnToggle({
 export function AppTableToolbar({
   table,
   columnLabelMapper,
-  filterOption,
-  setFilterOption,
+  selectedFilterOption,
+  availableFilterOptions,
+  setSelectedFilterOption,
   handleDataExport,
   showFilterInput = false,
   showPrintButton = true,
@@ -160,11 +170,12 @@ export function AppTableToolbar({
         className
       )}
     >
-      {showFilterInput && filterOption && (
+      {showFilterInput && selectedFilterOption && (
         <TableFilter
           table={table}
-          filterOption={filterOption}
-          setFilterOption={setFilterOption}
+          selectedFilterOption={selectedFilterOption}
+          availableFilterOptions={availableFilterOptions}
+          setSelectedFilterOption={setSelectedFilterOption}
           columnLabelMapper={columnLabelMapper}
         />
       )}

@@ -3,17 +3,12 @@ import { Metadata } from 'next';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { ExamsTable } from '@/app/components/features/exams/ExamsTable';
-import { mockExams } from '@/lib/mock.utils';
-import { Exam } from '@prisma/client';
 
 export const metadata: Metadata = {
   title: 'Lista de exames | SIMCASI',
   description:
     'Visualize todos os exames cadastrados, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todos os exames do SIMCASI.',
 };
-
-// TODO: Replace this mock data with the actual list of exams.
-export const data: Exam[] = mockExams;
 
 export default function ExamsPage() {
   return (
@@ -23,7 +18,7 @@ export default function ExamsPage() {
         title="Lista de exames"
         description="Visualize todos os exames cadastrados, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todos os exames do SIMCASI."
       />
-      <ExamsTable data={data} />
+      <ExamsTable />
     </div>
   );
 }

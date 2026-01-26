@@ -1,8 +1,19 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
-
+import { Patient } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
+import {
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type PaginationState,
+  type SortingState,
+  type VisibilityState,
+} from '@tanstack/react-table';
 import {
   ArrowDown01,
   ArrowDownAZ,
@@ -15,30 +26,19 @@ import {
   Pen,
   Trash2,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
-} from '@tanstack/react-table';
-
+import { deletePatient, findPatients } from '@/app/actions/patient.actions';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
 import { renderOrFallback } from '@/lib/shared.utils';
-import { Patient } from '@prisma/client';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
 import { AppTablePagination } from '../../common/AppTablePagination';
 import { AppTableToolbar } from '../../common/AppTableToolbar';
 import { HighlightedText } from '../../common/HighlightedText';
 import { Button } from '../../ui/button';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,7 +47,6 @@ import {
 } from '../../ui/dropdown-menu';
 
 interface PatientsTable {
-  data: Patient[];
   pageSize?: number;
   showFilterInput?: boolean;
   showPrintButton?: boolean;
@@ -118,11 +117,21 @@ const COLUMN_LABELS: Record<Column, string> = {
   deletedAt: 'Deletado em',
 };
 
+const FILTERABLE_COLUMNS: Column[] = [
+  'name',
+  'cpf',
+  'susCardNumber',
+  'motherName',
+  'email',
+  'phone',
+  'city',
+  'state',
+];
+
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN: Column = 'name';
 
 export function PatientsTable({
-  data,
   pageSize = DEFAULT_PAGE_SIZE,
   showFilterInput = true,
   showPrintButton = true,
@@ -135,21 +144,47 @@ export function PatientsTable({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
-  const [filterOption, setFilterOption] = useState<Column>(
+  const [selectedFilterOption, setSelectedFilterOption] = useState<Column>(
     DEFAULT_FILTER_COLUMN
   );
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize,
+  });
+
+  const searchValue = useMemo(() => {
+    const filter = columnFilters.find((f) => f.id === selectedFilterOption);
+    return (filter?.value as string) ?? '';
+  }, [columnFilters, selectedFilterOption]);
+
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [searchValue]);
+
+  const { data: patientList } = useQuery({
+    queryKey: ['find-patients', pagination, searchValue],
+    queryFn: async () =>
+      await findPatients({
+        skip: pagination.pageIndex * pagination.pageSize,
+        take: pagination.pageSize,
+        search: searchValue,
+        includeDeleted: false,
+      }),
+  });
+
+  const patients = useMemo(() => {
+    if (patientList?.success) {
+      return patientList.data.items;
+    }
+    return [];
+  }, [patientList]);
 
   // TODO: Implement real delete functionality.
-  function handleDelete() {
-    console.log(`Delete called for ID: ${data[0].id}`);
-  }
+  const handleDelete = useCallback((id: string) => {
+    deletePatient(id);
+  }, []);
 
   const columns = useMemo<ColumnDef<Partial<Patient>>[]>(() => {
-    const filterValue =
-      (columnFilters.find((filter) => filter.id === filterOption)
-        ?.value as string) ?? '';
-
     return [
       {
         accessorKey: 'id',
@@ -172,7 +207,7 @@ export function PatientsTable({
           <div className="ml-1">
             <HighlightedText
               text={String(row.getValue('id'))}
-              highlight={filterOption === 'id' ? filterValue : ''}
+              highlight={selectedFilterOption === 'id' ? searchValue : ''}
             />
           </div>
         ),
@@ -199,7 +234,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('susCardNumber'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'susCardNumber' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'susCardNumber' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -227,7 +264,7 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('name'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'name' ? filterValue : ''}
+                highlight={selectedFilterOption === 'name' ? searchValue : ''}
               />
             ))}
           </div>
@@ -255,7 +292,7 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('cpf'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'cpf' ? filterValue : ''}
+                highlight={selectedFilterOption === 'cpf' ? searchValue : ''}
               />
             ))}
           </div>
@@ -283,7 +320,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('socialName'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'socialName' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'socialName' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -314,7 +353,9 @@ export function PatientsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'birthDate' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'birthDate' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -343,7 +384,7 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('race'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'race' ? filterValue : ''}
+                highlight={selectedFilterOption === 'race' ? searchValue : ''}
               />
             ))}
           </div>
@@ -371,7 +412,7 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('sex'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'sex' ? filterValue : ''}
+                highlight={selectedFilterOption === 'sex' ? searchValue : ''}
               />
             ))}
           </div>
@@ -399,7 +440,7 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('gender'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'gender' ? filterValue : ''}
+                highlight={selectedFilterOption === 'gender' ? searchValue : ''}
               />
             ))}
           </div>
@@ -427,7 +468,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('sexuality'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'sexuality' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'sexuality' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -455,7 +498,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('nationality'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'nationality' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'nationality' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -483,7 +528,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('schooling'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'schooling' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'schooling' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -511,7 +558,7 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('email'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'email' ? filterValue : ''}
+                highlight={selectedFilterOption === 'email' ? searchValue : ''}
               />
             ))}
           </div>
@@ -539,7 +586,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('motherName'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'motherName' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'motherName' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -567,7 +616,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('fatherName'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'fatherName' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'fatherName' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -594,7 +645,9 @@ export function PatientsTable({
           <div className="ml-1">
             <HighlightedText
               text={row.getValue('isDeceased') ? 'Sim' : 'Não'}
-              highlight={filterOption === 'isDeceased' ? filterValue : ''}
+              highlight={
+                selectedFilterOption === 'isDeceased' ? searchValue : ''
+              }
             />
           </div>
         ),
@@ -621,7 +674,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('monitoringType'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'monitoringType' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'monitoringType' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -649,7 +704,7 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('phone'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'phone' ? filterValue : ''}
+                highlight={selectedFilterOption === 'phone' ? searchValue : ''}
               />
             ))}
           </div>
@@ -677,7 +732,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('zipCode'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'zipCode' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'zipCode' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -705,7 +762,7 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('state'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'state' ? filterValue : ''}
+                highlight={selectedFilterOption === 'state' ? searchValue : ''}
               />
             ))}
           </div>
@@ -733,7 +790,7 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('city'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'city' ? filterValue : ''}
+                highlight={selectedFilterOption === 'city' ? searchValue : ''}
               />
             ))}
           </div>
@@ -761,7 +818,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('neighborhood'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'neighborhood' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'neighborhood' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -789,7 +848,7 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('street'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'street' ? filterValue : ''}
+                highlight={selectedFilterOption === 'street' ? searchValue : ''}
               />
             ))}
           </div>
@@ -817,7 +876,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('houseNumber'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'houseNumber' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'houseNumber' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -845,7 +906,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('complement'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'complement' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'complement' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -873,7 +936,9 @@ export function PatientsTable({
             {renderOrFallback(row.getValue('createdBy'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'createdBy' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'createdBy' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -904,7 +969,9 @@ export function PatientsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'createdAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'createdAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -936,7 +1003,9 @@ export function PatientsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'updatedAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'updatedAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -968,7 +1037,9 @@ export function PatientsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'deletedAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'deletedAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -991,14 +1062,14 @@ export function PatientsTable({
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() =>
-                    router.push(`/patients/${row.getValue('id')}/details`)
+                    router.push(`/patients/${row.original.id}/details`)
                   }
                 >
                   <Eye /> Ver detalhes
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer"
-                  onClick={() => router.push(`/patients/${row.getValue('id')}`)}
+                  onClick={() => router.push(`/patients/${row.original.id}`)}
                 >
                   <Pen />
                   Editar paciente
@@ -1008,7 +1079,7 @@ export function PatientsTable({
                   description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
                   cancelAction={{ action: () => {} }}
                   continueAction={{
-                    action: handleDelete,
+                    action: () => handleDelete(String(row.original.id)),
                   }}
                 >
                   <DropdownMenuItem
@@ -1025,11 +1096,11 @@ export function PatientsTable({
         },
       },
     ];
-  }, [columnFilters, filterOption, handleDelete, router]);
+  }, [selectedFilterOption, searchValue, router, handleDelete]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data,
+    data: patients,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -1039,32 +1110,34 @@ export function PatientsTable({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
+    manualPagination: true,
+    pageCount: patientList?.success
+      ? Math.ceil(patientList.data.total / pagination.pageSize)
+      : -1,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-    },
-    initialState: {
-      pagination: {
-        pageSize,
-      },
+      pagination,
     },
   });
 
-  const hasRows = table.getRowModel().rows?.length;
-
   function exportData() {
     const rows = table.getFilteredRowModel().rows.map((row) => row.original);
-    exportToCsv(rows, 'data-table-export');
+    exportToCsv(rows, 'patients-export');
   }
 
   return (
     <div className="grid grid-cols-1 mx-auto w-full">
       <AppTableToolbar
         table={table}
-        filterOption={filterOption}
-        setFilterOption={(value: string) => setFilterOption(value as Column)}
+        selectedFilterOption={selectedFilterOption}
+        setSelectedFilterOption={(value: string) =>
+          setSelectedFilterOption(value as Column)
+        }
+        availableFilterOptions={FILTERABLE_COLUMNS}
         showColumnToggleButton={showColumnToggleButton}
         showFilterInput={showFilterInput}
         showPrintButton={showPrintButton}
@@ -1074,7 +1147,7 @@ export function PatientsTable({
 
       <AppTable table={table} />
 
-      {hasRows ? (
+      {patients.length > 0 ? (
         <AppTablePagination
           table={table}
           showPaginationInput={showPaginationInput}

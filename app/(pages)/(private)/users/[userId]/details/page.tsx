@@ -1,11 +1,14 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+import { deleteUser, getUser } from '@/app/actions/user.actions';
 import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
-import { mockUsers } from '@/lib/mock.utils';
+import { GetUserOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
+import { ActionResponse } from '@/lib/actions.utils';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Detalhes do usuário | SIMCASI',
@@ -21,14 +24,19 @@ export default async function UserDetailsPage({
 }: UserDetailsPageProps) {
   const { userId } = await params;
 
-  // --- TODO: Replace the logic below with the actual action call
-  const user = mockUsers.find((user) => user.id === userId);
+  const response: ActionResponse<GetUserOutput> = await getUser(userId);
+
+  if (!response.success || !response.data) {
+    notFound();
+  }
+
+  const user = response.data;
 
   const data = [
     {
       title: 'Identificação e acesso',
       fields: [
-        { label: 'ID', value: user?.roleId },
+        { label: 'Cargo ID', value: user?.roleId || '-' },
         { label: 'Nome', value: user?.name },
         { label: 'E-mail', value: user?.email },
       ],
@@ -42,7 +50,7 @@ export default async function UserDetailsPage({
 
   async function handleDelete() {
     'use server';
-    console.log('handleDelete called!');
+    deleteUser(userId);
   }
 
   return (

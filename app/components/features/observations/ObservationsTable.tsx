@@ -1,21 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
-
-import {
-  ArrowDown01,
-  ArrowDownAZ,
-  ArrowUp10,
-  ArrowUpZA,
-  ClockArrowDown,
-  ClockArrowUp,
-  Eye,
-  MoreHorizontal,
-  Pen,
-  Trash2,
-} from 'lucide-react';
-
+import { Observation } from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -24,21 +10,36 @@ import {
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
+  type PaginationState,
   type SortingState,
   type VisibilityState,
 } from '@tanstack/react-table';
+import {
+  ArrowDownAZ,
+  ArrowUpZA,
+  ClockArrowDown,
+  ClockArrowUp,
+  Eye,
+  MoreHorizontal,
+  Pen,
+  Trash2,
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import {
+  deleteObservation,
+  findObservations,
+} from '@/app/actions/observation.actions';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
 import { renderOrFallback } from '@/lib/shared.utils';
-import { Observation } from '@prisma/client';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
 import { AppTablePagination } from '../../common/AppTablePagination';
 import { AppTableToolbar } from '../../common/AppTableToolbar';
 import { HighlightedText } from '../../common/HighlightedText';
 import { Button } from '../../ui/button';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,7 +48,6 @@ import {
 } from '../../ui/dropdown-menu';
 
 interface ObservationsTable {
-  data: Observation[];
   pageSize?: number;
   showFilterInput?: boolean;
   showPrintButton?: boolean;
@@ -76,11 +76,12 @@ const COLUMN_LABELS: Record<Column, string> = {
   deletedAt: 'Deletado em',
 };
 
+const FILTERABLE_COLUMNS: Column[] = ['observations'];
+
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN: Column = 'observations';
 
 export function ObservationsTable({
-  data,
   pageSize = DEFAULT_PAGE_SIZE,
   showFilterInput = true,
   showPrintButton = true,
@@ -89,25 +90,59 @@ export function ObservationsTable({
 }: ObservationsTable) {
   const router = useRouter();
 
+  const [mounted, setMounted] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
-  const [filterOption, setFilterOption] = useState<Column>(
+  const [selectedFilterOption, setSelectedFilterOption] = useState<Column>(
     DEFAULT_FILTER_COLUMN
   );
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize,
+  });
 
-  // TODO: Implement real delete functionality.
-  function handleDelete() {
-    console.log(`Delete called for ID: ${data[0].id}`);
-  }
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const searchValue = useMemo(() => {
+    const filter = columnFilters.find((f) => f.id === selectedFilterOption);
+    return (filter?.value as string) ?? '';
+  }, [columnFilters, selectedFilterOption]);
+
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [searchValue]);
+
+  const { data: observationList } = useQuery({
+    queryKey: ['find-observations', pagination, searchValue, mounted],
+    queryFn: async () => {
+      if (!mounted) return { success: true, data: { items: [], total: 0 } };
+      return await findObservations({
+        skip: pagination.pageIndex * pagination.pageSize,
+        take: pagination.pageSize,
+        search: searchValue,
+        includeDeleted: false,
+      });
+    },
+    enabled: mounted,
+  });
+
+  const observations = useMemo(() => {
+    if (observationList?.success) {
+      return observationList.data.items;
+    }
+    return [];
+  }, [observationList]);
+
+  const handleDelete = useCallback((id: string) => {
+    deleteObservation(id);
+  }, []);
 
   const columns = useMemo<ColumnDef<Partial<Observation>>[]>(() => {
-    const filterValue =
-      (columnFilters.find((filter) => filter.id === filterOption)
-        ?.value as string) ?? '';
-
     return [
       {
         accessorKey: 'id',
@@ -119,10 +154,10 @@ export function ObservationsTable({
           >
             ID
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
-              <ArrowDown01 />
+              <ArrowDownAZ />
             )}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
-              <ArrowUp10 />
+              <ArrowUpZA />
             )}
           </Button>
         ),
@@ -130,8 +165,8 @@ export function ObservationsTable({
           <div className="ml-1">
             {renderOrFallback(row.getValue('id'), (value) => (
               <HighlightedText
-                text={value}
-                highlight={filterOption === 'id' ? filterValue : ''}
+                text={String(value)}
+                highlight={selectedFilterOption === 'id' ? searchValue : ''}
               />
             ))}
           </div>
@@ -159,7 +194,9 @@ export function ObservationsTable({
             {renderOrFallback(row.getValue('observations'), (value) => (
               <HighlightedText
                 text={value}
-                highlight={filterOption === 'observations' ? filterValue : ''}
+                highlight={
+                  selectedFilterOption === 'observations' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -187,7 +224,9 @@ export function ObservationsTable({
             <HighlightedText
               text={row.getValue('hasPartnerBeingTreated') ? 'Sim' : 'Não'}
               highlight={
-                filterOption === 'hasPartnerBeingTreated' ? filterValue : ''
+                selectedFilterOption === 'hasPartnerBeingTreated'
+                  ? searchValue
+                  : ''
               }
             />
           </div>
@@ -214,8 +253,10 @@ export function ObservationsTable({
           <div className="ml-1">
             {renderOrFallback(row.getValue('patientId'), (value) => (
               <HighlightedText
-                text={value}
-                highlight={filterOption === 'patientId' ? filterValue : ''}
+                text={String(value)}
+                highlight={
+                  selectedFilterOption === 'patientId' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -242,8 +283,10 @@ export function ObservationsTable({
           <div className="ml-1">
             {renderOrFallback(row.getValue('createdBy'), (value) => (
               <HighlightedText
-                text={value}
-                highlight={filterOption === 'createdBy' ? filterValue : ''}
+                text={String(value)}
+                highlight={
+                  selectedFilterOption === 'createdBy' ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -274,7 +317,9 @@ export function ObservationsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'createdAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'createdAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -306,7 +351,9 @@ export function ObservationsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'updatedAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'updatedAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -338,7 +385,9 @@ export function ObservationsTable({
               (value) => (
                 <HighlightedText
                   text={value}
-                  highlight={filterOption === 'deletedAt' ? filterValue : ''}
+                  highlight={
+                    selectedFilterOption === 'deletedAt' ? searchValue : ''
+                  }
                 />
               )
             )}
@@ -362,7 +411,7 @@ export function ObservationsTable({
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() =>
-                    router.push(`/observations/${row.getValue('id')}/details`)
+                    router.push(`/observations/${row.original.id}/details`)
                   }
                 >
                   <Eye /> Ver detalhes
@@ -371,9 +420,7 @@ export function ObservationsTable({
                   className="cursor-pointer"
                   onClick={() =>
                     router.push(
-                      `patients/${'patientId'}/observations/${row.getValue(
-                        'id'
-                      )}`
+                      `/patients/${row.original.patientId}/observations/${row.original.id}`
                     )
                   }
                 >
@@ -385,7 +432,7 @@ export function ObservationsTable({
                   description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
                   cancelAction={{ action: () => {} }}
                   continueAction={{
-                    action: handleDelete,
+                    action: () => handleDelete(String(row.original.id)),
                   }}
                 >
                   <DropdownMenuItem
@@ -402,11 +449,11 @@ export function ObservationsTable({
         },
       },
     ];
-  }, [columnFilters, filterOption, handleDelete, router]);
+  }, [selectedFilterOption, searchValue, router, handleDelete]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data,
+    data: observations,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -416,32 +463,36 @@ export function ObservationsTable({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onPaginationChange: setPagination,
+    manualPagination: true,
+    pageCount: observationList?.success
+      ? Math.ceil(observationList.data.total / pagination.pageSize)
+      : -1,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-    },
-    initialState: {
-      pagination: {
-        pageSize,
-      },
+      pagination,
     },
   });
 
-  const hasRows = table.getRowModel().rows?.length;
+  if (!mounted) return null;
 
   function exportData() {
     const rows = table.getFilteredRowModel().rows.map((row) => row.original);
-    exportToCsv(rows, 'data-table-export');
+    exportToCsv(rows, 'observations-export');
   }
 
   return (
     <div className="grid grid-cols-1 mx-auto w-full">
       <AppTableToolbar
         table={table}
-        filterOption={filterOption}
-        setFilterOption={(value: string) => setFilterOption(value as Column)}
+        selectedFilterOption={selectedFilterOption}
+        setSelectedFilterOption={(value: string) =>
+          setSelectedFilterOption(value as Column)
+        }
+        availableFilterOptions={FILTERABLE_COLUMNS}
         showColumnToggleButton={showColumnToggleButton}
         showFilterInput={showFilterInput}
         showPrintButton={showPrintButton}
@@ -451,7 +502,7 @@ export function ObservationsTable({
 
       <AppTable table={table} />
 
-      {hasRows ? (
+      {observations.length > 0 ? (
         <AppTablePagination
           table={table}
           showPaginationInput={showPaginationInput}

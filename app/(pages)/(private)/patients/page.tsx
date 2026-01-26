@@ -3,17 +3,12 @@ import { Metadata } from 'next';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { PatientsTable } from '@/app/components/features/patients/PatientsTable';
-import { mockPatients } from '@/lib/mock.utils';
-import { Patient } from '@prisma/client';
 
 export const metadata: Metadata = {
   title: 'Lista de pacientes | SIMCASI',
   description:
     'Visualize todos os pacientes cadastrados, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todos os pacientes do SIMCASI.',
 };
-
-// TODO: Replace this mock data with the actual list of patients.
-export const data: Patient[] = mockPatients;
 
 export default function PatientsPage() {
   return (
@@ -23,7 +18,7 @@ export default function PatientsPage() {
         title="Lista de pacientes"
         description="Visualize todos os pacientes cadastrados, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todos os pacientes do SIMCASI."
       />
-      <PatientsTable data={data} />
+      <PatientsTable />
     </div>
   );
 }

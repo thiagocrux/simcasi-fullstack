@@ -1,11 +1,17 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+import {
+  deleteNotification,
+  getNotification,
+} from '@/app/actions/notification.actions';
 import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
-import { mockNotifications } from '@/lib/mock.utils';
+import { Notification } from '@/core/domain/entities/notification.entity';
+import { ActionResponse } from '@/lib/actions.utils';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Detalhes da notificação | SIMCASI',
@@ -22,10 +28,14 @@ export default async function NotificationDetailsPage({
 }: NotificationDetailsPageProps) {
   const { notificationId } = await params;
 
-  // --- TODO: Replace the logic below with the actual action call
-  const notification = mockNotifications.find(
-    (notification) => notification.id === notificationId
-  );
+  const response: ActionResponse<Notification> =
+    await getNotification(notificationId);
+
+  if (!response.success || !response.data) {
+    notFound();
+  }
+
+  const notification = response.data;
 
   const data = [
     {
@@ -46,7 +56,7 @@ export default async function NotificationDetailsPage({
 
   async function handleDelete() {
     'use server';
-    console.log('handleDelete called!');
+    deleteNotification(notificationId);
   }
 
   return (

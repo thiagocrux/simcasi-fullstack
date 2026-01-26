@@ -45,6 +45,7 @@ export function DetailsPageActions({
           size="sm"
           variant="destructive"
           className="cursor-pointer select-none"
+          onClick={deleteAction.action}
         >
           <Trash2 />
           {deleteAction.label && <span>{deleteAction.label}</span>}

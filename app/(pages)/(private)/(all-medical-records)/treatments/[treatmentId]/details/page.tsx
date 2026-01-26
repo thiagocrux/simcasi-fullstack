@@ -1,11 +1,14 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+import { deleteTreatment, getTreatment } from '@/app/actions/treatment.actions';
 import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
-import { mockTreatments } from '@/lib/mock.utils';
+import { Treatment } from '@/core/domain/entities/treatment.entity';
+import { ActionResponse } from '@/lib/actions.utils';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Detalhes do tratamento | SIMCASI',
@@ -22,10 +25,13 @@ export default async function TreatmentDetailsPage({
 }: TreatmentDetailsPageProps) {
   const { treatmentId } = await params;
 
-  // --- TODO: Replace the logic below with the actual action call
-  const treatment = mockTreatments.find(
-    (treatment) => treatment.id === treatmentId
-  );
+  const response: ActionResponse<Treatment> = await getTreatment(treatmentId);
+
+  if (!response.success || !response.data) {
+    notFound();
+  }
+
+  const treatment = response.data;
 
   const data = [
     {
@@ -35,7 +41,9 @@ export default async function TreatmentDetailsPage({
         { label: 'Unidade de saúde', value: treatment?.healthCenter },
         {
           label: 'Data de início',
-          value: Intl.DateTimeFormat('pt-BR').format(treatment?.startDate),
+          value: treatment?.startDate
+            ? Intl.DateTimeFormat('pt-BR').format(new Date(treatment.startDate))
+            : '-',
         },
         { label: 'Dosagem', value: treatment?.dosage },
       ],
@@ -59,7 +67,7 @@ export default async function TreatmentDetailsPage({
 
   async function handleDelete() {
     'use server';
-    console.log('handleDelete called!');
+    deleteTreatment(treatmentId);
   }
 
   return (
