@@ -1,3 +1,5 @@
+import { useCallback, useMemo } from 'react';
+
 import { useQuery } from '@tanstack/react-query';
 
 import { findRoles } from '@/app/actions/role.actions';
@@ -10,18 +12,33 @@ export function useRoles() {
     staleTime: 1000 * 60 * 60,
   });
 
-  const roles = response?.success ? response.data.items : [];
+  const roles = useMemo(
+    () => (response?.success ? response.data.items : []),
+    [response]
+  );
 
-  const getRoleLabel = (roleId: string | null): string | null => {
-    if (!roleId) {
-      return null;
-    }
+  const getRoleLabel = useCallback(
+    (roleId: string | null): string | null => {
+      if (!roleId) {
+        return null;
+      }
 
-    const role = roles.filter((role) => role.id === roleId);
-    return ROLE_OPTIONS.filter(
-      (roleOption) => roleOption.value === role[0].code
-    )[0].label;
-  };
+      if (isLoadingRoles) {
+        return 'Carregando...';
+      }
+
+      const role = roles.find((role) => role.id === roleId);
+      if (!role) {
+        return null;
+      }
+
+      const roleOption = ROLE_OPTIONS.find(
+        (roleOption) => roleOption.value === role.code
+      );
+      return roleOption ? roleOption.label : 'Desconhecido';
+    },
+    [roles, isLoadingRoles]
+  );
 
   return { roles, getRoleLabel, isLoadingRoles };
 }
