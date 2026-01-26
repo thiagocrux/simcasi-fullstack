@@ -6,6 +6,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import Link from 'next/link';
 import { AppDialog } from '../common/AppDialog';
 import { GitHubIcon, LinkedInIcon } from '../common/BrandIcons';
+import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 
 /**
@@ -21,9 +22,11 @@ export function AppFooter() {
   }, []);
 
   return (
-    <footer className="flex justify-between p-6 text-muted-foreground text-xs">
-      <p>Versão {SYSTEM_CONSTANTS.VERSION}</p>
-      <p>{SYSTEM_CONSTANTS.COPYRIGHT}</p>
+    <footer className="flex xs:flex-row flex-col xs:justify-between items-center gap-2 p-6 text-muted-foreground text-xs text-center">
+      <p className="hidden xs:block select-none">v{SYSTEM_CONSTANTS.VERSION}</p>
+      <p className="hidden xs:block select-none">
+        {SYSTEM_CONSTANTS.COPYRIGHT}
+      </p>
       {isMounted ? (
         <AppDialog
           isOpen={isAboutModalOpen}
@@ -68,16 +71,19 @@ export function AppFooter() {
             </div>
           }
         >
-          <p
-            className="hover:text-foreground text-xs cursor-pointer"
+          <Button
+            variant="link"
+            className="hover:bg-transparent! px-0 text-muted-foreground hover:text-foreground text-xs cursor-pointer"
             onClick={() => setIsAboutModalOpen(true)}
           >
             Sobre o sistema
-          </p>
+          </Button>
         </AppDialog>
-      ) : (
-        <p className="text-xs">Sobre o sistema</p>
-      )}
+      ) : null}
+      <p className="xs:hidden block select-none">v{SYSTEM_CONSTANTS.VERSION}</p>
+      <p className="xs:hidden block select-none">
+        {SYSTEM_CONSTANTS.COPYRIGHT}
+      </p>
     </footer>
   );
 }
