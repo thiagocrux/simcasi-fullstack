@@ -5,6 +5,7 @@ import { ThemeProvider, useTheme } from 'next-themes';
 import { Toaster } from 'sonner';
 
 import StoreProvider from '@/stores/store.provider';
+import { useState } from 'react';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -26,7 +27,7 @@ function ToasterWithTheme() {
  * Global providers for the application.
  */
 export function Providers({ children }: ProvidersProps) {
-  const queryClient = new QueryClient();
+  const [queryClient] = useState(() => new QueryClient());
 
   return (
     <StoreProvider>

@@ -166,6 +166,12 @@ function Sidebar({
   collapsible?: 'offcanvas' | 'icon' | 'none';
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    const animationFrame = requestAnimationFrame(() => setIsMounted(true));
+    return () => cancelAnimationFrame(animationFrame);
+  }, []);
 
   if (collapsible === 'none') {
     return (
@@ -182,7 +188,7 @@ function Sidebar({
     );
   }
 
-  if (isMobile) {
+  if (isMobile && isMounted) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
         <SheetContent
