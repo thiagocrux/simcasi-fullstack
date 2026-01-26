@@ -21,8 +21,10 @@ export const GET = withAuthentication(['read:session'], async (request) => {
   const result = await findSessionsUseCase.execute({
     skip: (page - 1) * limit,
     take: limit,
-    userId,
+    orderBy: searchParams.get('orderBy') || undefined,
+    orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
     includeDeleted: searchParams.get('includeDeleted') === 'true',
+    userId,
   });
 
   return NextResponse.json(result);

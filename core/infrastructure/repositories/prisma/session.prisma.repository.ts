@@ -28,12 +28,16 @@ export class PrismaSessionRepository implements SessionRepository {
   async findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
-    userId?: string;
     includeDeleted?: boolean;
+    userId?: string;
   }): Promise<{ items: Session[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
+    const orderBy = params?.orderBy;
+    const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
     const userId = params?.userId;
     const includeDeleted = params?.includeDeleted || false;
@@ -55,7 +59,7 @@ export class PrismaSessionRepository implements SessionRepository {
         where,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { createdAt: 'desc' },
       }),
       prisma.session.count({ where }),
     ]);

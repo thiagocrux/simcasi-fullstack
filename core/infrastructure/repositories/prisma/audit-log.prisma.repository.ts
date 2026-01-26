@@ -25,6 +25,8 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
   async findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
     userId?: string;
     action?: string;
@@ -33,6 +35,8 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
   }): Promise<{ items: AuditLog[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
+    const orderBy = params?.orderBy;
+    const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
     const userId = params?.userId;
     const action = params?.action;
@@ -60,7 +64,7 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
         where,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { createdAt: 'desc' },
       }),
       prisma.auditLog.count({ where }),
     ]);

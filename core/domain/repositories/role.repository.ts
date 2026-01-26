@@ -22,6 +22,8 @@ export interface RoleRepository {
   findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Role[]; total: number }>;

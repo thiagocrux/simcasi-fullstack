@@ -16,6 +16,8 @@ export interface SessionRepository {
   findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
     userId?: string;
     includeDeleted?: boolean;

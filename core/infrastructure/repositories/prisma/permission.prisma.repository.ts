@@ -86,11 +86,15 @@ export class PrismaPermissionRepository implements PermissionRepository {
   async findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Permission[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
+    const orderBy = params?.orderBy;
+    const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
     const includeDeleted = params?.includeDeleted || false;
 
@@ -107,7 +111,7 @@ export class PrismaPermissionRepository implements PermissionRepository {
         where,
         skip,
         take,
-        orderBy: { code: 'asc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { code: 'asc' },
       }),
       prisma.permission.count({ where }),
     ]);

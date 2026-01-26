@@ -36,6 +36,8 @@ export interface PermissionRepository {
   findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Permission[]; total: number }>;

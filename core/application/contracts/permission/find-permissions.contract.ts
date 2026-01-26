@@ -5,6 +5,8 @@ export interface FindPermissionsInput {
   take?: number;
   search?: string;
   includeDeleted?: boolean;
+  orderBy?: string;
+  orderDir?: 'asc' | 'desc';
 }
 
 export interface FindPermissionsOutput {

@@ -22,6 +22,8 @@ export interface AuditLogRepository {
     action?: string;
     entityName?: string;
     entityId?: string;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
   }): Promise<{ items: AuditLog[]; total: number }>;
 
   /**

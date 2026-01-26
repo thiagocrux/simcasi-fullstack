@@ -23,6 +23,8 @@ export const GET = withAuthentication(['read:role'], async (request) => {
   const result = await useCase.execute({
     skip: (page - 1) * limit,
     take: limit,
+    orderBy: searchParams.get('orderBy') || undefined,
+    orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
     search: searchParams.get('search') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
   });

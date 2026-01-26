@@ -4,6 +4,8 @@ export interface FindSessionsInput {
   search?: string;
   userId?: string;
   includeDeleted?: boolean;
+  orderBy?: string;
+  orderDir?: 'asc' | 'desc';
 }
 
 export interface FindSessionsOutput {

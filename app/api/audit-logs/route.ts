@@ -20,6 +20,8 @@ export const GET = withAuthentication(['read:audit-log'], async (request) => {
   const result = await useCase.execute({
     skip: (page - 1) * limit,
     take: limit,
+    orderBy: searchParams.get('orderBy') || undefined,
+    orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
     search: searchParams.get('search') || undefined,
     userId: searchParams.get('userId') || undefined,
     action: searchParams.get('action') || undefined,

@@ -21,6 +21,8 @@ export class FindSessionsUseCase implements UseCase<
       search: input.search,
       userId: input.userId,
       includeDeleted: input.includeDeleted,
+      orderBy: input.orderBy,
+      orderDir: input.orderDir,
     });
 
     return {

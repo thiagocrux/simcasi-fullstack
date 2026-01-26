@@ -8,6 +8,8 @@ export interface FindAuditLogsInput {
   action?: string;
   entityName?: string;
   entityId?: string;
+  orderBy?: string;
+  orderDir?: 'asc' | 'desc';
 }
 
 export interface FindAuditLogsOutput {
