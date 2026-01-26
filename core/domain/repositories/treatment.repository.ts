@@ -16,9 +16,11 @@ export interface TreatmentRepository {
   findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
-    patientId?: string;
     includeDeleted?: boolean;
+    patientId?: string;
   }): Promise<{ items: Treatment[]; total: number }>;
 
   /**

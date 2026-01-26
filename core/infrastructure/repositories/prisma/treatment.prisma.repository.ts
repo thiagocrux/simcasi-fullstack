@@ -31,15 +31,19 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
   async findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
-    patientId?: string;
     includeDeleted?: boolean;
+    patientId?: string;
   }): Promise<{ items: Treatment[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
     const search = params?.search;
     const patientId = params?.patientId;
     const includeDeleted = params?.includeDeleted || false;
+    const orderBy = params?.orderBy;
+    const orderDir = params?.orderDir || 'asc';
 
     const where: Prisma.TreatmentWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
@@ -61,7 +65,7 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
         where,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { createdAt: 'desc' },
       }),
       prisma.treatment.count({ where }),
     ]);

@@ -25,9 +25,11 @@ export const GET = withAuthentication(['read:exam'], async (request) => {
   const result = await findExamsUseCase.execute({
     skip: (page - 1) * limit,
     take: limit,
+    orderBy: searchParams.get('orderBy') || undefined,
+    orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
     search,
-    patientId,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
+    patientId,
   });
 
   return NextResponse.json(result);

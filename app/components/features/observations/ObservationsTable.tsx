@@ -6,7 +6,6 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
@@ -118,12 +117,14 @@ export function ObservationsTable({
   }, [searchValue]);
 
   const { data: observationList } = useQuery({
-    queryKey: ['find-observations', pagination, searchValue, mounted],
+    queryKey: ['find-observations', pagination, searchValue, sorting, mounted],
     queryFn: async () => {
       if (!mounted) return { success: true, data: { items: [], total: 0 } };
       return await findObservations({
         skip: pagination.pageIndex * pagination.pageSize,
         take: pagination.pageSize,
+        orderBy: sorting[0]?.id,
+        orderDir: sorting[0]?.desc ? 'desc' : 'asc',
         search: searchValue,
         includeDeleted: false,
       });
@@ -459,12 +460,12 @@ export function ObservationsTable({
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
     manualPagination: true,
+    manualSorting: true,
     pageCount: observationList?.success
       ? Math.ceil(observationList.data.total / pagination.pageSize)
       : -1,

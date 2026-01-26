@@ -28,15 +28,19 @@ export class PrismaExamRepository implements ExamRepository {
   async findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
-    patientId?: string;
     includeDeleted?: boolean;
+    patientId?: string;
   }): Promise<{ items: Exam[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
     const search = params?.search;
     const patientId = params?.patientId;
     const includeDeleted = params?.includeDeleted || false;
+    const orderBy = params?.orderBy;
+    const orderDir = params?.orderDir || 'asc';
 
     const where: Prisma.ExamWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
@@ -60,7 +64,7 @@ export class PrismaExamRepository implements ExamRepository {
         where,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { createdAt: 'desc' },
       }),
       prisma.exam.count({ where }),
     ]);

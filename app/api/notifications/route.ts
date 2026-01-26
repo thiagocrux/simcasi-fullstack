@@ -26,9 +26,11 @@ export const GET = withAuthentication(
     const result = await useCase.execute({
       skip: (page - 1) * limit,
       take: limit,
+      orderBy: searchParams.get('orderBy') || undefined,
+      orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'asc',
       search: searchParams.get('search') || undefined,
-      patientId: searchParams.get('patientId') || undefined,
       includeDeleted: searchParams.get('includeDeleted') === 'true',
+      patientId: searchParams.get('patientId') || undefined,
     });
 
     return NextResponse.json(result);

@@ -6,7 +6,6 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
@@ -132,12 +131,14 @@ export function TreatmentsTable({
   }, [searchValue]);
 
   const { data: treatmentList } = useQuery({
-    queryKey: ['find-treatments', pagination, searchValue, mounted],
+    queryKey: ['find-treatments', pagination, searchValue, sorting, mounted],
     queryFn: async () => {
       if (!mounted) return { success: true, data: { items: [], total: 0 } };
       return await findTreatments({
         skip: pagination.pageIndex * pagination.pageSize,
         take: pagination.pageSize,
+        orderBy: sorting[0]?.id,
+        orderDir: sorting[0]?.desc ? 'desc' : 'asc',
         search: searchValue,
         includeDeleted: false,
       });
@@ -597,12 +598,12 @@ export function TreatmentsTable({
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
     manualPagination: true,
+    manualSorting: true,
     pageCount: treatmentList?.success
       ? Math.ceil(treatmentList.data.total / pagination.pageSize)
       : -1,

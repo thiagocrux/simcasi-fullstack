@@ -6,7 +6,6 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
@@ -137,12 +136,14 @@ export function ExamsTable({
   }, [searchValue]);
 
   const { data: examList } = useQuery({
-    queryKey: ['find-exams', pagination, searchValue, mounted],
+    queryKey: ['find-exams', pagination, searchValue, sorting, mounted],
     queryFn: async () => {
       if (!mounted) return { success: true, data: { items: [], total: 0 } };
       return await findExams({
         skip: pagination.pageIndex * pagination.pageSize,
         take: pagination.pageSize,
+        orderBy: sorting[0]?.id,
+        orderDir: sorting[0]?.desc ? 'desc' : 'asc',
         search: searchValue,
         includeDeleted: false,
       });
@@ -765,12 +766,12 @@ export function ExamsTable({
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
     manualPagination: true,
+    manualSorting: true,
     pageCount: examList?.success
       ? Math.ceil(examList.data.total / pagination.pageSize)
       : -1,

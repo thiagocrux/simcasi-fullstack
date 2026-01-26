@@ -10,6 +10,8 @@ export const IdSchema = z.uuid(messages.INVALID_UUID);
 export const QuerySchema = z.object({
   skip: z.coerce.number().min(0).optional().default(0),
   take: z.coerce.number().min(1).max(100).optional().default(10),
+  orderBy: z.string().optional(),
+  orderDir: z.enum(['asc', 'desc']).optional().default('asc'),
   search: z.string().optional(),
   includeDeleted: z.coerce.boolean().optional().default(false),
 });

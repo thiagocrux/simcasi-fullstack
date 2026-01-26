@@ -6,7 +6,6 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
@@ -118,12 +117,14 @@ export function NotificationsTable({
   }, [searchValue]);
 
   const { data: notificationList } = useQuery({
-    queryKey: ['find-notifications', pagination, searchValue, mounted],
+    queryKey: ['find-notifications', pagination, searchValue, sorting, mounted],
     queryFn: async () => {
       if (!mounted) return { success: true, data: { items: [], total: 0 } };
       return await findNotifications({
         skip: pagination.pageIndex * pagination.pageSize,
         take: pagination.pageSize,
+        orderBy: sorting[0]?.id,
+        orderDir: sorting[0]?.desc ? 'desc' : 'asc',
         search: searchValue,
         includeDeleted: false,
       });
@@ -457,12 +458,12 @@ export function NotificationsTable({
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
     manualPagination: true,
+    manualSorting: true,
     pageCount: notificationList?.success
       ? Math.ceil(notificationList.data.total / pagination.pageSize)
       : -1,

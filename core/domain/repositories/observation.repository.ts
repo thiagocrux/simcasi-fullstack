@@ -16,9 +16,11 @@ export interface ObservationRepository {
   findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
-    patientId?: string;
     includeDeleted?: boolean;
+    patientId?: string;
   }): Promise<{ items: Observation[]; total: number }>;
 
   /**
