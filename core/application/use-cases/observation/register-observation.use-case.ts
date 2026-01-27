@@ -1,9 +1,9 @@
 import { observationSchema } from '@/core/application/validation/schemas/observation.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterObservationInput,
   RegisterObservationOutput,
@@ -49,6 +49,7 @@ export class RegisterObservationUseCase implements UseCase<
     const observation = await this.observationRepository.create({
       ...observationData,
       createdBy: userId || 'SYSTEM',
+      updatedBy: null,
     });
 
     // 4. Create audit log.

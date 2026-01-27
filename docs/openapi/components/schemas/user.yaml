@@ -1,6 +1,7 @@
 User:
   allOf:
     - $ref: './commons.yaml#/BaseEntity'
+    - $ref: './commons.yaml#/AuthorshipEntity'
     - type: object
       properties:
         name:

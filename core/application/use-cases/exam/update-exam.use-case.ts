@@ -1,8 +1,8 @@
 import { examSchema } from '@/core/application/validation/schemas/exam.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   UpdateExamInput,
   UpdateExamOutput,
@@ -42,6 +42,7 @@ export class UpdateExamUseCase implements UseCase<
     // 3. Update the exam.
     const updatedExam = await this.examRepository.update(id, {
       ...validation.data,
+      updatedBy: userId || 'SYSTEM',
       treponemalTestDate: validation.data.treponemalTestDate
         ? new Date(validation.data.treponemalTestDate)
         : undefined,

@@ -703,6 +703,26 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created after this date."
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created before this date."
           }
         ],
         "responses": {
@@ -741,6 +761,22 @@
                                 "format": "date-time",
                                 "nullable": true,
                                 "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "createdBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "ID of the user who created this record."
+                              },
+                              "updatedBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "nullable": true,
+                                "description": "ID of the user who last updated this record."
                               }
                             }
                           },
@@ -998,6 +1034,22 @@
                           "format": "date-time",
                           "nullable": true,
                           "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
                         }
                       }
                     },
@@ -1343,6 +1395,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "name": {
                           "type": "string",
                           "description": "User's full name.",
@@ -1635,6 +1703,22 @@
                           "format": "date-time",
                           "nullable": true,
                           "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
                         }
                       }
                     },
@@ -2232,6 +2316,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "name": {
                           "type": "string",
                           "description": "User's full name.",
@@ -2464,6 +2564,26 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created after this date."
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created before this date."
           }
         ],
         "responses": {
@@ -2502,6 +2622,22 @@
                                 "format": "date-time",
                                 "nullable": true,
                                 "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "createdBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "ID of the user who created this record."
+                              },
+                              "updatedBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "nullable": true,
+                                "description": "ID of the user who last updated this record."
                               }
                             }
                           },
@@ -2622,11 +2758,6 @@
                                 "type": "string",
                                 "nullable": true,
                                 "description": "Additional address details (apartment, block, etc.)."
-                              },
-                              "createdBy": {
-                                "type": "string",
-                                "format": "uuid",
-                                "description": "ID of the user who registered this patient."
                               }
                             }
                           }
@@ -2982,6 +3113,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "name": {
                           "type": "string",
                           "description": "Full legal name of the patient.",
@@ -3096,11 +3243,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Additional address details (apartment, block, etc.)."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who registered this patient."
                         }
                       }
                     }
@@ -3374,6 +3516,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "name": {
                           "type": "string",
                           "description": "Full legal name of the patient.",
@@ -3488,11 +3646,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Additional address details (apartment, block, etc.)."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who registered this patient."
                         }
                       }
                     }
@@ -3848,6 +4001,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "name": {
                           "type": "string",
                           "description": "Full legal name of the patient.",
@@ -3962,11 +4131,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Additional address details (apartment, block, etc.)."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who registered this patient."
                         }
                       }
                     }
@@ -4542,6 +4706,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "name": {
                           "type": "string",
                           "description": "Full legal name of the patient.",
@@ -4656,11 +4836,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Additional address details (apartment, block, etc.)."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who registered this patient."
                         }
                       }
                     }
@@ -4877,6 +5052,26 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created after this date."
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created before this date."
           }
         ],
         "responses": {
@@ -4915,6 +5110,22 @@
                                 "format": "date-time",
                                 "nullable": true,
                                 "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "createdBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "ID of the user who created this record."
+                              },
+                              "updatedBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "nullable": true,
+                                "description": "ID of the user who last updated this record."
                               }
                             }
                           },
@@ -5152,6 +5363,22 @@
                           "format": "date-time",
                           "nullable": true,
                           "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
                         }
                       }
                     },
@@ -5485,6 +5712,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "code": {
                           "type": "string",
                           "description": "Unique identifier code for the role (e.g., admin, nurse).",
@@ -5766,6 +6009,22 @@
                           "format": "date-time",
                           "nullable": true,
                           "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
                         }
                       }
                     },
@@ -6351,6 +6610,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "code": {
                           "type": "string",
                           "description": "Unique identifier code for the role (e.g., admin, nurse).",
@@ -6571,6 +6846,26 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created after this date."
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created before this date."
           }
         ],
         "responses": {
@@ -6609,6 +6904,22 @@
                                 "format": "date-time",
                                 "nullable": true,
                                 "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "createdBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "ID of the user who created this record."
+                              },
+                              "updatedBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "nullable": true,
+                                "description": "ID of the user who last updated this record."
                               }
                             }
                           },
@@ -6845,6 +7156,22 @@
                           "format": "date-time",
                           "nullable": true,
                           "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
                         }
                       }
                     },
@@ -7122,6 +7449,22 @@
                           "format": "date-time",
                           "nullable": true,
                           "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
                         }
                       }
                     },
@@ -7408,6 +7751,22 @@
                           "format": "date-time",
                           "nullable": true,
                           "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
                         }
                       }
                     },
@@ -7993,6 +8352,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "code": {
                           "type": "string",
                           "description": "Unique identifier code for the permission (e.g., read:patient).",
@@ -8223,6 +8598,26 @@
               "format": "uuid"
             },
             "description": "Filter exams by a specific patient."
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created after this date."
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created before this date."
           }
         ],
         "responses": {
@@ -8261,6 +8656,22 @@
                                 "format": "date-time",
                                 "nullable": true,
                                 "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "createdBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "ID of the user who created this record."
+                              },
+                              "updatedBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "nullable": true,
+                                "description": "ID of the user who last updated this record."
                               }
                             }
                           },
@@ -8320,11 +8731,6 @@
                               "referenceObservations": {
                                 "type": "string",
                                 "description": "Clinical and reference observations regarding the exam."
-                              },
-                              "createdBy": {
-                                "type": "string",
-                                "format": "uuid",
-                                "description": "ID of the user who created this record."
                               }
                             }
                           }
@@ -8598,6 +9004,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -8651,11 +9073,6 @@
                         "referenceObservations": {
                           "type": "string",
                           "description": "Clinical and reference observations regarding the exam."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -8929,6 +9346,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -8982,11 +9415,6 @@
                         "referenceObservations": {
                           "type": "string",
                           "description": "Clinical and reference observations regarding the exam."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -9291,6 +9719,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -9344,11 +9788,6 @@
                         "referenceObservations": {
                           "type": "string",
                           "description": "Clinical and reference observations regarding the exam."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -9874,6 +10313,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -9927,11 +10382,6 @@
                         "referenceObservations": {
                           "type": "string",
                           "description": "Clinical and reference observations regarding the exam."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -10158,6 +10608,26 @@
               "format": "uuid"
             },
             "description": "Filter treatments by a specific patient."
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created after this date."
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created before this date."
           }
         ],
         "responses": {
@@ -10202,6 +10672,22 @@
                           {
                             "type": "object",
                             "properties": {
+                              "createdBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "ID of the user who created this record."
+                              },
+                              "updatedBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "nullable": true,
+                                "description": "ID of the user who last updated this record."
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
                               "patientId": {
                                 "type": "string",
                                 "format": "uuid",
@@ -10235,11 +10721,6 @@
                                 "type": "string",
                                 "nullable": true,
                                 "description": "Details about partner notification or treatment."
-                              },
-                              "createdBy": {
-                                "type": "string",
-                                "format": "uuid",
-                                "description": "ID of the user who created this record."
                               }
                             }
                           }
@@ -10491,6 +10972,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -10524,11 +11021,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Details about partner notification or treatment."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -10802,6 +11294,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -10835,11 +11343,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Details about partner notification or treatment."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -11129,6 +11632,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -11162,11 +11681,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Details about partner notification or treatment."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -11692,6 +12206,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -11725,11 +12255,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Details about partner notification or treatment."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -11956,6 +12481,26 @@
               "format": "uuid"
             },
             "description": "Filter notifications by a specific patient."
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created after this date."
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created before this date."
           }
         ],
         "responses": {
@@ -12000,6 +12545,22 @@
                           {
                             "type": "object",
                             "properties": {
+                              "createdBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "ID of the user who created this record."
+                              },
+                              "updatedBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "nullable": true,
+                                "description": "ID of the user who last updated this record."
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
                               "patientId": {
                                 "type": "string",
                                 "format": "uuid",
@@ -12014,11 +12575,6 @@
                                 "type": "string",
                                 "nullable": true,
                                 "description": "Additional case notes for the official report."
-                              },
-                              "createdBy": {
-                                "type": "string",
-                                "format": "uuid",
-                                "description": "ID of the user who created this record."
                               }
                             }
                           }
@@ -12249,6 +12805,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -12263,11 +12835,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Additional case notes for the official report."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -12541,6 +13108,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -12555,11 +13138,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Additional case notes for the official report."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -12834,6 +13412,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -12848,11 +13442,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Additional case notes for the official report."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -13378,6 +13967,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -13392,11 +13997,6 @@
                           "type": "string",
                           "nullable": true,
                           "description": "Additional case notes for the official report."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -13623,6 +14223,26 @@
               "format": "uuid"
             },
             "description": "Filter observations by a specific patient."
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created after this date."
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created before this date."
           }
         ],
         "responses": {
@@ -13667,6 +14287,22 @@
                           {
                             "type": "object",
                             "properties": {
+                              "createdBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "description": "ID of the user who created this record."
+                              },
+                              "updatedBy": {
+                                "type": "string",
+                                "format": "uuid",
+                                "nullable": true,
+                                "description": "ID of the user who last updated this record."
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
                               "patientId": {
                                 "type": "string",
                                 "format": "uuid",
@@ -13679,11 +14315,6 @@
                               "observations": {
                                 "type": "string",
                                 "description": "Clinical observations or case notes."
-                              },
-                              "createdBy": {
-                                "type": "string",
-                                "format": "uuid",
-                                "description": "ID of the user who created this record."
                               }
                             }
                           }
@@ -13914,6 +14545,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -13926,11 +14573,6 @@
                         "observations": {
                           "type": "string",
                           "description": "Clinical observations or case notes."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -14204,6 +14846,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -14216,11 +14874,6 @@
                         "observations": {
                           "type": "string",
                           "description": "Clinical observations or case notes."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -14495,6 +15148,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -14507,11 +15176,6 @@
                         "observations": {
                           "type": "string",
                           "description": "Clinical observations or case notes."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -15037,6 +15701,22 @@
                     {
                       "type": "object",
                       "properties": {
+                        "createdBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "ID of the user who created this record."
+                        },
+                        "updatedBy": {
+                          "type": "string",
+                          "format": "uuid",
+                          "nullable": true,
+                          "description": "ID of the user who last updated this record."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "patientId": {
                           "type": "string",
                           "format": "uuid",
@@ -15049,11 +15729,6 @@
                         "observations": {
                           "type": "string",
                           "description": "Clinical observations or case notes."
-                        },
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
                         }
                       }
                     }
@@ -15308,6 +15983,26 @@
               "format": "uuid"
             },
             "description": "Filter by affected entity ID."
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter logs created after this date."
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter logs created before this date."
           }
         ],
         "responses": {
@@ -15793,6 +16488,26 @@
               "format": "uuid"
             },
             "description": "Filter sessions by a specific user."
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created after this date."
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter records created before this date."
           }
         ],
         "responses": {

@@ -1,8 +1,8 @@
 import { patientSchema } from '@/core/application/validation/schemas/patient.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { ConflictError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterPatientInput,
   RegisterPatientOutput,
@@ -72,6 +72,7 @@ export class RegisterPatientUseCase implements UseCase<
       const patient = await this.patientRepository.update(deletedPatient.id, {
         ...validation.data,
         birthDate: new Date(validation.data.birthDate),
+        updatedBy: userId || 'SYSTEM',
         deletedAt: null,
       });
 

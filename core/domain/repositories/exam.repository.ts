@@ -18,9 +18,11 @@ export interface ExamRepository {
     take?: number;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
+    startDate?: Date;
+    endDate?: Date;
     search?: string;
-    includeDeleted?: boolean;
     patientId?: string;
+    includeDeleted?: boolean;
   }): Promise<{ items: Exam[]; total: number }>;
 
   /**
@@ -51,10 +53,14 @@ export interface ExamRepository {
   /**
    * Restores a single logically deleted exam.
    */
-  restore(id: string): Promise<void>;
+  restore(id: string, updatedBy: string): Promise<void>;
 
   /**
    * Restores exams of a patient deleted since a specific date (cascade restoration).
    */
-  restoreByPatientId(patientId: string, since?: Date): Promise<void>;
+  restoreByPatientId(
+    patientId: string,
+    updatedBy: string,
+    since?: Date
+  ): Promise<void>;
 }

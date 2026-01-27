@@ -5,7 +5,7 @@ import {
   makeFindExamsUseCase,
   makeRegisterExamUseCase,
 } from '@/core/infrastructure/factories/exam.factory';
-import { withAuthentication } from '@/lib/api.utils';
+import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/exams
@@ -30,6 +30,7 @@ export const GET = withAuthentication(['read:exam'], async (request) => {
     search,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
     patientId,
+    ...parseDateFilters(searchParams),
   });
 
   return NextResponse.json(result);

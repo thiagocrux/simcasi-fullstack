@@ -34,6 +34,8 @@ export class PrismaNotificationRepository implements NotificationRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    startDate?: Date;
+    endDate?: Date;
     includeDeleted?: boolean;
     patientId?: string;
   }): Promise<{ items: Notification[]; total: number }> {
@@ -44,10 +46,16 @@ export class PrismaNotificationRepository implements NotificationRepository {
     const includeDeleted = params?.includeDeleted || false;
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
+    const startDate = params?.startDate;
+    const endDate = params?.endDate;
 
     const where: Prisma.NotificationWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
       patientId: patientId,
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
     };
 
     if (search) {
@@ -137,11 +145,17 @@ export class PrismaNotificationRepository implements NotificationRepository {
    * Restores a soft-deleted notification.
    * @param id The notification ID.
    */
-  async restore(id: string): Promise<void> {
+  /**
+   * Restores a soft-deleted notification record.
+   * @param id The notification ID.
+   * @param updatedBy The ID of the user performing the restoration.
+   */
+  async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.notification.update({
       where: { id },
       data: {
         deletedAt: null,
+        updatedBy,
       },
     });
   }
@@ -149,16 +163,22 @@ export class PrismaNotificationRepository implements NotificationRepository {
   /**
    * Restores soft-deleted notifications for a specific patient, deleted after a certain date.
    * @param patientId The patient ID.
-   * @param since The date after which deletions should be restored.
+   * @param updatedBy The ID of the user performing the restoration.
+   * @param since The date after which deletions should be restored (optional).
    */
-  async restoreByPatientId(patientId: string, since: Date): Promise<void> {
+  async restoreByPatientId(
+    patientId: string,
+    updatedBy: string,
+    since?: Date
+  ): Promise<void> {
     await prisma.notification.updateMany({
       where: {
         patientId,
-        deletedAt: { gte: since },
+        deletedAt: since ? { gte: since } : { not: null },
       },
       data: {
         deletedAt: null,
+        updatedBy,
       },
     });
   }

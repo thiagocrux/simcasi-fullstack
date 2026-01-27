@@ -59,6 +59,8 @@ export class RegisterUserUseCase implements UseCase<
     const user = await this.userRepository.create({
       ...userData,
       password: hashedPassword,
+      createdBy: userId || 'SYSTEM',
+      updatedBy: userId || null,
     });
 
     // 6. Create audit log.

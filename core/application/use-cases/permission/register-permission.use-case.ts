@@ -1,8 +1,8 @@
 import { permissionSchema } from '@/core/application/validation/schemas/permission.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { ConflictError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterPermissionInput,
   RegisterPermissionOutput,
@@ -53,6 +53,7 @@ export class RegisterPermissionUseCase implements UseCase<
         {
           ...validation.data,
           deletedAt: null,
+          updatedBy: userId || 'SYSTEM',
         }
       );
 
@@ -71,7 +72,11 @@ export class RegisterPermissionUseCase implements UseCase<
     }
 
     // 4. If no record was found, create a brand new permission.
-    const permission = await this.permissionRepository.create(validation.data);
+    const permission = await this.permissionRepository.create({
+      ...validation.data,
+      createdBy: userId || 'SYSTEM',
+      updatedBy: null,
+    });
 
     // 5. Log 'CREATE' action for audit trailing.
     await this.auditLogRepository.create({

@@ -1,6 +1,7 @@
 Observation:
   allOf:
     - $ref: './commons.yaml#/BaseEntity'
+    - $ref: './commons.yaml#/AuthorshipEntity'
     - type: object
       properties:
         patientId:
@@ -13,10 +14,6 @@ Observation:
         observations:
           type: string
           description: Clinical observations or case notes.
-        createdBy:
-          type: string
-          format: uuid
-          description: ID of the user who created this record.
 
 ObservationCreateRequest:
   allOf:

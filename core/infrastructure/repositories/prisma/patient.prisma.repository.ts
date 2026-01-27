@@ -70,6 +70,8 @@ export class PrismaPatientRepository implements PatientRepository {
     skip?: number;
     take?: number;
     search?: string;
+    startDate?: Date;
+    endDate?: Date;
     includeDeleted?: boolean;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
@@ -80,9 +82,15 @@ export class PrismaPatientRepository implements PatientRepository {
     const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
     const includeDeleted = params?.includeDeleted || false;
+    const startDate = params?.startDate;
+    const endDate = params?.endDate;
 
     const where: Prisma.PatientWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
     };
 
     if (search) {
@@ -167,11 +175,12 @@ export class PrismaPatientRepository implements PatientRepository {
    * Restores a soft-deleted patient.
    * @param id The patient ID.
    */
-  async restore(id: string): Promise<void> {
+  async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.patient.update({
       where: { id },
       data: {
         deletedAt: null,
+        updatedBy,
       },
     });
   }

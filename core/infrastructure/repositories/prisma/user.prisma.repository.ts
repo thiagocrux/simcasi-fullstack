@@ -50,6 +50,8 @@ export class PrismaUserRepository implements UserRepository {
     skip?: number;
     take?: number;
     search?: string;
+    startDate?: Date;
+    endDate?: Date;
     roleId?: string;
     includeDeleted?: boolean;
     orderBy?: string;
@@ -62,10 +64,16 @@ export class PrismaUserRepository implements UserRepository {
     const search = params?.search;
     const includeDeleted = params?.includeDeleted || false;
     const roleId = params?.roleId;
+    const startDate = params?.startDate;
+    const endDate = params?.endDate;
 
     const where: Prisma.UserWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
       roleId: roleId,
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
     };
 
     if (search) {
@@ -111,6 +119,7 @@ export class PrismaUserRepository implements UserRepository {
           where: { id: existing.id },
           data: {
             ...data,
+            createdBy: (existing.createdBy as string) || data.createdBy,
             deletedAt: null,
             updatedAt: new Date(),
           },
@@ -163,11 +172,12 @@ export class PrismaUserRepository implements UserRepository {
    * Restores a soft-deleted user.
    * @param id The user ID.
    */
-  async restore(id: string): Promise<void> {
+  async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.user.update({
       where: { id },
       data: {
         deletedAt: null,
+        updatedBy,
       },
     });
   }

@@ -12,6 +12,7 @@ export interface Exam {
   otherNontreponemalTestDate?: Date | null;
   referenceObservations: string;
   createdBy: string;
+  updatedBy?: string | null;
   createdAt: Date;
   updatedAt?: Date | null;
   deletedAt?: Date | null;

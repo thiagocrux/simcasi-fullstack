@@ -32,8 +32,9 @@ export class RestoreUserUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (user.deletedAt) {
-      await this.userRepository.restore(id);
+      await this.userRepository.restore(id, userId || 'SYSTEM');
       user.deletedAt = null;
+      user.updatedBy = userId || 'SYSTEM';
 
       // 3. Create audit log.
       const { password: _, ...newValuesWithoutPassword } = user;

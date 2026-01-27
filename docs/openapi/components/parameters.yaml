@@ -35,3 +35,21 @@ IncludeDeleted:
   schema:
     type: boolean
     default: false
+
+StartDate:
+  name: startDate
+  in: query
+  description: Filter records created after this date (inclusive). Use ISO 8601 date-time format.
+  required: false
+  schema:
+    type: string
+    format: date-time
+
+EndDate:
+  name: endDate
+  in: query
+  description: Filter records created before this date (inclusive). Use ISO 8601 date-time format.
+  required: false
+  schema:
+    type: string
+    format: date-time

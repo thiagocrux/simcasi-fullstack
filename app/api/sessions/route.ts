@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { PAGINATION } from '@/core/domain/constants/pagination.constants';
 import { makeFindSessionsUseCase } from '@/core/infrastructure/factories/session.factory';
-import { withAuthentication } from '@/lib/api.utils';
+import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/sessions
@@ -25,6 +25,7 @@ export const GET = withAuthentication(['read:session'], async (request) => {
     orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
     includeDeleted: searchParams.get('includeDeleted') === 'true',
     userId,
+    ...parseDateFilters(searchParams),
   });
 
   return NextResponse.json(result);

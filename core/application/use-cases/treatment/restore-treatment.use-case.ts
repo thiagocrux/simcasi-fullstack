@@ -30,8 +30,9 @@ export class RestoreTreatmentUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (treatment.deletedAt) {
-      await this.treatmentRepository.restore(id);
+      await this.treatmentRepository.restore(id, userId || 'SYSTEM');
       treatment.deletedAt = null;
+      treatment.updatedBy = userId || 'SYSTEM';
 
       // 3. Create audit log.
       await this.auditLogRepository.create({

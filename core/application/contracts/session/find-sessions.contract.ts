@@ -1,11 +1,13 @@
 export interface FindSessionsInput {
   skip?: number;
   take?: number;
+  orderBy?: string;
+  orderDir?: 'asc' | 'desc';
+  startDate?: Date;
+  endDate?: Date;
   search?: string;
   userId?: string;
   includeDeleted?: boolean;
-  orderBy?: string;
-  orderDir?: 'asc' | 'desc';
 }
 
 export interface FindSessionsOutput {

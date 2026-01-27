@@ -5,7 +5,7 @@ import {
   makeFindRolesUseCase,
   makeRegisterRoleUseCase,
 } from '@/core/infrastructure/factories/role.factory';
-import { withAuthentication } from '@/lib/api.utils';
+import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/roles
@@ -27,6 +27,7 @@ export const GET = withAuthentication(['read:role'], async (request) => {
     orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
     search: searchParams.get('search') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
+    ...parseDateFilters(searchParams),
   });
 
   return NextResponse.json(result);

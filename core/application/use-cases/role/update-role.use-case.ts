@@ -1,4 +1,5 @@
 import { roleSchema } from '@/core/application/validation/schemas/role.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   ConflictError,
   NotFoundError,
@@ -7,7 +8,6 @@ import {
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   UpdateRoleInput,
   UpdateRoleOutput,
@@ -67,7 +67,10 @@ export class UpdateRoleUseCase implements UseCase<
     }
 
     // 5. Update the role.
-    const updatedRole = await this.roleRepository.update(id, validation.data);
+    const updatedRole = await this.roleRepository.update(id, {
+      ...validation.data,
+      updatedBy: userId || 'SYSTEM',
+    });
 
     // 6. Create audit log.
     await this.auditLogRepository.create({

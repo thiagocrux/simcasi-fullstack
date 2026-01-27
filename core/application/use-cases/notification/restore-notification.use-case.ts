@@ -32,7 +32,7 @@ export class RestoreNotificationUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (notification.deletedAt) {
-      await this.notificationRepository.restore(id);
+      await this.notificationRepository.restore(id, userId || 'SYSTEM');
     }
 
     const restoredNotification = (await this.notificationRepository.findById(

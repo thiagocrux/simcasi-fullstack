@@ -1,4 +1,5 @@
 import { patientSchema } from '@/core/application/validation/schemas/patient.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   ConflictError,
   NotFoundError,
@@ -6,7 +7,6 @@ import {
 } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   UpdatePatientInput,
   UpdatePatientOutput,
@@ -58,6 +58,7 @@ export class UpdatePatientUseCase implements UseCase<
     // 4. Delegate update to repository.
     const updated = await this.patientRepository.update(id, {
       ...validation.data,
+      updatedBy: userId || 'SYSTEM',
       birthDate: validation.data.birthDate
         ? new Date(validation.data.birthDate)
         : undefined,

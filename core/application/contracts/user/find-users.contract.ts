@@ -5,9 +5,11 @@ export interface FindUsersInput {
   take?: number;
   orderBy?: string;
   orderDir?: 'asc' | 'desc';
+  startDate?: Date;
+  endDate?: Date;
   search?: string;
-  includeDeleted?: boolean;
   roleId?: string;
+  includeDeleted?: boolean;
 }
 
 export interface FindUsersOutput {

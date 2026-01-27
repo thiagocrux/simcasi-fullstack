@@ -27,6 +27,8 @@ export interface PatientRepository {
     take?: number;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
+    startDate?: Date;
+    endDate?: Date;
     search?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Patient[]; total: number }>;
@@ -54,5 +56,5 @@ export interface PatientRepository {
   /**
    * Restores a logically deleted patient (clears deletedAt).
    */
-  restore(id: string): Promise<void>;
+  restore(id: string, updatedBy: string): Promise<void>;
 }

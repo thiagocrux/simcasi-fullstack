@@ -30,7 +30,7 @@ export class RestoreRoleUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (role.deletedAt) {
-      await this.roleRepository.restore(id);
+      await this.roleRepository.restore(id, userId || 'SYSTEM');
     }
 
     const restoredRole = (await this.roleRepository.findById(

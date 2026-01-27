@@ -32,6 +32,8 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     action?: string;
     entityName?: string;
     entityId?: string;
+    startDate?: Date;
+    endDate?: Date;
   }): Promise<{ items: AuditLog[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
@@ -42,12 +44,18 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     const action = params?.action;
     const entityName = params?.entityName;
     const entityId = params?.entityId;
+    const startDate = params?.startDate;
+    const endDate = params?.endDate;
 
     const where: Prisma.AuditLogWhereInput = {
       userId,
       action,
       entityName,
       entityId,
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
     };
 
     if (search) {

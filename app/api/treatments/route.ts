@@ -5,7 +5,7 @@ import {
   makeFindTreatmentsUseCase,
   makeRegisterTreatmentUseCase,
 } from '@/core/infrastructure/factories/treatment.factory';
-import { withAuthentication } from '@/lib/api.utils';
+import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/treatments
@@ -30,6 +30,7 @@ export const GET = withAuthentication(['read:treatment'], async (request) => {
     search,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
     patientId,
+    ...parseDateFilters(searchParams),
   });
 
   return NextResponse.json(result);

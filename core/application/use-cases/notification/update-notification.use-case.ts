@@ -1,8 +1,8 @@
 import { notificationSchema } from '@/core/application/validation/schemas/notification.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   UpdateNotificationInput,
   UpdateNotificationOutput,
@@ -42,10 +42,10 @@ export class UpdateNotificationUseCase implements UseCase<
     }
 
     // 3. Update the notification.
-    const updatedNotification = await this.notificationRepository.update(
-      id,
-      data
-    );
+    const updatedNotification = await this.notificationRepository.update(id, {
+      ...data,
+      updatedBy: userId || 'SYSTEM',
+    });
 
     // 4. Create audit log.
     await this.auditLogRepository.create({

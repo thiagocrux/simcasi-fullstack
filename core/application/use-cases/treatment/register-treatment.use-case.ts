@@ -1,9 +1,9 @@
 import { treatmentSchema } from '@/core/application/validation/schemas/treatment.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterTreatmentInput,
   RegisterTreatmentOutput,
@@ -50,6 +50,7 @@ export class RegisterTreatmentUseCase implements UseCase<
       ...validation.data,
       startDate: new Date(validation.data.startDate),
       createdBy: userId || 'SYSTEM',
+      updatedBy: null,
     });
 
     // 4. Create audit log.

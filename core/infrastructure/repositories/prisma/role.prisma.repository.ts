@@ -47,6 +47,8 @@ export class PrismaRoleRepository implements RoleRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    startDate?: Date;
+    endDate?: Date;
     includeDeleted?: boolean;
   }): Promise<{ items: Role[]; total: number }> {
     const skip = params?.skip || 0;
@@ -55,9 +57,15 @@ export class PrismaRoleRepository implements RoleRepository {
     const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
     const includeDeleted = params?.includeDeleted || false;
+    const startDate = params?.startDate;
+    const endDate = params?.endDate;
 
     const where: Prisma.RoleWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
     };
 
     if (search) {
@@ -154,14 +162,16 @@ export class PrismaRoleRepository implements RoleRepository {
   }
 
   /**
-   * Restores a soft-deleted role.
+   * Restores a soft-deleted role record.
    * @param id The role ID.
+   * @param updatedBy The ID of the user performing the restoration.
    */
-  async restore(id: string): Promise<void> {
+  async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.role.update({
       where: { id },
       data: {
         deletedAt: null,
+        updatedBy,
       },
     });
   }

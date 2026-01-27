@@ -8,6 +8,7 @@ export interface Treatment {
   observations?: string | null;
   partnerInformation?: string | null;
   createdBy: string;
+  updatedBy?: string | null;
   createdAt: Date;
   updatedAt?: Date | null;
   deletedAt?: Date | null;

@@ -31,6 +31,8 @@ export class PrismaExamRepository implements ExamRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    startDate?: Date;
+    endDate?: Date;
     includeDeleted?: boolean;
     patientId?: string;
   }): Promise<{ items: Exam[]; total: number }> {
@@ -41,10 +43,16 @@ export class PrismaExamRepository implements ExamRepository {
     const includeDeleted = params?.includeDeleted || false;
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
+    const startDate = params?.startDate;
+    const endDate = params?.endDate;
 
     const where: Prisma.ExamWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
       patientId: patientId,
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
     };
 
     if (search) {
@@ -138,12 +146,14 @@ export class PrismaExamRepository implements ExamRepository {
   /**
    * Restores a soft-deleted exam.
    * @param id The exam ID.
+   * @param updatedBy The ID of the user performing the restoration.
    */
-  async restore(id: string): Promise<void> {
+  async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.exam.update({
       where: { id },
       data: {
         deletedAt: null,
+        updatedBy,
       },
     });
   }
@@ -151,16 +161,22 @@ export class PrismaExamRepository implements ExamRepository {
   /**
    * Restores soft-deleted exams for a specific patient, deleted after a certain date.
    * @param patientId The patient ID.
-   * @param since The date after which deletions should be restored.
+   * @param updatedBy The ID of the user performing the restoration.
+   * @param since The date after which deletions should be restored (optional).
    */
-  async restoreByPatientId(patientId: string, since: Date): Promise<void> {
+  async restoreByPatientId(
+    patientId: string,
+    updatedBy: string,
+    since?: Date
+  ): Promise<void> {
     await prisma.exam.updateMany({
       where: {
         patientId,
-        deletedAt: { gte: since },
+        deletedAt: since ? { gte: since } : { not: null },
       },
       data: {
         deletedAt: null,
+        updatedBy,
       },
     });
   }

@@ -5,7 +5,7 @@ import {
   makeFindPatientsUseCase,
   makeRegisterPatientUseCase,
 } from '@/core/infrastructure/factories/patient.factory';
-import { withAuthentication } from '@/lib/api.utils';
+import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/patients
@@ -28,6 +28,7 @@ export const GET = withAuthentication(['read:patient'], async (request) => {
     orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
     search,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
+    ...parseDateFilters(searchParams),
   });
 
   return NextResponse.json(result);

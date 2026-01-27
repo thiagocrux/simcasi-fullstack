@@ -482,6 +482,8 @@ erDiagram
     Role {
         uuid id PK
         string code UK
+        uuid createdBy FK
+        uuid updatedBy FK
         timestamptz createdAt
         timestamptz updatedAt
         timestamptz deletedAt
@@ -490,6 +492,8 @@ erDiagram
     Permission {
         uuid id PK
         string code UK
+        uuid createdBy FK
+        uuid updatedBy FK
         timestamptz createdAt
         timestamptz updatedAt
         timestamptz deletedAt
@@ -506,6 +510,8 @@ erDiagram
         string email UK
         string password
         uuid roleId FK
+        uuid createdBy FK
+        uuid updatedBy FK
         timestamptz createdAt
         timestamptz updatedAt
         timestamptz deletedAt
@@ -538,6 +544,7 @@ erDiagram
         string houseNumber
         string complement
         uuid createdBy FK
+        uuid updatedBy FK
         timestamptz createdAt
         timestamptz updatedAt
         timestamptz deletedAt
@@ -557,6 +564,7 @@ erDiagram
         date otherNontreponemalTestDate
         string referenceObservations
         uuid createdBy FK
+        uuid updatedBy FK
         timestamptz createdAt
         timestamptz updatedAt
         timestamptz deletedAt
@@ -568,6 +576,7 @@ erDiagram
         string sinan
         string observations
         uuid createdBy FK
+        uuid updatedBy FK
         timestamptz createdAt
         timestamptz updatedAt
         timestamptz deletedAt
@@ -579,6 +588,7 @@ erDiagram
         string observations
         boolean hasPartnerBeingTreated
         uuid createdBy FK
+        uuid updatedBy FK
         timestamptz createdAt
         timestamptz updatedAt
         timestamptz deletedAt
@@ -594,6 +604,7 @@ erDiagram
         string observations
         string partnerInformation
         uuid createdBy FK
+        uuid updatedBy FK
         timestamptz createdAt
         timestamptz updatedAt
         timestamptz deletedAt

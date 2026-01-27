@@ -34,6 +34,8 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    startDate?: Date;
+    endDate?: Date;
     includeDeleted?: boolean;
     patientId?: string;
   }): Promise<{ items: Treatment[]; total: number }> {
@@ -44,10 +46,16 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
     const includeDeleted = params?.includeDeleted || false;
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
+    const startDate = params?.startDate;
+    const endDate = params?.endDate;
 
     const where: Prisma.TreatmentWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
       patientId: patientId,
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
     };
 
     if (search) {
@@ -139,12 +147,14 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
   /**
    * Restores a soft-deleted treatment record.
    * @param id The treatment ID.
+   * @param updatedBy The ID of the user performing the restoration.
    */
-  async restore(id: string): Promise<void> {
+  async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.treatment.update({
       where: { id },
       data: {
         deletedAt: null,
+        updatedBy,
       },
     });
   }
@@ -152,16 +162,22 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
   /**
    * Restores soft-deleted treatments for a specific patient, deleted after a certain date.
    * @param patientId The patient ID.
-   * @param since The date after which deletions should be restored.
+   * @param updatedBy The ID of the user performing the restoration.
+   * @param since The date after which deletions should be restored (optional).
    */
-  async restoreByPatientId(patientId: string, since: Date): Promise<void> {
+  async restoreByPatientId(
+    patientId: string,
+    updatedBy: string,
+    since?: Date
+  ): Promise<void> {
     await prisma.treatment.updateMany({
       where: {
         patientId,
-        deletedAt: { gte: since },
+        deletedAt: since ? { gte: since } : { not: null },
       },
       data: {
         deletedAt: null,
+        updatedBy,
       },
     });
   }

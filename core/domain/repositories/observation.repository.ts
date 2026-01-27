@@ -18,9 +18,11 @@ export interface ObservationRepository {
     take?: number;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
+    startDate?: Date;
+    endDate?: Date;
     search?: string;
-    includeDeleted?: boolean;
     patientId?: string;
+    includeDeleted?: boolean;
   }): Promise<{ items: Observation[]; total: number }>;
 
   /**
@@ -51,10 +53,14 @@ export interface ObservationRepository {
   /**
    * Restores a single logically deleted observation.
    */
-  restore(id: string): Promise<void>;
+  restore(id: string, updatedBy: string): Promise<void>;
 
   /**
    * Restores observations of a patient deleted since a specific date (cascade restoration).
    */
-  restoreByPatientId(patientId: string, since?: Date): Promise<void>;
+  restoreByPatientId(
+    patientId: string,
+    updatedBy: string,
+    since?: Date
+  ): Promise<void>;
 }

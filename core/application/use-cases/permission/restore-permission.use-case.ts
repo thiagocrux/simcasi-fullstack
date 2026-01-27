@@ -32,7 +32,7 @@ export class RestorePermissionUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (permission.deletedAt) {
-      await this.permissionRepository.restore(id);
+      await this.permissionRepository.restore(id, userId || 'SYSTEM');
     }
 
     const restoredPermission = (await this.permissionRepository.findById(

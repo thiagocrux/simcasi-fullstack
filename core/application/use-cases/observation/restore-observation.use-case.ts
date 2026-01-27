@@ -32,8 +32,9 @@ export class RestoreObservationUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (observation.deletedAt) {
-      await this.observationRepository.restore(id);
+      await this.observationRepository.restore(id, userId || 'SYSTEM');
       observation.deletedAt = null;
+      observation.updatedBy = userId || 'SYSTEM';
 
       // 3. Create audit log.
       await this.auditLogRepository.create({

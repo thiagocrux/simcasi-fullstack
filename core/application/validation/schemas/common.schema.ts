@@ -14,6 +14,8 @@ export const QuerySchema = z.object({
   orderDir: z.enum(['asc', 'desc']).optional().default('asc'),
   search: z.string().optional(),
   includeDeleted: z.coerce.boolean().optional().default(false),
+  startDate: z.coerce.date().optional(),
+  endDate: z.coerce.date().optional(),
 });
 
 export type QueryInput = z.infer<typeof QuerySchema>;

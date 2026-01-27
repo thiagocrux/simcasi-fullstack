@@ -19,6 +19,8 @@ collection:
           type: string
           format: uuid
         description: Filter observations by a specific patient.
+      - $ref: '../components/parameters.yaml#/StartDate'
+      - $ref: '../components/parameters.yaml#/EndDate'
     responses:
       '200':
         description: Paginated list of observations successfully retrieved (OK).

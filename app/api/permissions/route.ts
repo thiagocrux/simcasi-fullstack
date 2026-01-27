@@ -5,7 +5,7 @@ import {
   makeFindPermissionsUseCase,
   makeRegisterPermissionUseCase,
 } from '@/core/infrastructure/factories/permission.factory';
-import { withAuthentication } from '@/lib/api.utils';
+import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/permissions
@@ -27,6 +27,7 @@ export const GET = withAuthentication(['read:permission'], async (request) => {
     orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
     search: searchParams.get('search') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
+    ...parseDateFilters(searchParams),
   });
 
   return NextResponse.json(result);

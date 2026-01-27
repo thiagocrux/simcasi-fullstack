@@ -5,7 +5,7 @@ import {
   makeFindUsersUseCase,
   makeRegisterUserUseCase,
 } from '@/core/infrastructure/factories/user.factory';
-import { withAuthentication } from '@/lib/api.utils';
+import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/users
@@ -28,6 +28,7 @@ export const GET = withAuthentication(['read:user'], async (request) => {
     search: searchParams.get('search') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
     roleId: searchParams.get('roleId') || undefined,
+    ...parseDateFilters(searchParams),
   });
 
   return NextResponse.json(result);

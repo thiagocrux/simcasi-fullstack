@@ -64,7 +64,7 @@ export class UpdateUserUseCase implements UseCase<
     }
 
     // 4. Hash the password if it is being changed.
-    const updateData = { ...data };
+    const updateData = { ...data, updatedBy: userId || 'SYSTEM' };
     if (data.password) {
       updateData.password = await this.hashProvider.hash(data.password);
     }

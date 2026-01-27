@@ -5,7 +5,7 @@ import {
   makeFindNotificationsUseCase,
   makeRegisterNotificationUseCase,
 } from '@/core/infrastructure/factories/notification.factory';
-import { withAuthentication } from '@/lib/api.utils';
+import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/notifications
@@ -31,6 +31,7 @@ export const GET = withAuthentication(
       search: searchParams.get('search') || undefined,
       includeDeleted: searchParams.get('includeDeleted') === 'true',
       patientId: searchParams.get('patientId') || undefined,
+      ...parseDateFilters(searchParams),
     });
 
     return NextResponse.json(result);

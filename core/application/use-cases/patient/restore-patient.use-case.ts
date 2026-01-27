@@ -40,14 +40,30 @@ export class RestorePatientUseCase implements UseCase<
     if (patient.deletedAt) {
       const deletionDate = patient.deletedAt;
 
-      await this.patientRepository.restore(id);
+      await this.patientRepository.restore(id, userId || 'SYSTEM');
 
       // 3. Cascade restore to all related medical records deleted since the patient was deleted.
       await Promise.all([
-        this.examRepository.restoreByPatientId(id, deletionDate),
-        this.notificationRepository.restoreByPatientId(id, deletionDate),
-        this.observationRepository.restoreByPatientId(id, deletionDate),
-        this.treatmentRepository.restoreByPatientId(id, deletionDate),
+        this.examRepository.restoreByPatientId(
+          id,
+          userId || 'SYSTEM',
+          deletionDate
+        ),
+        this.notificationRepository.restoreByPatientId(
+          id,
+          userId || 'SYSTEM',
+          deletionDate
+        ),
+        this.observationRepository.restoreByPatientId(
+          id,
+          userId || 'SYSTEM',
+          deletionDate
+        ),
+        this.treatmentRepository.restoreByPatientId(
+          id,
+          userId || 'SYSTEM',
+          deletionDate
+        ),
       ]);
       patient.deletedAt = null;
 

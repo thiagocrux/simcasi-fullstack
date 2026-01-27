@@ -1,9 +1,9 @@
 import { examSchema } from '@/core/application/validation/schemas/exam.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterExamInput,
   RegisterExamOutput,
@@ -50,6 +50,7 @@ export class RegisterExamUseCase implements UseCase<
         ? new Date(validation.data.otherNontreponemalTestDate)
         : undefined,
       createdBy: userId || 'SYSTEM',
+      updatedBy: null,
     });
 
     // 4. Create audit log.

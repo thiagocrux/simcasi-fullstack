@@ -38,6 +38,8 @@ collection:
           type: string
           format: uuid
         description: Filter by affected entity ID.
+      - $ref: '../components/parameters.yaml#/StartDate'
+      - $ref: '../components/parameters.yaml#/EndDate'
     responses:
       '200':
         description: Paginated list of audit logs successfully retrieved (OK).

@@ -57,3 +57,16 @@ BaseEntity:
       format: date-time
       nullable: true
       description: Timestamp of soft-deletion in ISO 8601 format, if applicable.
+
+AuthorshipEntity:
+  type: object
+  properties:
+    createdBy:
+      type: string
+      format: uuid
+      description: ID of the user who created this record.
+    updatedBy:
+      type: string
+      format: uuid
+      nullable: true
+      description: ID of the user who last updated this record.

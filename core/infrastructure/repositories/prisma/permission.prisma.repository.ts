@@ -89,6 +89,8 @@ export class PrismaPermissionRepository implements PermissionRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    startDate?: Date;
+    endDate?: Date;
     includeDeleted?: boolean;
   }): Promise<{ items: Permission[]; total: number }> {
     const skip = params?.skip || 0;
@@ -97,9 +99,15 @@ export class PrismaPermissionRepository implements PermissionRepository {
     const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
     const includeDeleted = params?.includeDeleted || false;
+    const startDate = params?.startDate;
+    const endDate = params?.endDate;
 
     const where: Prisma.PermissionWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
     };
 
     if (search) {
@@ -196,14 +204,16 @@ export class PrismaPermissionRepository implements PermissionRepository {
   }
 
   /**
-   * Restores a soft-deleted permission.
+   * Restores a soft-deleted permission record.
    * @param id The permission ID.
+   * @param updatedBy The ID of the user performing the restoration.
    */
-  async restore(id: string): Promise<void> {
+  async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.permission.update({
       where: { id },
       data: {
         deletedAt: null,
+        updatedBy,
       },
     });
   }

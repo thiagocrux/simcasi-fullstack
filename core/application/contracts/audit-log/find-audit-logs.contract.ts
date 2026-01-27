@@ -10,6 +10,8 @@ export interface FindAuditLogsInput {
   entityId?: string;
   orderBy?: string;
   orderDir?: 'asc' | 'desc';
+  startDate?: Date;
+  endDate?: Date;
 }
 
 export interface FindAuditLogsOutput {

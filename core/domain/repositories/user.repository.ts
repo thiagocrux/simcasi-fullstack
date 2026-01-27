@@ -19,9 +19,11 @@ export interface UserRepository {
     take?: number;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
+    startDate?: Date;
+    endDate?: Date;
     search?: string;
-    includeDeleted?: boolean;
     roleId?: string;
+    includeDeleted?: boolean;
   }): Promise<{ items: User[]; total: number }>;
 
   /**
@@ -49,5 +51,5 @@ export interface UserRepository {
   /**
    * Restores a logically deleted user (clears deletedAt).
    */
-  restore(id: string): Promise<void>;
+  restore(id: string, updatedBy: string): Promise<void>;
 }

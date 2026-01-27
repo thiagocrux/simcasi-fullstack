@@ -5,9 +5,11 @@ export interface FindTreatmentsInput {
   take?: number;
   orderBy?: string;
   orderDir?: 'asc' | 'desc';
+  startDate?: Date;
+  endDate?: Date;
   search?: string;
-  includeDeleted?: boolean;
   patientId?: string;
+  includeDeleted?: boolean;
 }
 
 export interface FindTreatmentsOutput {

@@ -19,6 +19,8 @@ collection:
           type: string
           format: uuid
         description: Filter exams by a specific patient.
+      - $ref: '../components/parameters.yaml#/StartDate'
+      - $ref: '../components/parameters.yaml#/EndDate'
     responses:
       '200':
         description: Paginated list of exams successfully retrieved (OK).

@@ -19,6 +19,8 @@ collection:
           type: string
           format: uuid
         description: Filter sessions by a specific user.
+      - $ref: '../components/parameters.yaml#/StartDate'
+      - $ref: '../components/parameters.yaml#/EndDate'
     responses:
       '200':
         description: Paginated list of active sessions successfully retrieved (OK).

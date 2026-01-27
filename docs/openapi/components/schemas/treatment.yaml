@@ -1,6 +1,7 @@
 Treatment:
   allOf:
     - $ref: './commons.yaml#/BaseEntity'
+    - $ref: './commons.yaml#/AuthorshipEntity'
     - type: object
       properties:
         patientId:
@@ -30,10 +31,6 @@ Treatment:
           type: string
           nullable: true
           description: Details about partner notification or treatment.
-        createdBy:
-          type: string
-          format: uuid
-          description: ID of the user who created this record.
 
 TreatmentCreateRequest:
   allOf:

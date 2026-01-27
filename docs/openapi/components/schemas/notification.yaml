@@ -1,6 +1,7 @@
 Notification:
   allOf:
     - $ref: './commons.yaml#/BaseEntity'
+    - $ref: './commons.yaml#/AuthorshipEntity'
     - type: object
       properties:
         patientId:
@@ -15,10 +16,6 @@ Notification:
           type: string
           nullable: true
           description: Additional case notes for the official report.
-        createdBy:
-          type: string
-          format: uuid
-          description: ID of the user who created this record.
 
 NotificationCreateRequest:
   allOf:

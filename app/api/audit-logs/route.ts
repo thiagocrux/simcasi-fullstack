@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { PAGINATION } from '@/core/domain/constants/pagination.constants';
 import { makeFindAuditLogsUseCase } from '@/core/infrastructure/factories/audit-log.factory';
-import { withAuthentication } from '@/lib/api.utils';
+import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/audit-logs
@@ -27,6 +27,7 @@ export const GET = withAuthentication(['read:audit-log'], async (request) => {
     action: searchParams.get('action') || undefined,
     entityName: searchParams.get('entityName') || undefined,
     entityId: searchParams.get('entityId') || undefined,
+    ...parseDateFilters(searchParams),
   });
 
   return NextResponse.json(result);

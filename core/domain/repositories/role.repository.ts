@@ -24,6 +24,8 @@ export interface RoleRepository {
     take?: number;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
+    startDate?: Date;
+    endDate?: Date;
     search?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Role[]; total: number }>;
@@ -55,7 +57,7 @@ export interface RoleRepository {
   /**
    * Restores a logically deleted role (clears deletedAt).
    */
-  restore(id: string): Promise<void>;
+  restore(id: string, updatedBy: string): Promise<void>;
 
   /**
    * Checks if a role has at least one of the required permissions.

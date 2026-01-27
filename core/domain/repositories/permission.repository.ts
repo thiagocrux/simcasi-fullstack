@@ -38,6 +38,8 @@ export interface PermissionRepository {
     take?: number;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
+    startDate?: Date;
+    endDate?: Date;
     search?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Permission[]; total: number }>;
@@ -69,5 +71,5 @@ export interface PermissionRepository {
   /**
    * Restores a logically deleted permission (clears deletedAt).
    */
-  restore(id: string): Promise<void>;
+  restore(id: string, updatedBy: string): Promise<void>;
 }

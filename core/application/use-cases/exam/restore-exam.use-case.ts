@@ -30,8 +30,9 @@ export class RestoreExamUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (exam.deletedAt) {
-      await this.examRepository.restore(id);
+      await this.examRepository.restore(id, userId || 'SYSTEM');
       exam.deletedAt = null;
+      exam.updatedBy = userId || 'SYSTEM';
 
       // 3. Create audit log.
       await this.auditLogRepository.create({

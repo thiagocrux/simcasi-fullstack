@@ -31,6 +31,8 @@ export class PrismaSessionRepository implements SessionRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    startDate?: Date;
+    endDate?: Date;
     includeDeleted?: boolean;
     userId?: string;
   }): Promise<{ items: Session[]; total: number }> {
@@ -41,10 +43,16 @@ export class PrismaSessionRepository implements SessionRepository {
     const search = params?.search;
     const userId = params?.userId;
     const includeDeleted = params?.includeDeleted || false;
+    const startDate = params?.startDate;
+    const endDate = params?.endDate;
 
     const where: Prisma.SessionWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
       userId: userId,
+      createdAt: {
+        gte: startDate,
+        lte: endDate,
+      },
     };
 
     if (search) {

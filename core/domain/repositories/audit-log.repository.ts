@@ -17,13 +17,15 @@ export interface AuditLogRepository {
   findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
+    startDate?: Date;
+    endDate?: Date;
     search?: string;
     userId?: string;
     action?: string;
     entityName?: string;
     entityId?: string;
-    orderBy?: string;
-    orderDir?: 'asc' | 'desc';
   }): Promise<{ items: AuditLog[]; total: number }>;
 
   /**

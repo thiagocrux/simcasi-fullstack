@@ -1,9 +1,9 @@
 import { notificationSchema } from '@/core/application/validation/schemas/notification.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterNotificationInput,
   RegisterNotificationOutput,
@@ -47,6 +47,7 @@ export class RegisterNotificationUseCase implements UseCase<
     const notification = await this.notificationRepository.create({
       ...data,
       createdBy: userId || 'SYSTEM',
+      updatedBy: null,
     });
 
     // 4. Create audit log.

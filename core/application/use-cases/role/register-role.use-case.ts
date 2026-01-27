@@ -1,4 +1,5 @@
 import { roleSchema } from '@/core/application/validation/schemas/role.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   ConflictError,
   NotFoundError,
@@ -7,7 +8,6 @@ import {
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   RegisterRoleInput,
   RegisterRoleOutput,
@@ -67,6 +67,7 @@ export class RegisterRoleUseCase implements UseCase<
         code: roleData.code,
         permissionIds: roleData.permissionIds,
         deletedAt: null,
+        updatedBy: userId || 'SYSTEM',
       });
 
       // 4. Log the 'RESTORE' action for audit trailing.
@@ -87,6 +88,8 @@ export class RegisterRoleUseCase implements UseCase<
     const role = await this.roleRepository.create({
       code: roleData.code,
       permissionIds: roleData.permissionIds,
+      createdBy: userId || 'SYSTEM',
+      updatedBy: null,
     });
 
     // 6. Log the 'CREATE' action for audit trailing.

@@ -1,4 +1,5 @@
 import { permissionSchema } from '@/core/application/validation/schemas/permission.schema';
+import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   ConflictError,
   NotFoundError,
@@ -6,7 +7,6 @@ import {
 } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
-import { formatZodError } from '@/core/application/validation/zod.utils';
 import {
   UpdatePermissionInput,
   UpdatePermissionOutput,
@@ -55,10 +55,10 @@ export class UpdatePermissionUseCase implements UseCase<
     }
 
     // 4. Update the permission.
-    const updatedPermission = await this.permissionRepository.update(
-      id,
-      validation.data
-    );
+    const updatedPermission = await this.permissionRepository.update(id, {
+      ...validation.data,
+      updatedBy: userId || 'SYSTEM',
+    });
 
     // 5. Create audit log.
     await this.auditLogRepository.create({

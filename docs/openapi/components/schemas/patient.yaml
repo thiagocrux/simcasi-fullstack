@@ -1,6 +1,7 @@
 Patient:
   allOf:
     - $ref: './commons.yaml#/BaseEntity'
+    - $ref: './commons.yaml#/AuthorshipEntity'
     - type: object
       properties:
         name:
@@ -94,10 +95,6 @@ Patient:
           type: string
           nullable: true
           description: Additional address details (apartment, block, etc.).
-        createdBy:
-          type: string
-          format: uuid
-          description: ID of the user who registered this patient.
 
 PatientCreateRequest:
   allOf:

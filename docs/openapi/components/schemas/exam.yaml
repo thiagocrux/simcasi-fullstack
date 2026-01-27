@@ -1,6 +1,7 @@
 Exam:
   allOf:
     - $ref: './commons.yaml#/BaseEntity'
+    - $ref: './commons.yaml#/AuthorshipEntity'
     - type: object
       properties:
         patientId:
@@ -46,10 +47,6 @@ Exam:
         referenceObservations:
           type: string
           description: Clinical and reference observations regarding the exam.
-        createdBy:
-          type: string
-          format: uuid
-          description: ID of the user who created this record.
 
 ExamCreateRequest:
   allOf:
