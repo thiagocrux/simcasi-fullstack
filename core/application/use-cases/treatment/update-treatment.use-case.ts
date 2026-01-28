@@ -1,5 +1,6 @@
 import { treatmentSchema } from '@/core/application/validation/schemas/treatment.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
@@ -42,7 +43,7 @@ export class UpdateTreatmentUseCase implements UseCase<
     // 3. Update the treatment.
     const updatedTreatment = await this.treatmentRepository.update(id, {
       ...validation.data,
-      updatedBy: userId || 'SYSTEM',
+      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       startDate: validation.data.startDate
         ? new Date(validation.data.startDate)
         : undefined,
@@ -50,7 +51,7 @@ export class UpdateTreatmentUseCase implements UseCase<
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'UPDATE',
       entityName: 'TREATMENT',
       entityId: id,

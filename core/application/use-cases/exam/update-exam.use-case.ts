@@ -1,5 +1,6 @@
 import { examSchema } from '@/core/application/validation/schemas/exam.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
@@ -42,7 +43,7 @@ export class UpdateExamUseCase implements UseCase<
     // 3. Update the exam.
     const updatedExam = await this.examRepository.update(id, {
       ...validation.data,
-      updatedBy: userId || 'SYSTEM',
+      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       treponemalTestDate: validation.data.treponemalTestDate
         ? new Date(validation.data.treponemalTestDate)
         : undefined,
@@ -56,7 +57,7 @@ export class UpdateExamUseCase implements UseCase<
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'UPDATE',
       entityName: 'EXAM',
       entityId: id,

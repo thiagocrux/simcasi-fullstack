@@ -1,5 +1,6 @@
 import { permissionSchema } from '@/core/application/validation/schemas/permission.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import {
   ConflictError,
   NotFoundError,
@@ -57,12 +58,12 @@ export class UpdatePermissionUseCase implements UseCase<
     // 4. Update the permission.
     const updatedPermission = await this.permissionRepository.update(id, {
       ...validation.data,
-      updatedBy: userId || 'SYSTEM',
+      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
     });
 
     // 5. Create audit log.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'UPDATE',
       entityName: 'PERMISSION',
       entityId: id,

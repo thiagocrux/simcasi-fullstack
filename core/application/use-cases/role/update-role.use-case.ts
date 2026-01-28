@@ -1,5 +1,6 @@
 import { roleSchema } from '@/core/application/validation/schemas/role.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import {
   ConflictError,
   NotFoundError,
@@ -69,12 +70,12 @@ export class UpdateRoleUseCase implements UseCase<
     // 5. Update the role.
     const updatedRole = await this.roleRepository.update(id, {
       ...validation.data,
-      updatedBy: userId || 'SYSTEM',
+      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
     });
 
     // 6. Create audit log.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'UPDATE',
       entityName: 'ROLE',
       entityId: id,

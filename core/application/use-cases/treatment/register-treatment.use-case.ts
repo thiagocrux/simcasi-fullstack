@@ -1,5 +1,6 @@
 import { treatmentSchema } from '@/core/application/validation/schemas/treatment.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
@@ -49,13 +50,13 @@ export class RegisterTreatmentUseCase implements UseCase<
     const treatment = await this.treatmentRepository.create({
       ...validation.data,
       startDate: new Date(validation.data.startDate),
-      createdBy: userId || 'SYSTEM',
+      createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       updatedBy: null,
     });
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'TREATMENT',
       entityId: treatment.id,

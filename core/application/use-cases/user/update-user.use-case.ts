@@ -1,5 +1,6 @@
 import { userSchema } from '@/core/application/validation/schemas/user.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import {
   ConflictError,
   NotFoundError,
@@ -64,7 +65,10 @@ export class UpdateUserUseCase implements UseCase<
     }
 
     // 4. Hash the password if it is being changed.
-    const updateData = { ...data, updatedBy: userId || 'SYSTEM' };
+    const updateData = {
+      ...data,
+      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
+    };
     if (data.password) {
       updateData.password = await this.hashProvider.hash(data.password);
     }
@@ -77,7 +81,7 @@ export class UpdateUserUseCase implements UseCase<
     const { password: ___, ...newValuesWithoutPassword } = updatedUser;
 
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'UPDATE',
       entityName: 'USER',
       entityId: id,

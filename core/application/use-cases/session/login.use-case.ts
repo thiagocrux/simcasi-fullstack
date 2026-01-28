@@ -23,7 +23,7 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
   async execute(input: LoginInput): Promise<SessionOutput> {
     // 1. Find user by email.
     const user = await this.userRepository.findByEmail(input.email);
-    if (!user || user.deletedAt) {
+    if (!user || user.deletedAt || user.isSystem) {
       throw new UnauthorizedError('Invalid credentials.');
     }
 

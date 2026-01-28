@@ -1,3 +1,4 @@
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
@@ -41,7 +42,7 @@ export class DeleteUserUseCase implements UseCase<
     const { password: _, ...oldValuesWithoutPassword } = user;
 
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'DELETE',
       entityName: 'USER',
       entityId: id,

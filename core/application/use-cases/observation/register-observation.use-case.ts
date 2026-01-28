@@ -1,5 +1,6 @@
 import { observationSchema } from '@/core/application/validation/schemas/observation.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
@@ -47,14 +48,14 @@ export class RegisterObservationUseCase implements UseCase<
 
     // 3. Delegate to the repository.
     const observation = await this.observationRepository.create({
-      ...observationData,
-      createdBy: userId || 'SYSTEM',
+      ...validation.data,
+      createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       updatedBy: null,
     });
 
     // 4. Create audit log.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'OBSERVATION',
       entityId: observation.id,

@@ -1,5 +1,6 @@
 import { patientSchema } from '@/core/application/validation/schemas/patient.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import {
   ConflictError,
   NotFoundError,
@@ -58,7 +59,7 @@ export class UpdatePatientUseCase implements UseCase<
     // 4. Delegate update to repository.
     const updated = await this.patientRepository.update(id, {
       ...validation.data,
-      updatedBy: userId || 'SYSTEM',
+      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       birthDate: validation.data.birthDate
         ? new Date(validation.data.birthDate)
         : undefined,
@@ -66,7 +67,7 @@ export class UpdatePatientUseCase implements UseCase<
 
     // 5. Audit the update.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'UPDATE',
       entityName: 'PATIENT',
       entityId: id,

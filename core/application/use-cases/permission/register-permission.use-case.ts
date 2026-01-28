@@ -1,5 +1,6 @@
 import { permissionSchema } from '@/core/application/validation/schemas/permission.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { ConflictError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
@@ -53,13 +54,13 @@ export class RegisterPermissionUseCase implements UseCase<
         {
           ...validation.data,
           deletedAt: null,
-          updatedBy: userId || 'SYSTEM',
+          updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
         }
       );
 
       // 3. Log 'RESTORE' action for audit trailing.
       await this.auditLogRepository.create({
-        userId: userId || 'SYSTEM',
+        userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
         action: 'RESTORE',
         entityName: 'PERMISSION',
         entityId: restoredPermission.id,
@@ -74,13 +75,13 @@ export class RegisterPermissionUseCase implements UseCase<
     // 4. If no record was found, create a brand new permission.
     const permission = await this.permissionRepository.create({
       ...validation.data,
-      createdBy: userId || 'SYSTEM',
+      createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       updatedBy: null,
     });
 
     // 5. Log 'CREATE' action for audit trailing.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'PERMISSION',
       entityId: permission.id,

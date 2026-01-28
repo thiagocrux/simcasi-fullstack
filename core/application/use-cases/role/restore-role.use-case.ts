@@ -1,3 +1,4 @@
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
@@ -30,7 +31,10 @@ export class RestoreRoleUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (role.deletedAt) {
-      await this.roleRepository.restore(id, userId || 'SYSTEM');
+      await this.roleRepository.restore(
+        id,
+        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+      );
     }
 
     const restoredRole = (await this.roleRepository.findById(
@@ -39,7 +43,7 @@ export class RestoreRoleUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'RESTORE',
       entityName: 'ROLE',
       entityId: id,

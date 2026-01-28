@@ -1,3 +1,4 @@
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
@@ -32,7 +33,10 @@ export class RestorePermissionUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (permission.deletedAt) {
-      await this.permissionRepository.restore(id, userId || 'SYSTEM');
+      await this.permissionRepository.restore(
+        id,
+        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+      );
     }
 
     const restoredPermission = (await this.permissionRepository.findById(
@@ -41,7 +45,7 @@ export class RestorePermissionUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'RESTORE',
       entityName: 'PERMISSION',
       entityId: id,

@@ -1,3 +1,4 @@
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
@@ -30,13 +31,16 @@ export class RestoreTreatmentUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (treatment.deletedAt) {
-      await this.treatmentRepository.restore(id, userId || 'SYSTEM');
+      await this.treatmentRepository.restore(
+        id,
+        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+      );
       treatment.deletedAt = null;
-      treatment.updatedBy = userId || 'SYSTEM';
+      treatment.updatedBy = userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
 
       // 3. Create audit log.
       await this.auditLogRepository.create({
-        userId: userId || 'SYSTEM',
+        userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
         action: 'RESTORE',
         entityName: 'TREATMENT',
         entityId: id,

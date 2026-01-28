@@ -1,3 +1,4 @@
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
@@ -35,7 +36,7 @@ export class DeleteObservationUseCase implements UseCase<
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'DELETE',
       entityName: 'OBSERVATION',
       entityId: id,

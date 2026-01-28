@@ -1,5 +1,6 @@
 import { roleSchema } from '@/core/application/validation/schemas/role.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import {
   ConflictError,
   NotFoundError,
@@ -67,12 +68,12 @@ export class RegisterRoleUseCase implements UseCase<
         code: roleData.code,
         permissionIds: roleData.permissionIds,
         deletedAt: null,
-        updatedBy: userId || 'SYSTEM',
+        updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       });
 
       // 4. Log the 'RESTORE' action for audit trailing.
       await this.auditLogRepository.create({
-        userId: userId || 'SYSTEM',
+        userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
         action: 'RESTORE',
         entityName: 'ROLE',
         entityId: restoredRole.id,
@@ -88,13 +89,13 @@ export class RegisterRoleUseCase implements UseCase<
     const role = await this.roleRepository.create({
       code: roleData.code,
       permissionIds: roleData.permissionIds,
-      createdBy: userId || 'SYSTEM',
+      createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       updatedBy: null,
     });
 
     // 6. Log the 'CREATE' action for audit trailing.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'ROLE',
       entityId: role.id,

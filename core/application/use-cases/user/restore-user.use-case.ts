@@ -1,3 +1,4 @@
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { User } from '@/core/domain/entities/user.entity';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
@@ -32,15 +33,18 @@ export class RestoreUserUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (user.deletedAt) {
-      await this.userRepository.restore(id, userId || 'SYSTEM');
+      await this.userRepository.restore(
+        id,
+        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+      );
       user.deletedAt = null;
-      user.updatedBy = userId || 'SYSTEM';
+      user.updatedBy = userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
 
       // 3. Create audit log.
       const { password: _, ...newValuesWithoutPassword } = user;
 
       await this.auditLogRepository.create({
-        userId: userId || 'SYSTEM',
+        userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
         action: 'RESTORE',
         entityName: 'USER',
         entityId: id,

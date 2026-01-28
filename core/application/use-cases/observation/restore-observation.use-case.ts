@@ -1,3 +1,4 @@
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
@@ -32,13 +33,16 @@ export class RestoreObservationUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (observation.deletedAt) {
-      await this.observationRepository.restore(id, userId || 'SYSTEM');
+      await this.observationRepository.restore(
+        id,
+        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+      );
       observation.deletedAt = null;
-      observation.updatedBy = userId || 'SYSTEM';
+      observation.updatedBy = userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
 
       // 3. Create audit log.
       await this.auditLogRepository.create({
-        userId: userId || 'SYSTEM',
+        userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
         action: 'RESTORE',
         entityName: 'OBSERVATION',
         entityId: id,

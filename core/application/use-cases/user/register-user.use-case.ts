@@ -1,5 +1,6 @@
 import { userSchema } from '@/core/application/validation/schemas/user.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import {
   ConflictError,
   NotFoundError,
@@ -59,14 +60,14 @@ export class RegisterUserUseCase implements UseCase<
     const user = await this.userRepository.create({
       ...userData,
       password: hashedPassword,
-      createdBy: userId || 'SYSTEM',
-      updatedBy: userId || null,
+      createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
+      updatedBy: userId ?? null,
     });
 
     // 6. Create audit log.
     const { password: _, ...userWithoutPassword } = user;
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'USER',
       entityId: user.id,

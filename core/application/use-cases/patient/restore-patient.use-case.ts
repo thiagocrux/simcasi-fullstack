@@ -1,3 +1,4 @@
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
@@ -40,28 +41,31 @@ export class RestorePatientUseCase implements UseCase<
     if (patient.deletedAt) {
       const deletionDate = patient.deletedAt;
 
-      await this.patientRepository.restore(id, userId || 'SYSTEM');
+      await this.patientRepository.restore(
+        id,
+        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+      );
 
       // 3. Cascade restore to all related medical records deleted since the patient was deleted.
       await Promise.all([
         this.examRepository.restoreByPatientId(
           id,
-          userId || 'SYSTEM',
+          userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
           deletionDate
         ),
         this.notificationRepository.restoreByPatientId(
           id,
-          userId || 'SYSTEM',
+          userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
           deletionDate
         ),
         this.observationRepository.restoreByPatientId(
           id,
-          userId || 'SYSTEM',
+          userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
           deletionDate
         ),
         this.treatmentRepository.restoreByPatientId(
           id,
-          userId || 'SYSTEM',
+          userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
           deletionDate
         ),
       ]);
@@ -69,7 +73,7 @@ export class RestorePatientUseCase implements UseCase<
 
       // 4. Audit the restoration.
       await this.auditLogRepository.create({
-        userId: userId || 'SYSTEM',
+        userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
         action: 'RESTORE',
         entityName: 'PATIENT',
         entityId: id,

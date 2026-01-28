@@ -1,5 +1,6 @@
 import { patientSchema } from '@/core/application/validation/schemas/patient.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { ConflictError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
@@ -72,13 +73,13 @@ export class RegisterPatientUseCase implements UseCase<
       const patient = await this.patientRepository.update(deletedPatient.id, {
         ...validation.data,
         birthDate: new Date(validation.data.birthDate),
-        updatedBy: userId || 'SYSTEM',
+        updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
         deletedAt: null,
       });
 
       // 5. Audit the RESTORE action.
       await this.auditLogRepository.create({
-        userId: userId || 'SYSTEM',
+        userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
         action: 'RESTORE',
         entityName: 'PATIENT',
         entityId: patient.id,
@@ -94,12 +95,12 @@ export class RegisterPatientUseCase implements UseCase<
     const patient = await this.patientRepository.create({
       ...validation.data,
       birthDate: new Date(validation.data.birthDate),
-      createdBy: userId || 'SYSTEM',
+      createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
     });
 
     // 7. Audit the CREATE action.
     await this.auditLogRepository.create({
-      userId: userId || 'SYSTEM',
+      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'PATIENT',
       entityId: patient.id,
