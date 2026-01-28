@@ -1,17 +1,19 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { hashSync } from 'bcryptjs';
 import crypto from 'crypto';
+import 'dotenv/config';
 import { Pool } from 'pg';
-
-import { ROLES } from '@/core/domain/constants/role.constants';
-import { SECURITY_CONSTANTS } from '@/core/domain/constants/security.constants';
-import { PrismaClient } from '@prisma/client';
 
 import {
   PERMISSIONS,
   PERMISSIONS_BY_ROLE,
   isPermission,
 } from '@/core/domain/constants/permission.constants';
+import { ROLES } from '@/core/domain/constants/role.constants';
+import { SECURITY_CONSTANTS } from '@/core/domain/constants/security.constants';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
+import { logger } from '@/lib/logger.utils';
+import { PrismaClient } from '@prisma/client';
 
 const connectionString = `${process.env.DATABASE_URL}`;
 const pool = new Pool({ connectionString });
@@ -19,14 +21,55 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log('🚀 Starting seed for permissions and roles...');
+  // Ensure a canonical system user exists for FK integrity (idempotent, must be first!)
+  const systemUserId = SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
+  const systemEmail = (
+    process.env.PRISMA_SYSTEM_EMAIL || 'system@simcasi.local'
+  ).trim();
+  const systemPassword = crypto.randomBytes(12).toString('base64url');
+  const systemPasswordHash = hashSync(
+    systemPassword,
+    SECURITY_CONSTANTS.HASH_SALT_ROUNDS
+  );
+
+  // Create the admin role if it does not exist (createdBy will be set after system user exists)
+  const adminRole = await prisma.role.upsert({
+    where: { code: 'admin' },
+    update: {},
+    create: {
+      code: 'admin',
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { id: systemUserId },
+    update: {},
+    create: {
+      id: systemUserId,
+      name: 'System',
+      email: systemEmail,
+      password: systemPasswordHash,
+      isSystem: true,
+      roleId: adminRole.id,
+    },
+  });
+
+  // Now set the admin role's createdBy to the canonical system user for consistent authorship
+  await prisma.role.update({
+    where: { id: adminRole.id },
+    data: { createdBy: systemUserId },
+  });
+  logger.info('🚀 Starting seed for permissions and roles...');
 
   // Create permissions (idempotent upserts).
   for (const permission of PERMISSIONS) {
     await prisma.permission.upsert({
       where: { code: permission },
       update: {},
-      create: { code: permission },
+      create: {
+        code: permission,
+        createdBy: systemUserId,
+      },
     });
   }
 
@@ -44,8 +87,8 @@ async function main() {
   let seedPassword = process.env.PRISMA_SEED_PASSWORD;
 
   if (isProduction && seedEmail && !seedPassword) {
-    console.error(
-      'PRISMA_SEED_PASSWORD must be provided when seeding in production'
+    logger.error(
+      'PRISMA_SEED_PASSWORD must be provided when seeding in production.'
     );
 
     process.exit(1);
@@ -53,7 +96,7 @@ async function main() {
 
   if (seedEmail && !seedPassword && !isProduction) {
     seedPassword = crypto.randomBytes(12).toString('base64url');
-    console.log('\n🔑 Generated dev seed user password:', seedPassword);
+    logger.info('\n🔑 Generated dev seed user password:', seedPassword);
   }
 
   await prisma.$transaction(async (transaction) => {
@@ -63,7 +106,10 @@ async function main() {
       const { id: roleId } = await transaction.role.upsert({
         where: { code: role },
         update: {},
-        create: { code: role },
+        create: {
+          code: role,
+          createdBy: systemUserId,
+        },
       });
 
       // Grant the configured permissions to the role.
@@ -72,7 +118,7 @@ async function main() {
       for (const permission of rolePermissions) {
         // Validate we expect this permission value.
         if (!isPermission(permission)) {
-          console.warn(`Skipping unknown permission code: ${permission}`);
+          logger.warn(`Skipping unknown permission code: ${permission}`);
           continue;
         }
 
@@ -80,7 +126,7 @@ async function main() {
         const permissionId = permissionIdMap.get(permission);
 
         if (!permissionId) {
-          console.warn(`Permission not found in database: ${permission}`);
+          logger.warn(`Permission not found in database: ${permission}`);
           continue;
         }
 
@@ -112,10 +158,11 @@ async function main() {
       const adminRoleId = adminRoleRecord?.id;
 
       if (!adminRoleId) {
-        console.warn(
+        logger.warn(
           'Admin role was not found; bootstrap user will not be created.'
         );
       } else {
+        // The Admin user is created by the system user (canonical ID) to maintain traceable authorship.
         await transaction.user.upsert({
           where: { email: seedEmail },
           update: { password: passwordHash, roleId: adminRoleId },
@@ -124,14 +171,15 @@ async function main() {
             email: seedEmail,
             password: passwordHash,
             roleId: adminRoleId,
+            createdBy: systemUserId,
           },
         });
       }
     }
   });
 
-  // Note: dev/test bootstrap user is now created when PRISMA_SEED_EMAIL/PRISMA_SEED_PASSWORD are set.
-  console.log('\n✅ Seeding completed successfully!');
+  // NOTE: bootstrap user is now created when PRISMA_SEED_EMAIL/PRISMA_SEED_PASSWORD are set.
+  logger.info('✅ Seeding completed successfully!');
 }
 
 main()
@@ -139,7 +187,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (error) => {
-    console.error(
+    logger.error(
       '\n❌ Error during seeding. Transaction rollback ensured.',
       error
     );

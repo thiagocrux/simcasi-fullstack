@@ -9,7 +9,7 @@
           "description": "",
           "item": [
             {
-              "id": "783053e9-fd75-4a0d-a02b-7bf60a2558f4",
+              "id": "9120523f-35da-4d05-88e5-b2240ab4dcce",
               "name": "Login",
               "request": {
                 "name": "Login",
@@ -53,7 +53,7 @@
               },
               "response": [
                 {
-                  "id": "66cbe8ec-a609-4875-9c5e-2a42e6f28ea5",
+                  "id": "3ffeb8ce-c590-4cd6-b795-9bc848f8f591",
                   "name": "User successfully authenticated with tokens issued (OK).",
                   "originalRequest": {
                     "url": {
@@ -102,7 +102,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "476e8ae5-6094-4b7e-aec3-3e3e82e05938",
+                  "id": "3b1c3a7d-82ef-4cf1-84e8-a244e796dc49",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -151,7 +151,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "59550b5d-4131-408b-b1c6-81a5e6d5937e",
+                  "id": "5e2a3bf6-8398-4cef-9b17-5aa400206d74",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -228,7 +228,7 @@
               }
             },
             {
-              "id": "2586e1ce-96a2-404c-96f8-ed9684b1bb13",
+              "id": "d7b986ea-ac67-4338-afb3-aca0639393d2",
               "name": "Refresh token",
               "request": {
                 "name": "Refresh token",
@@ -272,7 +272,7 @@
               },
               "response": [
                 {
-                  "id": "56e35dbb-948f-4022-afd4-bda40eafab9f",
+                  "id": "a1cb572c-dffc-4c2d-ab4f-77c1802232de",
                   "name": "New token pair successfully issued and rotated (OK).",
                   "originalRequest": {
                     "url": {
@@ -329,7 +329,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "f018e3b0-b47d-4a79-8084-7b3d0364f5b5",
+                  "id": "9e39ea91-6108-480a-a918-e13d0881e52a",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -414,7 +414,7 @@
               }
             },
             {
-              "id": "eb1029b8-9286-4078-90db-6b0b06c67a39",
+              "id": "d625d483-bbb5-4ef3-8642-737852cf453f",
               "name": "Logout",
               "request": {
                 "name": "Logout",
@@ -467,7 +467,7 @@
               },
               "response": [
                 {
-                  "id": "804c4589-2ad3-4638-9fc4-63e43aff10e0",
+                  "id": "eb4ee711-318e-4a1a-9d6c-d3689c89925c",
                   "name": "Session successfully terminated and tokens invalidated (No Content).",
                   "originalRequest": {
                     "url": {
@@ -514,7 +514,7 @@
                   "_postman_previewlanguage": "text"
                 },
                 {
-                  "id": "bb218f96-9496-459e-a9de-7a6fbcc39f9f",
+                  "id": "e5c1bccb-347e-4816-8f48-9a260c2f13bc",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -583,7 +583,7 @@
           "description": "",
           "item": [
             {
-              "id": "6afd7a74-89cd-4ed0-8788-d2fe6c64dfbb",
+              "id": "dfb03546-32a0-487d-b8cf-29927851b212",
               "name": "Find users",
               "request": {
                 "name": "Find users",
@@ -638,7 +638,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created after this date.",
+                        "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "startDate",
@@ -647,7 +647,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created before this date.",
+                        "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "endDate",
@@ -677,7 +677,7 @@
               },
               "response": [
                 {
-                  "id": "7f6c06b4-b3a0-413a-b0f6-72892f654e9c",
+                  "id": "0a51f768-cd6c-4814-bbff-dbcb447cf1c0",
                   "name": "Paginated list of users successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -727,7 +727,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -736,7 +736,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -770,12 +770,12 @@
                       "value": "application/json"
                     }
                   ],
-                  "body": "{\n  \"items\": [\n    {\n      \"id\": \"<uuid>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"deletedAt\": \"<dateTime>\",\n      \"createdBy\": \"<uuid>\",\n      \"updatedBy\": \"<uuid>\",\n      \"name\": \"<string>\",\n      \"email\": \"<email>\",\n      \"roleId\": \"<uuid>\"\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"deletedAt\": \"<dateTime>\",\n      \"createdBy\": \"<uuid>\",\n      \"updatedBy\": \"<uuid>\",\n      \"name\": \"<string>\",\n      \"email\": \"<email>\",\n      \"roleId\": \"<uuid>\"\n    }\n  ],\n  \"total\": \"<integer>\"\n}",
+                  "body": "{\n  \"items\": [\n    {\n      \"id\": \"<uuid>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"deletedAt\": \"<dateTime>\",\n      \"createdBy\": \"<uuid>\",\n      \"updatedBy\": \"<uuid>\",\n      \"name\": \"<string>\",\n      \"email\": \"<email>\",\n      \"roleId\": \"<uuid>\",\n      \"isSystem\": \"<boolean>\"\n    },\n    {\n      \"id\": \"<uuid>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"deletedAt\": \"<dateTime>\",\n      \"createdBy\": \"<uuid>\",\n      \"updatedBy\": \"<uuid>\",\n      \"name\": \"<string>\",\n      \"email\": \"<email>\",\n      \"roleId\": \"<uuid>\",\n      \"isSystem\": \"<boolean>\"\n    }\n  ],\n  \"total\": \"<integer>\"\n}",
                   "cookie": [],
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "d18b6b09-6206-4505-9da3-13af181979e6",
+                  "id": "72b8fbb1-3f12-498a-8d47-baeff904606e",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -825,7 +825,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -834,7 +834,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -873,7 +873,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "253e387e-4331-4b25-9a81-de077a4e8d51",
+                  "id": "0f863596-59a4-4115-937b-c2702866e1f2",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -923,7 +923,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -932,7 +932,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -977,7 +977,7 @@
               }
             },
             {
-              "id": "9d2037b5-0254-4982-8be2-709f126a7873",
+              "id": "899d2941-5538-427e-942d-87fba984418e",
               "name": "Register a user",
               "request": {
                 "name": "Register a user",
@@ -1029,7 +1029,7 @@
               },
               "response": [
                 {
-                  "id": "181b09c0-ab55-4c39-9beb-620fa1b85581",
+                  "id": "9cbea7e0-1dc1-4c3b-8134-f9202de0ae5f",
                   "name": "User successfully created and persisted (Created).",
                   "originalRequest": {
                     "url": {
@@ -1080,12 +1080,12 @@
                       "value": "application/json"
                     }
                   ],
-                  "body": "{\n  \"id\": \"<uuid>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"deletedAt\": \"<dateTime>\",\n  \"createdBy\": \"<uuid>\",\n  \"updatedBy\": \"<uuid>\",\n  \"name\": \"<string>\",\n  \"email\": \"<email>\",\n  \"roleId\": \"<uuid>\"\n}",
+                  "body": "{\n  \"id\": \"<uuid>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"deletedAt\": \"<dateTime>\",\n  \"createdBy\": \"<uuid>\",\n  \"updatedBy\": \"<uuid>\",\n  \"name\": \"<string>\",\n  \"email\": \"<email>\",\n  \"roleId\": \"<uuid>\",\n  \"isSystem\": \"<boolean>\"\n}",
                   "cookie": [],
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "693cd707-e47b-40c4-bd5f-28c0927e24cc",
+                  "id": "37c78060-7cfb-4a8b-84c6-ea0331a732a8",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -1141,7 +1141,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "7f4d9d2b-d3c5-498a-b5d6-46a3ceca7daf",
+                  "id": "ec4d08c0-2681-4078-a47c-241a5ba8dc45",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -1197,7 +1197,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "0763a63b-b4ea-4324-88c0-8f81fdf5f47c",
+                  "id": "b4ac7495-3193-4e32-ad30-1f24ee5df5b0",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -1253,7 +1253,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "3a2f4f01-9e9d-4d51-8571-4753c60463ba",
+                  "id": "33377f5f-7c5b-48fb-a7f8-2e9e8c2158aa",
                   "name": "Business rule conflict or duplicate record (ConflictError).",
                   "originalRequest": {
                     "url": {
@@ -1309,7 +1309,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "2e41e665-34f0-45fe-b512-5fec6dafa0bc",
+                  "id": "a10ba789-acaf-4563-9ff7-aea556619069",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -1371,7 +1371,7 @@
               }
             },
             {
-              "id": "89c07537-5e0d-4823-bb25-3ebb4b3aa65f",
+              "id": "302a8182-a65e-4579-adb3-0081fa8dbd07",
               "name": "Get a user",
               "request": {
                 "name": "Get a user",
@@ -1422,7 +1422,7 @@
               },
               "response": [
                 {
-                  "id": "83bdc541-99d6-475b-830c-cfd1aeff7e50",
+                  "id": "32fa3565-30dd-4cf9-ba34-32fc86b67557",
                   "name": "User details successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -1472,12 +1472,12 @@
                       "value": "application/json"
                     }
                   ],
-                  "body": "{\n  \"id\": \"<uuid>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"deletedAt\": \"<dateTime>\",\n  \"createdBy\": \"<uuid>\",\n  \"updatedBy\": \"<uuid>\",\n  \"name\": \"<string>\",\n  \"email\": \"<email>\",\n  \"roleId\": \"<uuid>\"\n}",
+                  "body": "{\n  \"id\": \"<uuid>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"deletedAt\": \"<dateTime>\",\n  \"createdBy\": \"<uuid>\",\n  \"updatedBy\": \"<uuid>\",\n  \"name\": \"<string>\",\n  \"email\": \"<email>\",\n  \"roleId\": \"<uuid>\",\n  \"isSystem\": \"<boolean>\"\n}",
                   "cookie": [],
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "c51d365f-290e-485e-ab12-9aa52e353477",
+                  "id": "25f7c914-9024-4339-8a3a-49466a556787",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -1532,7 +1532,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "b6d2e702-bd6a-4b2b-b7a1-890bc6504b71",
+                  "id": "4c5f5df6-1670-4b52-981f-0bfeeb7e0c1b",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -1587,7 +1587,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "1076079c-d730-4fa6-be88-088d0d3fb3f1",
+                  "id": "71fb3b79-7e2d-4ead-a48f-8c59b2fd19ea",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -1648,7 +1648,7 @@
               }
             },
             {
-              "id": "7752fb9d-6f78-46b6-a00f-bd2edab01109",
+              "id": "923a6455-4772-42f4-824b-9595793ef492",
               "name": "Update a user",
               "request": {
                 "name": "Update a user",
@@ -1712,7 +1712,7 @@
               },
               "response": [
                 {
-                  "id": "8f4318f6-765b-440f-906d-73b6a26ee476",
+                  "id": "ece5e1ae-eb02-4ac1-8827-651922a5d322",
                   "name": "User successfully updated with provided changes (OK).",
                   "originalRequest": {
                     "url": {
@@ -1775,12 +1775,12 @@
                       "value": "application/json"
                     }
                   ],
-                  "body": "{\n  \"id\": \"<uuid>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"deletedAt\": \"<dateTime>\",\n  \"createdBy\": \"<uuid>\",\n  \"updatedBy\": \"<uuid>\",\n  \"name\": \"<string>\",\n  \"email\": \"<email>\",\n  \"roleId\": \"<uuid>\"\n}",
+                  "body": "{\n  \"id\": \"<uuid>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"deletedAt\": \"<dateTime>\",\n  \"createdBy\": \"<uuid>\",\n  \"updatedBy\": \"<uuid>\",\n  \"name\": \"<string>\",\n  \"email\": \"<email>\",\n  \"roleId\": \"<uuid>\",\n  \"isSystem\": \"<boolean>\"\n}",
                   "cookie": [],
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "3ac1a1d1-b232-4a36-9d4c-c17827c9d051",
+                  "id": "0ee740a8-bb82-4028-9991-d0a48e403bc3",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -1848,7 +1848,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "5920d4df-9fc4-4078-b774-f038b55d0284",
+                  "id": "8674eb90-10f4-47c4-bcf2-2da1d3dd6616",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -1916,7 +1916,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "aa496c09-4adf-4ffd-b22a-e461f444118b",
+                  "id": "b390705d-5481-4c34-b396-dd7a4fcfbe89",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -1984,7 +1984,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "d1a8ef57-f29b-446a-9469-471bb652adfc",
+                  "id": "833f1a33-71a2-463f-b555-afae09fd0753",
                   "name": "Business rule conflict or duplicate record (ConflictError).",
                   "originalRequest": {
                     "url": {
@@ -2052,7 +2052,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "efd1eb83-a77f-4945-b960-c70f7e71230a",
+                  "id": "9cac4fc1-0c7e-4d15-a00d-bb3811f4c537",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -2126,7 +2126,7 @@
               }
             },
             {
-              "id": "9259281b-497f-4338-a57d-551c5819f318",
+              "id": "c7453438-c9cd-4b0e-b9d4-aab913de1ddb",
               "name": "Delete a user",
               "request": {
                 "name": "Delete a user",
@@ -2190,7 +2190,7 @@
               },
               "response": [
                 {
-                  "id": "88c26228-6644-4af8-ba79-885fe79e1a3c",
+                  "id": "f3f3c620-7d1b-4f48-a300-83487f6b480f",
                   "name": "User successfully soft-deleted from active records (No Content).",
                   "originalRequest": {
                     "url": {
@@ -2248,7 +2248,7 @@
                   "_postman_previewlanguage": "text"
                 },
                 {
-                  "id": "80cf89ce-129f-40b6-83f2-794790f9e268",
+                  "id": "085595de-3887-4ed6-a057-622073a76afe",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -2316,7 +2316,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "d01e13f6-48c9-4ffc-8482-16f6e86dac11",
+                  "id": "56ab7d79-ea63-4de0-bdec-a86b5fac7a4a",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -2384,7 +2384,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "03429780-49f0-4bae-a32e-bfc058092a89",
+                  "id": "88bbbd11-9b7e-4586-b179-79606c04673a",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -2458,7 +2458,7 @@
               }
             },
             {
-              "id": "2bb8ad58-e82a-469d-a07d-79858ca24057",
+              "id": "8e771527-b2c1-41d2-8cab-ec7b128f84b5",
               "name": "Restore a user",
               "request": {
                 "name": "Restore a user",
@@ -2523,7 +2523,7 @@
               },
               "response": [
                 {
-                  "id": "f1259f98-2576-493e-b9e1-72840d0320fc",
+                  "id": "d3d1df7d-ae69-48bd-8af8-6640a2c5cd5b",
                   "name": "User successfully restored to active status (OK).",
                   "originalRequest": {
                     "url": {
@@ -2587,12 +2587,12 @@
                       "value": "application/json"
                     }
                   ],
-                  "body": "{\n  \"id\": \"<uuid>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"deletedAt\": \"<dateTime>\",\n  \"createdBy\": \"<uuid>\",\n  \"updatedBy\": \"<uuid>\",\n  \"name\": \"<string>\",\n  \"email\": \"<email>\",\n  \"roleId\": \"<uuid>\"\n}",
+                  "body": "{\n  \"id\": \"<uuid>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"deletedAt\": \"<dateTime>\",\n  \"createdBy\": \"<uuid>\",\n  \"updatedBy\": \"<uuid>\",\n  \"name\": \"<string>\",\n  \"email\": \"<email>\",\n  \"roleId\": \"<uuid>\",\n  \"isSystem\": \"<boolean>\"\n}",
                   "cookie": [],
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "56b0a9a9-23d6-4b81-a97b-3932347adaea",
+                  "id": "4106d5af-27d4-46e6-a1d3-ba8bed1bc6be",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -2661,7 +2661,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "74edf56a-6043-4c46-89ab-6fc383e55539",
+                  "id": "30a0bd3b-e107-4f31-a560-19a6cfb515a4",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -2730,7 +2730,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "e5202646-670f-4fb6-b901-207616b61542",
+                  "id": "c3e33957-3f22-4a31-b211-413bbf0de027",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -2811,7 +2811,7 @@
           "description": "",
           "item": [
             {
-              "id": "c54421b8-fd7c-4f85-9cd5-02eb9ed7601a",
+              "id": "2be416ca-6177-45c7-b3ab-bab9b1744426",
               "name": "Find roles",
               "request": {
                 "name": "Find roles",
@@ -2866,7 +2866,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created after this date.",
+                        "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "startDate",
@@ -2875,7 +2875,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created before this date.",
+                        "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "endDate",
@@ -2905,7 +2905,7 @@
               },
               "response": [
                 {
-                  "id": "62209a8f-50c0-4388-aab8-3e0c38240f8a",
+                  "id": "ff154553-2d2a-44fb-82eb-bd8ed17f284b",
                   "name": "Paginated list of roles successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -2955,7 +2955,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -2964,7 +2964,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -3003,7 +3003,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "b1636ae4-1bf5-4912-9b2d-5f27bc15f611",
+                  "id": "064c9f71-241a-43ad-bb3c-0b151f5c2f96",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -3053,7 +3053,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -3062,7 +3062,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -3101,7 +3101,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "b4a22d0e-742a-46fb-a473-4026ed3dc41e",
+                  "id": "ce7fcf3e-c785-4a75-ba60-b92d4b459125",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -3151,7 +3151,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -3160,7 +3160,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -3205,7 +3205,7 @@
               }
             },
             {
-              "id": "a6719ce1-1562-4070-8632-148e51354632",
+              "id": "0b809e81-47f1-4a31-9e56-e044f68db737",
               "name": "Register a role",
               "request": {
                 "name": "Register a role",
@@ -3257,7 +3257,7 @@
               },
               "response": [
                 {
-                  "id": "79b23ade-f2fd-4f51-8d0c-6a2bd72cf083",
+                  "id": "549d3b87-6443-4a81-af2d-164d60b8d23d",
                   "name": "Role successfully created with linked permissions (Created).",
                   "originalRequest": {
                     "url": {
@@ -3313,7 +3313,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "a8699c3a-7cd1-4f09-8241-7b50d88d0749",
+                  "id": "f351523f-4c46-4a72-9498-e288089a5c19",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -3369,7 +3369,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "cb70f9e3-00d4-4410-a9e3-a54494a5dc4c",
+                  "id": "20229aea-0a12-43c8-8009-15e8d35eb163",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -3425,7 +3425,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "532e08bd-9ff7-451e-9410-44bb9931b365",
+                  "id": "d8b8840d-732b-4531-aec3-ecda4760acc5",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -3481,7 +3481,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "51fecacc-cd97-4780-a071-7d2c8bdf8cc1",
+                  "id": "a17bbe1c-5375-41fe-b374-0fa04f77adc0",
                   "name": "Business rule conflict or duplicate record (ConflictError).",
                   "originalRequest": {
                     "url": {
@@ -3537,7 +3537,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "07ade748-9857-42ae-8015-25430cff857b",
+                  "id": "6d94350c-018b-4844-b067-cc507bf85e4a",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -3599,7 +3599,7 @@
               }
             },
             {
-              "id": "037be5e7-2b37-4038-8ca1-4bd2890189ea",
+              "id": "ba661718-0dca-482d-9a36-e894d1189ff2",
               "name": "Get a role",
               "request": {
                 "name": "Get a role",
@@ -3650,7 +3650,7 @@
               },
               "response": [
                 {
-                  "id": "420142cc-1a5e-486c-981e-3bc356fdf51d",
+                  "id": "4962209e-cdc1-4c68-8e5b-446a894cefa7",
                   "name": "Role details successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -3705,7 +3705,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "b0f4b7c1-116d-41a7-b75f-3b388c8be701",
+                  "id": "35603cfc-9755-4134-b83b-f6aa92236e98",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -3760,7 +3760,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "164e4a47-fb22-403b-9f9e-c70b4ed8c81e",
+                  "id": "58451abe-f1b1-4076-9d6f-324151d12f27",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -3815,7 +3815,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "012165d0-ff73-4474-aa80-f299796a381d",
+                  "id": "e36da238-fcee-4ed2-9995-d015c41afec6",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -3876,7 +3876,7 @@
               }
             },
             {
-              "id": "df14fe2c-bcf9-49c0-9810-34fb99548040",
+              "id": "cdaed9ed-1871-4a02-9e11-9756401aef62",
               "name": "Update a role",
               "request": {
                 "name": "Update a role",
@@ -3940,7 +3940,7 @@
               },
               "response": [
                 {
-                  "id": "998af240-92cb-4114-ac01-61831c0e9c25",
+                  "id": "6626c02d-f7e4-4b61-975c-7e37d15ba4a3",
                   "name": "Role successfully updated with provided changes (OK).",
                   "originalRequest": {
                     "url": {
@@ -4008,7 +4008,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "6f8f524f-e03e-4397-a693-3585be95ff61",
+                  "id": "66774914-ceac-490d-8911-afc142b4df83",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -4076,7 +4076,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "f444a1aa-569a-4019-bf5f-a37dc1e4cd74",
+                  "id": "dc1a40a9-b002-4b1b-bbe8-943376e61d9a",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -4144,7 +4144,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "f7ae25e6-f649-491d-8b51-c198f4a9f91b",
+                  "id": "a04df9c7-5987-47fb-b3bc-b0a86d17f72c",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -4212,7 +4212,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "833ec1fb-ab21-48a7-b382-f7af03f59691",
+                  "id": "abdf5825-3c87-4201-b1a4-18e831a7dfa0",
                   "name": "Business rule conflict or duplicate record (ConflictError).",
                   "originalRequest": {
                     "url": {
@@ -4280,7 +4280,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "2a6ca048-6a77-4cf3-870d-aab40d9ac61a",
+                  "id": "9e3cd21a-37ff-4cd2-88ef-24312ab5b6ed",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -4354,7 +4354,7 @@
               }
             },
             {
-              "id": "ccbce8fc-0594-4270-9941-82aa40ed4279",
+              "id": "f153a59c-635c-468c-acba-ce0bdcde7de5",
               "name": "Delete a role",
               "request": {
                 "name": "Delete a role",
@@ -4418,7 +4418,7 @@
               },
               "response": [
                 {
-                  "id": "54b27755-e0dc-4f36-80f4-0f4ee786c2f7",
+                  "id": "db2dd8d5-bab7-4fc5-9b8a-593cf87f5a15",
                   "name": "Role successfully soft-deleted from active profiles (No Content).",
                   "originalRequest": {
                     "url": {
@@ -4476,7 +4476,7 @@
                   "_postman_previewlanguage": "text"
                 },
                 {
-                  "id": "8ad847c0-1cc9-424e-b2f5-e46e17991ad6",
+                  "id": "7dd2fb73-6554-47f4-90b4-d4d6b3454ea5",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -4544,7 +4544,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "10917eb6-3065-4443-803b-4148be396269",
+                  "id": "ff37f1b6-2e43-415c-afd6-c2e502783777",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -4612,7 +4612,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "b1e8110e-2dd4-4bf5-b7ef-4816776251cf",
+                  "id": "e2530231-60b4-4a0a-8525-2069c1d2f73a",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -4686,7 +4686,7 @@
               }
             },
             {
-              "id": "ed0afb59-9cf7-4048-bba7-3a5e4734d0eb",
+              "id": "7f63f325-6d3c-4e80-8598-be067f722a95",
               "name": "Restore a role",
               "request": {
                 "name": "Restore a role",
@@ -4751,7 +4751,7 @@
               },
               "response": [
                 {
-                  "id": "d32e4070-8ed2-42dd-b390-927d63f64d81",
+                  "id": "2c5ffd0d-07c3-4d5e-823e-317df4c7600f",
                   "name": "Role successfully restored to active profiles (OK).",
                   "originalRequest": {
                     "url": {
@@ -4820,7 +4820,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "09129684-86dd-4760-98dd-055bfa0dc0df",
+                  "id": "035820a2-ec6e-43ea-a940-7d1703a47585",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -4889,7 +4889,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "4d126a6e-5f86-4c4e-b113-abb6bf88a7fa",
+                  "id": "da9da0c2-3d79-4493-81d2-e3cf85eb9036",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -4958,7 +4958,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "ab98853c-c7c5-4ef5-b368-8037b805f361",
+                  "id": "948ae123-63c4-41a9-acdc-fce5bd3489b6",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -5039,7 +5039,7 @@
           "description": "",
           "item": [
             {
-              "id": "7ac5dd35-ec5d-4f61-9c94-d3cc4d093ca9",
+              "id": "8c644c10-3275-433f-b8b3-7844541cf2f2",
               "name": "Find permissions",
               "request": {
                 "name": "Find permissions",
@@ -5094,7 +5094,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created after this date.",
+                        "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "startDate",
@@ -5103,7 +5103,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created before this date.",
+                        "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "endDate",
@@ -5133,7 +5133,7 @@
               },
               "response": [
                 {
-                  "id": "2ec9b9df-76e2-4e48-b174-9032b33b9f42",
+                  "id": "ece88c37-fdfa-49a3-9c6a-1c4a86a8d271",
                   "name": "Paginated list of permissions successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -5183,7 +5183,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -5192,7 +5192,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -5231,7 +5231,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "00276075-fc1c-40e4-b314-9a07449a1bdd",
+                  "id": "a12dd8dc-fa6f-4747-8606-b101ab466de5",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -5281,7 +5281,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -5290,7 +5290,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -5329,7 +5329,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "0704b7c6-046a-4224-8104-b4aea2f228ee",
+                  "id": "5416c280-4e19-440c-bb27-7ed134bf20c7",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -5379,7 +5379,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -5388,7 +5388,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -5433,7 +5433,7 @@
               }
             },
             {
-              "id": "cfd3e9f1-5caa-40bd-92b8-f711a229c0cb",
+              "id": "5113e996-4ed3-4581-a2ea-16bbcf2980e6",
               "name": "Register a permission",
               "request": {
                 "name": "Register a permission",
@@ -5485,7 +5485,7 @@
               },
               "response": [
                 {
-                  "id": "8730190e-5445-47b0-93bb-f8364fae7470",
+                  "id": "3572e13c-31a3-485d-8073-c178b5a9ed2f",
                   "name": "Permission successfully created and registered (Created).",
                   "originalRequest": {
                     "url": {
@@ -5541,7 +5541,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "344aeda1-09e2-4477-8345-f77ce444401c",
+                  "id": "fb4cdc67-4252-49ef-8b87-d2d7198d5d55",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -5597,7 +5597,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "2d3eaa7b-2f60-48ef-93cd-be3dfa4233ce",
+                  "id": "faf73289-0fb6-4330-8904-23fb6a995eb5",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -5653,7 +5653,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "6d8fbcfc-eb84-4355-bcba-3b541ebccf38",
+                  "id": "30c3e4d6-b8da-4ade-a1cb-ff036f9d2abc",
                   "name": "Business rule conflict or duplicate record (ConflictError).",
                   "originalRequest": {
                     "url": {
@@ -5709,7 +5709,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "cd256fc0-e609-45e9-9355-0f2e7b4f8848",
+                  "id": "13735573-9a7e-4473-be9e-9c681a5da52b",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -5771,7 +5771,7 @@
               }
             },
             {
-              "id": "d53c4b32-55a6-457b-b74f-d9ac2bcdeeae",
+              "id": "835c5589-50c0-4649-91f6-3ca019b8e5a8",
               "name": "Get a permission",
               "request": {
                 "name": "Get a permission",
@@ -5822,7 +5822,7 @@
               },
               "response": [
                 {
-                  "id": "c9196351-2b2f-47f2-bf22-1d02220a31f3",
+                  "id": "990144a7-3181-46a2-b804-235097ac0531",
                   "name": "Permission details successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -5877,7 +5877,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "a5b907f2-5b61-45b9-86be-76d6375fb0c7",
+                  "id": "0d359135-64c0-4319-991c-b84645e3470b",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -5932,7 +5932,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "04e51e26-49b5-45d2-b33c-65ccd99385e1",
+                  "id": "b32d6f50-0578-4d83-8514-86eec9dfdf93",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -5987,7 +5987,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "27809557-c209-432f-bebb-cca2c63714d7",
+                  "id": "b151f8d5-ea8f-48e5-a299-f287c5d922b9",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -6048,7 +6048,7 @@
               }
             },
             {
-              "id": "8bf75026-8047-48f7-967e-93d54a5257c2",
+              "id": "3e5c3e24-c7c2-46b4-aabf-aab6b5dd924a",
               "name": "Update a permission",
               "request": {
                 "name": "Update a permission",
@@ -6112,7 +6112,7 @@
               },
               "response": [
                 {
-                  "id": "ea61d590-0217-460d-8122-46bd911c1d26",
+                  "id": "5b84d356-9b37-49ef-b3cc-3993b5822a11",
                   "name": "Permission successfully updated with provided changes (OK).",
                   "originalRequest": {
                     "url": {
@@ -6180,7 +6180,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "85e30637-20a7-4237-87c4-4c9e0effc885",
+                  "id": "00717ff7-9cde-49e5-9415-50c2984e2a90",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -6248,7 +6248,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "87828565-58d6-4cca-a3b0-9b78021ec1bb",
+                  "id": "8e9d2273-589b-41d5-bf71-f85dcf852820",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -6316,7 +6316,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "fd353847-b881-4cb5-9afd-a73eea27cc91",
+                  "id": "3573a951-e698-42a1-92e4-37d97b3ed16e",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -6384,7 +6384,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "218ac79b-5090-43f9-b903-2bbdb2feebfb",
+                  "id": "e06912e4-1d3a-4e20-93a0-5fc858754467",
                   "name": "Business rule conflict or duplicate record (ConflictError).",
                   "originalRequest": {
                     "url": {
@@ -6452,7 +6452,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "75a8a02c-5ccf-4042-a8bf-e936c2869526",
+                  "id": "3e6ec8fd-1343-4ddc-99b4-18f4ad22d080",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -6526,7 +6526,7 @@
               }
             },
             {
-              "id": "e2ff53f5-736a-4a22-9b19-46f5b8a0ca41",
+              "id": "a17ede8b-ba22-4952-91a3-696c652d4d6f",
               "name": "Delete a permission",
               "request": {
                 "name": "Delete a permission",
@@ -6590,7 +6590,7 @@
               },
               "response": [
                 {
-                  "id": "9335dcf4-ab95-4467-adbc-cc35e89e7786",
+                  "id": "f2bd6080-72a6-4a7e-b767-45e032cf8e2c",
                   "name": "Permission successfully soft-deleted from active capabilities (No Content).",
                   "originalRequest": {
                     "url": {
@@ -6648,7 +6648,7 @@
                   "_postman_previewlanguage": "text"
                 },
                 {
-                  "id": "0245348c-8ac7-44fc-b2bd-6fd61cdb5a07",
+                  "id": "1bd498ee-d54e-4519-8c97-91c782ebc1f6",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -6716,7 +6716,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "fc61e075-f49a-44b2-9f4d-cb557f186a52",
+                  "id": "8be98d88-cf5a-4279-9628-1326252286fa",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -6784,7 +6784,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "3fac8357-0207-4407-9c08-7afbbeaa4ca2",
+                  "id": "d7e798a8-7b76-4433-957c-4e454e7d854b",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -6858,7 +6858,7 @@
               }
             },
             {
-              "id": "cba237a3-f1a3-43e1-b2c8-686539555f6f",
+              "id": "38c4ebaf-4e0d-4e36-bd6c-cc8160fd1cd0",
               "name": "Restore a permission",
               "request": {
                 "name": "Restore a permission",
@@ -6923,7 +6923,7 @@
               },
               "response": [
                 {
-                  "id": "51c46944-91d5-4d9f-bd8b-ad62623ca71e",
+                  "id": "e0ada57c-2c17-4ec2-8049-8debe619b664",
                   "name": "Permission successfully restored to active capabilities (OK).",
                   "originalRequest": {
                     "url": {
@@ -6992,7 +6992,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "7ebfbb08-a3a3-4ee1-bf87-f5265fa1f897",
+                  "id": "13dd5356-6597-4836-8034-54fd0a9fd5c2",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -7061,7 +7061,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "ae2a9a6a-0c9f-4a50-82d7-991619f0ace9",
+                  "id": "12d39bd3-4b46-41d1-89b1-6417871cc068",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -7130,7 +7130,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "9f8fdc35-aebf-4fc8-b949-0826f756196d",
+                  "id": "d1def672-da3c-461d-9f12-0e702f4e41bd",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -7211,7 +7211,7 @@
           "description": "",
           "item": [
             {
-              "id": "ba03730c-6aea-47e8-ba21-0426dc078747",
+              "id": "369fc53e-a044-4cb3-ae4f-e969bb3322ef",
               "name": "Find sessions",
               "request": {
                 "name": "Find sessions",
@@ -7275,7 +7275,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created after this date.",
+                        "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "startDate",
@@ -7284,7 +7284,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created before this date.",
+                        "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "endDate",
@@ -7314,7 +7314,7 @@
               },
               "response": [
                 {
-                  "id": "23d98a32-614d-4971-bebe-ca28b750261b",
+                  "id": "9b92c5c3-eec2-4330-9fa4-c4ccf7f51779",
                   "name": "Paginated list of active sessions successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -7373,7 +7373,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -7382,7 +7382,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -7421,7 +7421,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "473e95e4-0fc2-4b4d-a5ed-f31ba64e5b17",
+                  "id": "10afb4da-8b4c-4490-aa74-2aba9c5a5f1e",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -7480,7 +7480,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -7489,7 +7489,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -7528,7 +7528,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "e9b4073b-8172-476c-abbf-d83553edcb02",
+                  "id": "9d0afb2c-a385-428c-9313-c6f809462d20",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -7587,7 +7587,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -7596,7 +7596,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -7641,7 +7641,7 @@
               }
             },
             {
-              "id": "99938dea-59d4-41ba-9d19-83f17c7f5c7d",
+              "id": "2bbc203a-c54e-4406-8f4c-f4ed46fa8d84",
               "name": "Revoke a session",
               "request": {
                 "name": "Revoke a session",
@@ -7705,7 +7705,7 @@
               },
               "response": [
                 {
-                  "id": "3f24ba58-fdbe-499a-bb7d-4e6c5258566b",
+                  "id": "14ff542d-05ea-4f13-87a9-1371852c2805",
                   "name": "Session successfully revoked and tokens invalidated (No Content).",
                   "originalRequest": {
                     "url": {
@@ -7763,7 +7763,7 @@
                   "_postman_previewlanguage": "text"
                 },
                 {
-                  "id": "db6bfe47-52ac-49bf-b5c8-c6f2e62d66bd",
+                  "id": "3156e381-3f18-41f6-96b8-1587f441cd6a",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -7831,7 +7831,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "022b844e-92a1-4f1a-9d0c-bfa366f7f8fd",
+                  "id": "676f0749-e54d-4fdf-9c07-7ba0fff5d238",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -7899,7 +7899,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "cf9cdf0a-4d1e-4b58-8835-3a2099bc2184",
+                  "id": "f5c122dd-d255-4bb2-bb27-f6f71d53e3a7",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -7985,7 +7985,7 @@
           "description": "",
           "item": [
             {
-              "id": "52a3251c-ad0e-4782-8fb2-febcc590ce12",
+              "id": "6afb8b8b-0f80-4dee-84ba-275a0f20442e",
               "name": "Find patients",
               "request": {
                 "name": "Find patients",
@@ -8040,7 +8040,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created after this date.",
+                        "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "startDate",
@@ -8049,7 +8049,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created before this date.",
+                        "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "endDate",
@@ -8079,7 +8079,7 @@
               },
               "response": [
                 {
-                  "id": "708b0e56-7fb5-4b2a-a445-3da358091620",
+                  "id": "76a2c257-5d0c-4f23-ad50-e017faa33b3c",
                   "name": "Paginated list of patients successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -8129,7 +8129,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -8138,7 +8138,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -8177,7 +8177,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "63491ed7-49ae-4acb-8911-e8adffd84e96",
+                  "id": "37b96577-a819-4d75-9c65-4459e2405b26",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -8227,7 +8227,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -8236,7 +8236,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -8275,7 +8275,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "8036d76b-cfe4-42a4-a3cc-6bb3446bca95",
+                  "id": "d0e3ef44-72ba-4fb9-9f7a-939069675f56",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -8325,7 +8325,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -8334,7 +8334,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -8379,7 +8379,7 @@
               }
             },
             {
-              "id": "df7e9548-3b9f-4f90-bd68-60e16fe53513",
+              "id": "c6f88c90-1fb2-42c4-837a-20b8b037ee19",
               "name": "Register a patient",
               "request": {
                 "name": "Register a patient",
@@ -8431,7 +8431,7 @@
               },
               "response": [
                 {
-                  "id": "656e020f-6ef8-4ea4-ab36-eb54956da6fa",
+                  "id": "3b5d4f2f-7643-454f-82ce-23690e2ae145",
                   "name": "Patient successfully registered and persisted (Created).",
                   "originalRequest": {
                     "url": {
@@ -8487,7 +8487,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "2bb65fdf-1184-47ca-9046-3f5a0075baca",
+                  "id": "a24397c1-74f4-46ec-b4f0-fe13927de1e5",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -8543,7 +8543,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "4083a0ba-aa3d-4095-baa2-187678dc8bed",
+                  "id": "cf86b685-1ef7-4eeb-8de1-8354e089573d",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -8599,7 +8599,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "8883f703-1a37-46fe-b2d6-7bbefeffda1b",
+                  "id": "2e0a92e8-9bb6-40ff-bc01-0f6971ad7629",
                   "name": "Business rule conflict or duplicate record (ConflictError).",
                   "originalRequest": {
                     "url": {
@@ -8655,7 +8655,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "33751b50-2734-4160-bfa0-a4f0291ac0be",
+                  "id": "4ec72529-203c-4b98-9afe-0bfe2e06f6a4",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -8717,7 +8717,7 @@
               }
             },
             {
-              "id": "4d315d3e-579c-4a22-be5c-525c7bcc6f2a",
+              "id": "f6351d24-6e9f-4d7f-84fc-8dd39979e10a",
               "name": "Get a patient",
               "request": {
                 "name": "Get a patient",
@@ -8768,7 +8768,7 @@
               },
               "response": [
                 {
-                  "id": "183e8aa3-4121-4659-b71b-382ae91ad68d",
+                  "id": "022488ba-9eca-4050-983b-fb479aebffa9",
                   "name": "Patient details successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -8823,7 +8823,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "c334fe4a-090a-4196-a249-f1f876894dc1",
+                  "id": "84491605-5511-41af-8da0-0e7549be5309",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -8878,7 +8878,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "50e8a16c-bee6-420d-b340-7c57500a0f41",
+                  "id": "3edbd9bb-d2cc-44ea-a9e9-edb7eecd3e7a",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -8933,7 +8933,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "57a5303e-81b0-4058-949c-547f3312021b",
+                  "id": "9580bb97-2d7f-4854-87bd-d31779089a26",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -8994,7 +8994,7 @@
               }
             },
             {
-              "id": "56ef49ec-7c50-46ca-90dd-ed89869e463d",
+              "id": "4e9f89c1-07ab-43e1-9bb3-59fc8498a094",
               "name": "Update a patient",
               "request": {
                 "name": "Update a patient",
@@ -9058,7 +9058,7 @@
               },
               "response": [
                 {
-                  "id": "72d76117-da6b-41e2-9e19-225082a4c6e7",
+                  "id": "a6098d6e-f347-49c9-83dc-803ed1786555",
                   "name": "Patient successfully updated with provided changes (OK).",
                   "originalRequest": {
                     "url": {
@@ -9126,7 +9126,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "fdc5938d-4a4f-462c-84ba-5970d173441a",
+                  "id": "7733ae64-f599-4221-8775-68bd5ed8b407",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -9194,7 +9194,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "fff95c87-1843-4c91-928b-60ac864798b3",
+                  "id": "f401ce16-0588-42a7-bd91-dd712961bc4a",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -9262,7 +9262,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "e25dc6df-52f0-401b-83d6-47aa304d1f64",
+                  "id": "70f44f1f-7782-4b2b-97e7-6a93a1b37a56",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -9330,7 +9330,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "c2fd17a8-35c5-4ee8-a393-eb6a8575ffa7",
+                  "id": "ff2f55da-d1bb-4f09-9d95-bfe530ade946",
                   "name": "Business rule conflict or duplicate record (ConflictError).",
                   "originalRequest": {
                     "url": {
@@ -9398,7 +9398,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "9ed7a49c-b72a-44c7-9b62-1d52b23daa1e",
+                  "id": "c3811292-4a81-486c-ad07-1d22efd6a865",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -9472,7 +9472,7 @@
               }
             },
             {
-              "id": "ef2fa9d4-6d08-4670-86fb-c55db73ffa48",
+              "id": "d62d0abe-111a-45e5-9197-2def383ddd15",
               "name": "Delete a patient",
               "request": {
                 "name": "Delete a patient",
@@ -9536,7 +9536,7 @@
               },
               "response": [
                 {
-                  "id": "41fa660d-ae2d-4093-93f5-88a0854f54db",
+                  "id": "71878a25-9170-4528-97e8-52b9c0462714",
                   "name": "Patient successfully soft-deleted from active monitoring (No Content).",
                   "originalRequest": {
                     "url": {
@@ -9594,7 +9594,7 @@
                   "_postman_previewlanguage": "text"
                 },
                 {
-                  "id": "d0a30a89-0177-4e39-b7c3-0e303b5cfea2",
+                  "id": "8312cef4-14d8-4b7e-9ca7-01bc7a96ba33",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -9662,7 +9662,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "10951b3c-0f0a-4b60-91f1-c5a0587dd22b",
+                  "id": "948bc21d-2cf2-4738-a351-d7b6dd56ac9a",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -9730,7 +9730,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "647297da-bfed-4d3b-968b-afcb736234db",
+                  "id": "f2cb28f6-89f0-4450-839f-e0d3d93e0a42",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -9804,7 +9804,7 @@
               }
             },
             {
-              "id": "d95558ca-4598-441d-a23a-3769165e8ac6",
+              "id": "ad8bd56f-e59b-4f90-baf3-dd6c9645dba7",
               "name": "Restore a patient",
               "request": {
                 "name": "Restore a patient",
@@ -9869,7 +9869,7 @@
               },
               "response": [
                 {
-                  "id": "d258dd55-12fc-49d0-bdb6-1386240e88da",
+                  "id": "c348ac31-d908-49e5-b5ac-a44840745b9d",
                   "name": "Patient successfully restored to active monitoring (OK).",
                   "originalRequest": {
                     "url": {
@@ -9938,7 +9938,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "fa2db034-9e0c-4b8f-9c91-5b04bb5da6f5",
+                  "id": "88648db2-e083-45b5-a4c1-9ce354765d10",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -10007,7 +10007,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "31b83b2b-fe40-4acd-9739-dd5032ce450a",
+                  "id": "74cd01c5-8c58-42f7-90a6-28ea1e3c8538",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -10076,7 +10076,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "2eab7d9c-bc6e-4f8d-91e8-ebf5654df660",
+                  "id": "65161a11-c042-48bb-a03e-17728ae15a88",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -10157,7 +10157,7 @@
           "description": "",
           "item": [
             {
-              "id": "621c23f8-f6bc-413f-b88a-e304e08f7503",
+              "id": "5dc98fef-c7dd-4ad2-94dc-a7fa6e99250f",
               "name": "Find exams",
               "request": {
                 "name": "Find exams",
@@ -10221,7 +10221,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created after this date.",
+                        "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "startDate",
@@ -10230,7 +10230,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created before this date.",
+                        "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "endDate",
@@ -10260,7 +10260,7 @@
               },
               "response": [
                 {
-                  "id": "aeda9583-cfab-44aa-b0f8-908e5bc23a54",
+                  "id": "f64aa0a2-f01c-4b1a-999a-6c675b7f1438",
                   "name": "Paginated list of exams successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -10319,7 +10319,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -10328,7 +10328,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -10367,7 +10367,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "d1a0d9c2-ee59-4b6b-83d8-f997d584f0fb",
+                  "id": "fcf5f18d-83bc-445f-85ab-c649384c307f",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -10426,7 +10426,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -10435,7 +10435,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -10474,7 +10474,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "c3648398-e487-47b0-a996-8992a142aa2b",
+                  "id": "ec99c0db-fa0c-40fb-8c2a-5013e33bb436",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -10533,7 +10533,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -10542,7 +10542,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -10587,7 +10587,7 @@
               }
             },
             {
-              "id": "563e03fb-0f8a-4ce4-a355-6d7a4f040dc8",
+              "id": "c12d1cc5-ad87-423d-8698-70551deaa6c6",
               "name": "Register an exam",
               "request": {
                 "name": "Register an exam",
@@ -10639,7 +10639,7 @@
               },
               "response": [
                 {
-                  "id": "ebe77ea0-552d-42d8-a199-fc3cbe9213c1",
+                  "id": "9f8200bb-418d-45ed-86cf-a63fc0f9566e",
                   "name": "Exam successfully registered with laboratory results (Created).",
                   "originalRequest": {
                     "url": {
@@ -10695,7 +10695,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "30acc4dd-638c-4379-baf0-fa7c4834975c",
+                  "id": "ee5b8096-d448-487e-8450-e298dacbd029",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -10751,7 +10751,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "c114a1a5-d61c-4e8f-a831-da9b8bd40f54",
+                  "id": "d02aaa5b-bfcc-4c37-8efe-ad5e772a6b1d",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -10807,7 +10807,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "1d839f35-ef85-4b3e-994b-f40e81e088a9",
+                  "id": "dee6f2fb-b224-4ef5-96eb-09bc42c6ef23",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -10863,7 +10863,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "6e350f3a-5ee1-4e12-a421-17cd337603a0",
+                  "id": "216d7c18-2679-4850-963b-46bfee1b2dd9",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -10925,7 +10925,7 @@
               }
             },
             {
-              "id": "d5a2b1fe-9a44-4203-b2a5-c99ae4a75f6f",
+              "id": "5743a314-a8fe-40c4-9579-6cc5bd8692ac",
               "name": "Get an exam",
               "request": {
                 "name": "Get an exam",
@@ -10976,7 +10976,7 @@
               },
               "response": [
                 {
-                  "id": "689c4063-981d-4529-a833-c68ea257a158",
+                  "id": "b1934dd0-6c15-48c3-b667-33e477c25933",
                   "name": "Exam details successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -11031,7 +11031,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "d851dba5-ee63-4b9e-9359-0507e8383b30",
+                  "id": "f2167648-1785-4d79-8705-e0f1ca43767b",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -11086,7 +11086,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "efc74656-974c-425e-9860-fe30f6f29586",
+                  "id": "db948e30-4fa1-43df-89c8-c21237ed0caa",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -11141,7 +11141,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "56f2720b-ecdf-4cda-bd13-195757dbe661",
+                  "id": "d47acdb3-834b-4f35-83aa-bded0313c54a",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -11202,7 +11202,7 @@
               }
             },
             {
-              "id": "6f638ace-89b7-44fd-8ddd-e3e83d83e49a",
+              "id": "ec16ee67-16d0-4550-a252-6e642fd40a95",
               "name": "Update an exam",
               "request": {
                 "name": "Update an exam",
@@ -11266,7 +11266,7 @@
               },
               "response": [
                 {
-                  "id": "78263ccc-1b4c-478f-a093-3a9e80523ccd",
+                  "id": "57f9b0e5-8198-4c23-8229-c7d0372d7285",
                   "name": "Exam successfully updated with provided changes (OK).",
                   "originalRequest": {
                     "url": {
@@ -11334,7 +11334,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "cc08d665-0a05-4a66-b6b6-369c4aafca24",
+                  "id": "59b39b85-9891-437e-9ec4-baaa73fed920",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -11402,7 +11402,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "3f3a92b5-d85e-4a2b-a889-814bd6e2ea77",
+                  "id": "ba318f4b-63d4-42d9-a21d-8cb523cebfdb",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -11470,7 +11470,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "19b41fff-c003-4414-8cce-00b4e23589f8",
+                  "id": "c52b2e4f-d7ba-4258-be08-d62265c7efc7",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -11538,7 +11538,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "539f4bcc-9dc7-48a3-8188-35cb29c880ee",
+                  "id": "9e3ecf4b-504f-43e2-9378-61fefc581548",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -11612,7 +11612,7 @@
               }
             },
             {
-              "id": "7eaf0945-6ac3-486e-bfd7-c77252fbbb39",
+              "id": "797880ac-1d89-47d5-a860-c510a9d95b9a",
               "name": "Delete an exam",
               "request": {
                 "name": "Delete an exam",
@@ -11676,7 +11676,7 @@
               },
               "response": [
                 {
-                  "id": "ed5e8fba-c121-472d-8902-86ae80e19891",
+                  "id": "56670680-bd3c-4ac6-a29f-8f7cfa55017b",
                   "name": "Exam successfully soft-deleted from active records (No Content).",
                   "originalRequest": {
                     "url": {
@@ -11734,7 +11734,7 @@
                   "_postman_previewlanguage": "text"
                 },
                 {
-                  "id": "8f7a791c-2342-4b66-9254-6634efcbb837",
+                  "id": "e59426ae-a0c9-472b-965c-c1750e2068fa",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -11802,7 +11802,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "60b08eb8-2f0d-4c5e-8432-2f0b0abda185",
+                  "id": "464e745a-a584-401c-abed-879b637bf1df",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -11870,7 +11870,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "550b9340-5914-4aa3-8c4f-2516a2db2ffe",
+                  "id": "4465ab28-8dda-4b67-9739-bf9dfb8daff9",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -11944,7 +11944,7 @@
               }
             },
             {
-              "id": "18e8f60f-a0fe-460b-a8fe-ddfd4dfd5a67",
+              "id": "d9f196ed-9027-4715-9c5d-383bc02ad193",
               "name": "Restore an exam",
               "request": {
                 "name": "Restore an exam",
@@ -12009,7 +12009,7 @@
               },
               "response": [
                 {
-                  "id": "47addfbf-4951-4cf0-b3a1-eb21bf730db3",
+                  "id": "06a78e5a-b1d7-46c6-8e6b-ebbc5aa5b874",
                   "name": "Exam successfully restored to active records (OK).",
                   "originalRequest": {
                     "url": {
@@ -12078,7 +12078,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "8184c440-2f33-4520-85f5-0a4de6bd9bd1",
+                  "id": "3b787cff-2785-4860-8e71-7aa7dd136a8a",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -12147,7 +12147,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "9242d909-3cb3-487e-bd99-7cfdad1104bb",
+                  "id": "1eaadc16-d37c-45cd-a11a-87f56fbcaf79",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -12216,7 +12216,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "5ce21c4a-af87-4b6c-a18b-083f5d24fdf1",
+                  "id": "0d4d1f1e-f7b5-4ca9-a21b-e7bcedf9d8cf",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -12297,7 +12297,7 @@
           "description": "",
           "item": [
             {
-              "id": "1eb7bce2-97c3-4795-a782-bc15e3a3513c",
+              "id": "f7924109-0020-4b76-9791-ad71f32dc555",
               "name": "Find treatments",
               "request": {
                 "name": "Find treatments",
@@ -12361,7 +12361,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created after this date.",
+                        "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "startDate",
@@ -12370,7 +12370,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created before this date.",
+                        "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "endDate",
@@ -12400,7 +12400,7 @@
               },
               "response": [
                 {
-                  "id": "619bc48a-8418-4b79-a77d-6269030548c2",
+                  "id": "bac8ffb4-6313-4b25-9a71-9ca45ef6eecc",
                   "name": "Paginated list of treatments successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -12459,7 +12459,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -12468,7 +12468,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -12507,7 +12507,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "b620b314-4f99-46fd-8cc0-f003884aa204",
+                  "id": "20f32d98-cc32-486a-8452-4b590b5d4a7e",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -12566,7 +12566,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -12575,7 +12575,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -12614,7 +12614,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "184066b5-be12-4732-8e6f-c772bf3a555d",
+                  "id": "ca1114bc-183b-4280-ad0b-4b0cb36120a7",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -12673,7 +12673,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -12682,7 +12682,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -12727,7 +12727,7 @@
               }
             },
             {
-              "id": "7fc924ed-3762-4924-8bb5-afb6de55cac5",
+              "id": "ec75cb8f-e0cd-46e8-9fd6-dbd0331690cc",
               "name": "Register a treatment",
               "request": {
                 "name": "Register a treatment",
@@ -12779,7 +12779,7 @@
               },
               "response": [
                 {
-                  "id": "e1cac112-a3f6-45f8-af19-b55f395a549d",
+                  "id": "aac8e15e-1a0e-4145-bf6b-09c4fd4db964",
                   "name": "Treatment successfully registered with pharmacotherapy data (Created).",
                   "originalRequest": {
                     "url": {
@@ -12835,7 +12835,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "17833fcf-1efd-421b-a0cd-01e7f6e2dc23",
+                  "id": "e062bc14-0fb7-4249-b09c-27bc58b2e247",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -12891,7 +12891,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "4754b804-86de-441f-a713-918866e8af69",
+                  "id": "62f14ca3-009a-47ba-a6cd-65e9a003eddf",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -12947,7 +12947,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "d4eea4b4-d5ad-4c25-8530-51d1f9d6c4d6",
+                  "id": "83c5e4f6-d3a9-43a5-bd7d-7a1524c78120",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -13003,7 +13003,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "ddd150f5-5e23-40df-8f72-0454a07a6b48",
+                  "id": "99703a62-e4bd-4744-a27c-044fe172f93e",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -13065,7 +13065,7 @@
               }
             },
             {
-              "id": "2fcfb545-b9e6-44ca-81ab-bd89380f5b1d",
+              "id": "8f8fdab0-5bbf-4344-84c8-645388b81ce6",
               "name": "Get a treatment",
               "request": {
                 "name": "Get a treatment",
@@ -13116,7 +13116,7 @@
               },
               "response": [
                 {
-                  "id": "33b15110-6b11-4fe0-b820-a984465d07e0",
+                  "id": "6808d07b-31cd-486b-814e-e0e0a473050b",
                   "name": "Treatment details successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -13171,7 +13171,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "b3647edf-057f-470f-8d1c-5b43a9248b02",
+                  "id": "055b48b3-1607-4ea7-bc6c-158144cc3979",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -13226,7 +13226,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "58ac3f51-9f7f-433e-b67a-6c47046cdc78",
+                  "id": "7e9dc6a6-88b1-4a96-b75e-2692cfbb8ac6",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -13281,7 +13281,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "751c301d-9c97-4c8a-b52f-929bc83bc4cf",
+                  "id": "cfdd1440-dc2b-4a41-8e1c-712aa8e90da3",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -13342,7 +13342,7 @@
               }
             },
             {
-              "id": "70d742bf-9414-4ee9-8413-817f54eab666",
+              "id": "4218b309-bf6f-47fa-b10a-2ce4bbe17f0f",
               "name": "Update a treatment",
               "request": {
                 "name": "Update a treatment",
@@ -13406,7 +13406,7 @@
               },
               "response": [
                 {
-                  "id": "b99858ba-8f6c-4778-a2c6-373eab3a4dd1",
+                  "id": "7be80e58-1d29-42c7-8910-82252ac2e99d",
                   "name": "Treatment successfully updated with provided changes (OK).",
                   "originalRequest": {
                     "url": {
@@ -13474,7 +13474,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "2e048e4e-7b8f-4c09-a362-2b9c5f64b218",
+                  "id": "9f156457-dd8e-4c5e-88d3-0c365044997d",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -13542,7 +13542,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "261ecc3f-d1a8-4af8-815d-dec795a36ef9",
+                  "id": "4d37e6d0-ed60-49ea-a3e4-05f283013132",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -13610,7 +13610,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "bf9e1714-5a47-4e95-b3b3-5ce3b900a332",
+                  "id": "d7870781-ab0b-457a-a2f1-bb0b6d2af2bc",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -13678,7 +13678,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "e5af1524-0c58-4da4-b65c-167eb7958397",
+                  "id": "50c1a964-5548-4ae8-a860-9ae0fb367b4a",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -13752,7 +13752,7 @@
               }
             },
             {
-              "id": "891c9a9e-44e0-4f1b-ab4b-78570327154b",
+              "id": "96b3e170-3dbd-4d5c-9ee3-003288f7ab0c",
               "name": "Delete a treatment",
               "request": {
                 "name": "Delete a treatment",
@@ -13816,7 +13816,7 @@
               },
               "response": [
                 {
-                  "id": "836fda37-8655-49bd-a81d-4a452916d2fb",
+                  "id": "d5441d55-7776-4357-8ab8-1cabf7540ddc",
                   "name": "Treatment successfully soft-deleted from active records (No Content).",
                   "originalRequest": {
                     "url": {
@@ -13874,7 +13874,7 @@
                   "_postman_previewlanguage": "text"
                 },
                 {
-                  "id": "8ce7b1d9-68d0-4a45-aa95-90f42f6de5a4",
+                  "id": "36610180-a658-4325-95c9-4f10f3c8b38c",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -13942,7 +13942,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "5b7a0e6e-5dc4-4f8f-833b-f5948f5c4acc",
+                  "id": "bb94c6f7-927a-4593-98ce-913fb05b419b",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -14010,7 +14010,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "33feca0f-bb3a-4e74-bcfe-d4aed7030e94",
+                  "id": "15e145b5-6c94-4a6b-b081-68c8f2db5fb7",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -14084,7 +14084,7 @@
               }
             },
             {
-              "id": "0f3b3731-6d5b-42be-aade-b2b1d745b190",
+              "id": "15b78321-8b8d-440f-8601-b043784b2607",
               "name": "Restore a treatment",
               "request": {
                 "name": "Restore a treatment",
@@ -14149,7 +14149,7 @@
               },
               "response": [
                 {
-                  "id": "80cdcc51-4e78-4652-b332-2e57e06c13d8",
+                  "id": "9a58693a-ff8f-43eb-81dc-efd13d1a688e",
                   "name": "Treatment successfully restored to active records (OK).",
                   "originalRequest": {
                     "url": {
@@ -14218,7 +14218,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "0e4197dc-6966-48d8-8a14-8c96b7224689",
+                  "id": "8e83321a-65d6-48d4-b015-39d4f0251296",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -14287,7 +14287,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "d953e122-f05f-479e-9c97-0c7ed9abf521",
+                  "id": "f98af22c-fc59-4431-b7b4-288da703cd50",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -14356,7 +14356,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "7682e0ad-c8f1-4501-af7c-685bac7fb2ab",
+                  "id": "57f474ed-b115-4744-9fdc-2dad1e280ab8",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -14437,7 +14437,7 @@
           "description": "",
           "item": [
             {
-              "id": "b5c830c3-fd09-4173-bdd0-f6c83b5cdde4",
+              "id": "cc68130e-95be-40df-b153-663889762122",
               "name": "Find notifications",
               "request": {
                 "name": "Find notifications",
@@ -14501,7 +14501,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created after this date.",
+                        "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "startDate",
@@ -14510,7 +14510,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created before this date.",
+                        "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "endDate",
@@ -14540,7 +14540,7 @@
               },
               "response": [
                 {
-                  "id": "3d9ae67c-4387-4f6a-9e79-736e25dd1d93",
+                  "id": "28d9c50f-b18a-40af-a01b-bef962277341",
                   "name": "Paginated list of notifications successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -14599,7 +14599,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -14608,7 +14608,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -14647,7 +14647,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "f152171a-b10c-4dbd-85ad-bc9785644ec5",
+                  "id": "70b26fc6-a076-46c1-950c-83773c594c07",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -14706,7 +14706,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -14715,7 +14715,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -14754,7 +14754,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "497063f5-1d2b-4991-8aba-bc622678ade1",
+                  "id": "7ac8ce1b-d7a5-49d3-bde2-f9c5aa1c7b3d",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -14813,7 +14813,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -14822,7 +14822,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -14867,7 +14867,7 @@
               }
             },
             {
-              "id": "628faba6-3ce1-4c97-b8c3-f882365d485c",
+              "id": "844f3a64-a45a-445f-b9e8-66cef9fcc9e8",
               "name": "Register a notification",
               "request": {
                 "name": "Register a notification",
@@ -14919,7 +14919,7 @@
               },
               "response": [
                 {
-                  "id": "aab11acd-a0a4-4be7-8363-691e094a2b23",
+                  "id": "48024e41-4c1f-4859-a5af-33d3e4101002",
                   "name": "Notification successfully registered for regulatory compliance (Created).",
                   "originalRequest": {
                     "url": {
@@ -14975,7 +14975,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "67894d94-b6dd-42fe-8de9-74999230bbcb",
+                  "id": "21ba5158-e85f-49ee-af58-9b980bbd7f23",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -15031,7 +15031,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "18f2f507-5393-419a-91ec-212d8ebf5ef4",
+                  "id": "09428d51-51a2-4fce-aaa4-66888e1fc086",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -15087,7 +15087,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "4822bdbb-2c31-44df-a288-f58b6aad96bc",
+                  "id": "2ff63837-b918-4340-80f1-661741afe529",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -15143,7 +15143,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "cc6d234c-26fc-4591-91d1-59e4a152432e",
+                  "id": "836f9ebb-55d4-466f-90e3-1ad52186563b",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -15205,7 +15205,7 @@
               }
             },
             {
-              "id": "5260c41c-62a2-4f61-8fa7-a9951fa9e296",
+              "id": "d50fd8c4-4bd4-408e-9a80-d9a7d9e057d5",
               "name": "Get a notification",
               "request": {
                 "name": "Get a notification",
@@ -15256,7 +15256,7 @@
               },
               "response": [
                 {
-                  "id": "096dd718-5f66-488d-b764-b2fcfc0f0656",
+                  "id": "967ce62e-adaa-4f5a-84e4-7dfce229b7bc",
                   "name": "Notification details successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -15311,7 +15311,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "7368f216-831b-46db-85d7-e8470a6cd9b2",
+                  "id": "cb72d062-0c86-44ab-8a74-2989a357c1e5",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -15366,7 +15366,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "a7d1f2cc-7a9e-4730-9705-5d75ba726252",
+                  "id": "363616b4-528c-45b4-97a3-ddf52e370246",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -15421,7 +15421,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "7ef31c58-939b-4f4b-902c-422d9794cc27",
+                  "id": "ba196d47-23cf-4d3d-8b67-ccbc93b326b8",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -15482,7 +15482,7 @@
               }
             },
             {
-              "id": "19ffb840-aa75-4354-98d2-3e2e45b05205",
+              "id": "ca955c47-2b4b-4f96-9c71-b047c13237af",
               "name": "Update a notification",
               "request": {
                 "name": "Update a notification",
@@ -15546,7 +15546,7 @@
               },
               "response": [
                 {
-                  "id": "5a75ba2d-d599-4091-b52a-6f17640e832c",
+                  "id": "4a0ff1f7-2356-4616-a7f8-e1d787069c07",
                   "name": "Notification successfully updated with provided changes (OK).",
                   "originalRequest": {
                     "url": {
@@ -15614,7 +15614,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "e126569d-250a-40af-81d9-088230a03c16",
+                  "id": "d2d408b8-7cfd-419c-abd6-a1fa094badf6",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -15682,7 +15682,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "88c7bbde-1ae5-4315-86bf-ba4999a635e7",
+                  "id": "d50fa23f-8967-45b3-9d01-44ee3f2dccec",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -15750,7 +15750,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "da3f6039-1791-4e15-b8f8-78d88f19699c",
+                  "id": "d6dd4cb7-e5d6-4bbd-ab1e-0e0e90232b81",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -15818,7 +15818,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "50a3aa91-32d1-4837-8f83-e9b13c939d07",
+                  "id": "46d3c868-f318-4120-b47c-fe64b371e9f6",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -15892,7 +15892,7 @@
               }
             },
             {
-              "id": "a6a5e060-4211-4315-b109-115e108e3ab4",
+              "id": "e1e68299-7ebf-4e2f-80ff-9415a56a7792",
               "name": "Delete a notification",
               "request": {
                 "name": "Delete a notification",
@@ -15956,7 +15956,7 @@
               },
               "response": [
                 {
-                  "id": "10fe0c16-f183-43c1-9736-0b9f5afa861b",
+                  "id": "1dae0dd8-8197-42b1-94b5-dab936866d51",
                   "name": "Notification successfully soft-deleted from active records (No Content).",
                   "originalRequest": {
                     "url": {
@@ -16014,7 +16014,7 @@
                   "_postman_previewlanguage": "text"
                 },
                 {
-                  "id": "93ddb4b2-1e57-400d-802b-5db92cf43a29",
+                  "id": "b91948c0-7ee9-417f-9c5a-b310715d7618",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -16082,7 +16082,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "f54c852f-17ae-4ff5-88bf-941aa14174f9",
+                  "id": "290a351b-f9d7-40b0-adee-a2f84e4487e3",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -16150,7 +16150,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "2dd2cfe4-914d-46a3-9a95-76a689babd05",
+                  "id": "6a9c2f38-918a-437e-bafb-b35b6d03bb6a",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -16224,7 +16224,7 @@
               }
             },
             {
-              "id": "578a21b8-dfc2-49c9-9f50-333a63f88b06",
+              "id": "dc421bba-5b5b-41ba-8c54-2e75c83e84c3",
               "name": "Restore a notification",
               "request": {
                 "name": "Restore a notification",
@@ -16289,7 +16289,7 @@
               },
               "response": [
                 {
-                  "id": "92f9e334-2deb-4f17-a691-a748ca656347",
+                  "id": "c4e608ea-8798-446c-9e49-ee84ee945038",
                   "name": "Notification successfully restored to active records (OK).",
                   "originalRequest": {
                     "url": {
@@ -16358,7 +16358,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "b3531890-c0b6-4218-ae98-1beab1c0f27c",
+                  "id": "926a365c-53cc-4278-b0a7-71bc32d77fd2",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -16427,7 +16427,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "f778beb4-d535-4f6e-b3c8-6bc59b673415",
+                  "id": "6152bc88-49ca-4dd7-af76-92e1cb070f96",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -16496,7 +16496,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "697ff55e-e52d-42f8-a37b-0879b1055c25",
+                  "id": "0edd9dc0-c0b1-4859-b8fd-dd19a12c744b",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -16577,7 +16577,7 @@
           "description": "",
           "item": [
             {
-              "id": "4dd3ddab-bfa2-4714-b81e-ded51785531b",
+              "id": "993b7ca1-c0a8-4db8-b27e-e3e981b0bc81",
               "name": "Find observations",
               "request": {
                 "name": "Find observations",
@@ -16641,7 +16641,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created after this date.",
+                        "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "startDate",
@@ -16650,7 +16650,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter records created before this date.",
+                        "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "endDate",
@@ -16680,7 +16680,7 @@
               },
               "response": [
                 {
-                  "id": "26aee49e-25f9-4917-9841-8c224b157764",
+                  "id": "580962df-3525-45d9-a9e9-8d62c4309b8e",
                   "name": "Paginated list of observations successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -16739,7 +16739,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -16748,7 +16748,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -16787,7 +16787,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "85a9d940-e342-41fc-9545-3881f32f8abd",
+                  "id": "a6ee92a3-8c4a-43c0-a98b-3ec37a5a53ab",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -16846,7 +16846,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -16855,7 +16855,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -16894,7 +16894,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "f674e77c-fb66-4eda-9db4-dc03c7519d95",
+                  "id": "dfd7f3f7-c481-4c7c-92de-c16a2ca26074",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -16953,7 +16953,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -16962,7 +16962,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter records created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -17007,7 +17007,7 @@
               }
             },
             {
-              "id": "c6c75e24-7982-43ce-99ef-2a7bca311880",
+              "id": "95607e64-2350-432b-9407-232f67edcf60",
               "name": "Register an observation",
               "request": {
                 "name": "Register an observation",
@@ -17059,7 +17059,7 @@
               },
               "response": [
                 {
-                  "id": "19babeb7-12f6-4bef-a378-3dbef817f9f2",
+                  "id": "6695ccf5-2527-452e-92b1-1ea82e73cea3",
                   "name": "Observation successfully registered with clinical notes (Created).",
                   "originalRequest": {
                     "url": {
@@ -17115,7 +17115,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "bc0062d6-1f42-48d4-9cd5-546be9380369",
+                  "id": "4766410a-cffd-4ad2-ad2c-76f57a100db5",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -17171,7 +17171,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "de6d84a2-766f-4016-ae93-b2d6787707c0",
+                  "id": "3c8626ec-4452-40f2-8be5-3a1bd02f60c6",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -17227,7 +17227,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "902445e9-e1ad-4db1-91bf-c1385a19dc01",
+                  "id": "7fafdbdc-87a9-481a-94c7-cdb906cf83dd",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -17283,7 +17283,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "8b4e054c-11b3-45b9-967b-ed121b46e7c4",
+                  "id": "5b863e8d-8767-4ad4-907f-4c343f08a93d",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -17345,7 +17345,7 @@
               }
             },
             {
-              "id": "ae58d07d-3f6a-4494-bbf7-c5e863b539d0",
+              "id": "6722933b-fc7e-46ae-bf61-fb4a228eb84c",
               "name": "Get an observation",
               "request": {
                 "name": "Get an observation",
@@ -17396,7 +17396,7 @@
               },
               "response": [
                 {
-                  "id": "c6263a2d-9064-4e17-a382-aadc826933a1",
+                  "id": "cb613b2b-86c5-4f0c-bd09-aa4cbbd642ba",
                   "name": "Observation details successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -17451,7 +17451,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "a88f46cf-1303-425e-813a-2df52ab69be0",
+                  "id": "508ab9d8-738f-43fd-b3b9-7418fa03b405",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -17506,7 +17506,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "b4a1ceee-65c9-4bfd-ac0a-7d18ec9caeba",
+                  "id": "86d9f371-db96-4939-b86e-fc3fc0028f26",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -17561,7 +17561,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "fd2c5eff-1470-4b37-b688-d6ae481beafa",
+                  "id": "1c25a43a-c4b0-4da4-8f86-c04fe9b4de32",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -17622,7 +17622,7 @@
               }
             },
             {
-              "id": "9ae8f627-ed75-4dff-a225-2e0e67e069bc",
+              "id": "880af54f-01a1-4a96-a1f9-516e1632ebf0",
               "name": "Update an observation",
               "request": {
                 "name": "Update an observation",
@@ -17686,7 +17686,7 @@
               },
               "response": [
                 {
-                  "id": "217558bf-aae5-4212-b092-077ac5e83713",
+                  "id": "d6ba0e42-4900-4fe8-826b-3e8317134814",
                   "name": "Observation successfully updated with provided changes (OK).",
                   "originalRequest": {
                     "url": {
@@ -17754,7 +17754,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "e5a14c9b-4df9-421e-97f3-0844554dfc96",
+                  "id": "dfe583b8-e5f3-484e-a815-3b3c02b50563",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -17822,7 +17822,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "fafd40bd-b8ed-4c77-a4df-260c56e127dc",
+                  "id": "885804a9-78fa-4f50-a316-065eb447a0b5",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -17890,7 +17890,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "f919f37d-8a5c-4b3e-9f82-f055bbd37021",
+                  "id": "07849c43-2abe-4515-89ad-b293b3da2991",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -17958,7 +17958,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "3ea2854b-a80c-4ce5-a5ce-fe993d549a20",
+                  "id": "a710d2c7-c6b8-4f28-83a5-35f8b1fe76e9",
                   "name": "The request payload contains invalid data (ValidationError).",
                   "originalRequest": {
                     "url": {
@@ -18032,7 +18032,7 @@
               }
             },
             {
-              "id": "6d7d4d5d-b562-4ca9-9edc-52fa8be71c60",
+              "id": "07446294-cbd4-4da2-bb36-bcde110098df",
               "name": "Delete an observation",
               "request": {
                 "name": "Delete an observation",
@@ -18096,7 +18096,7 @@
               },
               "response": [
                 {
-                  "id": "2a20d998-f8af-445d-9096-a4a5abd879e3",
+                  "id": "b012e77b-ab89-4293-b3b8-1e1ca8c8abf2",
                   "name": "Observation successfully soft-deleted from active records (No Content).",
                   "originalRequest": {
                     "url": {
@@ -18154,7 +18154,7 @@
                   "_postman_previewlanguage": "text"
                 },
                 {
-                  "id": "9d759866-b7f0-4850-9f39-589b264eaf04",
+                  "id": "866eb604-ac45-4825-9863-9de9f66f8e3c",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -18222,7 +18222,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "fb044ad0-a2f6-4e74-8325-3981e87160ee",
+                  "id": "3f1b9ccb-7371-49f4-834f-08c0c397b1bf",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -18290,7 +18290,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "eaa95330-ea13-4e5f-aced-9a9d71396b2c",
+                  "id": "fffb6a44-849d-4fa8-b3f7-b7c42347edc8",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -18364,7 +18364,7 @@
               }
             },
             {
-              "id": "534a80ea-650f-46e3-b0d8-61b3f91016cb",
+              "id": "652b26ff-bc33-46d3-8122-1ac317000087",
               "name": "Restore an observation",
               "request": {
                 "name": "Restore an observation",
@@ -18429,7 +18429,7 @@
               },
               "response": [
                 {
-                  "id": "a48a4847-e468-45b5-a15a-d6725fe21314",
+                  "id": "b171a55d-3e7e-4d08-aad6-d6eb8dc0727a",
                   "name": "Observation successfully restored to active records (OK).",
                   "originalRequest": {
                     "url": {
@@ -18498,7 +18498,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "c0c9c964-2d5a-4889-b5c4-9262377cb004",
+                  "id": "910b4762-4b56-4507-a32f-279eb6b0ac8c",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -18567,7 +18567,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "9baf8c7e-7498-41a1-b090-8ba426ec6ec6",
+                  "id": "8b0e46c1-3360-40df-8f4f-d2cd84b3af67",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -18636,7 +18636,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "153f35a3-8818-4c2e-9509-1c3b7072375b",
+                  "id": "d6619260-1218-4268-9664-a22309a59e22",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -18723,7 +18723,7 @@
           "description": "",
           "item": [
             {
-              "id": "90c60ba3-3a2f-472f-b35d-a6001c0503cb",
+              "id": "30dc9d12-4f79-4921-9435-e482f3329292",
               "name": "Find audit logs",
               "request": {
                 "name": "Find audit logs",
@@ -18814,7 +18814,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter logs created after this date.",
+                        "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "startDate",
@@ -18823,7 +18823,7 @@
                     {
                       "disabled": false,
                       "description": {
-                        "content": "Filter logs created before this date.",
+                        "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                         "type": "text/plain"
                       },
                       "key": "endDate",
@@ -18853,7 +18853,7 @@
               },
               "response": [
                 {
-                  "id": "1d0cdf32-f22f-4f17-90a4-63e74db799fe",
+                  "id": "56ca855c-26de-482c-b92b-dc1ef82de1cc",
                   "name": "Paginated list of audit logs successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -18939,7 +18939,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter logs created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -18948,7 +18948,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter logs created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -18987,7 +18987,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "fc5a8e75-9afc-456d-953a-b5ee5f93b4b8",
+                  "id": "2f78de2c-b1f3-492e-bd56-d44b0bf8ced2",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -19073,7 +19073,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter logs created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -19082,7 +19082,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter logs created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -19121,7 +19121,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "c750e6b5-f66e-4d5b-bb01-3d154396727f",
+                  "id": "f656efb2-4760-44f8-a0ec-257ca8b244f3",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -19207,7 +19207,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter logs created after this date.",
+                            "content": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "startDate",
@@ -19216,7 +19216,7 @@
                         {
                           "disabled": false,
                           "description": {
-                            "content": "Filter logs created before this date.",
+                            "content": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
                             "type": "text/plain"
                           },
                           "key": "endDate",
@@ -19261,7 +19261,7 @@
               }
             },
             {
-              "id": "4dcd6ead-351f-4329-a405-4b69a0cd8b42",
+              "id": "aeb23269-46d8-4abf-b2c4-14100d466d88",
               "name": "Get an audit log",
               "request": {
                 "name": "Get an audit log",
@@ -19312,7 +19312,7 @@
               },
               "response": [
                 {
-                  "id": "d1af7ef8-5c2d-4bbe-b435-b269709639f1",
+                  "id": "15f1cc03-67ed-4cef-9576-d135c1810382",
                   "name": "Audit log details successfully retrieved (OK).",
                   "originalRequest": {
                     "url": {
@@ -19367,7 +19367,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "4c985058-c89a-4a1b-a04f-b51b91a83682",
+                  "id": "fb4ff3c2-842b-43a5-8923-152a9f6dc2b4",
                   "name": "Authentication required or invalid credentials (UnauthorizedError).",
                   "originalRequest": {
                     "url": {
@@ -19422,7 +19422,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "d063539c-57f2-4add-8863-4ced125eb88b",
+                  "id": "df59245c-906c-4989-b938-e2d491ee696e",
                   "name": "Access denied due to insufficient permissions (ForbiddenError).",
                   "originalRequest": {
                     "url": {
@@ -19477,7 +19477,7 @@
                   "_postman_previewlanguage": "json"
                 },
                 {
-                  "id": "fda7c0ff-907c-4830-9f98-81ec3909b747",
+                  "id": "f61d7d9e-59bd-44f8-a583-1b4604aeb091",
                   "name": "The requested resource was not found (NotFoundError).",
                   "originalRequest": {
                     "url": {
@@ -19544,7 +19544,7 @@
           "description": "",
           "item": [
             {
-              "id": "8b944b35-61c3-4726-92c8-ba934adf79eb",
+              "id": "36d6ab6e-6ddd-4549-bd53-357087f3be1b",
               "name": "API health status",
               "request": {
                 "name": "API health status",
@@ -19574,7 +19574,7 @@
               },
               "response": [
                 {
-                  "id": "e63c8fa6-18c4-4907-bc6e-6b7068cbd216",
+                  "id": "2da30e8d-1f55-4925-9cf4-37d96b24a2a5",
                   "name": "Service operational and database connection verified (OK).",
                   "originalRequest": {
                     "url": {
@@ -19627,7 +19627,7 @@
     }
   ],
   "info": {
-    "_postman_id": "c2c6665f-cc68-4a98-8350-9bcafe30862b",
+    "_postman_id": "e6a7502f-9e34-4c2c-989a-ddf0323e25a5",
     "name": "SIMCASI API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {

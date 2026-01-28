@@ -510,6 +510,7 @@ erDiagram
         string email UK
         string password
         uuid roleId FK
+        boolean isSystem
         uuid createdBy FK
         uuid updatedBy FK
         timestamptz createdAt

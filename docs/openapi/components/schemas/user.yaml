@@ -18,6 +18,14 @@ User:
           format: uuid
           description: Unique identifier for the assigned RBAC role.
           example: '8db3d722-6e2a-11ee-8c99-0242ac120002'
+        isSystem:
+          type: boolean
+          description: >
+            Indicates if this user is an internal/canonical system user. System users cannot
+            authenticate and are hidden from normal user listings. Only the canonical system
+            user (id: 00000000-0000-0000-0000-000000000000) should have this set to true.
+            This field is read-only and must not be sent in create or update requests.
+          example: false
 
 UserCreateRequest:
   allOf:

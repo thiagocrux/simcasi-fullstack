@@ -2,6 +2,8 @@
 CREATE TABLE "roles" (
     "id" UUID NOT NULL,
     "code" TEXT NOT NULL,
+    "created_by" UUID,
+    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
@@ -13,6 +15,8 @@ CREATE TABLE "roles" (
 CREATE TABLE "permissions" (
     "id" UUID NOT NULL,
     "code" TEXT NOT NULL,
+    "created_by" UUID,
+    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
@@ -35,6 +39,9 @@ CREATE TABLE "users" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role_id" UUID NOT NULL,
+    "is_system" BOOLEAN NOT NULL DEFAULT false,
+    "created_by" UUID,
+    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
@@ -85,6 +92,7 @@ CREATE TABLE "patients" (
     "house_number" TEXT NOT NULL,
     "complement" TEXT,
     "created_by" UUID NOT NULL,
+    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
@@ -107,6 +115,7 @@ CREATE TABLE "exams" (
     "other_nontreponemal_test_date" DATE,
     "reference_observations" TEXT NOT NULL,
     "created_by" UUID NOT NULL,
+    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
@@ -121,6 +130,7 @@ CREATE TABLE "notifications" (
     "sinan" TEXT NOT NULL,
     "observations" TEXT,
     "created_by" UUID NOT NULL,
+    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
@@ -135,6 +145,7 @@ CREATE TABLE "observations" (
     "observations" TEXT,
     "has_partner_being_treated" BOOLEAN NOT NULL DEFAULT false,
     "created_by" UUID NOT NULL,
+    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
@@ -153,6 +164,7 @@ CREATE TABLE "treatments" (
     "observations" TEXT,
     "partner_information" TEXT,
     "created_by" UUID NOT NULL,
+    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
@@ -207,10 +219,16 @@ CREATE UNIQUE INDEX "patients_cpf_key" ON "patients"("cpf");
 CREATE INDEX "idx_patients_created_by" ON "patients"("created_by");
 
 -- CreateIndex
+CREATE INDEX "idx_patients_updated_by" ON "patients"("updated_by");
+
+-- CreateIndex
 CREATE INDEX "idx_exams_patient_id" ON "exams"("patient_id");
 
 -- CreateIndex
 CREATE INDEX "idx_exams_created_by" ON "exams"("created_by");
+
+-- CreateIndex
+CREATE INDEX "idx_exams_updated_by" ON "exams"("updated_by");
 
 -- CreateIndex
 CREATE INDEX "idx_notifications_patient_id" ON "notifications"("patient_id");
@@ -219,16 +237,25 @@ CREATE INDEX "idx_notifications_patient_id" ON "notifications"("patient_id");
 CREATE INDEX "idx_notifications_created_by" ON "notifications"("created_by");
 
 -- CreateIndex
+CREATE INDEX "idx_notifications_updated_by" ON "notifications"("updated_by");
+
+-- CreateIndex
 CREATE INDEX "idx_observations_patient_id" ON "observations"("patient_id");
 
 -- CreateIndex
 CREATE INDEX "idx_observations_created_by" ON "observations"("created_by");
 
 -- CreateIndex
+CREATE INDEX "idx_observations_updated_by" ON "observations"("updated_by");
+
+-- CreateIndex
 CREATE INDEX "idx_treatments_patient_id" ON "treatments"("patient_id");
 
 -- CreateIndex
 CREATE INDEX "idx_treatments_created_by" ON "treatments"("created_by");
+
+-- CreateIndex
+CREATE INDEX "idx_treatments_updated_by" ON "treatments"("updated_by");
 
 -- CreateIndex
 CREATE INDEX "idx_audit_logs_entity" ON "audit_logs"("entity_id", "entity_name");
@@ -240,6 +267,18 @@ CREATE INDEX "idx_audit_logs_user" ON "audit_logs"("user_id");
 CREATE INDEX "idx_audit_logs_date" ON "audit_logs"("created_at");
 
 -- AddForeignKey
+ALTER TABLE "roles" ADD CONSTRAINT "roles_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "roles" ADD CONSTRAINT "roles_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "permissions" ADD CONSTRAINT "permissions_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "permissions" ADD CONSTRAINT "permissions_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "roles_permissions" ADD CONSTRAINT "roles_permissions_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -249,10 +288,19 @@ ALTER TABLE "roles_permissions" ADD CONSTRAINT "roles_permissions_permission_id_
 ALTER TABLE "users" ADD CONSTRAINT "users_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "users" ADD CONSTRAINT "users_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "users" ADD CONSTRAINT "users_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "patients" ADD CONSTRAINT "patients_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "patients" ADD CONSTRAINT "patients_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "exams" ADD CONSTRAINT "exams_patient_id_fkey" FOREIGN KEY ("patient_id") REFERENCES "patients"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -261,10 +309,16 @@ ALTER TABLE "exams" ADD CONSTRAINT "exams_patient_id_fkey" FOREIGN KEY ("patient
 ALTER TABLE "exams" ADD CONSTRAINT "exams_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "exams" ADD CONSTRAINT "exams_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_patient_id_fkey" FOREIGN KEY ("patient_id") REFERENCES "patients"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "notifications" ADD CONSTRAINT "notifications_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "observations" ADD CONSTRAINT "observations_patient_id_fkey" FOREIGN KEY ("patient_id") REFERENCES "patients"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -273,10 +327,16 @@ ALTER TABLE "observations" ADD CONSTRAINT "observations_patient_id_fkey" FOREIGN
 ALTER TABLE "observations" ADD CONSTRAINT "observations_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "observations" ADD CONSTRAINT "observations_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "treatments" ADD CONSTRAINT "treatments_patient_id_fkey" FOREIGN KEY ("patient_id") REFERENCES "patients"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "treatments" ADD CONSTRAINT "treatments_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "treatments" ADD CONSTRAINT "treatments_updated_by_fkey" FOREIGN KEY ("updated_by") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "audit_logs" ADD CONSTRAINT "audit_logs_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
