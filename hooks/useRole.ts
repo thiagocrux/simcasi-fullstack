@@ -8,7 +8,7 @@ import { ROLE_OPTIONS } from '@/core/domain/constants/role.constants';
 export function useRoles() {
   const { data: response, isLoading: isLoadingRoles } = useQuery({
     queryKey: ['find-roles'],
-    queryFn: () => findRoles({ skip: 0, take: 100, includeDeleted: true }),
+    queryFn: () => findRoles({ take: 100, includeDeleted: true }),
     staleTime: 1000 * 60 * 60,
   });
 

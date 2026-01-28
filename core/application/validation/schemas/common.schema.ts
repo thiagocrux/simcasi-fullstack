@@ -18,4 +18,4 @@ export const QuerySchema = z.object({
   endDate: z.coerce.date().optional(),
 });
 
-export type QueryInput = z.infer<typeof QuerySchema>;
+export type QueryInput = Partial<z.infer<typeof QuerySchema>>;
