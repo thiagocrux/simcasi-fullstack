@@ -40,6 +40,7 @@ export function ExamForm({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors: formErrors, isSubmitting },
     control,
   } = useForm<CreateExamInput>({

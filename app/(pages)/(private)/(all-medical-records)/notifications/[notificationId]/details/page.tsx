@@ -11,6 +11,7 @@ import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { Notification } from '@/core/domain/entities/notification.entity';
 import { ActionResponse } from '@/lib/actions.utils';
+import { formatDate } from '@/lib/formatters.utils';
 import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
@@ -30,19 +31,46 @@ export default async function NotificationDetailsPage({
 
   const response: ActionResponse<Notification> =
     await getNotification(notificationId);
-
   if (!response.success || !response.data) {
     notFound();
   }
-
   const notification = response.data;
 
   const data = [
     {
       title: 'Dados da notificação',
       fields: [
-        { label: 'SINAN', value: notification?.sinan },
-        { label: 'Observações', value: notification?.observations },
+        { label: 'SINAN', value: notification?.sinan || '-' },
+        { label: 'Observações', value: notification?.observations || '-' },
+      ],
+    },
+    {
+      title: 'Metadados',
+      fields: [
+        {
+          label: 'ID',
+          value: notification?.id || '-',
+        },
+        {
+          label: 'Criado por',
+          value: notification?.createdBy || '-',
+        },
+        {
+          label: 'Criado em',
+          value: notification?.createdAt
+            ? formatDate(new Date(notification.createdAt))
+            : '-',
+        },
+        {
+          label: 'Atualizado por',
+          value: notification?.updatedBy || '-',
+        },
+        {
+          label: 'Atualizado em',
+          value: notification?.updatedAt
+            ? formatDate(new Date(notification.updatedAt))
+            : '-',
+        },
       ],
     },
   ];

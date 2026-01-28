@@ -30,6 +30,7 @@ import {
   deleteTreatment,
   findTreatments,
 } from '@/app/actions/treatment.actions';
+
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
 import { renderOrFallback } from '@/lib/shared.utils';
@@ -65,8 +66,8 @@ type Column =
   | 'partnerInformation'
   | 'createdBy'
   | 'createdAt'
-  | 'updatedAt'
-  | 'deletedAt';
+  | 'updatedBy'
+  | 'updatedAt';
 
 const COLUMN_LABELS: Record<Column, string> = {
   id: 'ID',
@@ -79,8 +80,8 @@ const COLUMN_LABELS: Record<Column, string> = {
   partnerInformation: 'Informações do parceiro',
   createdBy: 'Criado por',
   createdAt: 'Criado em',
+  updatedBy: 'Atualizado por',
   updatedAt: 'Atualizado em',
-  deletedAt: 'Deletado em',
 };
 
 const FILTERABLE_COLUMNS: Column[] = [
@@ -466,6 +467,36 @@ export function TreatmentsTable({
         ),
       },
       {
+        accessorKey: 'updatedBy',
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="px-1! cursor-pointer"
+          >
+            Atualizado por
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ArrowDownAZ />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ArrowUpZA />
+            )}
+          </Button>
+        ),
+        cell: ({ row }) => (
+          <div className="ml-1">
+            {renderOrFallback(row.getValue('updatedBy'), (value) => (
+              <HighlightedText
+                text={String(value)}
+                highlight={
+                  selectedFilterOption === 'updatedBy' ? searchValue : ''
+                }
+              />
+            ))}
+          </div>
+        ),
+      },
+      {
         accessorKey: 'updatedAt',
         sortingFn: 'datetime',
         header: ({ column }) => (
@@ -499,41 +530,6 @@ export function TreatmentsTable({
           </div>
         ),
       },
-      {
-        accessorKey: 'deletedAt',
-        sortingFn: 'datetime',
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="px-1! cursor-pointer"
-          >
-            Deletado em
-            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
-              <ClockArrowDown />
-            )}
-            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
-              <ClockArrowUp />
-            )}
-          </Button>
-        ),
-        cell: ({ row }) => (
-          <div className="ml-1">
-            {renderOrFallback(
-              formatDate(row.getValue('deletedAt') as Date),
-              (value) => (
-                <HighlightedText
-                  text={value}
-                  highlight={
-                    selectedFilterOption === 'deletedAt' ? searchValue : ''
-                  }
-                />
-              )
-            )}
-          </div>
-        ),
-      },
-
       {
         id: 'actions',
         enableHiding: false,

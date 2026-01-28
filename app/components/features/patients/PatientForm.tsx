@@ -59,6 +59,7 @@ export function PatientForm({
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors: formErrors, isSubmitting },
   } = useForm<CreatePatientInput>({
     resolver: zodResolver(patientSchema),
@@ -166,6 +167,8 @@ export function PatientForm({
                 <FieldError message={formErrors.socialName.message} />
               )}
             </Field>
+          </FieldGroup>
+          <FieldGroup>
             <Field>
               <Controller
                 name="birthDate"

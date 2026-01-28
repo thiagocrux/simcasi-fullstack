@@ -10,6 +10,10 @@ import {
   createTreatment,
   updateTreatment,
 } from '@/app/actions/treatment.actions';
+import {
+  CreateTreatmentInput,
+  treatmentSchema,
+} from '@/core/application/validation/schemas/treatment.schema';
 import { Datepicker } from '../../common/Datepicker';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
@@ -18,11 +22,6 @@ import { Card } from '../../ui/card';
 import { Field, FieldGroup, FieldLabel } from '../../ui/field';
 import { Input } from '../../ui/input';
 import { Spinner } from '../../ui/spinner';
-
-import {
-  CreateTreatmentInput,
-  treatmentSchema,
-} from '@/core/application/validation/schemas/treatment.schema';
 
 interface TreatmentFormProps {
   isEditMode?: boolean;
@@ -42,6 +41,7 @@ export function TreatmentForm({
   const {
     register,
     handleSubmit,
+    reset,
     control,
     formState: { errors: formErrors, isSubmitting },
   } = useForm<CreateTreatmentInput>({

@@ -41,6 +41,7 @@ export function ObservationForm({
   const {
     register,
     control,
+    reset,
     handleSubmit,
     formState: { errors: formErrors, isSubmitting },
   } = useForm<CreateObservationInput>({

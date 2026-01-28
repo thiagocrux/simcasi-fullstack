@@ -44,6 +44,7 @@ export function UserForm({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors: formErrors, isSubmitting },
     control,
   } = useForm<CreateUserFormInput>({

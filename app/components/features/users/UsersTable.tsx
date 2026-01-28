@@ -24,13 +24,13 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { deleteUser, findUsers } from '@/app/actions/user.actions';
 import { useRoles } from '@/hooks/useRole';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
 import { renderOrFallback } from '@/lib/shared.utils';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
 import { AppTablePagination } from '../../common/AppTablePagination';
@@ -57,20 +57,20 @@ type Column =
   | 'name'
   | 'email'
   | 'roleId'
+  | 'createdBy'
   | 'createdAt'
   | 'updatedBy'
-  | 'updatedAt'
-  | 'deletedAt';
+  | 'updatedAt';
 
 const COLUMN_LABELS: Record<Column, string> = {
   id: 'ID',
   name: 'Nome',
   email: 'E-mail',
   roleId: 'Nível de permissão',
+  createdBy: 'Criado por',
   createdAt: 'Criado em',
   updatedBy: 'Atualizado por',
   updatedAt: 'Atualizado em',
-  deletedAt: 'Deletado em',
 };
 
 const FILTERABLE_COLUMNS: Column[] = ['name', 'email'];
@@ -256,6 +256,38 @@ export function UsersTable({
         ),
       },
       {
+        accessorKey: 'createdBy',
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+              className="px-1! cursor-pointer"
+            >
+              Criado por
+              {column.getSortIndex() === 0 &&
+                column.getIsSorted() === 'asc' && <ArrowDownAZ />}
+              {column.getSortIndex() === 0 &&
+                column.getIsSorted() === 'desc' && <ArrowUpZA />}
+            </Button>
+          );
+        },
+        cell: ({ row }) => (
+          <div className="ml-1">
+            {renderOrFallback(row.getValue('createdBy'), (value) => (
+              <HighlightedText
+                text={value as string}
+                highlight={
+                  selectedFilterOption === 'createdBy' ? searchValue : ''
+                }
+              />
+            ))}
+          </div>
+        ),
+      },
+      {
         accessorKey: 'createdAt',
         sortingFn: 'datetime',
         header: ({ column }) => {
@@ -314,7 +346,7 @@ export function UsersTable({
           <div className="ml-1">
             {renderOrFallback(row.getValue('updatedBy'), (value) => (
               <HighlightedText
-                text={value}
+                text={value as string}
                 highlight={
                   selectedFilterOption === 'updatedBy' ? searchValue : ''
                 }
@@ -352,42 +384,6 @@ export function UsersTable({
                   text={value}
                   highlight={
                     selectedFilterOption === 'updatedAt' ? searchValue : ''
-                  }
-                />
-              )
-            )}
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'deletedAt',
-        sortingFn: 'datetime',
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
-              }
-              className="px-1! cursor-pointer"
-            >
-              Deletado em
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'asc' && <ClockArrowDown />}
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'desc' && <ClockArrowUp />}
-            </Button>
-          );
-        },
-        cell: ({ row }) => (
-          <div className="ml-1">
-            {renderOrFallback(
-              formatDate(row.getValue('deletedAt') as Date),
-              (value) => (
-                <HighlightedText
-                  text={value}
-                  highlight={
-                    selectedFilterOption === 'deletedAt' ? searchValue : ''
                   }
                 />
               )

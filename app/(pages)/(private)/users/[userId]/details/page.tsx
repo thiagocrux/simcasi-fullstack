@@ -8,6 +8,7 @@ import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { GetUserOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
 import { ActionResponse } from '@/lib/actions.utils';
+import { formatDate } from '@/lib/formatters.utils';
 import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
@@ -25,7 +26,6 @@ export default async function UserDetailsPage({
   const { userId } = await params;
 
   const response: ActionResponse<GetUserOutput> = await getUser(userId);
-
   if (!response.success || !response.data) {
     notFound();
   }
@@ -36,9 +36,34 @@ export default async function UserDetailsPage({
     {
       title: 'Identificação e acesso',
       fields: [
-        { label: 'Cargo ID', value: user?.roleId || '-' },
-        { label: 'Nome', value: user?.name },
-        { label: 'E-mail', value: user?.email },
+        { label: 'ID do cargo', value: user?.roleId ?? '-' },
+        { label: 'Nome', value: user?.name ?? '-' },
+        { label: 'E-mail', value: user?.email ?? '-' },
+      ],
+    },
+    {
+      title: 'Metadados',
+      fields: [
+        {
+          label: 'ID',
+          value: user?.id ?? '-',
+        },
+        {
+          label: 'Criado por',
+          value: user?.createdBy ?? '-',
+        },
+        {
+          label: 'Criado em',
+          value: user?.createdAt ? formatDate(new Date(user.createdAt)) : '-',
+        },
+        {
+          label: 'Atualizado por',
+          value: user?.updatedBy ?? '-',
+        },
+        {
+          label: 'Atualizado em',
+          value: user?.updatedAt ? formatDate(new Date(user.updatedAt)) : '-',
+        },
       ],
     },
   ];

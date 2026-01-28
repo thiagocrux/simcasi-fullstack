@@ -10,6 +10,10 @@ import {
   createNotification,
   updateNotification,
 } from '@/app/actions/notification.actions';
+import {
+  CreateNotificationInput,
+  notificationSchema,
+} from '@/core/application/validation/schemas/notification.schema';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
 import { Button } from '../../ui/button';
@@ -18,11 +22,6 @@ import { Field, FieldGroup, FieldLabel } from '../../ui/field';
 import { Input } from '../../ui/input';
 import { Spinner } from '../../ui/spinner';
 import { Textarea } from '../../ui/textarea';
-
-import {
-  CreateNotificationInput,
-  notificationSchema,
-} from '@/core/application/validation/schemas/notification.schema';
 
 interface NotificationFormProps {
   isEditMode?: boolean;
@@ -42,6 +41,7 @@ export function NotificationForm({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors: formErrors, isSubmitting },
   } = useForm<CreateNotificationInput>({
     resolver: zodResolver(notificationSchema),
