@@ -8,6 +8,10 @@ Permission:
           type: string
           description: Unique identifier code for the permission (e.g., read:patient).
           example: 'read:patient'
+        label:
+          type: string
+          description: Human-friendly label describing the permission (e.g., "Read patient records").
+          example: 'Leitura de paciente'
 
 PermissionCreateRequest:
   allOf:
@@ -19,6 +23,10 @@ PermissionCreateRequest:
         code:
           type: string
           description: Unique identifier code for the permission.
+        label:
+          type: string
+          description: Human-friendly label for the permission.
+          example: 'Criação de usuário'
         roleIds:
           type: array
           items:
@@ -33,6 +41,10 @@ PermissionUpdateRequest:
       properties:
         code:
           type: string
+        label:
+          type: string
+          description: Human-friendly label for the permission.
+          example: 'Atualização de usuário'
         roleIds:
           type: array
           items:

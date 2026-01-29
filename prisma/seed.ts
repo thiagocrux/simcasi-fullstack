@@ -32,15 +32,38 @@ async function main() {
     SECURITY_CONSTANTS.HASH_SALT_ROUNDS
   );
 
-  // Create the admin role if it does not exist (createdBy will be set after system user exists)
-  const adminRole = await prisma.role.upsert({
-    where: { code: 'admin' },
-    update: {},
-    create: {
-      code: 'admin',
-    },
-  });
+  // 1. Create permissions (idempotent upserts) WITHOUT createdBy so we can create them before the system user.
+  for (const permission of PERMISSIONS) {
+    await prisma.permission.upsert({
+      where: { code: permission.code },
+      update: {},
+      create: {
+        code: permission.code,
+        label: permission.label,
+      },
+    });
+  }
 
+  // 2. Create Roles (idempotent upserts) WITHOUT createdBy so roles exist before creating the canonical user.
+  for (const role of ROLES) {
+    await prisma.role.upsert({
+      where: { code: role.code },
+      update: { label: role.label },
+      create: {
+        code: role.code,
+        label: role.label,
+      },
+    });
+  }
+
+  // 3. Ensure admin role exists and retrieve it to attach to the system user.
+  const adminRole = await prisma.role.findUnique({ where: { code: 'admin' } });
+  if (!adminRole) {
+    logger.error('Admin role was not created as expected.');
+    process.exit(1);
+  }
+
+  // 4. Create the canonical system user (now that admin role exists).
   await prisma.user.upsert({
     where: { id: systemUserId },
     update: {},
@@ -54,83 +77,92 @@ async function main() {
     },
   });
 
-  // Now set the admin role's createdBy to the canonical system user for consistent authorship
-  await prisma.role.update({
-    where: { id: adminRole.id },
-    data: { createdBy: systemUserId },
-  });
-  logger.info('🚀 Starting seed for permissions and roles...');
+  // 5. Create default non-system admin user from env (SIMCASI Admin)
+  const seedEmail = process.env.PRISMA_SEED_EMAIL?.trim();
+  const seedPassword = process.env.PRISMA_SEED_PASSWORD;
+  if (seedEmail && seedPassword) {
+    const seedPasswordHash = hashSync(
+      seedPassword,
+      SECURITY_CONSTANTS.HASH_SALT_ROUNDS
+    );
 
-  // Create permissions (idempotent upserts).
-  for (const permission of PERMISSIONS) {
-    await prisma.permission.upsert({
-      where: { code: permission },
-      update: {},
+    await prisma.user.upsert({
+      where: { email: seedEmail },
+      update: {
+        password: seedPasswordHash,
+        roleId: adminRole.id,
+        name: 'SIMCASI Admin',
+        isSystem: false,
+      },
       create: {
-        code: permission,
+        name: 'SIMCASI Admin',
+        email: seedEmail,
+        password: seedPasswordHash,
+        roleId: adminRole.id,
+        isSystem: false,
         createdBy: systemUserId,
       },
     });
+  } else {
+    logger.info(
+      'PRISMA_SEED_EMAIL/PRISMA_SEED_PASSWORD not set — skipping default admin user creation.'
+    );
   }
 
-  // Create Roles and assign permissions (single transaction for atomicity).
-  const permissionRecords = await prisma.permission.findMany();
+  // 6. After system user exists, set createdBy on roles and permissions and associate permissions to roles atomically.
+  logger.info(
+    '🚀 Starting seed for setting authorship and role-permissions...'
+  );
 
-  // Build a map of existing permissions (code->id) with a single query to avoid repeated DB lookups.
+  // Build permission map
+  const permissionRecords = await prisma.permission.findMany();
   const permissionIdMap = new Map<string, string>(
     permissionRecords.map((permission) => [permission.code, permission.id])
   );
 
-  // Seed user settings (for bootstrapping in dev/test). Use env vars only; fallback to generated password in dev.
-  const isProduction = process.env.NODE_ENV === 'production';
-  const seedEmail = process.env.PRISMA_SEED_EMAIL?.trim();
-  let seedPassword = process.env.PRISMA_SEED_PASSWORD;
-
-  if (isProduction && seedEmail && !seedPassword) {
-    logger.error(
-      'PRISMA_SEED_PASSWORD must be provided when seeding in production.'
-    );
-
-    process.exit(1);
-  }
-
-  if (seedEmail && !seedPassword && !isProduction) {
-    seedPassword = crypto.randomBytes(12).toString('base64url');
-    logger.info('\n🔑 Generated dev seed user password:', seedPassword);
-  }
-
   await prisma.$transaction(async (transaction) => {
-    // Use for...of to ensure we retrieve the upserted roleId for the join table.
+    // Update createdBy for roles
     for (const role of ROLES) {
-      // Create or update the role.
-      const { id: roleId } = await transaction.role.upsert({
-        where: { code: role },
-        update: {},
-        create: {
-          code: role,
-          createdBy: systemUserId,
-        },
+      await transaction.role.updateMany({
+        where: { code: role.code, createdBy: null },
+        data: { createdBy: systemUserId },
+      });
+    }
+
+    // Update createdBy for permissions
+    for (const permission of PERMISSIONS) {
+      await transaction.permission.updateMany({
+        where: { code: permission.code, createdBy: null },
+        data: { createdBy: systemUserId },
+      });
+    }
+
+    // Populate rolePermission join table
+    for (const role of ROLES) {
+      const roleRecord = await transaction.role.findUnique({
+        where: { code: role.code },
       });
 
-      // Grant the configured permissions to the role.
-      const rolePermissions = PERMISSIONS_BY_ROLE[role] ?? [];
+      if (!roleRecord) {
+        logger.warn(`Role not found when assigning permissions: ${role.code}`);
+        continue;
+      }
+
+      const roleId = roleRecord.id;
+      const rolePermissions = PERMISSIONS_BY_ROLE[role.code] ?? [];
 
       for (const permission of rolePermissions) {
-        // Validate we expect this permission value.
         if (!isPermission(permission)) {
           logger.warn(`Skipping unknown permission code: ${permission}`);
           continue;
         }
 
-        // Retrieve the permission id from a cached map (built below) avoiding repeated DB lookups inside the role loop.
         const permissionId = permissionIdMap.get(permission);
-
         if (!permissionId) {
           logger.warn(`Permission not found in database: ${permission}`);
           continue;
         }
 
-        // Populate the join table using upsert (composite key).
         await transaction.rolePermission.upsert({
           where: {
             roleId_permissionId: {
@@ -143,42 +175,8 @@ async function main() {
         });
       }
     }
-
-    // Create or update the bootstrap user if configured.
-    if (seedEmail && seedPassword) {
-      const passwordHash = hashSync(
-        seedPassword,
-        SECURITY_CONSTANTS.HASH_SALT_ROUNDS
-      );
-
-      const adminRoleRecord = await transaction.role.findUnique({
-        where: { code: 'admin' },
-      });
-
-      const adminRoleId = adminRoleRecord?.id;
-
-      if (!adminRoleId) {
-        logger.warn(
-          'Admin role was not found; bootstrap user will not be created.'
-        );
-      } else {
-        // The Admin user is created by the system user (canonical ID) to maintain traceable authorship.
-        await transaction.user.upsert({
-          where: { email: seedEmail },
-          update: { password: passwordHash, roleId: adminRoleId },
-          create: {
-            name: 'Admin',
-            email: seedEmail,
-            password: passwordHash,
-            roleId: adminRoleId,
-            createdBy: systemUserId,
-          },
-        });
-      }
-    }
   });
 
-  // NOTE: bootstrap user is now created when PRISMA_SEED_EMAIL/PRISMA_SEED_PASSWORD are set.
   logger.info('✅ Seeding completed successfully!');
 }
 

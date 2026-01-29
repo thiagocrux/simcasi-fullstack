@@ -3,9 +3,9 @@ import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { findRoles } from '@/app/actions/role.actions';
-import { ROLE_OPTIONS } from '@/core/domain/constants/role.constants';
+import { Role } from '@/core/domain/entities/role.entity';
 
-export function useRoles() {
+export function useRole() {
   const { data: response, isLoading: isLoadingRoles } = useQuery({
     queryKey: ['find-roles'],
     queryFn: () => findRoles({ take: 100, includeDeleted: true }),
@@ -19,23 +19,10 @@ export function useRoles() {
 
   const getRoleLabel = useCallback(
     (roleId: string | null): string | null => {
-      if (!roleId) {
-        return null;
-      }
-
-      if (isLoadingRoles) {
-        return 'Carregando...';
-      }
-
+      if (!roleId) return null;
+      if (isLoadingRoles) return 'Carregando...';
       const role = roles.find((role) => role.id === roleId);
-      if (!role) {
-        return null;
-      }
-
-      const roleOption = ROLE_OPTIONS.find(
-        (roleOption) => roleOption.value === role.code
-      );
-      return roleOption ? roleOption.label : 'Desconhecido';
+      return role ? (role as Role).label : 'Desconhecido';
     },
     [roles, isLoadingRoles]
   );

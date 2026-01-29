@@ -8,6 +8,10 @@ Role:
           type: string
           description: Unique identifier code for the role (e.g., admin, nurse).
           example: 'admin'
+        label:
+          type: string
+          description: Human-friendly label for the role (used in UI and seed).
+          example: 'Administrator'
 
 RoleCreateRequest:
   allOf:
@@ -19,6 +23,10 @@ RoleCreateRequest:
         code:
           type: string
           description: Unique identifier code for the role.
+        label:
+          type: string
+          description: Human-friendly label for the role.
+          example: 'Administrator'
         permissionIds:
           type: array
           items:
@@ -33,6 +41,10 @@ RoleUpdateRequest:
       properties:
         code:
           type: string
+        label:
+          type: string
+          description: Human-friendly label for the role.
+          example: 'Administrator'
         permissionIds:
           type: array
           items:

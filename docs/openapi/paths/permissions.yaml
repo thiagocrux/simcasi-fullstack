@@ -45,6 +45,7 @@ collection:
               summary: Create new permission with role assignments
               value:
                 code: APPROVE_TREATMENT_PROTOCOL
+                label: Aprove treatment protocol
                 roleIds:
                   - role-admin-123
                   - role-medical-coordinator-456
@@ -124,6 +125,7 @@ item:
               summary: Update permission code and synchronize roles
               value:
                 code: APPROVE_ADVANCED_TREATMENT_PROTOCOL
+                label: Approve advanced treatment protocol
                 roleIds:
                   - role-admin-123
                   - role-medical-coordinator-456

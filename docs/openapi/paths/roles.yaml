@@ -45,6 +45,7 @@ collection:
               summary: Create new role with assigned permissions
               value:
                 code: MEDICAL_COORDINATOR
+                label: Medical coordinator
                 permissionIds:
                   - perm-123-view-patients
                   - perm-456-manage-treatments
@@ -127,6 +128,7 @@ item:
               summary: Update role code and synchronize permissions
               value:
                 code: SENIOR_MEDICAL_COORDINATOR
+                label: Senior medical coordinator
                 permissionIds:
                   - perm-123-view-patients
                   - perm-456-manage-treatments

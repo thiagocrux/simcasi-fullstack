@@ -5161,6 +5161,11 @@
                                 "type": "string",
                                 "description": "Unique identifier code for the role (e.g., admin, nurse).",
                                 "example": "admin"
+                              },
+                              "label": {
+                                "type": "string",
+                                "description": "Human-friendly label for the role (used in UI and seed).",
+                                "example": "Administrator"
                               }
                             }
                           }
@@ -5327,6 +5332,11 @@
                         "type": "string",
                         "description": "Unique identifier code for the role."
                       },
+                      "label": {
+                        "type": "string",
+                        "description": "Human-friendly label for the role.",
+                        "example": "Administrator"
+                      },
                       "permissionIds": {
                         "type": "array",
                         "items": {
@@ -5344,6 +5354,7 @@
                   "summary": "Create new role with assigned permissions",
                   "value": {
                     "code": "MEDICAL_COORDINATOR",
+                    "label": "Medical coordinator",
                     "permissionIds": [
                       "perm-123-view-patients",
                       "perm-456-manage-treatments",
@@ -5414,6 +5425,11 @@
                           "type": "string",
                           "description": "Unique identifier code for the role (e.g., admin, nurse).",
                           "example": "admin"
+                        },
+                        "label": {
+                          "type": "string",
+                          "description": "Human-friendly label for the role (used in UI and seed).",
+                          "example": "Administrator"
                         }
                       }
                     }
@@ -5757,6 +5773,11 @@
                           "type": "string",
                           "description": "Unique identifier code for the role (e.g., admin, nurse).",
                           "example": "admin"
+                        },
+                        "label": {
+                          "type": "string",
+                          "description": "Human-friendly label for the role (used in UI and seed).",
+                          "example": "Administrator"
                         }
                       }
                     }
@@ -5973,6 +5994,11 @@
                       "code": {
                         "type": "string"
                       },
+                      "label": {
+                        "type": "string",
+                        "description": "Human-friendly label for the role.",
+                        "example": "Administrator"
+                      },
                       "permissionIds": {
                         "type": "array",
                         "items": {
@@ -5989,6 +6015,7 @@
                   "summary": "Update role code and synchronize permissions",
                   "value": {
                     "code": "SENIOR_MEDICAL_COORDINATOR",
+                    "label": "Senior medical coordinator",
                     "permissionIds": [
                       "perm-123-view-patients",
                       "perm-456-manage-treatments",
@@ -6060,6 +6087,11 @@
                           "type": "string",
                           "description": "Unique identifier code for the role (e.g., admin, nurse).",
                           "example": "admin"
+                        },
+                        "label": {
+                          "type": "string",
+                          "description": "Human-friendly label for the role (used in UI and seed).",
+                          "example": "Administrator"
                         }
                       }
                     }
@@ -6655,6 +6687,11 @@
                           "type": "string",
                           "description": "Unique identifier code for the role (e.g., admin, nurse).",
                           "example": "admin"
+                        },
+                        "label": {
+                          "type": "string",
+                          "description": "Human-friendly label for the role (used in UI and seed).",
+                          "example": "Administrator"
                         }
                       }
                     }
@@ -6955,6 +6992,11 @@
                                 "type": "string",
                                 "description": "Unique identifier code for the permission (e.g., read:patient).",
                                 "example": "read:patient"
+                              },
+                              "label": {
+                                "type": "string",
+                                "description": "Human-friendly label describing the permission (e.g., \"Read patient records\").",
+                                "example": "Leitura de paciente"
                               }
                             }
                           }
@@ -7121,6 +7163,11 @@
                         "type": "string",
                         "description": "Unique identifier code for the permission."
                       },
+                      "label": {
+                        "type": "string",
+                        "description": "Human-friendly label for the permission.",
+                        "example": "Criação de usuário"
+                      },
                       "roleIds": {
                         "type": "array",
                         "items": {
@@ -7138,6 +7185,7 @@
                   "summary": "Create new permission with role assignments",
                   "value": {
                     "code": "APPROVE_TREATMENT_PROTOCOL",
+                    "label": "Aprove treatment protocol",
                     "roleIds": [
                       "role-admin-123",
                       "role-medical-coordinator-456"
@@ -7207,6 +7255,11 @@
                           "type": "string",
                           "description": "Unique identifier code for the permission (e.g., read:patient).",
                           "example": "read:patient"
+                        },
+                        "label": {
+                          "type": "string",
+                          "description": "Human-friendly label describing the permission (e.g., \"Read patient records\").",
+                          "example": "Leitura de paciente"
                         }
                       }
                     }
@@ -7500,6 +7553,11 @@
                           "type": "string",
                           "description": "Unique identifier code for the permission (e.g., read:patient).",
                           "example": "read:patient"
+                        },
+                        "label": {
+                          "type": "string",
+                          "description": "Human-friendly label describing the permission (e.g., \"Read patient records\").",
+                          "example": "Leitura de paciente"
                         }
                       }
                     }
@@ -7716,6 +7774,11 @@
                       "code": {
                         "type": "string"
                       },
+                      "label": {
+                        "type": "string",
+                        "description": "Human-friendly label for the permission.",
+                        "example": "Atualização de usuário"
+                      },
                       "roleIds": {
                         "type": "array",
                         "items": {
@@ -7732,6 +7795,7 @@
                   "summary": "Update permission code and synchronize roles",
                   "value": {
                     "code": "APPROVE_ADVANCED_TREATMENT_PROTOCOL",
+                    "label": "Approve advanced treatment protocol",
                     "roleIds": [
                       "role-admin-123",
                       "role-medical-coordinator-456",
@@ -7802,6 +7866,11 @@
                           "type": "string",
                           "description": "Unique identifier code for the permission (e.g., read:patient).",
                           "example": "read:patient"
+                        },
+                        "label": {
+                          "type": "string",
+                          "description": "Human-friendly label describing the permission (e.g., \"Read patient records\").",
+                          "example": "Leitura de paciente"
                         }
                       }
                     }
@@ -8397,6 +8466,11 @@
                           "type": "string",
                           "description": "Unique identifier code for the permission (e.g., read:patient).",
                           "example": "read:patient"
+                        },
+                        "label": {
+                          "type": "string",
+                          "description": "Human-friendly label describing the permission (e.g., \"Read patient records\").",
+                          "example": "Leitura de paciente"
                         }
                       }
                     }

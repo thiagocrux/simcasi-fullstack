@@ -2,6 +2,7 @@
 CREATE TABLE "roles" (
     "id" UUID NOT NULL,
     "code" TEXT NOT NULL,
+    "label" TEXT NOT NULL,
     "created_by" UUID,
     "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -15,6 +16,7 @@ CREATE TABLE "roles" (
 CREATE TABLE "permissions" (
     "id" UUID NOT NULL,
     "code" TEXT NOT NULL,
+    "label" TEXT NOT NULL,
     "created_by" UUID,
     "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
