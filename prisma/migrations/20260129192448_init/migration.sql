@@ -4,8 +4,8 @@ CREATE TABLE "roles" (
     "code" TEXT NOT NULL,
     "label" TEXT NOT NULL,
     "created_by" UUID,
-    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by" UUID,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
 
@@ -18,8 +18,8 @@ CREATE TABLE "permissions" (
     "code" TEXT NOT NULL,
     "label" TEXT NOT NULL,
     "created_by" UUID,
-    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by" UUID,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
 
@@ -43,8 +43,8 @@ CREATE TABLE "users" (
     "role_id" UUID NOT NULL,
     "is_system" BOOLEAN NOT NULL DEFAULT false,
     "created_by" UUID,
-    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by" UUID,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
 
@@ -94,8 +94,8 @@ CREATE TABLE "patients" (
     "house_number" TEXT NOT NULL,
     "complement" TEXT,
     "created_by" UUID NOT NULL,
-    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by" UUID,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
 
@@ -117,8 +117,8 @@ CREATE TABLE "exams" (
     "other_nontreponemal_test_date" DATE,
     "reference_observations" TEXT NOT NULL,
     "created_by" UUID NOT NULL,
-    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by" UUID,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
 
@@ -147,8 +147,8 @@ CREATE TABLE "observations" (
     "observations" TEXT,
     "has_partner_being_treated" BOOLEAN NOT NULL DEFAULT false,
     "created_by" UUID NOT NULL,
-    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by" UUID,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
 
@@ -166,8 +166,8 @@ CREATE TABLE "treatments" (
     "observations" TEXT,
     "partner_information" TEXT,
     "created_by" UUID NOT NULL,
-    "updated_by" UUID,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_by" UUID,
     "updated_at" TIMESTAMPTZ(6),
     "deleted_at" TIMESTAMPTZ(6),
 

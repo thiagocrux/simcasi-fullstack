@@ -28,8 +28,8 @@ model Role {
   code      String    @unique
   label     String
   createdBy String?   @map("created_by") @db.Uuid
-  updatedBy String?   @map("updated_by") @db.Uuid
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedBy String?   @map("updated_by") @db.Uuid
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
@@ -57,8 +57,8 @@ model Permission {
   code      String    @unique
   label     String
   createdBy String?   @map("created_by") @db.Uuid
-  updatedBy String?   @map("updated_by") @db.Uuid
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedBy String?   @map("updated_by") @db.Uuid
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
@@ -110,8 +110,8 @@ model User {
   roleId    String    @map("role_id") @db.Uuid
   isSystem  Boolean   @default(false) @map("is_system")
   createdBy String?   @map("created_by") @db.Uuid
-  updatedBy String?   @map("updated_by") @db.Uuid
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedBy String?   @map("updated_by") @db.Uuid
   updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
@@ -217,8 +217,8 @@ model Patient {
   houseNumber    String    @map("house_number")
   complement     String?
   createdBy      String    @map("created_by") @db.Uuid
-  updatedBy      String?   @map("updated_by") @db.Uuid
   createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedBy      String?   @map("updated_by") @db.Uuid
   updatedAt      DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt      DateTime? @map("deleted_at") @db.Timestamptz(6)
 
@@ -261,8 +261,8 @@ model Exam {
   otherNontreponemalTestDate DateTime? @map("other_nontreponemal_test_date") @db.Date
   referenceObservations      String    @map("reference_observations")
   createdBy                  String    @map("created_by") @db.Uuid
-  updatedBy                  String?   @map("updated_by") @db.Uuid
   createdAt                  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedBy                  String?   @map("updated_by") @db.Uuid
   updatedAt                  DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt                  DateTime? @map("deleted_at") @db.Timestamptz(6)
 
@@ -327,8 +327,8 @@ model Observation {
   observations           String?
   hasPartnerBeingTreated Boolean   @default(false) @map("has_partner_being_treated")
   createdBy              String    @map("created_by") @db.Uuid
-  updatedBy              String?   @map("updated_by") @db.Uuid
   createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedBy              String?   @map("updated_by") @db.Uuid
   updatedAt              DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt              DateTime? @map("deleted_at") @db.Timestamptz(6)
 
@@ -364,8 +364,8 @@ model Treatment {
   observations       String?
   partnerInformation String?   @map("partner_information")
   createdBy          String    @map("created_by") @db.Uuid
-  updatedBy          String?   @map("updated_by") @db.Uuid
   createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedBy          String?   @map("updated_by") @db.Uuid
   updatedAt          DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt          DateTime? @map("deleted_at") @db.Timestamptz(6)
 
