@@ -3,8 +3,10 @@ import { z } from 'zod';
 import { messages } from '../messages';
 
 /**
- * Schema for permission registration and update validation.
- * Used to ensure that permissions have a valid code and optional role links.
+ * Main schema for permission entity validation.
+ *
+ * Defines all required and optional fields for a permission record, including code and associated roles.
+ * Used for validating permission creation, update, and form data throughout the application.
  */
 export const permissionSchema = z.object({
   code: z
@@ -17,11 +19,25 @@ export const permissionSchema = z.object({
 });
 
 /**
- * Type inferred from the permission schema for creation.
+ * Type for permission creation.
+ *
+ * - Based on the main schema (`permissionSchema`), including all required fields for creation.
+ * - Used in server actions, use cases, and repositories when creating a new permission.
  */
-export type CreatePermissionInputSchema = z.infer<typeof permissionSchema>;
+export type CreatePermissionInput = z.infer<typeof permissionSchema>;
 
 /**
- * Type inferred from the permission schema for updates.
+ * Type for permission update.
+ *
+ * - Based on the main schema (`permissionSchema`), including all fields (all optional if needed).
+ * - Used in server actions, use cases, and repositories when updating an existing permission.
  */
-export type UpdatePermissionInputSchema = z.infer<typeof permissionSchema>;
+export type UpdatePermissionInput = z.infer<typeof permissionSchema>;
+
+/**
+ * Type for permission form usage.
+ *
+ * - Based on the main schema (`permissionSchema`).
+ * - Used to type permission creation/edit forms (e.g., with React Hook Form).
+ */
+export type PermissionFormInput = z.infer<typeof permissionSchema>;

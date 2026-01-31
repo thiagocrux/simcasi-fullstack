@@ -3,6 +3,12 @@ import * as z from 'zod';
 import { messages } from '../messages';
 import { regex } from '../regex';
 
+/**
+ * Main schema for user entity validation.
+ *
+ * Defines all required fields for a user record, including name, email, password, and role.
+ * Used for validating user creation, update, and form data throughout the application.
+ */
 export const userSchema = z.object({
   name: z.string().nonempty(messages.REQUIRED_FIELD('Nome')),
   email: z
@@ -12,27 +18,113 @@ export const userSchema = z.object({
     .string()
     .nonempty(messages.REQUIRED_FIELD('Senha'))
     .regex(regex.PASSWORD, messages.INVALID_PASSWORD),
-  roleId: z
-    .uuid(messages.INVALID_UUID)
-    .nonempty(messages.REQUIRED_FIELD('Cargo')),
+  roleId: z.string().nonempty(messages.REQUIRED_FIELD('Cargo')),
 });
 
-export const userFormSchema = userSchema
-  .extend({
-    passwordConfirmation: z
-      .string()
-      .nonempty(messages.REQUIRED_FIELD('Confirmação de senha')),
-  })
-  .superRefine((data, ctx) => {
-    if (data.password !== data.passwordConfirmation) {
-      ctx.addIssue({
-        code: 'custom',
-        message: messages.UNMATCHED_PASSWORDS,
-        path: ['passwordConfirmation'],
-      });
-    }
-  });
+/**
+ * Dynamic schema for user form (create/edit).
+ *
+ * - Allows password and password confirmation fields to be optional,
+ *   since password is usually not changed in edit mode.
+ * - Uses conditional validation via `.superRefine()` to ensure:
+ *   - On creation: password and confirmation are required and must match.
+ *   - On edit: password is only validated if provided, and confirmation is required if password is filled.
+ *
+ * This approach is necessary because the same form is used for both creating and editing users,
+ * but the validation rules change depending on the context (creation vs. editing).
+ */
+export function getUserFormSchema(isEditMode: boolean) {
+  return userSchema
+    .extend({
+      password: z.string().optional(),
+      passwordConfirmation: z.string().optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (!isEditMode) {
+        // Creation: password required
+        if (!data.password || data.password.length < 6) {
+          ctx.addIssue({
+            path: ['password'],
+            code: 'custom',
+            message: messages.REQUIRED_MIN_LENGTH('Senha', 6),
+          });
+        }
+        if (!data.passwordConfirmation) {
+          ctx.addIssue({
+            path: ['passwordConfirmation'],
+            code: 'custom',
+            message: messages.REQUIRED_FIELD('Confirmação de senha'),
+          });
+        }
+        if (data.password !== data.passwordConfirmation) {
+          ctx.addIssue({
+            path: ['passwordConfirmation'],
+            code: 'custom',
+            message: messages.UNMATCHED_PASSWORDS,
+          });
+        }
+      } else {
+        // Edit: if password is filled, confirmation is required and must match
+        if (data.password || data.passwordConfirmation) {
+          if (!data.password || data.password.length < 6) {
+            ctx.addIssue({
+              path: ['password'],
+              code: 'custom',
+              message: messages.REQUIRED_MIN_LENGTH('Senha', 6),
+            });
+          }
+          if (!data.passwordConfirmation) {
+            ctx.addIssue({
+              path: ['passwordConfirmation'],
+              code: 'custom',
+              message: messages.REQUIRED_FIELD('Confirmação de senha'),
+            });
+          }
+          if (data.password !== data.passwordConfirmation) {
+            ctx.addIssue({
+              path: ['passwordConfirmation'],
+              code: 'custom',
+              message: messages.UNMATCHED_PASSWORDS,
+            });
+          }
+        }
+      }
+    });
+}
 
-export type CreateUserInput = z.infer<typeof userSchema>;
-export type CreateUserFormInput = z.infer<typeof userFormSchema>;
-export type UpdateUserInput = Partial<CreateUserInput>;
+/**
+ * Type for user creation.
+ *
+ * - Based on the main schema (`userSchema`), including all required fields for creation.
+ * - Adds the `createdBy` field to track the author of the creation (used for auditing and permission control).
+ * - Used in server actions, use cases, and repositories when creating a new user.
+ */
+export type CreateUserInput = z.infer<typeof userSchema> & {
+  createdBy: string;
+};
+
+/**
+ * Type for user update.
+ *
+ * - All user fields are optional (via `Partial`), allowing partial updates.
+ * - Adds the `updatedBy` field to track the author of the change (used for auditing and permission control).
+ * - Used in server actions, use cases, and repositories when updating an existing user.
+ */
+export type UpdateUserInput = Partial<z.infer<typeof userSchema>> & {
+  updatedBy: string;
+};
+
+/**
+ * Type for user form usage.
+ *
+ * - We do not use `z.infer<typeof getUserFormSchema>` because the schema is dynamic (depends on isEditMode).
+ * - Password fields are optional to allow the same type for both creation and editing.
+ * - Ensures compatibility with React Hook Form and the schema's conditional validations.
+ */
+export type UserFormInput = {
+  name: string;
+  email: string;
+  roleId: string;
+  password?: string;
+  passwordConfirmation?: string;
+};

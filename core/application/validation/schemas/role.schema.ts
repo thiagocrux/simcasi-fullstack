@@ -3,8 +3,10 @@ import { z } from 'zod';
 import { messages } from '../messages';
 
 /**
- * Schema for role registration and update validation.
- * Used to ensure that roles have a valid code and optional permission links.
+ * Main schema for role entity validation.
+ *
+ * Defines all required and optional fields for a role record, including code and associated permissions.
+ * Used for validating role creation, update, and form data throughout the application.
  */
 export const roleSchema = z.object({
   code: z
@@ -17,11 +19,25 @@ export const roleSchema = z.object({
 });
 
 /**
- * Type inferred from the role schema for creation.
+ * Type for role creation.
+ *
+ * - Based on the main schema (`roleSchema`), including all required fields for creation.
+ * - Used in server actions, use cases, and repositories when creating a new role.
  */
-export type CreateRoleInputSchema = z.infer<typeof roleSchema>;
+export type CreateRoleInput = z.infer<typeof roleSchema>;
 
 /**
- * Type inferred from the role schema for updates.
+ * Type for role update.
+ *
+ * - Based on the main schema (`roleSchema`), including all fields (all optional if needed).
+ * - Used in server actions, use cases, and repositories when updating an existing role.
  */
-export type UpdateRoleInputSchema = z.infer<typeof roleSchema>;
+export type UpdateRoleInput = z.infer<typeof roleSchema>;
+
+/**
+ * Type for role form usage.
+ *
+ * - Based on the main schema (`roleSchema`).
+ * - Used to type role creation/edit forms (e.g., with React Hook Form).
+ */
+export type RoleFormInput = z.infer<typeof roleSchema>;
