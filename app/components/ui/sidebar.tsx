@@ -166,11 +166,12 @@ function Sidebar({
   collapsible?: 'offcanvas' | 'icon' | 'none';
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
-  const [isMounted, setIsMounted] = React.useState(false);
 
+  // Avoid hydration mismatch by only rendering after mount
+  const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
-    const animationFrame = requestAnimationFrame(() => setIsMounted(true));
-    return () => cancelAnimationFrame(animationFrame);
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   if (collapsible === 'none') {
@@ -188,7 +189,7 @@ function Sidebar({
     );
   }
 
-  if (isMobile && isMounted) {
+  if (isMobile && mounted) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
         <SheetContent
