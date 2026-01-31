@@ -17,7 +17,9 @@ function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
         "group/input-group border-input dark:bg-input/30 relative flex w-full items-center rounded-md border shadow-xs transition-[color,box-shadow] outline-none",
         "h-9 min-w-0 has-[>textarea]:h-auto",
 
-        // Variants based on alignment.
+        // Dynamic alignment variants: These use :has() selectors to detect child elements with data-align attributes
+        // and dynamically adjust the container's layout (flex direction, height) and input padding.
+        // Unlike the static variants below in inputGroupAddonVariants, these respond to child state at runtime.
         "has-[>[data-align=inline-start]]:[&>input]:pl-2",
         "has-[>[data-align=inline-end]]:[&>input]:pr-2",
         "has-[>[data-align=block-start]]:h-auto has-[>[data-align=block-start]]:flex-col has-[>[data-align=block-start]]:[&>input]:pb-3",
@@ -36,6 +38,9 @@ function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+// Static alignment variants: These define preset styling for the InputGroupAddon component.
+// They work in conjunction with the dynamic variants above—while the container handles layout,
+// these variants control the addon's specific positioning (order), spacing, and margins.
 const inputGroupAddonVariants = cva(
   "text-muted-foreground flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:opacity-50",
   {
