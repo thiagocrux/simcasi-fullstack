@@ -3,10 +3,11 @@
 import { useEffect } from 'react';
 
 import { LucideRefreshCcw } from 'lucide-react';
+import Image from 'next/image';
 
 import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
-import Image from 'next/image';
+import { logger } from '@/lib/logger.utils';
 
 export default function PrivateErrorPage({
   error,
@@ -16,8 +17,7 @@ export default function PrivateErrorPage({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error('[PRIVATE_ERROR_BOUNDARY]', error);
+    logger.error('[PRIVATE_ERROR_BOUNDARY]', error);
   }, [error]);
 
   return (
