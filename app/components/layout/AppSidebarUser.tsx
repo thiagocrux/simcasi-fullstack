@@ -2,10 +2,10 @@
 
 import { ChevronsUpDown, LogOut, type LucideIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { useLogout } from '@/hooks/useLogout';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -44,6 +43,13 @@ export function AppSidebarUser({ user, dropdownItems }: AppSidebarUserProps) {
   const router = useRouter();
   const { handleLogout } = useLogout();
 
+  // Avoid hydration mismatch by only rendering after mount
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -56,12 +62,16 @@ export function AppSidebarUser({ user, dropdownItems }: AppSidebarUserProps) {
               <Avatar className="rounded-lg w-8 h-8">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">
-                  {user.name.charAt(0).toUpperCase()}
+                  {mounted ? user.name.charAt(0).toUpperCase() : ''}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 grid text-sm text-left leading-tight">
-                <span className="font-medium truncate">{user.name}</span>
-                <span className="text-xs truncate">{user.email}</span>
+                <span className="font-medium truncate">
+                  {mounted ? user.name : 'Carregando...'}
+                </span>
+                <span className="text-xs truncate">
+                  {mounted ? user.email : ''}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -77,12 +87,16 @@ export function AppSidebarUser({ user, dropdownItems }: AppSidebarUserProps) {
                 <Avatar className="rounded-lg w-8 h-8">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">
-                    {user.name.charAt(0).toUpperCase()}
+                    {mounted ? user.name.charAt(0).toUpperCase() : ''}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 grid text-sm text-left leading-tight">
-                  <span className="font-medium truncate">{user.name}</span>
-                  <span className="text-xs truncate">{user.email}</span>
+                  <span className="font-medium truncate">
+                    {mounted ? user.name : 'Carregando...'}
+                  </span>
+                  <span className="text-xs truncate">
+                    {mounted ? user.email : ''}
+                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>

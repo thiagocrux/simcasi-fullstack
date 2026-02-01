@@ -14,11 +14,12 @@ import { Separator } from '../ui/separator';
  */
 export function AppFooter() {
   const [isAboutModalOpen, setIsAboutModalOpen] = useState<boolean>(false);
-  const [isMounted, setIsMounted] = useState(false);
 
+  // Avoid hydration mismatch by only rendering after mount
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    const animationFrame = requestAnimationFrame(() => setIsMounted(true));
-    return () => cancelAnimationFrame(animationFrame);
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   return (
@@ -27,7 +28,7 @@ export function AppFooter() {
       <p className="hidden xs:block select-none">
         {SYSTEM_CONSTANTS.COPYRIGHT}
       </p>
-      {isMounted ? (
+      {mounted ? (
         <AppDialog
           isOpen={isAboutModalOpen}
           title={`Sobre o sistema`}

@@ -166,7 +166,7 @@ export function AppTableToolbar({
   return (
     <div
       className={cn(
-        'flex sm:flex-row flex-col items-center gap-2 py-4',
+        'flex sm:flex-row flex-col items-center gap-2 mb-4',
         className
       )}
     >
