@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Notification } from '@/core/domain/entities/notification.entity';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
 import { Prisma } from '@prisma/client';
@@ -34,20 +35,22 @@ export class PrismaNotificationRepository implements NotificationRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    searchBy?: string;
     startDate?: Date;
     endDate?: Date;
-    includeDeleted?: boolean;
     patientId?: string;
+    includeDeleted?: boolean;
   }): Promise<{ items: Notification[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
-    const search = params?.search;
-    const patientId = params?.patientId;
-    const includeDeleted = params?.includeDeleted || false;
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
+    const search = params?.search;
+    const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const patientId = params?.patientId;
+    const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.NotificationWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
@@ -59,10 +62,19 @@ export class PrismaNotificationRepository implements NotificationRepository {
     };
 
     if (search) {
-      where.OR = [
-        { sinan: { contains: search, mode: 'insensitive' } },
-        { observations: { contains: search, mode: 'insensitive' } },
-      ];
+      if (searchBy) {
+        // Field-specific search (case-insensitive for string fields).
+        where[searchBy as keyof Prisma.NotificationWhereInput] = {
+          contains: search,
+          mode: 'insensitive',
+        } as any;
+      } else {
+        // Default behavior: Generic OR search across common fields.
+        where.OR = [
+          { sinan: { contains: search, mode: 'insensitive' } },
+          { observations: { contains: search, mode: 'insensitive' } },
+        ];
+      }
     }
 
     const [items, total] = await Promise.all([
@@ -70,7 +82,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { createdAt: 'desc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
       }),
       prisma.notification.count({ where }),
     ]);

@@ -10,8 +10,12 @@ collection:
     parameters:
       - $ref: '../components/parameters.yaml#/Page'
       - $ref: '../components/parameters.yaml#/Limit'
+      - $ref: '../components/parameters.yaml#/OrderBy'
+      - $ref: '../components/parameters.yaml#/OrderDir'
       - $ref: '../components/parameters.yaml#/Search'
-      - $ref: '../components/parameters.yaml#/IncludeDeleted'
+      - $ref: '../components/parameters.yaml#/SearchBy'
+      - $ref: '../components/parameters.yaml#/StartDate'
+      - $ref: '../components/parameters.yaml#/EndDate'
       - name: userId
         in: query
         required: false
@@ -38,8 +42,7 @@ collection:
           type: string
           format: uuid
         description: Filter by affected entity ID.
-      - $ref: '../components/parameters.yaml#/StartDate'
-      - $ref: '../components/parameters.yaml#/EndDate'
+      - $ref: '../components/parameters.yaml#/IncludeDeleted'
     responses:
       '200':
         description: Paginated list of audit logs successfully retrieved (OK).

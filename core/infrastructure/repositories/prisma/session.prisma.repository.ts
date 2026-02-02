@@ -33,18 +33,18 @@ export class PrismaSessionRepository implements SessionRepository {
     search?: string;
     startDate?: Date;
     endDate?: Date;
-    includeDeleted?: boolean;
     userId?: string;
+    includeDeleted?: boolean;
   }): Promise<{ items: Session[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
-    const userId = params?.userId;
-    const includeDeleted = params?.includeDeleted || false;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const userId = params?.userId;
+    const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.SessionWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
@@ -67,7 +67,7 @@ export class PrismaSessionRepository implements SessionRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { createdAt: 'desc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
       }),
       prisma.session.count({ where }),
     ]);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { User } from '@/core/domain/entities/user.entity';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import { Prisma } from '@prisma/client';
@@ -50,6 +51,7 @@ export class PrismaUserRepository implements UserRepository {
     skip?: number;
     take?: number;
     search?: string;
+    searchBy?: string;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     startDate?: Date;
@@ -62,10 +64,11 @@ export class PrismaUserRepository implements UserRepository {
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
-    const includeDeleted = params?.includeDeleted || false;
-    const roleId = params?.roleId;
+    const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const roleId = params?.roleId;
+    const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.UserWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
@@ -78,10 +81,19 @@ export class PrismaUserRepository implements UserRepository {
     };
 
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-      ];
+      if (searchBy) {
+        // If a specific column is selected, we only filter by it.
+        where[searchBy as keyof Prisma.UserWhereInput] = {
+          contains: search,
+          mode: 'insensitive',
+        } as any;
+      } else {
+        // Default behavior: Generic OR search across common fields.
+        where.OR = [
+          { name: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+        ];
+      }
     }
 
     const [items, total] = await Promise.all([
@@ -89,7 +101,7 @@ export class PrismaUserRepository implements UserRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { name: 'asc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
       }),
       prisma.user.count({ where }),
     ]);

@@ -28,6 +28,7 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    searchBy?: string;
     userId?: string;
     action?: string;
     entityName?: string;
@@ -40,12 +41,13 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
+    const searchBy = params?.searchBy;
+    const startDate = params?.startDate;
+    const endDate = params?.endDate;
     const userId = params?.userId;
     const action = params?.action;
     const entityName = params?.entityName;
     const entityId = params?.entityId;
-    const startDate = params?.startDate;
-    const endDate = params?.endDate;
 
     const where: Prisma.AuditLogWhereInput = {
       userId,
@@ -59,19 +61,31 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     };
 
     if (search) {
-      where.OR = [
-        { action: { contains: search, mode: 'insensitive' } },
-        { entityName: { contains: search, mode: 'insensitive' } },
-        { ipAddress: { contains: search } },
-        { userAgent: { contains: search } },
-      ];
+      const allowedFields = ['action', 'entityName', 'ipAddress', 'userAgent'];
+      if (searchBy && allowedFields.includes(searchBy)) {
+        // Field-specific search (case-insensitive for string fields).
+        const isInsensitive = ['action', 'entityName'].includes(searchBy);
+        where[searchBy as keyof Prisma.AuditLogWhereInput] = {
+          contains: search,
+          ...(isInsensitive ? { mode: 'insensitive' } : {}),
+        } as any;
+      } else {
+        // Default behavior: Generic OR search across common fields.
+        where.OR = [
+          { action: { contains: search, mode: 'insensitive' } },
+          { entityName: { contains: search, mode: 'insensitive' } },
+          { ipAddress: { contains: search } },
+          { userAgent: { contains: search } },
+        ];
+      }
     }
-
     const [items, total] = await Promise.all([
       prisma.auditLog.findMany({
         where,
         skip,
         take,
+        // Uses 'createdAt' as the default ordering field because audit logs are immutable.
+        // Ordering by 'updatedAt' or similar fields is not applicable for immutable records.
         orderBy: orderBy ? { [orderBy]: orderDir } : { createdAt: 'desc' },
       }),
       prisma.auditLog.count({ where }),

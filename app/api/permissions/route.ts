@@ -26,6 +26,7 @@ export const GET = withAuthentication(['read:permission'], async (request) => {
     orderBy: searchParams.get('orderBy') || undefined,
     orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
     search: searchParams.get('search') || undefined,
+    searchBy: searchParams.get('searchBy') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
     ...parseDateFilters(searchParams),
   });

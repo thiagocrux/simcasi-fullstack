@@ -686,6 +686,28 @@
             }
           },
           {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Column name to order the results by. Must match a valid field of the resource.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderDir",
+            "in": "query",
+            "description": "Direction to order the results. Accepts 'asc' for ascending or 'desc' for descending order.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
             "name": "search",
             "in": "query",
             "description": "Filter search string for relevant record fields.",
@@ -695,13 +717,12 @@
             }
           },
           {
-            "name": "includeDeleted",
+            "name": "searchBy",
             "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
+            "description": "The specific column to perform the search on. If provided, search will be restricted to this field.",
             "required": false,
             "schema": {
-              "type": "boolean",
-              "default": false
+              "type": "string"
             }
           },
           {
@@ -722,6 +743,16 @@
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -2572,6 +2603,28 @@
             }
           },
           {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Column name to order the results by. Must match a valid field of the resource.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderDir",
+            "in": "query",
+            "description": "Direction to order the results. Accepts 'asc' for ascending or 'desc' for descending order.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
             "name": "search",
             "in": "query",
             "description": "Filter search string for relevant record fields.",
@@ -2581,13 +2634,12 @@
             }
           },
           {
-            "name": "includeDeleted",
+            "name": "searchBy",
             "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
+            "description": "The specific column to perform the search on. If provided, search will be restricted to this field.",
             "required": false,
             "schema": {
-              "type": "boolean",
-              "default": false
+              "type": "string"
             }
           },
           {
@@ -2608,6 +2660,16 @@
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -5060,6 +5122,28 @@
             }
           },
           {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Column name to order the results by. Must match a valid field of the resource.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderDir",
+            "in": "query",
+            "description": "Direction to order the results. Accepts 'asc' for ascending or 'desc' for descending order.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
             "name": "search",
             "in": "query",
             "description": "Filter search string for relevant record fields.",
@@ -5069,13 +5153,12 @@
             }
           },
           {
-            "name": "includeDeleted",
+            "name": "searchBy",
             "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
+            "description": "The specific column to perform the search on. If provided, search will be restricted to this field.",
             "required": false,
             "schema": {
-              "type": "boolean",
-              "default": false
+              "type": "string"
             }
           },
           {
@@ -5096,6 +5179,16 @@
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -6891,6 +6984,28 @@
             }
           },
           {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Column name to order the results by. Must match a valid field of the resource.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderDir",
+            "in": "query",
+            "description": "Direction to order the results. Accepts 'asc' for ascending or 'desc' for descending order.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
             "name": "search",
             "in": "query",
             "description": "Filter search string for relevant record fields.",
@@ -6900,13 +7015,12 @@
             }
           },
           {
-            "name": "includeDeleted",
+            "name": "searchBy",
             "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
+            "description": "The specific column to perform the search on. If provided, search will be restricted to this field.",
             "required": false,
             "schema": {
-              "type": "boolean",
-              "default": false
+              "type": "string"
             }
           },
           {
@@ -6927,6 +7041,16 @@
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -8670,6 +8794,28 @@
             }
           },
           {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Column name to order the results by. Must match a valid field of the resource.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderDir",
+            "in": "query",
+            "description": "Direction to order the results. Accepts 'asc' for ascending or 'desc' for descending order.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
             "name": "search",
             "in": "query",
             "description": "Filter search string for relevant record fields.",
@@ -8679,24 +8825,13 @@
             }
           },
           {
-            "name": "includeDeleted",
+            "name": "searchBy",
             "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
+            "description": "The specific column to perform the search on. If provided, search will be restricted to this field.",
             "required": false,
             "schema": {
-              "type": "boolean",
-              "default": false
+              "type": "string"
             }
-          },
-          {
-            "name": "patientId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Filter exams by a specific patient."
           },
           {
             "name": "startDate",
@@ -8716,6 +8851,26 @@
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "patientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter exams by a specific patient."
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -10680,6 +10835,28 @@
             }
           },
           {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Column name to order the results by. Must match a valid field of the resource.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderDir",
+            "in": "query",
+            "description": "Direction to order the results. Accepts 'asc' for ascending or 'desc' for descending order.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
             "name": "search",
             "in": "query",
             "description": "Filter search string for relevant record fields.",
@@ -10689,24 +10866,13 @@
             }
           },
           {
-            "name": "includeDeleted",
+            "name": "searchBy",
             "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
+            "description": "The specific column to perform the search on. If provided, search will be restricted to this field.",
             "required": false,
             "schema": {
-              "type": "boolean",
-              "default": false
+              "type": "string"
             }
-          },
-          {
-            "name": "patientId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Filter treatments by a specific patient."
           },
           {
             "name": "startDate",
@@ -10726,6 +10892,26 @@
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "patientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter treatments by a specific patient."
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -12553,6 +12739,28 @@
             }
           },
           {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Column name to order the results by. Must match a valid field of the resource.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderDir",
+            "in": "query",
+            "description": "Direction to order the results. Accepts 'asc' for ascending or 'desc' for descending order.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
             "name": "search",
             "in": "query",
             "description": "Filter search string for relevant record fields.",
@@ -12562,24 +12770,13 @@
             }
           },
           {
-            "name": "includeDeleted",
+            "name": "searchBy",
             "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
+            "description": "The specific column to perform the search on. If provided, search will be restricted to this field.",
             "required": false,
             "schema": {
-              "type": "boolean",
-              "default": false
+              "type": "string"
             }
-          },
-          {
-            "name": "patientId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Filter notifications by a specific patient."
           },
           {
             "name": "startDate",
@@ -12599,6 +12796,26 @@
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "patientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter notifications by a specific patient."
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -14295,6 +14512,28 @@
             }
           },
           {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Column name to order the results by. Must match a valid field of the resource.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderDir",
+            "in": "query",
+            "description": "Direction to order the results. Accepts 'asc' for ascending or 'desc' for descending order.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
             "name": "search",
             "in": "query",
             "description": "Filter search string for relevant record fields.",
@@ -14304,24 +14543,13 @@
             }
           },
           {
-            "name": "includeDeleted",
+            "name": "searchBy",
             "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
+            "description": "The specific column to perform the search on. If provided, search will be restricted to this field.",
             "required": false,
             "schema": {
-              "type": "boolean",
-              "default": false
+              "type": "string"
             }
-          },
-          {
-            "name": "patientId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Filter observations by a specific patient."
           },
           {
             "name": "startDate",
@@ -14341,6 +14569,26 @@
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "patientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter observations by a specific patient."
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -16027,6 +16275,28 @@
             }
           },
           {
+            "name": "orderBy",
+            "in": "query",
+            "description": "Column name to order the results by. Must match a valid field of the resource.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderDir",
+            "in": "query",
+            "description": "Direction to order the results. Accepts 'asc' for ascending or 'desc' for descending order.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
             "name": "search",
             "in": "query",
             "description": "Filter search string for relevant record fields.",
@@ -16036,13 +16306,32 @@
             }
           },
           {
-            "name": "includeDeleted",
+            "name": "searchBy",
             "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
+            "description": "The specific column to perform the search on. If provided, search will be restricted to this field.",
             "required": false,
             "schema": {
-              "type": "boolean",
-              "default": false
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
             }
           },
           {
@@ -16084,23 +16373,13 @@
             "description": "Filter by affected entity ID."
           },
           {
-            "name": "startDate",
+            "name": "includeDeleted",
             "in": "query",
-            "description": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
+            "description": "Flag to include soft-deleted records in the results.",
             "required": false,
             "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "endDate",
-            "in": "query",
-            "description": "Filter records created before this date (inclusive). Use ISO 8601 date-time format.",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
+              "type": "boolean",
+              "default": false
             }
           }
         ],

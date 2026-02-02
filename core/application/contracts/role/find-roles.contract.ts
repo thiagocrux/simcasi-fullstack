@@ -5,9 +5,10 @@ export interface FindRolesInput {
   take?: number;
   orderBy?: string;
   orderDir?: 'asc' | 'desc';
+  search?: string;
+  searchBy?: string;
   startDate?: Date;
   endDate?: Date;
-  search?: string;
   includeDeleted?: boolean;
 }
 

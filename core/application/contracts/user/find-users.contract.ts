@@ -5,9 +5,10 @@ export interface FindUsersInput {
   take?: number;
   orderBy?: string;
   orderDir?: 'asc' | 'desc';
+  search?: string;
+  searchBy?: string;
   startDate?: Date;
   endDate?: Date;
-  search?: string;
   roleId?: string;
   includeDeleted?: boolean;
 }

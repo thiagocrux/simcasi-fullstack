@@ -27,9 +27,10 @@ export interface PatientRepository {
     take?: number;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
+    search?: string;
+    searchBy?: string;
     startDate?: Date;
     endDate?: Date;
-    search?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Patient[]; total: number }>;
 

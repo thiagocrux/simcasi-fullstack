@@ -18,8 +18,6 @@ export const GET = withAuthentication(['read:exam'], async (request) => {
     Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
     PAGINATION.MAX_LIMIT
   );
-  const search = searchParams.get('search') || undefined;
-  const patientId = searchParams.get('patientId') || undefined;
 
   const findExamsUseCase = makeFindExamsUseCase();
   const result = await findExamsUseCase.execute({
@@ -27,9 +25,10 @@ export const GET = withAuthentication(['read:exam'], async (request) => {
     take: limit,
     orderBy: searchParams.get('orderBy') || undefined,
     orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
-    search,
+    search: searchParams.get('search') || undefined,
+    searchBy: searchParams.get('searchBy') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
-    patientId,
+    patientId: searchParams.get('patientId') || undefined,
     ...parseDateFilters(searchParams),
   });
 

@@ -29,6 +29,7 @@ export const GET = withAuthentication(
       orderBy: searchParams.get('orderBy') || undefined,
       orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'asc',
       search: searchParams.get('search') || undefined,
+      searchBy: searchParams.get('searchBy') || undefined,
       includeDeleted: searchParams.get('includeDeleted') === 'true',
       patientId: searchParams.get('patientId') || undefined,
       ...parseDateFilters(searchParams),

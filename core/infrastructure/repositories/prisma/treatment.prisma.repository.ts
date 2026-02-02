@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Treatment } from '@/core/domain/entities/treatment.entity';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
 import { Prisma } from '@prisma/client';
@@ -34,20 +35,22 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    searchBy?: string;
     startDate?: Date;
     endDate?: Date;
-    includeDeleted?: boolean;
     patientId?: string;
+    includeDeleted?: boolean;
   }): Promise<{ items: Treatment[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
-    const search = params?.search;
-    const patientId = params?.patientId;
-    const includeDeleted = params?.includeDeleted || false;
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
+    const search = params?.search;
+    const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const patientId = params?.patientId;
+    const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.TreatmentWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
@@ -59,13 +62,22 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
     };
 
     if (search) {
-      where.OR = [
-        { medication: { contains: search, mode: 'insensitive' } },
-        { dosage: { contains: search, mode: 'insensitive' } },
-        { healthCenter: { contains: search, mode: 'insensitive' } },
-        { observations: { contains: search, mode: 'insensitive' } },
-        { partnerInformation: { contains: search, mode: 'insensitive' } },
-      ];
+      if (searchBy) {
+        // Field-specific search (case-insensitive for string fields).
+        where[searchBy as keyof Prisma.TreatmentWhereInput] = {
+          contains: search,
+          mode: 'insensitive',
+        } as any;
+      } else {
+        // Default generic search
+        where.OR = [
+          { medication: { contains: search, mode: 'insensitive' } },
+          { dosage: { contains: search, mode: 'insensitive' } },
+          { healthCenter: { contains: search, mode: 'insensitive' } },
+          { observations: { contains: search, mode: 'insensitive' } },
+          { partnerInformation: { contains: search, mode: 'insensitive' } },
+        ];
+      }
     }
 
     const [items, total] = await Promise.all([
@@ -73,7 +85,7 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { createdAt: 'desc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
       }),
       prisma.treatment.count({ where }),
     ]);

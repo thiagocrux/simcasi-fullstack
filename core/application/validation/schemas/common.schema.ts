@@ -29,9 +29,10 @@ export const QuerySchema = z.object({
   orderBy: z.string().optional(),
   orderDir: z.enum(['asc', 'desc']).optional().default('asc'),
   search: z.string().optional(),
-  includeDeleted: z.coerce.boolean().optional().default(false),
+  searchBy: z.string().optional(),
   startDate: z.coerce.date().optional(),
   endDate: z.coerce.date().optional(),
+  includeDeleted: z.coerce.boolean().optional().default(false),
 });
 
 /**

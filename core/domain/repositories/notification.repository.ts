@@ -18,9 +18,10 @@ export interface NotificationRepository {
     take?: number;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
+    search?: string;
+    searchBy?: string;
     startDate?: Date;
     endDate?: Date;
-    search?: string;
     patientId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Notification[]; total: number }>;

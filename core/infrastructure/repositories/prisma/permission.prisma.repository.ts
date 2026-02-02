@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Permission } from '@/core/domain/entities/permission.entity';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import { Prisma } from '@prisma/client';
@@ -89,6 +90,7 @@ export class PrismaPermissionRepository implements PermissionRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    searchBy?: string;
     startDate?: Date;
     endDate?: Date;
     includeDeleted?: boolean;
@@ -98,9 +100,10 @@ export class PrismaPermissionRepository implements PermissionRepository {
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
-    const includeDeleted = params?.includeDeleted || false;
+    const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.PermissionWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
@@ -111,7 +114,14 @@ export class PrismaPermissionRepository implements PermissionRepository {
     };
 
     if (search) {
-      where.code = { contains: search, mode: 'insensitive' };
+      if (searchBy) {
+        where[searchBy as keyof Prisma.PermissionWhereInput] = {
+          contains: search,
+          mode: 'insensitive',
+        } as any;
+      } else {
+        where.code = { contains: search, mode: 'insensitive' };
+      }
     }
 
     const [items, total] = await Promise.all([
@@ -119,7 +129,7 @@ export class PrismaPermissionRepository implements PermissionRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { code: 'asc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
       }),
       prisma.permission.count({ where }),
     ]);

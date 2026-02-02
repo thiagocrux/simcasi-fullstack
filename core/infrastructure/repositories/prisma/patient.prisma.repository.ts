@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Patient } from '@/core/domain/entities/patient.entity';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { Prisma } from '@prisma/client';
@@ -69,21 +70,23 @@ export class PrismaPatientRepository implements PatientRepository {
   async findAll(params?: {
     skip?: number;
     take?: number;
+    orderBy?: string;
+    orderDir?: 'asc' | 'desc';
     search?: string;
+    searchBy?: string;
     startDate?: Date;
     endDate?: Date;
     includeDeleted?: boolean;
-    orderBy?: string;
-    orderDir?: 'asc' | 'desc';
   }): Promise<{ items: Patient[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
-    const includeDeleted = params?.includeDeleted || false;
+    const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.PatientWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
@@ -94,16 +97,32 @@ export class PrismaPatientRepository implements PatientRepository {
     };
 
     if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { cpf: { contains: search } },
-        { susCardNumber: { contains: search } },
-        { motherName: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { phone: { contains: search } },
-        { city: { contains: search, mode: 'insensitive' } },
-        { state: { contains: search, mode: 'insensitive' } },
-      ];
+      if (searchBy) {
+        // Field-specific search (case-insensitive for string fields).
+        const isInsensitive = [
+          'name',
+          'motherName',
+          'email',
+          'city',
+          'state',
+        ].includes(searchBy);
+        where[searchBy as keyof Prisma.PatientWhereInput] = {
+          contains: search,
+          mode: isInsensitive ? 'insensitive' : undefined,
+        } as any;
+      } else {
+        // Default behavior: Generic OR search across common fields.
+        where.OR = [
+          { name: { contains: search, mode: 'insensitive' } },
+          { cpf: { contains: search } },
+          { susCardNumber: { contains: search } },
+          { motherName: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { phone: { contains: search } },
+          { city: { contains: search, mode: 'insensitive' } },
+          { state: { contains: search, mode: 'insensitive' } },
+        ];
+      }
     }
 
     const [items, total] = await Promise.all([
@@ -111,7 +130,7 @@ export class PrismaPatientRepository implements PatientRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { name: 'asc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
       }),
       prisma.patient.count({ where }),
     ]);

@@ -18,7 +18,6 @@ export const GET = withAuthentication(['read:patient'], async (request) => {
     Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
     PAGINATION.MAX_LIMIT
   );
-  const search = searchParams.get('search') || undefined;
 
   const findPatientsUseCase = makeFindPatientsUseCase();
   const result = await findPatientsUseCase.execute({
@@ -26,7 +25,8 @@ export const GET = withAuthentication(['read:patient'], async (request) => {
     take: limit,
     orderBy: searchParams.get('orderBy') || undefined,
     orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
-    search,
+    search: searchParams.get('search') || undefined,
+    searchBy: searchParams.get('searchBy') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
     ...parseDateFilters(searchParams),
   });

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Role } from '@/core/domain/entities/role.entity';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { Prisma } from '@prisma/client';
@@ -47,6 +48,7 @@ export class PrismaRoleRepository implements RoleRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    searchBy?: string;
     startDate?: Date;
     endDate?: Date;
     includeDeleted?: boolean;
@@ -56,9 +58,10 @@ export class PrismaRoleRepository implements RoleRepository {
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
     const search = params?.search;
-    const includeDeleted = params?.includeDeleted || false;
+    const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.RoleWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
@@ -69,7 +72,14 @@ export class PrismaRoleRepository implements RoleRepository {
     };
 
     if (search) {
-      where.code = { contains: search, mode: 'insensitive' };
+      if (searchBy) {
+        where[searchBy as keyof Prisma.RoleWhereInput] = {
+          contains: search,
+          mode: 'insensitive',
+        } as any;
+      } else {
+        where.code = { contains: search, mode: 'insensitive' };
+      }
     }
 
     const [items, total] = await Promise.all([
@@ -77,7 +87,7 @@ export class PrismaRoleRepository implements RoleRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { code: 'asc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
       }),
       prisma.role.count({ where }),
     ]);

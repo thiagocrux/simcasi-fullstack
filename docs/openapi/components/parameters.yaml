@@ -19,6 +19,25 @@ Limit:
     minimum: 1
     maximum: 100
 
+OrderBy:
+  name: orderBy
+  in: query
+  description: Column name to order the results by. Must match a valid field of the resource.
+  required: false
+  schema:
+    type: string
+
+OrderDir:
+  name: orderDir
+  in: query
+  description: Direction to order the results. Accepts 'asc' for ascending or 'desc' for descending order.
+  required: false
+  schema:
+    type: string
+    enum:
+      - asc
+      - desc
+
 Search:
   name: search
   in: query
@@ -27,14 +46,13 @@ Search:
   schema:
     type: string
 
-IncludeDeleted:
-  name: includeDeleted
+SearchBy:
+  name: searchBy
   in: query
-  description: Flag to include soft-deleted records in the results.
+  description: The specific column to perform the search on. If provided, search will be restricted to this field.
   required: false
   schema:
-    type: boolean
-    default: false
+    type: string
 
 StartDate:
   name: startDate
@@ -53,3 +71,12 @@ EndDate:
   schema:
     type: string
     format: date-time
+
+IncludeDeleted:
+  name: includeDeleted
+  in: query
+  description: Flag to include soft-deleted records in the results.
+  required: false
+  schema:
+    type: boolean
+    default: false

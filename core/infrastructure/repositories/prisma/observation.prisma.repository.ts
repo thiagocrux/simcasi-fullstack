@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Observation } from '@/core/domain/entities/observation.entity';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
 import { Prisma } from '@prisma/client';
@@ -34,20 +35,22 @@ export class PrismaObservationRepository implements ObservationRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    searchBy?: string;
     startDate?: Date;
     endDate?: Date;
-    includeDeleted?: boolean;
     patientId?: string;
+    includeDeleted?: boolean;
   }): Promise<{ items: Observation[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
-    const search = params?.search;
-    const patientId = params?.patientId;
-    const includeDeleted = params?.includeDeleted || false;
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
+    const search = params?.search;
+    const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const patientId = params?.patientId;
+    const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.ObservationWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
@@ -59,7 +62,16 @@ export class PrismaObservationRepository implements ObservationRepository {
     };
 
     if (search) {
-      where.observations = { contains: search, mode: 'insensitive' };
+      if (searchBy) {
+        // Field-specific search (case-insensitive for string fields).
+        where[searchBy as keyof Prisma.ObservationWhereInput] = {
+          contains: search,
+          mode: 'insensitive',
+        } as any;
+      } else {
+        // Default behavior: Generic OR search across common fields.
+        where.observations = { contains: search, mode: 'insensitive' };
+      }
     }
 
     const [items, total] = await Promise.all([
@@ -67,7 +79,7 @@ export class PrismaObservationRepository implements ObservationRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { createdAt: 'desc' },
+        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
       }),
       prisma.observation.count({ where }),
     ]);
