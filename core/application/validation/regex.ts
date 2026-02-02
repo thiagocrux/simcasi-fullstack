@@ -1,3 +1,5 @@
+import { SINAN_LENGTH } from '@/core/domain/constants/notification.constants';
+
 export const regex = {
   SUS_CARD_NUMBER: /^\d{3}(\s\d{4}){3}$/,
   CPF: /^([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})$/,
@@ -7,4 +9,5 @@ export const regex = {
   PHONE: /^\(\d{2}\)\s9?\d{4}\-\d{4}$/,
   PASSWORD:
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,128}$/,
+  SINAN: new RegExp(`^\\d{${SINAN_LENGTH}}$`),
 };

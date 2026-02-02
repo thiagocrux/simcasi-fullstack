@@ -1,6 +1,7 @@
 import * as z from 'zod';
 
 import { messages } from '../messages';
+import { regex } from '../regex';
 
 /**
  * Main schema for notification entity validation.
@@ -10,7 +11,10 @@ import { messages } from '../messages';
  */
 export const notificationSchema = z.object({
   patientId: z.string().nonempty(messages.REQUIRED_FIELD('Paciente')),
-  sinan: z.string().nonempty(messages.REQUIRED_FIELD('SINAN')),
+  sinan: z
+    .string()
+    .nonempty(messages.REQUIRED_FIELD('SINAN'))
+    .regex(regex.SINAN, messages.INVALID_SINAN),
   observations: z.string().optional(),
 });
 

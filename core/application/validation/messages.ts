@@ -1,3 +1,5 @@
+import { SINAN_LENGTH } from '@/core/domain/constants/notification.constants';
+
 export const messages = {
   REQUIRED_FIELD: (field: string) => `O campo **${field}** é obrigatório.`,
   INVALID_FIELD: (field: string) => `O campo **${field}** é inválido.`,
@@ -16,4 +18,5 @@ export const messages = {
   INVALID_UUID:
     'Por favor, insira um UUID válido no formato: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.',
   INVALID_CREDENTIALS: 'Credenciais inválidas. Por favor, tente novamente.',
+  INVALID_SINAN: `O campo **SINAN** deve ter exatamente ${SINAN_LENGTH} dígitos. Caso o número possua menos de ${SINAN_LENGTH}, complete com zeros à esquerda.`,
 } as const;

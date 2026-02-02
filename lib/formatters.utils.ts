@@ -16,7 +16,7 @@ export function formatDate(date: Date) {
   }).format(date);
 }
 
-export type MaskType = 'cpf' | 'susCardNumber' | 'phone' | 'zipCode';
+export type MaskType = 'cpf' | 'susCardNumber' | 'phone' | 'zipCode' | 'sinan';
 
 /**
  * Applies a mask to a string value according to the specified MaskType.
@@ -25,7 +25,10 @@ export type MaskType = 'cpf' | 'susCardNumber' | 'phone' | 'zipCode';
  * @param {MaskType} type The type of mask to apply.
  * @return {string} The masked string, or the original value if the type is not recognized or input is invalid.
  */
-export function applyMask(value: string, type: MaskType): string {
+export function applyMask(
+  value: string,
+  type: Omit<MaskType, 'sinan'>
+): string {
   const onlyNumbers = value.replace(/\D+/g, '');
 
   switch (type) {
