@@ -8,8 +8,8 @@ import {
   QuerySchema,
 } from '@/core/application/validation/schemas/common.schema';
 import {
-  CreateRoleInputSchema,
-  UpdateRoleInputSchema,
+  CreateRoleInput,
+  UpdateRoleInput,
   roleSchema,
 } from '@/core/application/validation/schemas/role.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
@@ -56,7 +56,7 @@ export async function getRole(id: string) {
  * Register a new role in the system.
  * This will also handle automatic restoration if the role code was previously soft-deleted.
  */
-export async function createRole(input: CreateRoleInputSchema) {
+export async function createRole(input: CreateRoleInput) {
   return withSecuredActionAndAutomaticRetry(
     ['create:role'],
     async ({ userId, ipAddress, userAgent }) => {
@@ -86,7 +86,7 @@ export async function createRole(input: CreateRoleInputSchema) {
 /**
  * Update an existing role's code or its associated permissions.
  */
-export async function updateRole(id: string, input: UpdateRoleInputSchema) {
+export async function updateRole(id: string, input: UpdateRoleInput) {
   return withSecuredActionAndAutomaticRetry(
     ['update:role'],
     async ({ userId, ipAddress, userAgent }) => {

@@ -8,8 +8,8 @@ import {
   QuerySchema,
 } from '@/core/application/validation/schemas/common.schema';
 import {
-  CreatePermissionInputSchema,
-  UpdatePermissionInputSchema,
+  CreatePermissionInput,
+  UpdatePermissionInput,
   permissionSchema,
 } from '@/core/application/validation/schemas/permission.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
@@ -55,7 +55,7 @@ export async function getPermission(id: string) {
  * Register a new permission in the system.
  * Handles automatic restoration if the permission code was previously soft-deleted.
  */
-export async function createPermission(input: CreatePermissionInputSchema) {
+export async function createPermission(input: CreatePermissionInput) {
   return withSecuredActionAndAutomaticRetry(
     ['create:permission'],
     async ({ userId, ipAddress, userAgent }) => {
@@ -87,7 +87,7 @@ export async function createPermission(input: CreatePermissionInputSchema) {
  */
 export async function updatePermission(
   id: string,
-  input: UpdatePermissionInputSchema
+  input: UpdatePermissionInput
 ) {
   return withSecuredActionAndAutomaticRetry(
     ['update:permission'],
