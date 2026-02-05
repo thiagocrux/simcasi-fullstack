@@ -103,7 +103,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    font-family: var(--font-poppins), sans-serif;
+    font-family: var(--font), sans-serif;
     min-width: 320px;
     @apply bg-background text-foreground;
   }

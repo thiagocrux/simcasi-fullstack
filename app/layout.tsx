@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
-import { Poppins } from 'next/font/google';
+import { IBM_Plex_Sans } from 'next/font/google';
 
 import './globals.css';
 import { Providers } from './providers';
 
-const poppins = Poppins({
+const font = IBM_Plex_Sans({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-poppins',
+  variable: '--font',
 });
 
 export const metadata: Metadata = {
@@ -44,7 +44,7 @@ export default async function RootLayout({
       </head>
 
       <body
-        className={`${poppins.variable} antialiased flex flex-col min-h-dvh min-w-full`}
+        className={`${font.variable} antialiased flex flex-col min-h-dvh min-w-full`}
       >
         <Providers>{children}</Providers>
       </body>
