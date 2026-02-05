@@ -18,7 +18,7 @@ export default async function UsersPage() {
         title="Lista de usuários"
         description="Visualize todos os usuários cadastrados, exclua registros, acesse a página de edição e crie usuários. Gerencie facilmente o acesso e os dados da sua equipe no SIMCASI."
       />
-      <UsersTable />
+      <UsersTable showIdColumn={false} />
     </div>
   );
 }

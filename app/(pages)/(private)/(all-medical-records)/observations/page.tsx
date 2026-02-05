@@ -18,7 +18,7 @@ export default function ObservationsPage() {
         title="Lista de observações"
         description="Visualize todas as observações cadastrados, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todas as observações do SIMCASI."
       />
-      <ObservationsTable />
+      <ObservationsTable showIdColumn={false} />
     </div>
   );
 }

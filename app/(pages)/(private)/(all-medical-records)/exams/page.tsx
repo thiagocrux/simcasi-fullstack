@@ -18,7 +18,7 @@ export default function ExamsPage() {
         title="Lista de exames"
         description="Visualize todos os exames cadastrados, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todos os exames do SIMCASI."
       />
-      <ExamsTable />
+      <ExamsTable showIdColumn={false} />
     </div>
   );
 }

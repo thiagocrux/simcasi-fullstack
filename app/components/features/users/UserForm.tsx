@@ -1,17 +1,24 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
-import { createUser, updateUser } from '@/app/actions/user.actions';
+import { createUser, getUser, updateUser } from '@/app/actions/user.actions';
 import {
-  CreateUserFormInput,
-  userFormSchema,
+  CreateUserInput,
+  getUserFormSchema,
+  UpdateUserInput,
+  UserFormInput,
 } from '@/core/application/validation/schemas/user.schema';
-import { ROLE_OPTIONS } from '@/core/domain/constants/role.constants';
+import { useLogout } from '@/hooks/useLogout';
+import { useRole } from '@/hooks/useRole';
+import { useUser } from '@/hooks/useUser';
+import { logger } from '@/lib/logger.utils';
+import { useEffect } from 'react';
+import { Combobox } from '../../common/Combobox';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
 import { PasswordInput } from '../../common/PasswordInput';
@@ -19,13 +26,6 @@ import { Button } from '../../ui/button';
 import { Card } from '../../ui/card';
 import { Field, FieldGroup, FieldLabel } from '../../ui/field';
 import { Input } from '../../ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../ui/select';
 import { Spinner } from '../../ui/spinner';
 
 interface UserFormProps {
@@ -40,6 +40,11 @@ export function UserForm({
   className,
 }: UserFormProps) {
   const router = useRouter();
+  const { user: loggedUser } = useUser();
+  const { roles: ROLE_OPTIONS } = useRole();
+  const { handleLogout } = useLogout();
+
+  const userFormSchema = getUserFormSchema(isEditMode);
 
   const {
     register,
@@ -47,7 +52,7 @@ export function UserForm({
     reset,
     formState: { errors: formErrors, isSubmitting },
     control,
-  } = useForm<CreateUserFormInput>({
+  } = useForm<UserFormInput>({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
       name: '',
@@ -58,20 +63,75 @@ export function UserForm({
     },
   });
 
-  const userMutation = useMutation({
-    mutationFn: (input: CreateUserFormInput) =>
-      isEditMode && userId ? updateUser(userId, input) : createUser(input),
+  const { data: user, isPending: isFetchingUser } = useQuery({
+    queryKey: ['find-users'],
+    queryFn: async () => await getUser(userId as string),
+    enabled: isEditMode,
+  });
+
+  useEffect(() => {
+    if (user && user.success) {
+      const { name, email, roleId } = user.data;
+      reset({
+        name,
+        email,
+        roleId,
+      });
+    }
+  }, [user, reset]);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: ({
+      input,
+      authorId,
+    }: {
+      input: UserFormInput;
+      authorId: string;
+    }) => {
+      const payload = isEditMode
+        ? { ...input, updatedBy: authorId }
+        : { ...input, createdBy: authorId };
+
+      return isEditMode && userId
+        ? updateUser(userId, payload as UpdateUserInput)
+        : createUser(payload as CreateUserInput);
+    },
     onSuccess: () => {
-      // TODO: Implement success case.
+      logger.success(
+        `The user ${isEditMode ? 'update' : 'creation'} was successfull!`
+      );
+      reset();
+      router.push('/users');
     },
     onError: (error: unknown) => {
-      // TODO: Implement error case.
-      console.error('Submit error:', error);
+      logger.error('[FORM_ERROR]', error);
     },
   });
 
-  async function onSubmit(input: CreateUserFormInput) {
-    userMutation.mutate(input);
+  const isFormBusy =
+    isPending || isSubmitting || (isEditMode && isFetchingUser);
+
+  async function onSubmit(input: UserFormInput) {
+    if (!loggedUser?.id) {
+      logger.error('[FORM_ERROR] Expired session or invalid user.');
+      handleLogout();
+      return;
+    }
+
+    const selectedRole = ROLE_OPTIONS.find((role) => role.id === input.roleId);
+    if (!selectedRole) {
+      logger.error(
+        '[FORM_ERROR] O cargo selecionado é inválido ou não foi encontrado.'
+      );
+      return;
+    }
+
+    const { name, email, roleId } = input;
+
+    mutate({
+      input: isEditMode ? { name, email, roleId } : input,
+      authorId: loggedUser?.id,
+    });
   }
 
   return (
@@ -88,6 +148,7 @@ export function UserForm({
                 name="name"
                 placeholder="Maria Silva"
                 aria-invalid={!!formErrors.name}
+                disabled={isFormBusy}
               />
               {formErrors.name && (
                 <FieldError message={formErrors.name.message} />
@@ -101,6 +162,7 @@ export function UserForm({
                 name="email"
                 placeholder="exemplo@email.com"
                 aria-invalid={!!formErrors.email}
+                disabled={isFormBusy}
               />
               {formErrors.email && (
                 <FieldError message={formErrors.email.message} />
@@ -114,24 +176,19 @@ export function UserForm({
                 render={({ field }) => (
                   <>
                     <FieldLabel htmlFor="role">Cargo</FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger
-                        className={
-                          formErrors.roleId
-                            ? 'border-destructive! focus:ring-destructive/30!'
-                            : ''
-                        }
-                      >
-                        <SelectValue placeholder="Selecione o seu cargo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {ROLE_OPTIONS.map((role) => (
-                          <SelectItem key={role.value} value={role.value}>
-                            {role.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Combobox
+                      {...field}
+                      data={ROLE_OPTIONS.map((role) => ({
+                        value: role.id,
+                        label: role.label,
+                      }))}
+                      onChange={field.onChange}
+                      placeholder="Selecione o cargo"
+                      searchPlaceholder="Pesquisar..."
+                      emptySearchMessage="Nenhum resultado encontrado."
+                      disabled={isFormBusy}
+                      aria-invalid={!!formErrors.roleId}
+                    />
                     {formErrors.roleId && (
                       <FieldError message={formErrors.roleId.message} />
                     )}
@@ -140,32 +197,40 @@ export function UserForm({
               />
             </Field>
 
-            <Field>
-              <FieldLabel htmlFor="password">Senha</FieldLabel>
-              <PasswordInput
-                {...register('password')}
-                name="password"
-                placeholder="********"
-                aria-invalid={!!formErrors.password}
-              />
-              {formErrors.password && (
-                <FieldError message={formErrors.password.message} />
-              )}
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="passwordConfirmation">
-                Confirmação de senha
-              </FieldLabel>
-              <PasswordInput
-                {...register('passwordConfirmation')}
-                name="passwordConfirmation"
-                placeholder="********"
-                aria-invalid={!!formErrors.passwordConfirmation}
-              />
-              {formErrors.passwordConfirmation && (
-                <FieldError message={formErrors.passwordConfirmation.message} />
-              )}
-            </Field>
+            {!isEditMode ? (
+              <>
+                <Field>
+                  <FieldLabel htmlFor="password">Senha</FieldLabel>
+                  <PasswordInput
+                    {...register('password')}
+                    name="password"
+                    placeholder="********"
+                    aria-invalid={!!formErrors.password}
+                    disabled={isFormBusy}
+                  />
+                  {formErrors.password && (
+                    <FieldError message={formErrors.password.message} />
+                  )}
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="passwordConfirmation">
+                    Confirmação de senha
+                  </FieldLabel>
+                  <PasswordInput
+                    {...register('passwordConfirmation')}
+                    name="passwordConfirmation"
+                    placeholder="********"
+                    aria-invalid={!!formErrors.passwordConfirmation}
+                    disabled={isFormBusy}
+                  />
+                  {formErrors.passwordConfirmation && (
+                    <FieldError
+                      message={formErrors.passwordConfirmation.message}
+                    />
+                  )}
+                </Field>
+              </>
+            ) : null}
           </div>
         </FieldGroup>
 
@@ -173,7 +238,7 @@ export function UserForm({
           type="submit"
           size="lg"
           className="mt-8 w-full cursor-pointer"
-          disabled={isSubmitting}
+          disabled={isFormBusy}
         >
           {isSubmitting ? <Spinner /> : <Save />}
           {isEditMode ? 'Atualizar' : 'Salvar'}

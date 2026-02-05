@@ -18,7 +18,7 @@ export default function NotificationsPage() {
         title="Lista de notificações"
         description="Visualize todas as notificações cadastradas, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todas as notificações do SIMCASI."
       />
-      <NotificationsTable />
+      <NotificationsTable showIdColumn={false} />
     </div>
   );
 }

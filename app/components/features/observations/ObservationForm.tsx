@@ -1,19 +1,26 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
 import {
   createObservation,
+  getObservation,
   updateObservation,
 } from '@/app/actions/observation.actions';
 import {
   CreateObservationInput,
+  ObservationFormInput,
   observationSchema,
+  UpdateObservationInput,
 } from '@/core/application/validation/schemas/observation.schema';
+import { useLogout } from '@/hooks/useLogout';
+import { useUser } from '@/hooks/useUser';
+import { logger } from '@/lib/logger.utils';
+import { useEffect } from 'react';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
 import { Button } from '../../ui/button';
@@ -37,6 +44,8 @@ export function ObservationForm({
   className,
 }: ObservationFormProps) {
   const router = useRouter();
+  const { user: loggedUser } = useUser();
+  const { handleLogout } = useLogout();
 
   const {
     register,
@@ -44,7 +53,7 @@ export function ObservationForm({
     reset,
     handleSubmit,
     formState: { errors: formErrors, isSubmitting },
-  } = useForm<CreateObservationInput>({
+  } = useForm<ObservationFormInput>({
     resolver: zodResolver(observationSchema),
     defaultValues: {
       patientId,
@@ -53,21 +62,64 @@ export function ObservationForm({
     },
   });
 
-  const observationMutation = useMutation({
-    mutationFn: (input: CreateObservationInput) =>
-      isEditMode && observationId
-        ? updateObservation(observationId, input)
-        : createObservation(input),
+  const { data: observation, isPending: isFetchingObservation } = useQuery({
+    queryKey: ['get-observation', observationId],
+    queryFn: async () => await getObservation(observationId as string),
+    enabled: isEditMode,
+  });
+
+  useEffect(() => {
+    if (observation && observation.success) {
+      const { observations, ...rest } = observation.data;
+      reset({
+        ...rest,
+        observations: observations ?? '',
+      });
+    }
+  }, [observation, reset]);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: ({
+      input,
+      authorId,
+    }: {
+      input: ObservationFormInput;
+      authorId: string;
+    }) => {
+      const payload = isEditMode
+        ? { ...input, updatedBy: authorId }
+        : { ...input, createdBy: authorId };
+
+      return isEditMode && observationId
+        ? updateObservation(observationId, payload as UpdateObservationInput)
+        : createObservation(payload as CreateObservationInput);
+    },
     onSuccess: () => {
-      // TODO: Implement success case
+      logger.success(
+        `The observation ${isEditMode ? 'update' : 'creation'} was successfull!`
+      );
+      reset();
+      router.push('/observations');
     },
     onError: (error: unknown) => {
-      console.error('Submit error:', error);
+      logger.error('[FORM_ERROR]', error);
     },
   });
 
-  async function onSubmit(input: CreateObservationInput) {
-    observationMutation.mutate(input);
+  const isFormBusy =
+    isPending || isSubmitting || (isEditMode && isFetchingObservation);
+
+  async function onSubmit(input: ObservationFormInput) {
+    if (!loggedUser?.id) {
+      logger.error('[FORM_ERROR] Expired session or invalid user.');
+      handleLogout();
+      return;
+    }
+
+    mutate({
+      input,
+      authorId: loggedUser?.id,
+    });
   }
 
   return (
@@ -86,6 +138,7 @@ export function ObservationForm({
                 name="observations"
                 placeholder="Ex: Paciente relatou melhora nos sintomas."
                 aria-invalid={!!formErrors.observations}
+                disabled={isFormBusy}
               />
               {formErrors.observations && (
                 <FieldError message={formErrors.observations.message} />
@@ -102,6 +155,7 @@ export function ObservationForm({
                       id="hasPartnerBeingTreated"
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      disabled={isFormBusy}
                     />
                   )}
                 />
@@ -122,7 +176,7 @@ export function ObservationForm({
           type="submit"
           size="lg"
           className="mt-8 w-full cursor-pointer"
-          disabled={isSubmitting}
+          disabled={isFormBusy}
         >
           {isSubmitting ? <Spinner /> : <Save />}
           {isEditMode ? 'Atualizar' : 'Salvar'}

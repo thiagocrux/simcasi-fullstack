@@ -13,6 +13,7 @@ import {
   sessionSchema,
 } from '@/core/application/validation/schemas/session.schema';
 import { useAppDispatch } from '@/hooks/redux.hooks';
+import { logger } from '@/lib/logger.utils';
 import { setCredentials } from '@/stores/auth/auth.slice';
 import { FieldError } from '../../common/FieldError';
 import { PasswordInput } from '../../common/PasswordInput';
@@ -65,8 +66,7 @@ export function SignInForm({ className }: SignInFormProps) {
       }
     },
     onError: (error: unknown) => {
-      // TODO: Replace console with a proper log.
-      console.error('Submit error:', error);
+      logger.error('[SIGNIN ERROR]', error);
       toast.error('Erro de comunicação com o servidor.');
     },
   });

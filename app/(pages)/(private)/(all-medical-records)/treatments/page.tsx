@@ -18,7 +18,7 @@ export default function TreatmentsPage() {
         title="Lista de tratamentos"
         description="Visualize todos os tratamentos cadastrados, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todos os tratamentos do SIMCASI."
       />
-      <TreatmentsTable />
+      <TreatmentsTable showIdColumn={false} />
     </div>
   );
 }

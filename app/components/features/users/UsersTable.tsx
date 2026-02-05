@@ -1,7 +1,7 @@
 'use client';
 
 import { User } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -21,22 +21,28 @@ import {
   Eye,
   MoreHorizontal,
   Pen,
+  Plus,
   Trash2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { deleteUser, findUsers } from '@/app/actions/user.actions';
-import { useRoles } from '@/hooks/useRole';
+import { usePermission } from '@/hooks/usePermission';
+import { useRole } from '@/hooks/useRole';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
 import { renderOrFallback } from '@/lib/shared.utils';
+import { getNextSortDirection } from '@/lib/sort.utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
 import { AppTablePagination } from '../../common/AppTablePagination';
 import { AppTableToolbar } from '../../common/AppTableToolbar';
+import { CustomSkeleton } from '../../common/CustomSkeleton';
+import { EmptyTableFeedback } from '../../common/EmptyTableFeedback';
 import { HighlightedText } from '../../common/HighlightedText';
 import { Button } from '../../ui/button';
+import { ContextMenuItem, ContextMenuSeparator } from '../../ui/context-menu';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,12 +50,13 @@ import {
   DropdownMenuTrigger,
 } from '../../ui/dropdown-menu';
 
-interface UsersTable {
+interface UsersTableProps {
   pageSize?: number;
   showFilterInput?: boolean;
   showPrintButton?: boolean;
   showColumnToggleButton?: boolean;
   showPaginationInput?: boolean;
+  showIdColumn?: boolean;
 }
 
 type Column =
@@ -74,9 +81,9 @@ const COLUMN_LABELS: Record<Column, string> = {
 };
 
 const FILTERABLE_COLUMNS: Column[] = ['name', 'email'];
-
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN: Column = 'name';
+const COLUMN_MAX_WIDTH = 'max-w-md';
 
 export function UsersTable({
   pageSize = DEFAULT_PAGE_SIZE,
@@ -84,9 +91,11 @@ export function UsersTable({
   showPrintButton = true,
   showColumnToggleButton = true,
   showPaginationInput = false,
-}: UsersTable) {
+  showIdColumn = true,
+}: UsersTableProps) {
   const router = useRouter();
-  const { getRoleLabel } = useRoles();
+  const { getRoleLabel } = useRole();
+  const { can } = usePermission();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -100,6 +109,13 @@ export function UsersTable({
     pageSize,
   });
 
+  // Avoid hydration mismatch by only rendering after mount
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
   const searchValue = useMemo(() => {
     const filter = columnFilters.find((f) => f.id === selectedFilterOption);
     return (filter?.value as string) ?? '';
@@ -109,17 +125,29 @@ export function UsersTable({
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   }, [searchValue]);
 
-  const { data: userList } = useQuery({
-    queryKey: ['find-users', pagination, searchValue, sorting],
-    queryFn: async () =>
-      await findUsers({
+  const {
+    data: userList,
+    refetch: refetchUserList,
+    isPending,
+  } = useQuery({
+    queryKey: ['find-users', pagination, searchValue, sorting, mounted],
+    queryFn: async () => {
+      if (!mounted) {
+        return { success: true, data: { items: [], total: 0 } };
+      }
+
+      return await findUsers({
         skip: pagination.pageIndex * pagination.pageSize,
         take: pagination.pageSize,
         orderBy: sorting[0]?.id,
         orderDir: sorting[0]?.desc ? 'desc' : 'asc',
         search: searchValue,
+        searchBy: selectedFilterOption,
         includeDeleted: false,
-      }),
+      });
+    },
+    enabled: mounted,
+    placeholderData: keepPreviousData,
   });
 
   const users = useMemo(() => {
@@ -129,63 +157,81 @@ export function UsersTable({
     return [];
   }, [userList]);
 
-  const handleDelete = useCallback((id: string) => {
-    deleteUser(id);
-  }, []);
+  const handleDelete = useCallback(
+    (id: string) => {
+      deleteUser(id);
+      refetchUserList();
+    },
+    [refetchUserList]
+  );
 
   const columns = useMemo<ColumnDef<Partial<User>>[]>(() => {
     return [
-      {
-        accessorKey: 'id',
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
-              }
-              className="px-1! cursor-pointer"
-            >
-              ID
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'asc' && <ArrowDownAZ />}
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'desc' && <ArrowUpZA />}
-            </Button>
-          );
-        },
-        cell: ({ row }) => (
-          <div className="ml-1">
-            {renderOrFallback(row.getValue('id'), (value) => (
-              <HighlightedText
-                text={value}
-                highlight={selectedFilterOption === 'id' ? searchValue : ''}
-              />
-            ))}
-          </div>
-        ),
-      },
+      ...(showIdColumn
+        ? ([
+            {
+              accessorKey: 'id',
+              header: ({ column }) => (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    const next = getNextSortDirection(column.getIsSorted());
+                    if (next === false) {
+                      setSorting([]);
+                    } else {
+                      column.toggleSorting(next === 'desc');
+                    }
+                  }}
+                  className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+                >
+                  ID
+                  {column.getSortIndex() === 0 &&
+                    column.getIsSorted() === 'asc' && <ArrowDownAZ />}
+                  {column.getSortIndex() === 0 &&
+                    column.getIsSorted() === 'desc' && <ArrowUpZA />}
+                </Button>
+              ),
+              cell: ({ row }) => (
+                <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
+                  {renderOrFallback(row.getValue('id'), (value) => (
+                    <HighlightedText
+                      text={value}
+                      highlight={
+                        selectedFilterOption === 'id' ? searchValue : ''
+                      }
+                    />
+                  ))}
+                </div>
+              ),
+            },
+          ] as ColumnDef<Partial<User>>[])
+        : []),
       {
         accessorKey: 'name',
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
               }
-              className="px-1! cursor-pointer"
-            >
-              Nome
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'asc' && <ArrowDownAZ />}
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'desc' && <ArrowUpZA />}
-            </Button>
-          );
-        },
+            }}
+            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            Nome
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ArrowDownAZ />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ArrowUpZA />
+            )}
+          </Button>
+        ),
         cell: ({ row }) => (
-          <div className="ml-1">
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(row.getValue('name'), (value) => (
               <HighlightedText
                 text={value}
@@ -197,25 +243,30 @@ export function UsersTable({
       },
       {
         accessorKey: 'email',
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
               }
-              className="px-1! cursor-pointer"
-            >
-              E-mail
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'asc' && <ArrowDownAZ />}
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'desc' && <ArrowUpZA />}
-            </Button>
-          );
-        },
+            }}
+            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            E-mail
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ArrowDownAZ />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ArrowUpZA />
+            )}
+          </Button>
+        ),
         cell: ({ row }) => (
-          <div className="ml-1">
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(row.getValue('email'), (value) => (
               <HighlightedText
                 text={value}
@@ -227,25 +278,30 @@ export function UsersTable({
       },
       {
         accessorKey: 'roleId',
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
               }
-              className="px-1! cursor-pointer"
-            >
-              Nível de permissão
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'asc' && <ArrowDownAZ />}
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'desc' && <ArrowUpZA />}
-            </Button>
-          );
-        },
+            }}
+            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            Nível de permissão
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ArrowDownAZ />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ArrowUpZA />
+            )}
+          </Button>
+        ),
         cell: ({ row }) => (
-          <div className="ml-1">
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(row.getValue('roleId'), (value) => (
               <HighlightedText
                 text={getRoleLabel(value) ?? value}
@@ -257,25 +313,30 @@ export function UsersTable({
       },
       {
         accessorKey: 'createdBy',
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
               }
-              className="px-1! cursor-pointer"
-            >
-              Criado por
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'asc' && <ArrowDownAZ />}
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'desc' && <ArrowUpZA />}
-            </Button>
-          );
-        },
+            }}
+            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            Criado por
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ArrowDownAZ />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ArrowUpZA />
+            )}
+          </Button>
+        ),
         cell: ({ row }) => (
-          <div className="ml-1">
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(row.getValue('createdBy'), (value) => (
               <HighlightedText
                 text={value as string}
@@ -290,25 +351,30 @@ export function UsersTable({
       {
         accessorKey: 'createdAt',
         sortingFn: 'datetime',
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
               }
-              className="px-1! cursor-pointer"
-            >
-              Criado em
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'asc' && <ClockArrowDown />}
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'desc' && <ClockArrowUp />}
-            </Button>
-          );
-        },
+            }}
+            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            Criado em
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ClockArrowDown />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ClockArrowUp />
+            )}
+          </Button>
+        ),
         cell: ({ row }) => (
-          <div className="ml-1">
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
               formatDate(row.getValue('createdAt') as Date),
               (value) => (
@@ -325,25 +391,30 @@ export function UsersTable({
       },
       {
         accessorKey: 'updatedBy',
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
               }
-              className="px-1! cursor-pointer"
-            >
-              Atualizado por
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'asc' && <ArrowDownAZ />}
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'desc' && <ArrowUpZA />}
-            </Button>
-          );
-        },
+            }}
+            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            Atualizado por
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ArrowDownAZ />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ArrowUpZA />
+            )}
+          </Button>
+        ),
         cell: ({ row }) => (
-          <div className="ml-1">
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(row.getValue('updatedBy'), (value) => (
               <HighlightedText
                 text={value as string}
@@ -358,25 +429,30 @@ export function UsersTable({
       {
         accessorKey: 'updatedAt',
         sortingFn: 'datetime',
-        header: ({ column }) => {
-          return (
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === 'asc')
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
               }
-              className="px-1! cursor-pointer"
-            >
-              Atualizado em
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'asc' && <ClockArrowDown />}
-              {column.getSortIndex() === 0 &&
-                column.getIsSorted() === 'desc' && <ClockArrowUp />}
-            </Button>
-          );
-        },
+            }}
+            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            Atualizado em
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ClockArrowDown />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ClockArrowUp />
+            )}
+          </Button>
+        ),
         cell: ({ row }) => (
-          <div className="ml-1">
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
               formatDate(row.getValue('updatedAt') as Date),
               (value) => (
@@ -412,36 +488,50 @@ export function UsersTable({
                 >
                   <Eye /> Ver detalhes
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => router.push(`/users/${row.getValue('id')}`)}
-                >
-                  <Pen />
-                  Editar usuário
-                </DropdownMenuItem>
-                <AppAlertDialog
-                  title="Você tem certeza absoluta?"
-                  description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
-                  cancelAction={{ action: () => {} }}
-                  continueAction={{
-                    action: () => handleDelete(row.getValue('id')),
-                  }}
-                >
+
+                {can('update:user') && (
                   <DropdownMenuItem
                     className="cursor-pointer"
-                    onSelect={(event) => event.preventDefault()}
+                    onClick={() => router.push(`/users/${row.getValue('id')}`)}
                   >
-                    <Trash2 />
-                    Deletar usuário
+                    <Pen />
+                    Editar usuário
                   </DropdownMenuItem>
-                </AppAlertDialog>
+                )}
+
+                {can('delete:user') && (
+                  <AppAlertDialog
+                    title="Você tem certeza absoluta?"
+                    description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
+                    cancelAction={{ action: () => {} }}
+                    continueAction={{
+                      action: () => handleDelete(row.getValue('id')),
+                    }}
+                  >
+                    <DropdownMenuItem
+                      className="text-destructive cursor-pointer"
+                      onSelect={(event) => event.preventDefault()}
+                    >
+                      <Trash2 />
+                      Deletar usuário
+                    </DropdownMenuItem>
+                  </AppAlertDialog>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           );
         },
       },
     ];
-  }, [searchValue, selectedFilterOption, handleDelete, router, getRoleLabel]);
+  }, [
+    searchValue,
+    selectedFilterOption,
+    handleDelete,
+    router,
+    getRoleLabel,
+    showIdColumn,
+    can,
+  ]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -468,8 +558,6 @@ export function UsersTable({
     },
   });
 
-  const hasRows = table.getRowModel().rows?.length;
-
   async function exportData() {
     const total = userList && userList.success ? userList.data.total : 0;
     if (!total) {
@@ -489,30 +577,100 @@ export function UsersTable({
     }
   }
 
+  const hasRows = !!table.getRowModel().rows?.length;
+  const isSearching = searchValue.trim() !== '';
+  const hasRegisteredData = userList?.success && (userList.data.total ?? 0) > 0;
+
   return (
     <div className="grid grid-cols-1 mx-auto w-full">
-      <AppTableToolbar
-        table={table}
-        selectedFilterOption={selectedFilterOption}
-        setSelectedFilterOption={(value: string) =>
-          setSelectedFilterOption(value as Column)
-        }
-        availableFilterOptions={FILTERABLE_COLUMNS}
-        showColumnToggleButton={showColumnToggleButton}
-        showFilterInput={showFilterInput}
-        showPrintButton={showPrintButton}
-        columnLabelMapper={COLUMN_LABELS}
-        handleDataExport={exportData}
-      />
-
-      <AppTable table={table} />
-
-      {hasRows ? (
-        <AppTablePagination
+      {(hasRegisteredData || isSearching) && (
+        <AppTableToolbar
           table={table}
-          showPaginationInput={showPaginationInput}
-        />
-      ) : null}
+          selectedFilterOption={selectedFilterOption}
+          setSelectedFilterOption={(value: string) =>
+            setSelectedFilterOption(value as Column)
+          }
+          availableFilterOptions={FILTERABLE_COLUMNS}
+          showColumnToggleButton={showColumnToggleButton}
+          showFilterInput={showFilterInput}
+          showPrintButton={showPrintButton}
+          columnLabelMapper={COLUMN_LABELS}
+          handleDataExport={exportData}
+        >
+          {can('create:user') && (
+            <Button
+              variant="outline"
+              className="self-end cursor-pointer select-none"
+              onClick={() => router.push('/users/new')}
+            >
+              <Plus />
+              Cadastrar usuário
+            </Button>
+          )}
+        </AppTableToolbar>
+      )}
+
+      {isPending ? (
+        <CustomSkeleton variant="item-list" />
+      ) : hasRows || isSearching ? (
+        <>
+          <AppTable
+            table={table}
+            renderRowContextMenu={(row) => (
+              <>
+                <ContextMenuItem
+                  className="cursor-pointer"
+                  onClick={() =>
+                    router.push(`/users/${row.original.id}/details`)
+                  }
+                >
+                  <Eye className="mr-2 w-4 h-4" /> Ver detalhes
+                </ContextMenuItem>
+
+                {can('update:user') && (
+                  <ContextMenuItem
+                    className="cursor-pointer"
+                    onClick={() => router.push(`/users/${row.original.id}`)}
+                  >
+                    <Pen className="mr-2 w-4 h-4" />
+                    Editar usuário
+                  </ContextMenuItem>
+                )}
+
+                {can('delete:user') && (
+                  <>
+                    <ContextMenuSeparator />
+                    <AppAlertDialog
+                      title="Você tem certeza absoluta?"
+                      description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o usuário."
+                      cancelAction={{ action: () => {} }}
+                      continueAction={{
+                        action: () => handleDelete(String(row.original.id)),
+                      }}
+                    >
+                      <ContextMenuItem
+                        className="text-destructive cursor-pointer"
+                        onSelect={(event) => event.preventDefault()}
+                      >
+                        <Trash2 className="mr-2 w-4 h-4" />
+                        Deletar usuário
+                      </ContextMenuItem>
+                    </AppAlertDialog>
+                  </>
+                )}
+              </>
+            )}
+          />
+          {hasRows && (
+            <AppTablePagination
+              table={table}
+              showPaginationInput={showPaginationInput}
+            />
+          )}
+        </>
+      ) : (
+        <EmptyTableFeedback variant="users" />
+      )}
     </div>
   );
 }

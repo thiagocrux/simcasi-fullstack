@@ -5,6 +5,7 @@ import { forwardRef } from 'react';
 import { useMaskInput, withMask } from 'use-mask-input';
 
 import { Input } from '@/app/components/ui/input';
+import { SINAN_LENGTH } from '@/core/domain/constants/notification.constants';
 import { MaskType } from '@/lib/formatters.utils';
 
 interface MaskedInputProps {
@@ -57,6 +58,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
           showMaskOnHover: false,
         },
       }),
+      sinan: '',
     };
 
     /**
@@ -67,6 +69,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
       cpf: '999.999.999-99',
       zipCode: '99999-999',
       phone: '',
+      sinan: `9{${SINAN_LENGTH}}`,
     };
 
     /**

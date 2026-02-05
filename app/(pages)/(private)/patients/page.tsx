@@ -18,7 +18,7 @@ export default function PatientsPage() {
         title="Lista de pacientes"
         description="Visualize todos os pacientes cadastrados, exclua, edite ou crie novos registros. Gerencie facilmente as informações de todos os pacientes do SIMCASI."
       />
-      <PatientsTable />
+      <PatientsTable showIdColumn={false} />
     </div>
   );
 }

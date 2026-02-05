@@ -24,17 +24,17 @@ import {
   PaginationPrevious,
 } from '../ui/pagination';
 
-interface AppTablePaginationProps {
-  table: Table<Partial<unknown>>;
+interface AppTablePaginationProps<TData> {
+  table: Table<TData>;
   showPaginationInput?: boolean;
   className?: string;
 }
 
-export function AppTablePagination({
+export function AppTablePagination<TData>({
   table,
   showPaginationInput = false,
   className,
-}: AppTablePaginationProps) {
+}: AppTablePaginationProps<TData>) {
   const hasRows = table.getRowModel().rows?.length;
 
   if (!hasRows) {
@@ -43,7 +43,7 @@ export function AppTablePagination({
 
   return (
     <div className={cn('flex lg:flex-row flex-col gap-4 py-4', className)}>
-      <Pagination className="">
+      <Pagination>
         <PaginationContent>
           <PaginationItem>
             <PaginationFirst
@@ -130,7 +130,7 @@ export function AppTablePagination({
   );
 }
 
-function PaginationInput({ table }: { table: Table<Partial<unknown>> }) {
+function PaginationInput<TData>({ table }: { table: Table<TData> }) {
   const [goToPageInput, setGoToPageInput] = useState('1');
 
   function handleGoToPage() {

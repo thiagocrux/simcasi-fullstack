@@ -87,6 +87,7 @@ export default async function UserDetailsPage({
           description="Aqui você pode visualizar todas as informações completas deste usuário."
         />
         <DetailsPageActions
+          entity="user"
           dialogTitle="Você tem certeza absoluta?"
           dialogDescription="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o usuário."
           updateAction={{ label: 'Editar usuário', action: handleUpdate }}

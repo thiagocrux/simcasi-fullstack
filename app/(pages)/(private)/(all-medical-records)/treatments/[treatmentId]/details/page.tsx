@@ -118,6 +118,7 @@ export default async function TreatmentDetailsPage({
           description="Aqui você pode visualizar todas as informações deste tratamento."
         />
         <DetailsPageActions
+          entity="treatment"
           dialogTitle="Você tem certeza absoluta?"
           dialogDescription="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o tratamento."
           updateAction={{ label: 'Editar tratamento', action: handleUpdate }}

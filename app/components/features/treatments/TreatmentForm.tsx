@@ -1,19 +1,27 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
 import {
   createTreatment,
+  getTreatment,
   updateTreatment,
 } from '@/app/actions/treatment.actions';
 import {
   CreateTreatmentInput,
+  TreatmentFormInput,
   treatmentSchema,
+  UpdateTreatmentInput,
 } from '@/core/application/validation/schemas/treatment.schema';
+import { useLogout } from '@/hooks/useLogout';
+import { useUser } from '@/hooks/useUser';
+import { toCalendarISOString } from '@/lib/formatters.utils';
+import { logger } from '@/lib/logger.utils';
+import { useEffect } from 'react';
 import { Datepicker } from '../../common/Datepicker';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
@@ -37,6 +45,8 @@ export function TreatmentForm({
   className,
 }: TreatmentFormProps) {
   const router = useRouter();
+  const { user: loggedUser } = useUser();
+  const { handleLogout } = useLogout();
 
   const {
     register,
@@ -44,7 +54,7 @@ export function TreatmentForm({
     reset,
     control,
     formState: { errors: formErrors, isSubmitting },
-  } = useForm<CreateTreatmentInput>({
+  } = useForm<TreatmentFormInput>({
     resolver: zodResolver(treatmentSchema),
     defaultValues: {
       patientId,
@@ -57,21 +67,69 @@ export function TreatmentForm({
     },
   });
 
-  const treatmentMutation = useMutation({
-    mutationFn: (input: CreateTreatmentInput) =>
-      isEditMode && treatmentId
-        ? updateTreatment(treatmentId, input)
-        : createTreatment(input),
+  // ...existing code...
+  const { data: treatment, isPending: isFetchingTreatment } = useQuery({
+    queryKey: ['get-treatment', treatmentId],
+    queryFn: async () => await getTreatment(treatmentId as string),
+    enabled: isEditMode,
+  });
+
+  useEffect(() => {
+    if (treatment && treatment.success) {
+      const { startDate, observations, partnerInformation, ...rest } =
+        treatment.data;
+
+      reset({
+        ...rest,
+        startDate: toCalendarISOString(startDate),
+        observations: observations ?? '',
+        partnerInformation: partnerInformation ?? '',
+      });
+    }
+  }, [treatment, reset]);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: ({
+      input,
+      authorId,
+    }: {
+      input: TreatmentFormInput;
+      authorId: string;
+    }) => {
+      const payload = isEditMode
+        ? { ...input, updatedBy: authorId }
+        : { ...input, createdBy: authorId };
+
+      return isEditMode && treatmentId
+        ? updateTreatment(treatmentId, payload as UpdateTreatmentInput)
+        : createTreatment(payload as CreateTreatmentInput);
+    },
     onSuccess: () => {
-      // TODO: Implement success case
+      logger.success(
+        `The treatment ${isEditMode ? 'update' : 'creation'} was successfull!`
+      );
+      reset();
+      router.push('/treatments');
     },
     onError: (error: unknown) => {
-      console.error('Submit error:', error);
+      logger.error('[FORM_ERROR]', error);
     },
   });
 
-  async function onSubmit(input: CreateTreatmentInput) {
-    treatmentMutation.mutate(input);
+  const isFormBusy =
+    isPending || isSubmitting || (isEditMode && isFetchingTreatment);
+
+  async function onSubmit(input: TreatmentFormInput) {
+    if (!loggedUser?.id) {
+      logger.error('[FORM_ERROR] Expired session or invalid user.');
+      handleLogout();
+      return;
+    }
+
+    mutate({
+      input,
+      authorId: loggedUser?.id,
+    });
   }
 
   return (
@@ -88,6 +146,7 @@ export function TreatmentForm({
                 name="medication"
                 placeholder="Ex: Penicilina Benzatina"
                 aria-invalid={!!formErrors.medication}
+                disabled={isFormBusy}
               />
               {formErrors.medication && (
                 <FieldError message={formErrors.medication.message} />
@@ -103,6 +162,7 @@ export function TreatmentForm({
                 name="healthCenter"
                 placeholder="Ex: UBS Centro"
                 aria-invalid={!!formErrors.healthCenter}
+                disabled={isFormBusy}
               />
               {formErrors.healthCenter && (
                 <FieldError message={formErrors.healthCenter.message} />
@@ -117,10 +177,11 @@ export function TreatmentForm({
                   <>
                     <FieldLabel htmlFor="startDate">Data de início</FieldLabel>
                     <Datepicker
-                      placeholder="DD/MM/AAAA"
+                      placeholder="dd/mm/aaaa"
                       value={field.value}
                       onValueChange={field.onChange}
                       hasError={!!formErrors.startDate}
+                      disabled={isFormBusy}
                     />
                     {formErrors.startDate && (
                       <FieldError message={formErrors.startDate.message} />
@@ -137,6 +198,7 @@ export function TreatmentForm({
                 name="dosage"
                 placeholder="Ex: 2.400.000 UI"
                 aria-invalid={!!formErrors.dosage}
+                disabled={isFormBusy}
               />
               {formErrors.dosage && (
                 <FieldError message={formErrors.dosage.message} />
@@ -152,6 +214,7 @@ export function TreatmentForm({
                 name="observations"
                 placeholder="Ex: Paciente apresentou melhora."
                 aria-invalid={!!formErrors.observations}
+                disabled={isFormBusy}
               />
               {formErrors.observations && (
                 <FieldError message={formErrors.observations.message} />
@@ -167,6 +230,7 @@ export function TreatmentForm({
                 name="partnerInformation"
                 placeholder="Ex: Parceiro tratado na mesma data."
                 aria-invalid={!!formErrors.partnerInformation}
+                disabled={isFormBusy}
               />
               {formErrors.partnerInformation && (
                 <FieldError message={formErrors.partnerInformation.message} />
@@ -179,7 +243,7 @@ export function TreatmentForm({
           type="submit"
           size="lg"
           className="mt-8 w-full cursor-pointer"
-          disabled={isSubmitting}
+          disabled={isFormBusy}
         >
           {isSubmitting ? <Spinner /> : <Save />}
           {isEditMode ? 'Atualizar' : 'Salvar'}

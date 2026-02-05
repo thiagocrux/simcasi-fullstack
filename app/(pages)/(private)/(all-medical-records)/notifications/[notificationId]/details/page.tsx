@@ -96,6 +96,7 @@ export default async function NotificationDetailsPage({
           description="Aqui você pode visualizar todas as informações desta notificação."
         />
         <DetailsPageActions
+          entity="notification"
           dialogTitle="Você tem certeza absoluta?"
           dialogDescription="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a notificação."
           updateAction={{ label: 'Editar notificação', action: handleUpdate }}

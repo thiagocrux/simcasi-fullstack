@@ -90,6 +90,7 @@ export default async function ObservationDetailsPage({
           description="Aqui você pode visualizar todas as informações desta observação."
         />
         <DetailsPageActions
+          entity="observation"
           dialogTitle="Você tem certeza absoluta?"
           dialogDescription="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
           updateAction={{ label: 'Editar observação', action: handleUpdate }}

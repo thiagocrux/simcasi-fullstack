@@ -1,5 +1,14 @@
-import { flexRender, type Table as TableType } from '@tanstack/react-table';
+import {
+  flexRender,
+  type Row,
+  type Table as TableType,
+} from '@tanstack/react-table';
 
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuTrigger,
+} from '../ui/context-menu';
 import {
   Table,
   TableBody,
@@ -9,11 +18,15 @@ import {
   TableRow,
 } from '../ui/table';
 
-interface AppTableProps {
-  table: TableType<Partial<unknown>>;
+interface AppTableProps<TData> {
+  table: TableType<TData>;
+  renderRowContextMenu?: (row: Row<TData>) => React.ReactNode;
 }
 
-export function AppTable({ table }: AppTableProps) {
+export function AppTable<TData>({
+  table,
+  renderRowContextMenu,
+}: AppTableProps<TData>) {
   return (
     <div className="border rounded-md">
       <Table>
@@ -39,16 +52,25 @@ export function AppTable({ table }: AppTableProps) {
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
+              <ContextMenu key={row.id}>
+                <ContextMenuTrigger asChild>
+                  <TableRow data-state={row.getIsSelected() && 'selected'}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </ContextMenuTrigger>
+                {renderRowContextMenu && (
+                  <ContextMenuContent className="w-64">
+                    {renderRowContextMenu(row)}
+                  </ContextMenuContent>
+                )}
+              </ContextMenu>
             ))
           ) : (
             <TableRow>

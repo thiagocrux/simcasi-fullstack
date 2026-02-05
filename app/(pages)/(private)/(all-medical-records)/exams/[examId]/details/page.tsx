@@ -122,6 +122,7 @@ export default async function ExamDetailsPage({
           description="Aqui você pode visualizar todas as informações deste exame."
         />
         <DetailsPageActions
+          entity="exam"
           dialogTitle="Você tem certeza absoluta?"
           dialogDescription="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o exame."
           updateAction={{ label: 'Editar exame', action: handleUpdate }}

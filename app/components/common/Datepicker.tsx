@@ -11,84 +11,57 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 /**
  * Props for the Datepicker component.
- *
- * @typedef {Object} DatepickerProps
- * @property {Date|string|undefined} [value] The selected date, as a Date object or a string (ISO or 'yyyy-MM-dd' format). Optional.
- * @property {(date: string | undefined) => void} onValueChange Callback function called when the date changes. Receives the new date as an ISO string or undefined.
- * @property {string} placeholder Placeholder text displayed when no date is selected.
- * @property {boolean} [hasError] If true, applies error styling to the input. Optional.
- * @property {boolean} [disabled] If true, disables the datepicker input. Optional.
  */
 interface DatepickerProps {
-  /** Accepts Date or ISO / yyyy-MM-dd strings */
-  value?: Date | string | undefined;
-  onValueChange: (date: string | undefined) => void;
-  placeholder: string;
+  placeholder?: string;
   hasError?: boolean;
   disabled?: boolean;
+  value?: Date | string;
+  onValueChange: (date: string | undefined) => void;
 }
 
 /**
  * Attempts to parse a value into a valid Date object.
  *
- * Tries to interpret the input as a Date instance, an ISO string, or a 'yyyy-MM-dd' string.
- * Returns undefined if the value is invalid or cannot be parsed.
- *
- * @param {Date|string|undefined} value The value to parse (Date, ISO string, or 'yyyy-MM-dd' string).
- * @return {Date|undefined} The parsed Date object, or undefined if the input is invalid.
+ * @param {Date|string|undefined} value The value to parse.
+ * @return {Date|undefined} The parsed Date object or undefined.
  */
 function parseDate(value?: Date | string | undefined): Date | undefined {
   if (!value) return undefined;
   if (value instanceof Date) return isValid(value) ? value : undefined;
 
-  // Try parsing as ISO string first
   try {
     const iso = parseISO(value);
     if (isValid(iso)) return iso;
   } catch {
-    // Ignore parsing errors
+    // Ignore
   }
 
-  // Try parsing as 'yyyy-MM-dd' (common input format)
   try {
     const d = parse(String(value), 'yyyy-MM-dd', new Date());
     if (isValid(d)) return d;
   } catch {
-    // Ignore parsing errors
+    // Ignore
   }
 
   return undefined;
 }
 
 /**
- * Datepicker component for selecting a single date using a popover calendar UI.
- *
- * Provides a button that opens a calendar popover for date selection. Supports controlled and uncontrolled usage.
- *
- * @param {DatepickerProps} props The props for the Datepicker component.
- * @param {React.Ref<HTMLButtonElement>} ref Ref to the button element for accessibility and focus control.
- * @return {JSX.Element} The rendered Datepicker component.
+ * Simplified Datepicker component for selecting a single date.
  */
 export const Datepicker = React.forwardRef<HTMLButtonElement, DatepickerProps>(
-  (
-    {
-      value,
-      onValueChange,
-      placeholder = 'Selecione uma data',
-      hasError = false,
-      disabled,
-    },
-    ref
-  ) => {
+  ({ placeholder = 'Selecione uma data', hasError = false, disabled, value, onValueChange }, ref) => {
     const [open, setOpen] = React.useState(false);
-    const [date, setDate] = React.useState<Date | undefined>(() =>
-      parseDate(value)
-    );
 
-    // Synchronize internal state if parent passes a new value
-    React.useEffect(() => {
-      setDate(parseDate(value));
-    }, [value]);
+    const date = React.useMemo(() => parseDate(value), [value]);
+
+    const handleSelect = (selectedDate: Date | undefined) => {
+      setOpen(false);
+      onValueChange(selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined);
+    };
+
+    const displayValue = date ? format(date, 'dd/MM/yyyy') : placeholder;
 
     return (
       <div className="flex flex-col gap-3">
@@ -100,26 +73,24 @@ export const Datepicker = React.forwardRef<HTMLButtonElement, DatepickerProps>(
               id="date"
               aria-invalid={hasError}
               className={cn(
-                'justify-between w-full font-normal',
+                'justify-between gap-2 w-full font-normal',
                 hasError && 'border-destructive! focus:ring-destructive/30!',
                 !date && 'text-muted-foreground hover:text-muted-foreground'
               )}
             >
-              {date ? format(date, 'dd/MM/yyyy') : placeholder}
-              <ChevronDownIcon />
+              <span className="flex-1 text-left truncate">{displayValue}</span>
+              <ChevronDownIcon className="size-4 text-muted-foreground shrink-0" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-0 w-auto overflow-hidden" align="start">
-            <Calendar
-              mode="single"
-              selected={date}
-              captionLayout="dropdown"
-              onSelect={(date) => {
-                setDate(date);
-                setOpen(false);
-                onValueChange(date ? date.toISOString() : undefined);
-              }}
-            />
+            <div className="p-3">
+              <Calendar
+                mode="single"
+                captionLayout="dropdown"
+                selected={date}
+                onSelect={handleSelect}
+              />
+            </div>
           </PopoverContent>
         </Popover>
       </div>
@@ -127,8 +98,4 @@ export const Datepicker = React.forwardRef<HTMLButtonElement, DatepickerProps>(
   }
 );
 
-/**
- * Display name for the Datepicker component, used for debugging and React DevTools.
- * @type {string}
- */
 Datepicker.displayName = 'Datepicker';
