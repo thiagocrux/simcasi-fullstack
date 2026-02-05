@@ -13,8 +13,6 @@ import { Separator } from '../ui/separator';
  * Global footer component for the application.
  */
 export function AppFooter() {
-  const [isAboutModalOpen, setIsAboutModalOpen] = useState<boolean>(false);
-
   // Avoid hydration mismatch by only rendering after mount
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -30,10 +28,9 @@ export function AppFooter() {
       </p>
       {mounted ? (
         <AppDialog
-          isOpen={isAboutModalOpen}
-          title={`Sobre o sistema`}
+          title="Sobre o sistema"
           description={SYSTEM_CONSTANTS.DESCRIPTION}
-          customContent={
+          content={
             <div className="space-y-4 pt-4">
               <Separator />
               <div className="space-y-2">
@@ -46,7 +43,7 @@ export function AppFooter() {
                   meu LinkedIn ou GitHub abaixo.
                 </p>
               </div>
-              <div className="flex gap-4">
+              <div className="flex justify-center gap-4">
                 <Link
                   href="https://linkedin.com/in/thiagocrux"
                   target="_blank"
@@ -66,7 +63,7 @@ export function AppFooter() {
                   GitHub
                 </Link>
               </div>
-              <p className="mt-10 text-muted-foreground text-xs">
+              <p className="mt-10 text-muted-foreground text-xs text-center">
                 {SYSTEM_CONSTANTS.COPYRIGHT}
               </p>
             </div>
@@ -75,7 +72,6 @@ export function AppFooter() {
           <Button
             variant="link"
             className="hover:bg-transparent! px-0 text-muted-foreground hover:text-foreground text-xs cursor-pointer"
-            onClick={() => setIsAboutModalOpen(true)}
           >
             Sobre o sistema
           </Button>

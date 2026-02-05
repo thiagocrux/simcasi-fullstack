@@ -4,14 +4,6 @@ import { LogOut } from 'lucide-react';
 
 import { useLogout } from '@/hooks/useLogout';
 import { ThemeSwitcher } from '../common/ThemeSwitcher';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '../ui/breadcrumb';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
 import { SidebarTrigger } from '../ui/sidebar';
@@ -47,17 +39,6 @@ export function AppHeader({ variant = 'private' }: AppHeaderProps) {
           orientation="vertical"
           className="mr-2 data-[orientation=vertical]:h-4"
         />
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="#">Sistema</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator className="hidden md:block" />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Início</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
       </div>
       <div className="flex items-center gap-2">
         <ThemeSwitcher />
