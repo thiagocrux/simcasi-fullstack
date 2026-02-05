@@ -12,6 +12,9 @@ export const roleSchema = z.object({
   code: z
     .string(messages.REQUIRED_FIELD('Código'))
     .min(2, messages.REQUIRED_MIN_LENGTH('Código', 2)),
+  label: z
+    .string(messages.REQUIRED_FIELD('Nome'))
+    .min(2, messages.REQUIRED_MIN_LENGTH('Nome', 2)),
   /**
    * List of unique identifiers for permissions to be associated with this role.
    */
@@ -24,7 +27,8 @@ export const roleSchema = z.object({
  * - Based on the main schema (`roleSchema`), including all required fields for creation.
  * - Used in server actions, use cases, and repositories when creating a new role.
  */
-export type CreateRoleInput = z.infer<typeof roleSchema>;
+export const CreateRoleInputSchema = roleSchema;
+export type CreateRoleInput = z.infer<typeof CreateRoleInputSchema>;
 
 /**
  * Type for role update.
@@ -32,7 +36,8 @@ export type CreateRoleInput = z.infer<typeof roleSchema>;
  * - Based on the main schema (`roleSchema`), including all fields (all optional if needed).
  * - Used in server actions, use cases, and repositories when updating an existing role.
  */
-export type UpdateRoleInput = z.infer<typeof roleSchema>;
+export const UpdateRoleInputSchema = roleSchema;
+export type UpdateRoleInput = z.infer<typeof UpdateRoleInputSchema>;
 
 /**
  * Type for role form usage.

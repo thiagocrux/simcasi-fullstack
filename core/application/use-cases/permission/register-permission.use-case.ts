@@ -74,7 +74,9 @@ export class RegisterPermissionUseCase implements UseCase<
 
     // 4. If no record was found, create a brand new permission.
     const permission = await this.permissionRepository.create({
-      ...validation.data,
+      code: validation.data.code,
+      label: validation.data.label,
+      roleIds: validation.data.roleIds,
       createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       updatedBy: null,
     });

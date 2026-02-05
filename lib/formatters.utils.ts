@@ -16,6 +16,53 @@ export function formatDate(date: Date) {
   }).format(date);
 }
 
+/**
+ * Formats a Date object or ISO string to a calendar date string (dd/mm/aaaa) without time.
+ * This function extracts the date components in UTC to avoid timezone shifts.
+ *
+ * @param {Date | string | undefined | null} date The date to format.
+ * @return {string} The formatted date string, or '—' if input is invalid.
+ */
+export function formatCalendarDate(date: Date | string | undefined | null) {
+  if (!date) {
+    return '—';
+  }
+
+  const d = date instanceof Date ? date : new Date(date);
+
+  if (isNaN(d.getTime())) {
+    return '—';
+  }
+
+  // Use Intl.DateTimeFormat with 'short' dateStyle and no timeStyle
+  // We use UTC components directly to create a local date that matches the intended calendar day
+  return new Intl.DateTimeFormat('pt-BR', {
+    dateStyle: 'short',
+  }).format(new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+}
+
+/**
+ * Returns a 'yyyy-MM-dd' string from a date, using UTC components
+ * to avoid timezone shifts. Useful for form inputs.
+ *
+ * @param {Date | string | undefined | null} date The date to be formatted.
+ * @returns {string} A string in the format 'yyyy-MM-dd'.
+ */
+export function toCalendarISOString(
+  date: Date | string | undefined | null
+): string {
+  if (!date) return '';
+
+  const d = date instanceof Date ? date : new Date(date);
+  if (isNaN(d.getTime())) return '';
+
+  const day = d.getUTCDate().toString().padStart(2, '0');
+  const month = (d.getUTCMonth() + 1).toString().padStart(2, '0');
+  const year = d.getUTCFullYear();
+
+  return `${year}-${month}-${day}`;
+}
+
 export type MaskType = 'cpf' | 'susCardNumber' | 'phone' | 'zipCode' | 'sinan';
 
 /**

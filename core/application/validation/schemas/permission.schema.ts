@@ -12,6 +12,9 @@ export const permissionSchema = z.object({
   code: z
     .string(messages.REQUIRED_FIELD('Código'))
     .min(2, messages.REQUIRED_MIN_LENGTH('Código', 2)),
+  label: z
+    .string(messages.REQUIRED_FIELD('Nome'))
+    .min(2, messages.REQUIRED_MIN_LENGTH('Nome', 2)),
   /**
    * List of unique identifiers for roles to be associated with this permission.
    */
@@ -24,7 +27,8 @@ export const permissionSchema = z.object({
  * - Based on the main schema (`permissionSchema`), including all required fields for creation.
  * - Used in server actions, use cases, and repositories when creating a new permission.
  */
-export type CreatePermissionInput = z.infer<typeof permissionSchema>;
+export const CreatePermissionInputSchema = permissionSchema;
+export type CreatePermissionInput = z.infer<typeof CreatePermissionInputSchema>;
 
 /**
  * Type for permission update.
@@ -32,7 +36,8 @@ export type CreatePermissionInput = z.infer<typeof permissionSchema>;
  * - Based on the main schema (`permissionSchema`), including all fields (all optional if needed).
  * - Used in server actions, use cases, and repositories when updating an existing permission.
  */
-export type UpdatePermissionInput = z.infer<typeof permissionSchema>;
+export const UpdatePermissionInputSchema = permissionSchema;
+export type UpdatePermissionInput = z.infer<typeof UpdatePermissionInputSchema>;
 
 /**
  * Type for permission form usage.

@@ -88,6 +88,7 @@ export class RegisterRoleUseCase implements UseCase<
     // 5. If no record was found with that code, create a completely new one.
     const role = await this.roleRepository.create({
       code: roleData.code,
+      label: roleData.label,
       permissionIds: roleData.permissionIds,
       createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       updatedBy: null,
