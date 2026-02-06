@@ -16,6 +16,8 @@ export class FindObservationsUseCase implements UseCase<
 
   async execute(input: FindObservationsInput): Promise<FindObservationsOutput> {
     // 1. Find all observations based on input criteria.
-    return this.observationRepository.findAll(input);
+    return this.observationRepository.findAll({
+      ...input,
+    });
   }
 }

@@ -15,6 +15,8 @@ export class FindPatientsUseCase implements UseCase<
   constructor(private readonly patientRepository: PatientRepository) {}
 
   async execute(input: FindPatientsInput): Promise<FindPatientsOutput> {
-    return await this.patientRepository.findAll(input);
+    return await this.patientRepository.findAll({
+      ...input,
+    });
   }
 }

@@ -7,8 +7,9 @@ export interface FindTreatmentsInput {
   orderDir?: 'asc' | 'desc';
   search?: string;
   searchBy?: string;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: string;
+  endDate?: string;
+  timezoneOffset?: string;
   patientId?: string;
   includeDeleted?: boolean;
 }

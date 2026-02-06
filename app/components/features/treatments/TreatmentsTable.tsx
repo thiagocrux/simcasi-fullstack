@@ -35,7 +35,7 @@ import {
 import { usePermission } from '@/hooks/usePermission';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatCalendarDate, formatDate } from '@/lib/formatters.utils';
-import { renderOrFallback } from '@/lib/shared.utils';
+import { getTimezoneOffset, renderOrFallback } from '@/lib/shared.utils';
 import { getNextSortDirection } from '@/lib/sort.utils';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
@@ -137,20 +137,38 @@ export function TreatmentsTable({
   }, []);
 
   const searchValue = useMemo(() => {
-    const filter = columnFilters.find((f) => f.id === selectedFilterOption);
+    const filter = columnFilters.find(
+      (filter) => filter.id === selectedFilterOption
+    );
     return (filter?.value as string) ?? '';
   }, [columnFilters, selectedFilterOption]);
 
+  const dateFilter = useMemo(() => {
+    const filter = columnFilters.find((filter) => filter.id === 'createdAt');
+    return filter?.value as { start?: string; end?: string } | undefined;
+  }, [columnFilters]);
+
+  const isSearching = searchValue.trim() !== '';
+  const isFilteringByDate = !!(dateFilter?.start || dateFilter?.end);
+  const isFiltering = isSearching || isFilteringByDate;
+
   useEffect(() => {
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  }, [searchValue]);
+  }, [searchValue, dateFilter]);
 
   const {
     data: treatmentList,
     refetch: refetchTreatmentList,
     isPending,
   } = useQuery({
-    queryKey: ['find-treatments', pagination, searchValue, sorting, mounted],
+    queryKey: [
+      'find-treatments',
+      pagination,
+      searchValue,
+      sorting,
+      mounted,
+      dateFilter,
+    ],
     queryFn: async () => {
       if (!mounted) {
         return { success: true, data: { items: [], total: 0 } };
@@ -165,6 +183,9 @@ export function TreatmentsTable({
         searchBy: selectedFilterOption,
         patientId,
         includeDeleted: false,
+        startDate: dateFilter?.start,
+        endDate: dateFilter?.end,
+        timezoneOffset: getTimezoneOffset(),
       });
     },
     enabled: mounted,
@@ -728,6 +749,7 @@ export function TreatmentsTable({
     onPaginationChange: setPagination,
     manualPagination: true,
     manualSorting: true,
+    manualFiltering: true,
     pageCount: treatmentList?.success
       ? Math.ceil(treatmentList.data.total / pagination.pageSize)
       : -1,
@@ -746,13 +768,12 @@ export function TreatmentsTable({
   }
 
   const hasRows = !!table.getRowModel().rows?.length;
-  const isSearching = searchValue.trim() !== '';
   const hasRegisteredData =
     treatmentList?.success && (treatmentList.data.total ?? 0) > 0;
 
   return (
     <div className="grid grid-cols-1 mx-auto w-full">
-      {(hasRegisteredData || isSearching) && (
+      {(hasRegisteredData || isFiltering) && (
         <AppTableToolbar
           table={table}
           selectedFilterOption={selectedFilterOption}
@@ -781,7 +802,7 @@ export function TreatmentsTable({
       )}
       {isPending ? (
         <CustomSkeleton variant="item-list" />
-      ) : hasRows || isSearching ? (
+      ) : hasRows || isFiltering ? (
         <>
           <AppTable
             table={table}

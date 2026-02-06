@@ -5,7 +5,7 @@ import {
   makeFindPatientsUseCase,
   makeRegisterPatientUseCase,
 } from '@/core/infrastructure/factories/patient.factory';
-import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
+import { withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/patients
@@ -18,9 +18,14 @@ export const GET = withAuthentication(['read:patient'], async (request) => {
     Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
     PAGINATION.MAX_LIMIT
   );
+  const timezoneOffset =
+    request.headers.get('x-timezone-offset') ||
+    searchParams.get('timezoneOffset') ||
+    undefined;
 
-  const findPatientsUseCase = makeFindPatientsUseCase();
-  const result = await findPatientsUseCase.execute({
+  const useCase = makeFindPatientsUseCase();
+
+  const result = await useCase.execute({
     skip: (page - 1) * limit,
     take: limit,
     orderBy: searchParams.get('orderBy') || undefined,
@@ -28,7 +33,9 @@ export const GET = withAuthentication(['read:patient'], async (request) => {
     search: searchParams.get('search') || undefined,
     searchBy: searchParams.get('searchBy') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
-    ...parseDateFilters(searchParams),
+    startDate: searchParams.get('startDate') || undefined,
+    endDate: searchParams.get('endDate') || undefined,
+    timezoneOffset,
   });
 
   return NextResponse.json(result);

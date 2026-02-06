@@ -5,7 +5,7 @@ import {
   makeFindExamsUseCase,
   makeRegisterExamUseCase,
 } from '@/core/infrastructure/factories/exam.factory';
-import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
+import { withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/exams
@@ -18,9 +18,14 @@ export const GET = withAuthentication(['read:exam'], async (request) => {
     Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
     PAGINATION.MAX_LIMIT
   );
+  const timezoneOffset =
+    request.headers.get('x-timezone-offset') ||
+    searchParams.get('timezoneOffset') ||
+    undefined;
 
-  const findExamsUseCase = makeFindExamsUseCase();
-  const result = await findExamsUseCase.execute({
+  const useCase = makeFindExamsUseCase();
+
+  const result = await useCase.execute({
     skip: (page - 1) * limit,
     take: limit,
     orderBy: searchParams.get('orderBy') || undefined,
@@ -29,7 +34,9 @@ export const GET = withAuthentication(['read:exam'], async (request) => {
     searchBy: searchParams.get('searchBy') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
     patientId: searchParams.get('patientId') || undefined,
-    ...parseDateFilters(searchParams),
+    startDate: searchParams.get('startDate') || undefined,
+    endDate: searchParams.get('endDate') || undefined,
+    timezoneOffset,
   });
 
   return NextResponse.json(result);

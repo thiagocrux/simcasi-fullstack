@@ -16,6 +16,8 @@ export class FindTreatmentsUseCase implements UseCase<
 
   async execute(input: FindTreatmentsInput): Promise<FindTreatmentsOutput> {
     // 1. Find all treatments based on input criteria.
-    return this.treatmentRepository.findAll(input);
+    return this.treatmentRepository.findAll({
+      ...input,
+    });
   }
 }

@@ -20,8 +20,9 @@ export interface TreatmentRepository {
     orderDir?: 'asc' | 'desc';
     search?: string;
     searchBy?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     patientId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Treatment[]; total: number }>;

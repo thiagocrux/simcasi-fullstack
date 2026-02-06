@@ -16,6 +16,8 @@ export class FindAuditLogsUseCase implements UseCase<
 
   async execute(input: FindAuditLogsInput): Promise<FindAuditLogsOutput> {
     // 1. Find all audit logs based on input criteria.
-    return this.auditLogRepository.findAll(input);
+    return this.auditLogRepository.findAll({
+      ...input,
+    });
   }
 }

@@ -1,24 +1,31 @@
 /**
- * Formats a Date object to a string in 'pt-BR' locale with short date and medium time, using the 'America/Recife' timezone.
+ * Formats a Date object or ISO string to a string in 'pt-BR' locale.
+ * Uses the user's local timezone (browser default).
  *
- * @param {Date} date The date to format.
+ * @param {Date | string | null | undefined} date The date to format.
  * @return {string|null} The formatted date string, or null if input is invalid.
  */
-export function formatDate(date: Date) {
+export function formatDate(date: Date | string | null | undefined) {
   if (!date) {
+    return null;
+  }
+
+  const validatedDate = date instanceof Date ? date : new Date(date);
+
+  if (isNaN(validatedDate.getTime())) {
     return null;
   }
 
   return new Intl.DateTimeFormat('pt-BR', {
     dateStyle: 'short',
     timeStyle: 'medium',
-    timeZone: 'America/Recife',
-  }).format(date);
+  }).format(validatedDate);
 }
 
 /**
  * Formats a Date object or ISO string to a calendar date string (dd/mm/aaaa) without time.
- * This function extracts the date components in UTC to avoid timezone shifts.
+ * This function uses UTC to ensure the date doesn't shift regardless of user timezone.
+ * Useful for birth dates, exam dates, etc.
  *
  * @param {Date | string | undefined | null} date The date to format.
  * @return {string} The formatted date string, or '—' if input is invalid.
@@ -28,22 +35,21 @@ export function formatCalendarDate(date: Date | string | undefined | null) {
     return '—';
   }
 
-  const d = date instanceof Date ? date : new Date(date);
+  const validatedDate = date instanceof Date ? date : new Date(date);
 
-  if (isNaN(d.getTime())) {
+  if (isNaN(validatedDate.getTime())) {
     return '—';
   }
 
-  // Use Intl.DateTimeFormat with 'short' dateStyle and no timeStyle
-  // We use UTC components directly to create a local date that matches the intended calendar day
   return new Intl.DateTimeFormat('pt-BR', {
     dateStyle: 'short',
-  }).format(new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+    timeZone: 'UTC',
+  }).format(validatedDate);
 }
 
 /**
  * Returns a 'yyyy-MM-dd' string from a date, using UTC components
- * to avoid timezone shifts. Useful for form inputs.
+ * to avoid timezone shifts. Useful for pre-filling HTML form date inputs.
  *
  * @param {Date | string | undefined | null} date The date to be formatted.
  * @returns {string} A string in the format 'yyyy-MM-dd'.

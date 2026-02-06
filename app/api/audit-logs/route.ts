@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { PAGINATION } from '@/core/domain/constants/pagination.constants';
 import { makeFindAuditLogsUseCase } from '@/core/infrastructure/factories/audit-log.factory';
-import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
+import { withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/audit-logs
@@ -15,8 +15,13 @@ export const GET = withAuthentication(['read:audit-log'], async (request) => {
     Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
     PAGINATION.MAX_LIMIT
   );
+  const timezoneOffset =
+    request.headers.get('x-timezone-offset') ||
+    searchParams.get('timezoneOffset') ||
+    undefined;
 
   const useCase = makeFindAuditLogsUseCase();
+
   const result = await useCase.execute({
     skip: (page - 1) * limit,
     take: limit,
@@ -27,7 +32,9 @@ export const GET = withAuthentication(['read:audit-log'], async (request) => {
     action: searchParams.get('action') || undefined,
     entityName: searchParams.get('entityName') || undefined,
     entityId: searchParams.get('entityId') || undefined,
-    ...parseDateFilters(searchParams),
+    startDate: searchParams.get('startDate') || undefined,
+    endDate: searchParams.get('endDate') || undefined,
+    timezoneOffset,
   });
 
   return NextResponse.json(result);

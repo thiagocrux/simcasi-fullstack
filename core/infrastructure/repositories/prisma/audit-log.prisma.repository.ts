@@ -2,6 +2,7 @@
 import { AuditLog } from '@/core/domain/entities/audit-log.entity';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { Prisma } from '@prisma/client';
+import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaAuditLogRepository implements AuditLogRepository {
@@ -33,8 +34,9 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     action?: string;
     entityName?: string;
     entityId?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
   }): Promise<{ items: AuditLog[]; total: number }> {
     const skip = params?.skip || 0;
     const take = params?.take || 20;
@@ -44,6 +46,7 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const timezoneOffset = params?.timezoneOffset;
     const userId = params?.userId;
     const action = params?.action;
     const entityName = params?.entityName;
@@ -54,11 +57,18 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
       action,
       entityName,
       entityId,
-      createdAt: {
-        gte: startDate,
-        lte: endDate,
-      },
     };
+
+    // Add date range filter only if dates are provided
+    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
+    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
+
+    if (start || end) {
+      where.createdAt = {
+        gte: start,
+        lte: end,
+      };
+    }
 
     if (search) {
       const allowedFields = ['action', 'entityName', 'ipAddress', 'userAgent'];

@@ -15,7 +15,9 @@ export class FindSessionsUseCase implements UseCase<
   constructor(private readonly sessionRepository: SessionRepository) {}
 
   async execute(input: FindSessionsInput): Promise<FindSessionsOutput> {
-    const { items, total } = await this.sessionRepository.findAll(input);
+    const { items, total } = await this.sessionRepository.findAll({
+      ...input,
+    });
 
     return {
       items: items.map((s) => ({

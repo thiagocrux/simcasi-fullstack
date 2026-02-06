@@ -2,6 +2,7 @@
 import { User } from '@/core/domain/entities/user.entity';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import { Prisma } from '@prisma/client';
+import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaUserRepository implements UserRepository {
@@ -54,8 +55,9 @@ export class PrismaUserRepository implements UserRepository {
     searchBy?: string;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     roleId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: User[]; total: number }> {
@@ -67,6 +69,7 @@ export class PrismaUserRepository implements UserRepository {
     const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const timezoneOffset = params?.timezoneOffset;
     const roleId = params?.roleId;
     const includeDeleted = params?.includeDeleted || false;
 
@@ -74,11 +77,18 @@ export class PrismaUserRepository implements UserRepository {
       deletedAt: includeDeleted ? undefined : null,
       roleId: roleId,
       isSystem: false,
-      createdAt: {
-        gte: startDate,
-        lte: endDate,
-      },
     };
+
+    // Add date range filter only if dates are provided
+    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
+    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
+
+    if (start || end) {
+      where.createdAt = {
+        gte: start,
+        lte: end,
+      };
+    }
 
     if (search) {
       if (searchBy) {

@@ -17,6 +17,8 @@ collection:
       - $ref: '../components/parameters.yaml#/StartDate'
       - $ref: '../components/parameters.yaml#/EndDate'
       - $ref: '../components/parameters.yaml#/IncludeDeleted'
+      - $ref: '../components/parameters.yaml#/TimezoneOffset'
+      - $ref: '../components/parameters.yaml#/TimezoneOffsetHeader'
     responses:
       '200':
         description: Paginated list of roles successfully retrieved (OK).

@@ -21,8 +21,9 @@ export interface UserRepository {
     orderDir?: 'asc' | 'desc';
     search?: string;
     searchBy?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     roleId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: User[]; total: number }>;

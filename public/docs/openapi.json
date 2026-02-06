@@ -754,6 +754,26 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
+            "name": "x-timezone-offset",
+            "in": "header",
+            "description": "Custom header providing the timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
           }
         ],
         "responses": {
@@ -2670,6 +2690,26 @@
             "schema": {
               "type": "boolean",
               "default": false
+            }
+          },
+          {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
+            "name": "x-timezone-offset",
+            "in": "header",
+            "description": "Custom header providing the timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
             }
           }
         ],
@@ -5190,6 +5230,26 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
+            "name": "x-timezone-offset",
+            "in": "header",
+            "description": "Custom header providing the timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
           }
         ],
         "responses": {
@@ -7052,6 +7112,26 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
+            "name": "x-timezone-offset",
+            "in": "header",
+            "description": "Custom header providing the timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
           }
         ],
         "responses": {
@@ -8871,6 +8951,26 @@
             "schema": {
               "type": "boolean",
               "default": false
+            }
+          },
+          {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
+            "name": "x-timezone-offset",
+            "in": "header",
+            "description": "Custom header providing the timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
             }
           }
         ],
@@ -10913,6 +11013,26 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
+            "name": "x-timezone-offset",
+            "in": "header",
+            "description": "Custom header providing the timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
           }
         ],
         "responses": {
@@ -12817,6 +12937,26 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
+            "name": "x-timezone-offset",
+            "in": "header",
+            "description": "Custom header providing the timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
           }
         ],
         "responses": {
@@ -14589,6 +14729,26 @@
             "schema": {
               "type": "boolean",
               "default": false
+            }
+          },
+          {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
+            "name": "x-timezone-offset",
+            "in": "header",
+            "description": "Custom header providing the timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
             }
           }
         ],
@@ -16381,6 +16541,26 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
+            "name": "x-timezone-offset",
+            "in": "header",
+            "description": "Custom header providing the timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
           }
         ],
         "responses": {
@@ -16885,6 +17065,26 @@
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
+            "name": "x-timezone-offset",
+            "in": "header",
+            "description": "Custom header providing the timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
             }
           }
         ],

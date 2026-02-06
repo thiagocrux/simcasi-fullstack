@@ -20,6 +20,8 @@ export class FindNotificationsUseCase implements UseCase<
     input: FindNotificationsInput
   ): Promise<FindNotificationsOutput> {
     // 1. Find all notifications based on input criteria.
-    return this.notificationRepository.findAll(input);
+    return this.notificationRepository.findAll({
+      ...input,
+    });
   }
 }

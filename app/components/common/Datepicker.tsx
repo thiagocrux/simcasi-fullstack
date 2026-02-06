@@ -18,6 +18,10 @@ interface DatepickerProps {
   disabled?: boolean;
   value?: Date | string;
   onValueChange: (date: string | undefined) => void;
+  hidden?: {
+    before?: Date;
+    after?: Date;
+  };
 }
 
 /**
@@ -51,14 +55,26 @@ function parseDate(value?: Date | string | undefined): Date | undefined {
  * Simplified Datepicker component for selecting a single date.
  */
 export const Datepicker = React.forwardRef<HTMLButtonElement, DatepickerProps>(
-  ({ placeholder = 'Selecione uma data', hasError = false, disabled, value, onValueChange }, ref) => {
+  (
+    {
+      placeholder = 'Selecione uma data',
+      hasError = false,
+      disabled,
+      value,
+      onValueChange,
+      hidden,
+    },
+    ref
+  ) => {
     const [open, setOpen] = React.useState(false);
 
     const date = React.useMemo(() => parseDate(value), [value]);
 
     const handleSelect = (selectedDate: Date | undefined) => {
       setOpen(false);
-      onValueChange(selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined);
+      onValueChange(
+        selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined
+      );
     };
 
     const displayValue = date ? format(date, 'dd/MM/yyyy') : placeholder;
@@ -89,6 +105,15 @@ export const Datepicker = React.forwardRef<HTMLButtonElement, DatepickerProps>(
                 captionLayout="dropdown"
                 selected={date}
                 onSelect={handleSelect}
+                disabled={
+                  hidden
+                    ? (date) => {
+                        if (hidden.before && date < hidden.before) return true;
+                        if (hidden.after && date > hidden.after) return true;
+                        return false;
+                      }
+                    : undefined
+                }
               />
             </div>
           </PopoverContent>

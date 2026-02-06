@@ -2,6 +2,7 @@
 import { Patient } from '@/core/domain/entities/patient.entity';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { Prisma } from '@prisma/client';
+import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaPatientRepository implements PatientRepository {
@@ -74,8 +75,9 @@ export class PrismaPatientRepository implements PatientRepository {
     orderDir?: 'asc' | 'desc';
     search?: string;
     searchBy?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Patient[]; total: number }> {
     const skip = params?.skip || 0;
@@ -86,15 +88,23 @@ export class PrismaPatientRepository implements PatientRepository {
     const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const timezoneOffset = params?.timezoneOffset;
     const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.PatientWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
-      createdAt: {
-        gte: startDate,
-        lte: endDate,
-      },
     };
+
+    // Add date range filter only if dates are provided
+    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
+    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
+
+    if (start || end) {
+      where.createdAt = {
+        gte: start,
+        lte: end,
+      };
+    }
 
     if (search) {
       if (searchBy) {

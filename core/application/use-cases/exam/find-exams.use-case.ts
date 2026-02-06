@@ -16,6 +16,8 @@ export class FindExamsUseCase implements UseCase<
 
   async execute(input: FindExamsInput): Promise<FindExamsOutput> {
     // 1. Find all exams based on input criteria.
-    return this.examRepository.findAll(input);
+    return this.examRepository.findAll({
+      ...input,
+    });
   }
 }

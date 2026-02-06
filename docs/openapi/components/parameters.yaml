@@ -72,6 +72,15 @@ EndDate:
     type: string
     format: date-time
 
+TimezoneOffset:
+  name: timezoneOffset
+  in: query
+  description: The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.
+  required: false
+  schema:
+    type: string
+    example: '-03:00'
+
 IncludeDeleted:
   name: includeDeleted
   in: query
@@ -80,3 +89,12 @@ IncludeDeleted:
   schema:
     type: boolean
     default: false
+
+TimezoneOffsetHeader:
+  name: x-timezone-offset
+  in: header
+  description: Custom header providing the timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.
+  required: false
+  schema:
+    type: string
+    example: '-03:00'

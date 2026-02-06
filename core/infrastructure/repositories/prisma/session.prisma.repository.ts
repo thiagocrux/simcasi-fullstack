@@ -1,6 +1,7 @@
 import { Session } from '@/core/domain/entities/session.entity';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { Prisma } from '@prisma/client';
+import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaSessionRepository implements SessionRepository {
@@ -31,8 +32,9 @@ export class PrismaSessionRepository implements SessionRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     userId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Session[]; total: number }> {
@@ -43,17 +45,25 @@ export class PrismaSessionRepository implements SessionRepository {
     const search = params?.search;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const timezoneOffset = params?.timezoneOffset;
     const userId = params?.userId;
     const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.SessionWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
       userId: userId,
-      createdAt: {
-        gte: startDate,
-        lte: endDate,
-      },
     };
+
+    // Add date range filter only if dates are provided
+    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
+    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
+
+    if (start || end) {
+      where.createdAt = {
+        gte: start,
+        lte: end,
+      };
+    }
 
     if (search) {
       where.OR = [

@@ -18,8 +18,9 @@ export interface SessionRepository {
     take?: number;
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     search?: string;
     userId?: string;
     includeDeleted?: boolean;

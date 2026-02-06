@@ -31,7 +31,7 @@ import { deleteExam, findExams } from '@/app/actions/exam.actions';
 import { usePermission } from '@/hooks/usePermission';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatCalendarDate, formatDate } from '@/lib/formatters.utils';
-import { renderOrFallback } from '@/lib/shared.utils';
+import { getTimezoneOffset, renderOrFallback } from '@/lib/shared.utils';
 import { getNextSortDirection } from '@/lib/sort.utils';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
@@ -144,16 +144,32 @@ export function ExamsTable({
     return (filter?.value as string) ?? '';
   }, [columnFilters, selectedFilterOption]);
 
+  const dateFilter = useMemo(() => {
+    const filter = columnFilters.find((f) => f.id === 'createdAt');
+    return filter?.value as { start?: string; end?: string } | undefined;
+  }, [columnFilters]);
+
+  const isSearching = searchValue.trim() !== '';
+  const isFilteringByDate = !!(dateFilter?.start || dateFilter?.end);
+  const isFiltering = isSearching || isFilteringByDate;
+
   useEffect(() => {
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  }, [searchValue]);
+  }, [searchValue, dateFilter]);
 
   const {
     data: examList,
     refetch: refetchExamList,
     isPending,
   } = useQuery({
-    queryKey: ['find-exams', pagination, searchValue, sorting, mounted],
+    queryKey: [
+      'find-exams',
+      pagination,
+      searchValue,
+      sorting,
+      mounted,
+      dateFilter,
+    ],
     queryFn: async () => {
       if (!mounted) return { success: true, data: { items: [], total: 0 } };
       return await findExams({
@@ -165,6 +181,9 @@ export function ExamsTable({
         searchBy: selectedFilterOption,
         patientId,
         includeDeleted: false,
+        startDate: dateFilter?.start,
+        endDate: dateFilter?.end,
+        timezoneOffset: getTimezoneOffset(),
       });
     },
     enabled: mounted,
@@ -920,6 +939,7 @@ export function ExamsTable({
     onPaginationChange: setPagination,
     manualPagination: true,
     manualSorting: true,
+    manualFiltering: true,
     pageCount: examList?.success
       ? Math.ceil(examList.data.total / pagination.pageSize)
       : -1,
@@ -938,12 +958,11 @@ export function ExamsTable({
   }
 
   const hasRows = !!table.getRowModel().rows?.length;
-  const isSearching = searchValue.trim() !== '';
   const hasRegisteredData = examList?.success && (examList.data.total ?? 0) > 0;
 
   return (
     <div className="grid grid-cols-1 mx-auto w-full">
-      {(hasRegisteredData || isSearching) && (
+      {(hasRegisteredData || isFiltering) && (
         <AppTableToolbar
           table={table}
           selectedFilterOption={selectedFilterOption}
@@ -973,7 +992,7 @@ export function ExamsTable({
 
       {isPending ? (
         <CustomSkeleton variant="item-list" />
-      ) : hasRows || isSearching ? (
+      ) : hasRows || isFiltering ? (
         <>
           <AppTable
             table={table}

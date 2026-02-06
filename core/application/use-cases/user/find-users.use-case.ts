@@ -16,7 +16,9 @@ export class FindUsersUseCase implements UseCase<
 
   async execute(input: FindUsersInput): Promise<FindUsersOutput> {
     // 1. Find all users based on input criteria.
-    const result = await this.userRepository.findAll(input);
+    const result = await this.userRepository.findAll({
+      ...input,
+    });
 
     // 2. Security: Ensure passwords are removed from the output.
     return {

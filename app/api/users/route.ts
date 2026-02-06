@@ -5,7 +5,7 @@ import {
   makeFindUsersUseCase,
   makeRegisterUserUseCase,
 } from '@/core/infrastructure/factories/user.factory';
-import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
+import { withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/users
@@ -18,8 +18,13 @@ export const GET = withAuthentication(['read:user'], async (request) => {
     Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
     PAGINATION.MAX_LIMIT
   );
+  const timezoneOffset =
+    request.headers.get('x-timezone-offset') ||
+    searchParams.get('timezoneOffset') ||
+    undefined;
 
   const useCase = makeFindUsersUseCase();
+
   const result = await useCase.execute({
     skip: (page - 1) * limit,
     take: limit,
@@ -29,7 +34,9 @@ export const GET = withAuthentication(['read:user'], async (request) => {
     searchBy: searchParams.get('searchBy') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
     roleId: searchParams.get('roleId') || undefined,
-    ...parseDateFilters(searchParams),
+    startDate: searchParams.get('startDate') || undefined,
+    endDate: searchParams.get('endDate') || undefined,
+    timezoneOffset,
   });
 
   return NextResponse.json(result);

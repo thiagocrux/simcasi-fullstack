@@ -2,6 +2,7 @@
 import { Observation } from '@/core/domain/entities/observation.entity';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
 import { Prisma } from '@prisma/client';
+import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaObservationRepository implements ObservationRepository {
@@ -36,8 +37,9 @@ export class PrismaObservationRepository implements ObservationRepository {
     orderDir?: 'asc' | 'desc';
     search?: string;
     searchBy?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     patientId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Observation[]; total: number }> {
@@ -49,17 +51,25 @@ export class PrismaObservationRepository implements ObservationRepository {
     const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const timezoneOffset = params?.timezoneOffset;
     const patientId = params?.patientId;
     const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.ObservationWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
       patientId: patientId,
-      createdAt: {
-        gte: startDate,
-        lte: endDate,
-      },
     };
+
+    // Add date range filter only if dates are provided
+    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
+    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
+
+    if (start || end) {
+      where.createdAt = {
+        gte: start,
+        lte: end,
+      };
+    }
 
     if (search) {
       if (searchBy) {

@@ -40,8 +40,9 @@ export interface PermissionRepository {
     orderDir?: 'asc' | 'desc';
     search?: string;
     searchBy?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Permission[]; total: number }>;
 

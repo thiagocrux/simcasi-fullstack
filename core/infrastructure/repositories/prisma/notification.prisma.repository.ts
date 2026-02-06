@@ -2,6 +2,7 @@
 import { Notification } from '@/core/domain/entities/notification.entity';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
 import { Prisma } from '@prisma/client';
+import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaNotificationRepository implements NotificationRepository {
@@ -36,8 +37,9 @@ export class PrismaNotificationRepository implements NotificationRepository {
     orderDir?: 'asc' | 'desc';
     search?: string;
     searchBy?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     patientId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Notification[]; total: number }> {
@@ -49,17 +51,25 @@ export class PrismaNotificationRepository implements NotificationRepository {
     const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const timezoneOffset = params?.timezoneOffset;
     const patientId = params?.patientId;
     const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.NotificationWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
       patientId: patientId,
-      createdAt: {
-        gte: startDate,
-        lte: endDate,
-      },
     };
+
+    // Add date range filter only if dates are provided
+    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
+    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
+
+    if (start || end) {
+      where.createdAt = {
+        gte: start,
+        lte: end,
+      };
+    }
 
     if (search) {
       if (searchBy) {

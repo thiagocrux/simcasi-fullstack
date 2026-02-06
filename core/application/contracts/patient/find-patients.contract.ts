@@ -7,8 +7,9 @@ export interface FindPatientsInput {
   orderDir?: 'asc' | 'desc';
   search?: string;
   searchBy?: string;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: string;
+  endDate?: string;
+  timezoneOffset?: string;
   includeDeleted?: boolean;
 }
 

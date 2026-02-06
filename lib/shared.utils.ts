@@ -65,6 +65,30 @@ export function renderOrFallback(
   renderer: (value: string) => ReactNode,
   fallback: ReactNode = '-'
 ): ReactNode {
-  if (value === undefined || value === null || value === '') return fallback;
+  if (value === undefined || value === null || value === '') {
+    return fallback;
+  }
+
   return renderer(String(value));
+}
+
+/**
+ * Returns the current browser's timezone offset in '+HH:mm', '-HH:mm' or 'Z' format.
+ * Useful for syncing server-side date normalization with client-side local time.
+ */
+export function getTimezoneOffset(): string {
+  const offsetMinutes = new Date().getTimezoneOffset();
+  if (offsetMinutes === 0) {
+    return 'Z';
+  }
+
+  const offsetHours = Math.abs(Math.floor(offsetMinutes / 60))
+    .toString()
+    .padStart(2, '0');
+  const offsetMins = Math.abs(offsetMinutes % 60)
+    .toString()
+    .padStart(2, '0');
+  const sign = offsetMinutes > 0 ? '-' : '+';
+
+  return `${sign}${offsetHours}:${offsetMins}`;
 }

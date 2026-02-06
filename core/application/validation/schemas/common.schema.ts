@@ -30,8 +30,9 @@ export const QuerySchema = z.object({
   orderDir: z.enum(['asc', 'desc']).optional().default('asc'),
   search: z.string().optional(),
   searchBy: z.string().optional(),
-  startDate: z.coerce.date().optional(),
-  endDate: z.coerce.date().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  timezoneOffset: z.string().optional(),
   includeDeleted: z.coerce.boolean().optional().default(false),
 });
 

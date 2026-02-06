@@ -186,20 +186,3 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
     }
   };
 }
-
-/**
- * Extracts and parses common filters from request search params.
- * @param searchParams The URLSearchParams object.
- */
-export function parseDateFilters(searchParams: URLSearchParams) {
-  const startDateStr = searchParams.get('startDate');
-  const endDateStr = searchParams.get('endDate');
-
-  const startDate = startDateStr ? new Date(startDateStr) : undefined;
-  const endDate = endDateStr ? new Date(endDateStr) : undefined;
-
-  return {
-    startDate: startDate && !isNaN(startDate.getTime()) ? startDate : undefined,
-    endDate: endDate && !isNaN(endDate.getTime()) ? endDate : undefined,
-  };
-}

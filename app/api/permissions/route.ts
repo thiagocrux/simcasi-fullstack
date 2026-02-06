@@ -5,7 +5,7 @@ import {
   makeFindPermissionsUseCase,
   makeRegisterPermissionUseCase,
 } from '@/core/infrastructure/factories/permission.factory';
-import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
+import { withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/permissions
@@ -18,8 +18,13 @@ export const GET = withAuthentication(['read:permission'], async (request) => {
     Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
     PAGINATION.MAX_LIMIT
   );
+  const timezoneOffset =
+    request.headers.get('x-timezone-offset') ||
+    searchParams.get('timezoneOffset') ||
+    undefined;
 
   const useCase = makeFindPermissionsUseCase();
+
   const result = await useCase.execute({
     skip: (page - 1) * limit,
     take: limit,
@@ -28,7 +33,9 @@ export const GET = withAuthentication(['read:permission'], async (request) => {
     search: searchParams.get('search') || undefined,
     searchBy: searchParams.get('searchBy') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
-    ...parseDateFilters(searchParams),
+    startDate: searchParams.get('startDate') || undefined,
+    endDate: searchParams.get('endDate') || undefined,
+    timezoneOffset,
   });
 
   return NextResponse.json(result);

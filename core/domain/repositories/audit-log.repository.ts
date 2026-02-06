@@ -21,8 +21,9 @@ export interface AuditLogRepository {
     orderDir?: 'asc' | 'desc';
     search?: string;
     searchBy?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     userId?: string;
     action?: string;
     entityName?: string;

@@ -2,6 +2,7 @@
 import { Role } from '@/core/domain/entities/role.entity';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { Prisma } from '@prisma/client';
+import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
 
 export class PrismaRoleRepository implements RoleRepository {
@@ -49,8 +50,9 @@ export class PrismaRoleRepository implements RoleRepository {
     orderDir?: 'asc' | 'desc';
     search?: string;
     searchBy?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Role[]; total: number }> {
     const skip = params?.skip || 0;
@@ -61,15 +63,23 @@ export class PrismaRoleRepository implements RoleRepository {
     const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
+    const timezoneOffset = params?.timezoneOffset;
     const includeDeleted = params?.includeDeleted || false;
 
     const where: Prisma.RoleWhereInput = {
       deletedAt: includeDeleted ? undefined : null,
-      createdAt: {
-        gte: startDate,
-        lte: endDate,
-      },
     };
+
+    // Add date range filter only if dates are provided
+    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
+    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
+
+    if (start || end) {
+      where.createdAt = {
+        gte: start,
+        lte: end,
+      };
+    }
 
     if (search) {
       if (searchBy) {

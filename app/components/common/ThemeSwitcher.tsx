@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import { Button } from '../ui/button';
 
+import { logger } from '@/lib/logger.utils';
 import { cn } from '@/lib/shared.utils';
 import {
   Select,
@@ -90,7 +91,7 @@ export function ThemeSwitcher({
       localStorage.setItem('theme', theme);
     } catch (error: any) {
       // Failing to persist preference should not break the app
-      console.log(error);
+      logger.error(error);
     }
   }
 

@@ -5,7 +5,7 @@ import {
   makeFindObservationsUseCase,
   makeRegisterObservationUseCase,
 } from '@/core/infrastructure/factories/observation.factory';
-import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
+import { withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/observations
@@ -18,8 +18,13 @@ export const GET = withAuthentication(['read:observation'], async (request) => {
     Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
     PAGINATION.MAX_LIMIT
   );
+  const timezoneOffset =
+    request.headers.get('x-timezone-offset') ||
+    searchParams.get('timezoneOffset') ||
+    undefined;
 
   const useCase = makeFindObservationsUseCase();
+
   const result = await useCase.execute({
     skip: (page - 1) * limit,
     take: limit,
@@ -29,7 +34,9 @@ export const GET = withAuthentication(['read:observation'], async (request) => {
     searchBy: searchParams.get('searchBy') || undefined,
     includeDeleted: searchParams.get('includeDeleted') === 'true',
     patientId: searchParams.get('patientId') || undefined,
-    ...parseDateFilters(searchParams),
+    startDate: searchParams.get('startDate') || undefined,
+    endDate: searchParams.get('endDate') || undefined,
+    timezoneOffset,
   });
 
   return NextResponse.json(result);

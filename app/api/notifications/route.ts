@@ -5,7 +5,7 @@ import {
   makeFindNotificationsUseCase,
   makeRegisterNotificationUseCase,
 } from '@/core/infrastructure/factories/notification.factory';
-import { parseDateFilters, withAuthentication } from '@/lib/api.utils';
+import { withAuthentication } from '@/lib/api.utils';
 
 /**
  * GET - /api/notifications
@@ -15,13 +15,17 @@ export const GET = withAuthentication(
   ['read:notification'],
   async (request) => {
     const { searchParams } = new URL(request.url);
-    const useCase = makeFindNotificationsUseCase();
-
     const page = Number(searchParams.get('page')) || PAGINATION.DEFAULT_PAGE;
     const limit = Math.min(
       Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
       PAGINATION.MAX_LIMIT
     );
+    const timezoneOffset =
+      request.headers.get('x-timezone-offset') ||
+      searchParams.get('timezoneOffset') ||
+      undefined;
+
+    const useCase = makeFindNotificationsUseCase();
 
     const result = await useCase.execute({
       skip: (page - 1) * limit,
@@ -32,7 +36,9 @@ export const GET = withAuthentication(
       searchBy: searchParams.get('searchBy') || undefined,
       includeDeleted: searchParams.get('includeDeleted') === 'true',
       patientId: searchParams.get('patientId') || undefined,
-      ...parseDateFilters(searchParams),
+      startDate: searchParams.get('startDate') || undefined,
+      endDate: searchParams.get('endDate') || undefined,
+      timezoneOffset,
     });
 
     return NextResponse.json(result);

@@ -16,6 +16,8 @@ export class FindPermissionsUseCase implements UseCase<
 
   async execute(input: FindPermissionsInput): Promise<FindPermissionsOutput> {
     // 1. Find all permissions based on input criteria.
-    return this.permissionRepository.findAll(input);
+    return this.permissionRepository.findAll({
+      ...input,
+    });
   }
 }

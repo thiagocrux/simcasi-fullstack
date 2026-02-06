@@ -16,6 +16,8 @@ export class FindRolesUseCase implements UseCase<
 
   async execute(input: FindRolesInput): Promise<FindRolesOutput> {
     // 1. Find all roles based on input criteria.
-    return this.roleRepository.findAll(input);
+    return this.roleRepository.findAll({
+      ...input,
+    });
   }
 }

@@ -26,8 +26,9 @@ export interface RoleRepository {
     orderDir?: 'asc' | 'desc';
     search?: string;
     searchBy?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
+    timezoneOffset?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Role[]; total: number }>;
 
