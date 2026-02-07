@@ -10,6 +10,7 @@ import { PrismaNotificationRepository } from '../repositories/prisma/notificatio
 import { PrismaObservationRepository } from '../repositories/prisma/observation.prisma.repository';
 import { PrismaPatientRepository } from '../repositories/prisma/patient.prisma.repository';
 import { PrismaTreatmentRepository } from '../repositories/prisma/treatment.prisma.repository';
+import { PrismaUserRepository } from '../repositories/prisma/user.prisma.repository';
 
 const patientRepository = new PrismaPatientRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
@@ -17,13 +18,14 @@ const examRepository = new PrismaExamRepository();
 const notificationRepository = new PrismaNotificationRepository();
 const treatmentRepository = new PrismaTreatmentRepository();
 const observationRepository = new PrismaObservationRepository();
+const userRepository = new PrismaUserRepository();
 
 export function makeRegisterPatientUseCase() {
   return new RegisterPatientUseCase(patientRepository, auditLogRepository);
 }
 
 export function makeFindPatientsUseCase() {
-  return new FindPatientsUseCase(patientRepository);
+  return new FindPatientsUseCase(patientRepository, userRepository);
 }
 
 export function makeGetPatientByIdUseCase() {

@@ -46,6 +46,11 @@ export interface UserRepository {
   ): Promise<User>;
 
   /**
+   * Searches for multiple users by an array of IDs.
+   */
+  findByIds(ids: string[]): Promise<User[]>;
+
+  /**
    * Executes Soft Delete (sets deletedAt).
    */
   softDelete(id: string): Promise<void>;

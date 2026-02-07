@@ -32,11 +32,14 @@ export const GET = withAuthentication(['read:observation'], async (request) => {
     orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'asc',
     search: searchParams.get('search') || undefined,
     searchBy: searchParams.get('searchBy') || undefined,
-    includeDeleted: searchParams.get('includeDeleted') === 'true',
-    patientId: searchParams.get('patientId') || undefined,
     startDate: searchParams.get('startDate') || undefined,
     endDate: searchParams.get('endDate') || undefined,
     timezoneOffset,
+    patientId: searchParams.get('patientId') || undefined,
+    includeRelatedUsers: searchParams.get('includeRelatedUsers') === 'true',
+    includeRelatedPatients:
+      searchParams.get('includeRelatedPatients') === 'true',
+    includeDeleted: searchParams.get('includeDeleted') === 'true',
   });
 
   return NextResponse.json(result);

@@ -16,6 +16,7 @@ collection:
       - $ref: '../components/parameters.yaml#/SearchBy'
       - $ref: '../components/parameters.yaml#/StartDate'
       - $ref: '../components/parameters.yaml#/EndDate'
+      - $ref: '../components/parameters.yaml#/TimezoneOffset'
       - name: userId
         in: query
         required: false
@@ -23,18 +24,21 @@ collection:
           type: string
           format: uuid
         description: Filter logs by a specific user.
+        example: '7e8f9a0b-1234-5678-9abc-def012345678'
       - name: action
         in: query
         required: false
         schema:
           type: string
         description: Filter by action type (CREATE, UPDATE, etc.).
+        example: 'CREATE'
       - name: entityName
         in: query
         required: false
         schema:
           type: string
         description: Filter by affected entity type.
+        example: 'NOTIFICATION'
       - name: entityId
         in: query
         required: false
@@ -42,8 +46,9 @@ collection:
           type: string
           format: uuid
         description: Filter by affected entity ID.
+        example: '7e8f9a0b-1234-5678-9abc-def012345678'
+      - $ref: '../components/parameters.yaml#/IncludeRelatedUsers'
       - $ref: '../components/parameters.yaml#/IncludeDeleted'
-      - $ref: '../components/parameters.yaml#/TimezoneOffset'
       - $ref: '../components/parameters.yaml#/TimezoneOffsetHeader'
     responses:
       '200':

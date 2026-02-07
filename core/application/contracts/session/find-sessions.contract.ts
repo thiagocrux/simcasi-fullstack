@@ -1,3 +1,5 @@
+import { User } from '@/core/domain/entities/user.entity';
+
 export interface FindSessionsInput {
   skip?: number;
   take?: number;
@@ -8,6 +10,7 @@ export interface FindSessionsInput {
   timezoneOffset?: string;
   search?: string;
   userId?: string;
+  includeRelatedUsers?: boolean;
   includeDeleted?: boolean;
 }
 
@@ -22,4 +25,5 @@ export interface FindSessionsOutput {
     deletedAt: Date | null;
   }>;
   total: number;
+  relatedUsers?: User[];
 }

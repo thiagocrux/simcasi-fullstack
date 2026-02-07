@@ -8,10 +8,12 @@ import { ValidatePermissionsUseCase } from '@/core/application/use-cases/permiss
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
 import { PrismaPermissionRepository } from '../repositories/prisma/permission.prisma.repository';
 import { PrismaRoleRepository } from '../repositories/prisma/role.prisma.repository';
+import { PrismaUserRepository } from '../repositories/prisma/user.prisma.repository';
 
 const permissionRepository = new PrismaPermissionRepository();
 const roleRepository = new PrismaRoleRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
+const userRepository = new PrismaUserRepository();
 
 export function makeRegisterPermissionUseCase() {
   return new RegisterPermissionUseCase(
@@ -21,7 +23,7 @@ export function makeRegisterPermissionUseCase() {
 }
 
 export function makeFindPermissionsUseCase() {
-  return new FindPermissionsUseCase(permissionRepository);
+  return new FindPermissionsUseCase(permissionRepository, userRepository);
 }
 
 export function makeGetPermissionByIdUseCase() {

@@ -24,6 +24,23 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   /**
+   * Finds multiple users by their IDs.
+   * @param ids The list of user IDs.
+   * @returns A list of users.
+   */
+  async findByIds(ids: string[]): Promise<User[]> {
+    if (ids.length === 0) return [];
+
+    const users = await prisma.user.findMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+
+    return users as User[];
+  }
+
+  /**
    * Finds an user by their unique email.
    * @param email The user email.
    * @param includeDeleted Whether to include soft-deleted records.

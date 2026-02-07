@@ -1,4 +1,6 @@
+import { User } from '@/core/domain/entities/user.entity';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
+import { UserRepository } from '@/core/domain/repositories/user.repository';
 import {
   FindSessionsInput,
   FindSessionsOutput,
@@ -12,24 +14,45 @@ export class FindSessionsUseCase implements UseCase<
   FindSessionsInput,
   FindSessionsOutput
 > {
-  constructor(private readonly sessionRepository: SessionRepository) {}
+  constructor(
+    private readonly sessionRepository: SessionRepository,
+    private readonly userRepository: UserRepository
+  ) {}
 
   async execute(input: FindSessionsInput): Promise<FindSessionsOutput> {
-    const { items, total } = await this.sessionRepository.findAll({
-      ...input,
-    });
+    const { items, total } = await this.sessionRepository.findAll(input);
+
+    // Extract unique user IDs from sessions if requested
+    const userIds = new Set<string>();
+    if (input.includeRelatedUsers) {
+      items.forEach((item) => {
+        if (item.userId) userIds.add(item.userId);
+      });
+    }
+
+    const relatedUsers =
+      userIds.size > 0
+        ? await this.userRepository.findByIds(Array.from(userIds))
+        : [];
+
+    // Sanitize users
+    const sanitizedUsers = relatedUsers.map((user) => {
+      const { password: _, ...rest } = user;
+      return rest;
+    }) as Omit<User, 'password'>[];
 
     return {
-      items: items.map((s) => ({
-        id: s.id,
-        userId: s.userId,
-        ipAddress: s.ipAddress,
-        userAgent: s.userAgent,
-        issuedAt: s.issuedAt,
-        expiresAt: s.expiresAt,
-        deletedAt: s.deletedAt ?? null,
+      items: items.map((session) => ({
+        id: session.id,
+        userId: session.userId,
+        ipAddress: session.ipAddress,
+        userAgent: session.userAgent,
+        issuedAt: session.issuedAt,
+        expiresAt: session.expiresAt,
+        deletedAt: session.deletedAt ?? null,
       })),
       total,
+      ...(input.includeRelatedUsers && { relatedUsers: sanitizedUsers }),
     };
   }
 }

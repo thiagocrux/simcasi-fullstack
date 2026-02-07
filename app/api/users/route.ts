@@ -32,11 +32,12 @@ export const GET = withAuthentication(['read:user'], async (request) => {
     orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'asc',
     search: searchParams.get('search') || undefined,
     searchBy: searchParams.get('searchBy') || undefined,
-    includeDeleted: searchParams.get('includeDeleted') === 'true',
-    roleId: searchParams.get('roleId') || undefined,
     startDate: searchParams.get('startDate') || undefined,
     endDate: searchParams.get('endDate') || undefined,
     timezoneOffset,
+    roleId: searchParams.get('roleId') || undefined,
+    includeRelatedUsers: searchParams.get('includeRelatedUsers') === 'true',
+    includeDeleted: searchParams.get('includeDeleted') === 'true',
   });
 
   return NextResponse.json(result);

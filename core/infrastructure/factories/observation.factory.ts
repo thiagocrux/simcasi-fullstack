@@ -7,10 +7,12 @@ import { UpdateObservationUseCase } from '@/core/application/use-cases/observati
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
 import { PrismaObservationRepository } from '../repositories/prisma/observation.prisma.repository';
 import { PrismaPatientRepository } from '../repositories/prisma/patient.prisma.repository';
+import { PrismaUserRepository } from '../repositories/prisma/user.prisma.repository';
 
 const observationRepository = new PrismaObservationRepository();
 const patientRepository = new PrismaPatientRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
+const userRepository = new PrismaUserRepository();
 
 export function makeRegisterObservationUseCase() {
   return new RegisterObservationUseCase(
@@ -21,7 +23,11 @@ export function makeRegisterObservationUseCase() {
 }
 
 export function makeFindObservationsUseCase() {
-  return new FindObservationsUseCase(observationRepository);
+  return new FindObservationsUseCase(
+    observationRepository,
+    userRepository,
+    patientRepository
+  );
 }
 
 export function makeGetObservationByIdUseCase() {

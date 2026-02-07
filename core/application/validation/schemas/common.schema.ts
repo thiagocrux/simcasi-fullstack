@@ -33,6 +33,8 @@ export const QuerySchema = z.object({
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   timezoneOffset: z.string().optional(),
+  includeRelatedPatients: z.coerce.boolean().optional().default(false),
+  includeRelatedUsers: z.coerce.boolean().optional().default(false),
   includeDeleted: z.coerce.boolean().optional().default(false),
 });
 

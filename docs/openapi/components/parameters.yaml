@@ -81,6 +81,24 @@ TimezoneOffset:
     type: string
     example: '-03:00'
 
+IncludeRelatedPatients:
+  name: includeRelatedPatients
+  in: query
+  description: Flag to include related patients in the response.
+  required: false
+  schema:
+    type: boolean
+    default: false
+
+IncludeRelatedUsers:
+  name: includeRelatedUsers
+  in: query
+  description: Flag to include related users (creator/updater) in the response.
+  required: false
+  schema:
+    type: boolean
+    default: false
+
 IncludeDeleted:
   name: includeDeleted
   in: query

@@ -7,10 +7,12 @@ import { UpdateRoleUseCase } from '@/core/application/use-cases/role/update-role
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
 import { PrismaPermissionRepository } from '../repositories/prisma/permission.prisma.repository';
 import { PrismaRoleRepository } from '../repositories/prisma/role.prisma.repository';
+import { PrismaUserRepository } from '../repositories/prisma/user.prisma.repository';
 
 const roleRepository = new PrismaRoleRepository();
 const permissionRepository = new PrismaPermissionRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
+const userRepository = new PrismaUserRepository();
 
 export function makeRegisterRoleUseCase() {
   return new RegisterRoleUseCase(
@@ -21,7 +23,7 @@ export function makeRegisterRoleUseCase() {
 }
 
 export function makeFindRolesUseCase() {
-  return new FindRolesUseCase(roleRepository);
+  return new FindRolesUseCase(roleRepository, userRepository);
 }
 
 export function makeGetRoleByIdUseCase() {

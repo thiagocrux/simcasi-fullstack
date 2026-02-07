@@ -746,16 +746,6 @@
             }
           },
           {
-            "name": "includeDeleted",
-            "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
             "name": "timezoneOffset",
             "in": "query",
             "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
@@ -763,6 +753,26 @@
             "schema": {
               "type": "string",
               "example": "-03:00"
+            }
+          },
+          {
+            "name": "includeRelatedUsers",
+            "in": "query",
+            "description": "Flag to include related users (creator/updater) in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           },
           {
@@ -2683,16 +2693,6 @@
             }
           },
           {
-            "name": "includeDeleted",
-            "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
             "name": "timezoneOffset",
             "in": "query",
             "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
@@ -2700,6 +2700,26 @@
             "schema": {
               "type": "string",
               "example": "-03:00"
+            }
+          },
+          {
+            "name": "includeRelatedUsers",
+            "in": "query",
+            "description": "Flag to include related users (creator/updater) in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           },
           {
@@ -5222,16 +5242,6 @@
             }
           },
           {
-            "name": "includeDeleted",
-            "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
             "name": "timezoneOffset",
             "in": "query",
             "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
@@ -5239,6 +5249,26 @@
             "schema": {
               "type": "string",
               "example": "-03:00"
+            }
+          },
+          {
+            "name": "includeRelatedUsers",
+            "in": "query",
+            "description": "Flag to include related users (creator/updater) in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           },
           {
@@ -7104,16 +7134,6 @@
             }
           },
           {
-            "name": "includeDeleted",
-            "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
             "name": "timezoneOffset",
             "in": "query",
             "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
@@ -7121,6 +7141,26 @@
             "schema": {
               "type": "string",
               "example": "-03:00"
+            }
+          },
+          {
+            "name": "includeRelatedUsers",
+            "in": "query",
+            "description": "Flag to include related users (creator/updater) in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           },
           {
@@ -8934,6 +8974,16 @@
             }
           },
           {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
             "name": "patientId",
             "in": "query",
             "required": false,
@@ -8941,7 +8991,28 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Filter exams by a specific patient."
+            "description": "Filter exams by a specific patient.",
+            "example": "7e8f9a0b-1234-5678-9abc-def012345678"
+          },
+          {
+            "name": "includeRelatedPatients",
+            "in": "query",
+            "description": "Flag to include related patients in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeRelatedUsers",
+            "in": "query",
+            "description": "Flag to include related users (creator/updater) in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           },
           {
             "name": "includeDeleted",
@@ -8951,16 +9022,6 @@
             "schema": {
               "type": "boolean",
               "default": false
-            }
-          },
-          {
-            "name": "timezoneOffset",
-            "in": "query",
-            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "example": "-03:00"
             }
           },
           {
@@ -10995,6 +11056,16 @@
             }
           },
           {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
             "name": "patientId",
             "in": "query",
             "required": false,
@@ -11002,7 +11073,28 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Filter treatments by a specific patient."
+            "description": "Filter treatments by a specific patient.",
+            "example": "7e8f9a0b-1234-5678-9abc-def012345678"
+          },
+          {
+            "name": "includeRelatedPatients",
+            "in": "query",
+            "description": "Flag to include related patients in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeRelatedUsers",
+            "in": "query",
+            "description": "Flag to include related users (creator/updater) in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           },
           {
             "name": "includeDeleted",
@@ -11012,16 +11104,6 @@
             "schema": {
               "type": "boolean",
               "default": false
-            }
-          },
-          {
-            "name": "timezoneOffset",
-            "in": "query",
-            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "example": "-03:00"
             }
           },
           {
@@ -12919,6 +13001,16 @@
             }
           },
           {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
             "name": "patientId",
             "in": "query",
             "required": false,
@@ -12926,7 +13018,28 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Filter notifications by a specific patient."
+            "description": "Filter notifications by a specific patient.",
+            "example": "7e8f9a0b-1234-5678-9abc-def012345678"
+          },
+          {
+            "name": "includeRelatedPatients",
+            "in": "query",
+            "description": "Flag to include related patients in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeRelatedUsers",
+            "in": "query",
+            "description": "Flag to include related users (creator/updater) in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           },
           {
             "name": "includeDeleted",
@@ -12936,16 +13049,6 @@
             "schema": {
               "type": "boolean",
               "default": false
-            }
-          },
-          {
-            "name": "timezoneOffset",
-            "in": "query",
-            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "example": "-03:00"
             }
           },
           {
@@ -14712,6 +14815,16 @@
             }
           },
           {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
             "name": "patientId",
             "in": "query",
             "required": false,
@@ -14719,7 +14832,28 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Filter observations by a specific patient."
+            "description": "Filter observations by a specific patient.",
+            "example": "7e8f9a0b-1234-5678-9abc-def012345678"
+          },
+          {
+            "name": "includeRelatedPatients",
+            "in": "query",
+            "description": "Flag to include related patients in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeRelatedUsers",
+            "in": "query",
+            "description": "Flag to include related users (creator/updater) in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           },
           {
             "name": "includeDeleted",
@@ -14729,16 +14863,6 @@
             "schema": {
               "type": "boolean",
               "default": false
-            }
-          },
-          {
-            "name": "timezoneOffset",
-            "in": "query",
-            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "example": "-03:00"
             }
           },
           {
@@ -16495,6 +16619,16 @@
             }
           },
           {
+            "name": "timezoneOffset",
+            "in": "query",
+            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "-03:00"
+            }
+          },
+          {
             "name": "userId",
             "in": "query",
             "required": false,
@@ -16502,7 +16636,8 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Filter logs by a specific user."
+            "description": "Filter logs by a specific user.",
+            "example": "7e8f9a0b-1234-5678-9abc-def012345678"
           },
           {
             "name": "action",
@@ -16511,7 +16646,8 @@
             "schema": {
               "type": "string"
             },
-            "description": "Filter by action type (CREATE, UPDATE, etc.)."
+            "description": "Filter by action type (CREATE, UPDATE, etc.).",
+            "example": "CREATE"
           },
           {
             "name": "entityName",
@@ -16520,7 +16656,8 @@
             "schema": {
               "type": "string"
             },
-            "description": "Filter by affected entity type."
+            "description": "Filter by affected entity type.",
+            "example": "NOTIFICATION"
           },
           {
             "name": "entityId",
@@ -16530,7 +16667,18 @@
               "type": "string",
               "format": "uuid"
             },
-            "description": "Filter by affected entity ID."
+            "description": "Filter by affected entity ID.",
+            "example": "7e8f9a0b-1234-5678-9abc-def012345678"
+          },
+          {
+            "name": "includeRelatedUsers",
+            "in": "query",
+            "description": "Flag to include related users (creator/updater) in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           },
           {
             "name": "includeDeleted",
@@ -16540,16 +16688,6 @@
             "schema": {
               "type": "boolean",
               "default": false
-            }
-          },
-          {
-            "name": "timezoneOffset",
-            "in": "query",
-            "description": "The timezone offset from UTC (e.g., '-03:00'), used to normalize date and time values for the client's local time.",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "example": "-03:00"
             }
           },
           {
@@ -17028,26 +17166,6 @@
             }
           },
           {
-            "name": "includeDeleted",
-            "in": "query",
-            "description": "Flag to include soft-deleted records in the results.",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          },
-          {
-            "name": "userId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "description": "Filter sessions by a specific user."
-          },
-          {
             "name": "startDate",
             "in": "query",
             "description": "Filter records created after this date (inclusive). Use ISO 8601 date-time format.",
@@ -17075,6 +17193,37 @@
             "schema": {
               "type": "string",
               "example": "-03:00"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter sessions by a specific user.",
+            "example": "7e8f9a0b-1234-5678-9abc-def012345678"
+          },
+          {
+            "name": "includeRelatedUsers",
+            "in": "query",
+            "description": "Flag to include related users (creator/updater) in the response.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Flag to include soft-deleted records in the results.",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           },
           {

@@ -7,10 +7,12 @@ import { UpdateTreatmentUseCase } from '@/core/application/use-cases/treatment/u
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
 import { PrismaPatientRepository } from '../repositories/prisma/patient.prisma.repository';
 import { PrismaTreatmentRepository } from '../repositories/prisma/treatment.prisma.repository';
+import { PrismaUserRepository } from '../repositories/prisma/user.prisma.repository';
 
 const repository = new PrismaTreatmentRepository();
 const patientRepository = new PrismaPatientRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
+const userRepository = new PrismaUserRepository();
 
 export function makeRegisterTreatmentUseCase() {
   return new RegisterTreatmentUseCase(
@@ -21,7 +23,11 @@ export function makeRegisterTreatmentUseCase() {
 }
 
 export function makeFindTreatmentsUseCase() {
-  return new FindTreatmentsUseCase(repository);
+  return new FindTreatmentsUseCase(
+    repository,
+    userRepository,
+    patientRepository
+  );
 }
 
 export function makeGetTreatmentByIdUseCase() {

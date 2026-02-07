@@ -7,10 +7,12 @@ import { UpdateNotificationUseCase } from '@/core/application/use-cases/notifica
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
 import { PrismaNotificationRepository } from '../repositories/prisma/notification.prisma.repository';
 import { PrismaPatientRepository } from '../repositories/prisma/patient.prisma.repository';
+import { PrismaUserRepository } from '../repositories/prisma/user.prisma.repository';
 
 const notificationRepository = new PrismaNotificationRepository();
 const patientRepository = new PrismaPatientRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
+const userRepository = new PrismaUserRepository();
 
 export function makeRegisterNotificationUseCase() {
   return new RegisterNotificationUseCase(
@@ -21,7 +23,11 @@ export function makeRegisterNotificationUseCase() {
 }
 
 export function makeFindNotificationsUseCase() {
-  return new FindNotificationsUseCase(notificationRepository);
+  return new FindNotificationsUseCase(
+    notificationRepository,
+    userRepository,
+    patientRepository
+  );
 }
 
 export function makeGetNotificationByIdUseCase() {

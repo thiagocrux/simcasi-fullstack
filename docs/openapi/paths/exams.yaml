@@ -16,6 +16,7 @@ collection:
       - $ref: '../components/parameters.yaml#/SearchBy'
       - $ref: '../components/parameters.yaml#/StartDate'
       - $ref: '../components/parameters.yaml#/EndDate'
+      - $ref: '../components/parameters.yaml#/TimezoneOffset'
       - name: patientId
         in: query
         required: false
@@ -23,8 +24,10 @@ collection:
           type: string
           format: uuid
         description: Filter exams by a specific patient.
+        example: '7e8f9a0b-1234-5678-9abc-def012345678'
+      - $ref: '../components/parameters.yaml#/IncludeRelatedPatients'
+      - $ref: '../components/parameters.yaml#/IncludeRelatedUsers'
       - $ref: '../components/parameters.yaml#/IncludeDeleted'
-      - $ref: '../components/parameters.yaml#/TimezoneOffset'
       - $ref: '../components/parameters.yaml#/TimezoneOffsetHeader'
     responses:
       '200':

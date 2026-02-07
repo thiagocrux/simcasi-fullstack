@@ -7,10 +7,12 @@ import { UpdateExamUseCase } from '@/core/application/use-cases/exam/update-exam
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
 import { PrismaExamRepository } from '../repositories/prisma/exam.prisma.repository';
 import { PrismaPatientRepository } from '../repositories/prisma/patient.prisma.repository';
+import { PrismaUserRepository } from '../repositories/prisma/user.prisma.repository';
 
 const examRepository = new PrismaExamRepository();
 const patientRepository = new PrismaPatientRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
+const userRepository = new PrismaUserRepository();
 
 export function makeRegisterExamUseCase() {
   return new RegisterExamUseCase(
@@ -21,7 +23,11 @@ export function makeRegisterExamUseCase() {
 }
 
 export function makeFindExamsUseCase() {
-  return new FindExamsUseCase(examRepository);
+  return new FindExamsUseCase(
+    examRepository,
+    userRepository,
+    patientRepository
+  );
 }
 
 export function makeGetExamByIdUseCase() {

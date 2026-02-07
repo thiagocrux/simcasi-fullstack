@@ -1,4 +1,5 @@
 import { Role } from '@/core/domain/entities/role.entity';
+import { User } from '@/core/domain/entities/user.entity';
 
 export interface FindRolesInput {
   skip?: number;
@@ -10,10 +11,12 @@ export interface FindRolesInput {
   startDate?: string;
   endDate?: string;
   timezoneOffset?: string;
+  includeRelatedUsers?: boolean;
   includeDeleted?: boolean;
 }
 
 export interface FindRolesOutput {
   items: Role[];
   total: number;
+  relatedUsers?: User[];
 }

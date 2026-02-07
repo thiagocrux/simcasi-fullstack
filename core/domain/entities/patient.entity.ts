@@ -25,8 +25,8 @@ export interface Patient {
   houseNumber: string;
   complement?: string | null;
   createdBy: string;
-  updatedBy?: string | null;
   createdAt: Date;
+  updatedBy?: string | null;
   updatedAt?: Date | null;
   deletedAt?: Date | null;
 }

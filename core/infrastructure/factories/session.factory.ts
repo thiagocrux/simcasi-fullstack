@@ -31,7 +31,7 @@ export function makeLoginUseCase() {
 }
 
 export function makeFindSessionsUseCase() {
-  return new FindSessionsUseCase(sessionRepository);
+  return new FindSessionsUseCase(sessionRepository, userRepository);
 }
 
 export function makeRevokeSessionUseCase() {

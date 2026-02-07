@@ -4,8 +4,8 @@ export interface Notification {
   sinan: string;
   observations?: string | null;
   createdBy: string;
-  updatedBy?: string | null;
   createdAt: Date;
+  updatedBy?: string | null;
   updatedAt?: Date | null;
   deletedAt?: Date | null;
 }

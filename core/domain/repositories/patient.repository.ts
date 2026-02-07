@@ -51,6 +51,11 @@ export interface PatientRepository {
   ): Promise<Patient>;
 
   /**
+   * Searches for multiple patients by an array of IDs.
+   */
+  findByIds(ids: string[]): Promise<Patient[]>;
+
+  /**
    * Executes Soft Delete (sets deletedAt).
    */
   softDelete(id: string): Promise<void>;

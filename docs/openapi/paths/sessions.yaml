@@ -11,7 +11,9 @@ collection:
       - $ref: '../components/parameters.yaml#/Page'
       - $ref: '../components/parameters.yaml#/Limit'
       - $ref: '../components/parameters.yaml#/Search'
-      - $ref: '../components/parameters.yaml#/IncludeDeleted'
+      - $ref: '../components/parameters.yaml#/StartDate'
+      - $ref: '../components/parameters.yaml#/EndDate'
+      - $ref: '../components/parameters.yaml#/TimezoneOffset'
       - name: userId
         in: query
         required: false
@@ -19,9 +21,9 @@ collection:
           type: string
           format: uuid
         description: Filter sessions by a specific user.
-      - $ref: '../components/parameters.yaml#/StartDate'
-      - $ref: '../components/parameters.yaml#/EndDate'
-      - $ref: '../components/parameters.yaml#/TimezoneOffset'
+        example: '7e8f9a0b-1234-5678-9abc-def012345678'
+      - $ref: '../components/parameters.yaml#/IncludeRelatedUsers'
+      - $ref: '../components/parameters.yaml#/IncludeDeleted'
       - $ref: '../components/parameters.yaml#/TimezoneOffsetHeader'
     responses:
       '200':

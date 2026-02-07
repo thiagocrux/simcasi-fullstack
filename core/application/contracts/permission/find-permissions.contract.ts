@@ -1,4 +1,5 @@
 import { Permission } from '@/core/domain/entities/permission.entity';
+import { User } from '@/core/domain/entities/user.entity';
 
 export interface FindPermissionsInput {
   skip?: number;
@@ -10,10 +11,12 @@ export interface FindPermissionsInput {
   startDate?: string;
   endDate?: string;
   timezoneOffset?: string;
+  includeRelatedUsers?: boolean;
   includeDeleted?: boolean;
 }
 
 export interface FindPermissionsOutput {
   items: Permission[];
   total: number;
+  relatedUsers?: User[];
 }

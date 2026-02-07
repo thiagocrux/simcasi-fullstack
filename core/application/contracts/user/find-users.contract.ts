@@ -11,10 +11,12 @@ export interface FindUsersInput {
   endDate?: string;
   timezoneOffset?: string;
   roleId?: string;
+  includeRelatedUsers?: boolean;
   includeDeleted?: boolean;
 }
 
 export interface FindUsersOutput {
   items: Omit<User, 'password'>[];
   total: number;
+  relatedUsers?: Omit<User, 'password'>[];
 }

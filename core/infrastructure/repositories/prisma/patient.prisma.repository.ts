@@ -24,6 +24,23 @@ export class PrismaPatientRepository implements PatientRepository {
   }
 
   /**
+   * Finds multiple patients by their IDs.
+   * @param ids The list of patient IDs.
+   * @returns A list of patients.
+   */
+  async findByIds(ids: string[]): Promise<Patient[]> {
+    if (ids.length === 0) return [];
+
+    const patients = await prisma.patient.findMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+
+    return patients as Patient[];
+  }
+
+  /**
    * Finds a patient by their CPF.
    * @param cpf The CPF to search for.
    * @param includeDeleted Whether to include soft-deleted records.

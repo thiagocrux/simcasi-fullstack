@@ -3,8 +3,8 @@ export interface Permission {
   code: string;
   label: string;
   createdBy?: string | null;
-  updatedBy?: string | null;
   createdAt: Date;
+  updatedBy?: string | null;
   updatedAt?: Date | null;
   deletedAt?: Date | null;
 }

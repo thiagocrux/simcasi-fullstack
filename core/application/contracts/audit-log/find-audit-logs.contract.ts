@@ -1,4 +1,5 @@
 import { AuditLog } from '@/core/domain/entities/audit-log.entity';
+import { User } from '@/core/domain/entities/user.entity';
 
 export interface FindAuditLogsInput {
   skip?: number;
@@ -13,9 +14,11 @@ export interface FindAuditLogsInput {
   action?: string;
   entityName?: string;
   entityId?: string;
+  includeRelatedUsers?: boolean;
 }
 
 export interface FindAuditLogsOutput {
   items: AuditLog[];
   total: number;
+  relatedUsers?: User[];
 }

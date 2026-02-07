@@ -28,13 +28,14 @@ export const GET = withAuthentication(['read:audit-log'], async (request) => {
     orderBy: searchParams.get('orderBy') || undefined,
     orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
     search: searchParams.get('search') || undefined,
+    startDate: searchParams.get('startDate') || undefined,
+    endDate: searchParams.get('endDate') || undefined,
+    timezoneOffset,
     userId: searchParams.get('userId') || undefined,
     action: searchParams.get('action') || undefined,
     entityName: searchParams.get('entityName') || undefined,
     entityId: searchParams.get('entityId') || undefined,
-    startDate: searchParams.get('startDate') || undefined,
-    endDate: searchParams.get('endDate') || undefined,
-    timezoneOffset,
+    includeRelatedUsers: searchParams.get('includeRelatedUsers') === 'true',
   });
 
   return NextResponse.json(result);

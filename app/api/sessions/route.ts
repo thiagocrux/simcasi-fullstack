@@ -28,11 +28,12 @@ export const GET = withAuthentication(['read:session'], async (request) => {
     take: limit,
     orderBy: searchParams.get('orderBy') || undefined,
     orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'desc',
-    includeDeleted: searchParams.get('includeDeleted') === 'true',
-    userId,
     startDate: searchParams.get('startDate') || undefined,
     endDate: searchParams.get('endDate') || undefined,
     timezoneOffset,
+    userId,
+    includeRelatedUsers: searchParams.get('includeRelatedUsers') === 'true',
+    includeDeleted: searchParams.get('includeDeleted') === 'true',
   });
 
   return NextResponse.json(result);
