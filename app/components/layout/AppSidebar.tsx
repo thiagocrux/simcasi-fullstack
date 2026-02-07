@@ -12,7 +12,6 @@ import {
   FileLock,
   Hospital,
   Info,
-  KeyRound,
   LayoutDashboard,
   Mail,
   Settings2,
@@ -93,11 +92,6 @@ const data = {
           icon: UserPlus,
         },
       ],
-    },
-    {
-      title: 'Permissões',
-      url: '/permissions',
-      icon: KeyRound,
     },
     {
       title: 'Sessões',

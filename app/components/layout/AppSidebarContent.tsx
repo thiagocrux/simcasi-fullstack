@@ -1,7 +1,4 @@
-'use client';
-
 import { ChevronRight, type LucideIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 
 import {
   Collapsible,
@@ -9,6 +6,7 @@ import {
   CollapsibleTrigger,
 } from '../ui/collapsible';
 
+import Link from 'next/link';
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -37,8 +35,6 @@ interface AppSidebarContentProps {
 }
 
 export function AppSidebarContent({ label, items }: AppSidebarContentProps) {
-  const router = useRouter();
-
   return (
     <SidebarGroup>
       {label ? <SidebarGroupLabel>{label}</SidebarGroupLabel> : null}
@@ -48,13 +44,10 @@ export function AppSidebarContent({ label, items }: AppSidebarContentProps) {
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild tooltip={item.title}>
-                  <a
-                    onClick={() => router.push(item.url)}
-                    className="cursor-pointer"
-                  >
+                  <Link href={item.url} className="cursor-pointer">
                     <item.icon />
                     <span>{item.title}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );
@@ -64,13 +57,10 @@ export function AppSidebarContent({ label, items }: AppSidebarContentProps) {
             <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip={item.title}>
-                  <a
-                    onClick={() => router.push(item.url)}
-                    className="cursor-pointer"
-                  >
+                  <Link href={item.url} className="cursor-pointer">
                     <item.icon />
                     <span>{item.title}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
                 <CollapsibleTrigger asChild>
                   <SidebarMenuAction className="data-[state=open]:rotate-90">
@@ -83,13 +73,10 @@ export function AppSidebarContent({ label, items }: AppSidebarContentProps) {
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
-                          <a
-                            onClick={() => router.push(subItem.url)}
-                            className="cursor-pointer"
-                          >
+                          <Link href={subItem.url} className="cursor-pointer">
                             {subItem.icon ? <subItem.icon /> : null}
                             <span>{subItem.title}</span>
-                          </a>
+                          </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}
