@@ -2,14 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 
-import {
-  IdSchema,
-  QueryInput,
-  QuerySchema,
-} from '@/core/application/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreateTreatmentInput,
+  TreatmentQueryInput,
   UpdateTreatmentInput,
+  treatmentQuerySchema,
   treatmentSchema,
 } from '@/core/application/validation/schemas/treatment.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
@@ -23,14 +21,16 @@ import {
 } from '@/core/infrastructure/factories/treatment.factory';
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
-export async function findTreatments(
-  query?: QueryInput & { patientId?: string }
-) {
+/**
+ * Find treatments with filters.
+ *
+ * @param query - The search and filter parameters.
+ * @returns The list of treatments and count.
+ */
+export async function findTreatments(query?: TreatmentQueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:treatment'], async () => {
     // 1. Validate query input.
-    const parsed = QuerySchema.extend({
-      patientId: IdSchema.optional(),
-    }).safeParse(query);
+    const parsed = treatmentQuerySchema.safeParse(query);
 
     // 2. Initialize use case.
     const findTreatmentsUseCase = makeFindTreatmentsUseCase();

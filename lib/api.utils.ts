@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { ZodError } from 'zod';
 
 import { AppError } from '@/core/domain/errors/app.error';
 import { makeTokenProvider } from '@/core/infrastructure/factories/security.factory';
@@ -28,6 +29,21 @@ type ApiHandler = (
  * Standard error handler for Next.js API Route Handlers.
  */
 export function handleApiError(error: any) {
+  if (error instanceof ZodError) {
+    return NextResponse.json(
+      {
+        name: 'ValidationError',
+        message: 'Invalid input data',
+        code: 'VALIDATION_ERROR',
+        errors: error.issues.map((issue) => ({
+          path: issue.path.join('.'),
+          message: issue.message,
+        })),
+      },
+      { status: 400 }
+    );
+  }
+
   // Use property check as a fallback for instanceof, common in Next.js HMR/Turbopack.
   const isAppError =
     error instanceof AppError || (error?.statusCode && error?.code);

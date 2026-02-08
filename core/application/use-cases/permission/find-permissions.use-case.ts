@@ -1,3 +1,4 @@
+import { permissionQuerySchema } from '@/core/application/validation/schemas/permission.schema';
 import { Permission } from '@/core/domain/entities/permission.entity';
 import { User } from '@/core/domain/entities/user.entity';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
@@ -20,24 +21,31 @@ export class FindPermissionsUseCase implements UseCase<
     private readonly userRepository: UserRepository
   ) {}
 
+  /**
+   * Executes the use case to find permissions.
+   */
   async execute(input: FindPermissionsInput): Promise<FindPermissionsOutput> {
-    const { items, total } = await this.permissionRepository.findAll(input);
+    const validatedInput = permissionQuerySchema.parse(
+      input
+    ) as FindPermissionsInput;
 
-    // Extract unique user IDs from createdBy and updatedBy if requested
+    const { items, total } =
+      await this.permissionRepository.findAll(validatedInput);
+
     const userIds = new Set<string>();
-    if (input.includeRelatedUsers) {
+    if (validatedInput.includeRelatedUsers) {
       items.forEach((item: Permission) => {
         if (item.createdBy) userIds.add(item.createdBy);
         if (item.updatedBy) userIds.add(item.updatedBy);
       });
     }
 
+    // Fetch and sanitize related users if requested
     const relatedUsers =
       userIds.size > 0
         ? await this.userRepository.findByIds(Array.from(userIds))
         : [];
 
-    // Sanitize users
     const sanitizedUsers = relatedUsers.map((user) => {
       const { password: _, ...rest } = user;
       return rest;
@@ -46,7 +54,9 @@ export class FindPermissionsUseCase implements UseCase<
     return {
       items,
       total,
-      ...(input.includeRelatedUsers && { relatedUsers: sanitizedUsers }),
+      ...(validatedInput.includeRelatedUsers && {
+        relatedUsers: sanitizedUsers,
+      }),
     };
   }
 }

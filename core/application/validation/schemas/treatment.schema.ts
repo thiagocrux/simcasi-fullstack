@@ -1,6 +1,17 @@
 import * as z from 'zod';
 
+import {
+  TREATMENT_SEARCHABLE_FIELDS,
+  TREATMENT_SORTABLE_FIELDS,
+} from '@/core/domain/constants/treatment.constants';
+
 import { messages } from '../messages';
+import {
+  createQuerySchema,
+  PatientEnrichmentFields,
+  PatientFilterFields,
+  UserEnrichmentFields,
+} from './common.schema';
 
 /**
  * Main schema for treatment entity validation.
@@ -19,6 +30,31 @@ export const treatmentSchema = z.object({
   observations: z.string().optional(),
   partnerInformation: z.string().optional(),
 });
+
+/**
+ * Standardized query schema for listing treatments.
+ *
+ * Includes standard pagination, sorting, search, and fragments for:
+ * - Patent filtering (patientId)
+ * - Patient enrichment (includeRelatedPatients)
+ * - User enrichment (includeRelatedUsers)
+ */
+export const treatmentQuerySchema = createQuerySchema(
+  TREATMENT_SORTABLE_FIELDS,
+  TREATMENT_SEARCHABLE_FIELDS
+).extend({
+  ...PatientFilterFields,
+  ...PatientEnrichmentFields,
+  ...UserEnrichmentFields,
+});
+
+/**
+ * Type for treatment query input.
+ *
+ * Includes filters, pagination, and sorting for listing treatments.
+ * Used in server actions and use cases.
+ */
+export type TreatmentQueryInput = Partial<z.infer<typeof treatmentQuerySchema>>;
 
 /**
  * Type for treatment creation.

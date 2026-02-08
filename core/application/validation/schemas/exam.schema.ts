@@ -1,6 +1,17 @@
 import * as z from 'zod';
 
+import {
+  EXAM_SEARCHABLE_FIELDS,
+  EXAM_SORTABLE_FIELDS,
+} from '@/core/domain/constants/exam.constants';
+
 import { messages } from '../messages';
+import {
+  createQuerySchema,
+  PatientEnrichmentFields,
+  PatientFilterFields,
+  UserEnrichmentFields,
+} from './common.schema';
 
 /**
  * Main schema for exam entity validation.
@@ -67,3 +78,26 @@ export type UpdateExamInput = Partial<z.infer<typeof examSchema>> & {
  * - Used to type exam creation/edit forms (e.g., with React Hook Form).
  */
 export type ExamFormInput = z.infer<typeof examSchema>;
+
+/**
+ * Standardized query schema for listing exams.
+ *
+ * Includes standard pagination, sorting, search, and fragments for:
+ * - Patent filtering (patientId)
+ * - Patient enrichment (includeRelatedPatients)
+ * - User enrichment (includeRelatedUsers)
+ */
+export const examQuerySchema = createQuerySchema(
+  EXAM_SORTABLE_FIELDS,
+  EXAM_SEARCHABLE_FIELDS
+).extend({
+  ...PatientFilterFields,
+  ...PatientEnrichmentFields,
+  ...UserEnrichmentFields,
+});
+
+/**
+ * Type for exam list queries.
+ * Used to type filters, pagination and search parameters.
+ */
+export type ExamQueryInput = Partial<z.infer<typeof examQuerySchema>>;

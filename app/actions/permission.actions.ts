@@ -2,14 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 
-import {
-  IdSchema,
-  QueryInput,
-  QuerySchema,
-} from '@/core/application/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreatePermissionInput,
+  PermissionQueryInput,
   UpdatePermissionInput,
+  permissionQuerySchema,
   permissionSchema,
 } from '@/core/application/validation/schemas/permission.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
@@ -27,9 +25,9 @@ import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 /**
  * Fetch a paginated list of all permissions available in the system.
  */
-export async function findPermissions(query?: QueryInput) {
+export async function findPermissions(query?: PermissionQueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:permission'], async () => {
-    const parsed = QuerySchema.safeParse(query);
+    const parsed = permissionQuerySchema.safeParse(query);
     const useCase = makeFindPermissionsUseCase();
     return await useCase.execute(parsed.data || {});
   });

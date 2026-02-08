@@ -150,6 +150,7 @@ export function ObservationsTable({
       'find-observations',
       pagination,
       searchValue,
+      selectedFilterOption,
       sorting,
       mounted,
       dateFilter,
@@ -171,6 +172,8 @@ export function ObservationsTable({
         startDate: dateFilter?.start,
         endDate: dateFilter?.end,
         timezoneOffset: getTimezoneOffset(),
+        includeRelatedPatients: true,
+        includeRelatedUsers: true,
       });
     },
     enabled: mounted,

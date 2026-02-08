@@ -1,3 +1,4 @@
+import { patientQuerySchema } from '@/core/application/validation/schemas/patient.schema';
 import { User } from '@/core/domain/entities/user.entity';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
@@ -19,24 +20,29 @@ export class FindPatientsUseCase implements UseCase<
     private readonly userRepository: UserRepository
   ) {}
 
+  /**
+   * Executes the use case to find patients.
+   */
   async execute(input: FindPatientsInput): Promise<FindPatientsOutput> {
-    const { items, total } = await this.patientRepository.findAll(input);
+    const validatedInput = patientQuerySchema.parse(input) as FindPatientsInput;
 
-    // Extract unique user IDs from createdBy and updatedBy if requested
+    const { items, total } =
+      await this.patientRepository.findAll(validatedInput);
+
     const userIds = new Set<string>();
-    if (input.includeRelatedUsers) {
+    if (validatedInput.includeRelatedUsers) {
       items.forEach((item) => {
         if (item.createdBy) userIds.add(item.createdBy);
         if (item.updatedBy) userIds.add(item.updatedBy);
       });
     }
 
+    // Fetch and sanitize related users if requested
     const relatedUsers =
       userIds.size > 0
         ? await this.userRepository.findByIds(Array.from(userIds))
         : [];
 
-    // Sanitize users (remove passwords)
     const sanitizedUsers = relatedUsers.map((user) => {
       const { password: _, ...rest } = user;
       return rest;
@@ -45,7 +51,9 @@ export class FindPatientsUseCase implements UseCase<
     return {
       items,
       total,
-      ...(input.includeRelatedUsers && { relatedUsers: sanitizedUsers }),
+      ...(validatedInput.includeRelatedUsers && {
+        relatedUsers: sanitizedUsers,
+      }),
     };
   }
 }

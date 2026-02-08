@@ -15,3 +15,19 @@ export const ROLES = [
   { code: 'user', label: 'Usuário' },
   { code: 'viewer', label: 'Leitor' },
 ];
+
+/**
+ * Fields of the Role entity that are allowed for sorting in list requests.
+ */
+export const ROLE_SORTABLE_FIELDS = [
+  'id',
+  'code',
+  'label',
+  'createdAt',
+  'updatedAt',
+] as const;
+
+/**
+ * Fields of the Role entity that are allowed for text search.
+ */
+export const ROLE_SEARCHABLE_FIELDS = ['code', 'label'] as const;

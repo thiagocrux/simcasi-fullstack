@@ -1,7 +1,13 @@
 import * as z from 'zod';
 
+import {
+  USER_SEARCHABLE_FIELDS,
+  USER_SORTABLE_FIELDS,
+} from '@/core/domain/constants/user.constants';
+
 import { messages } from '../messages';
 import { regex } from '../regex';
+import { createQuerySchema, UserEnrichmentFields } from './common.schema';
 
 /**
  * Main schema for user entity validation.
@@ -128,3 +134,24 @@ export type UserFormInput = {
   password?: string;
   passwordConfirmation?: string;
 };
+
+/**
+ * Standardized query schema for listing users.
+ *
+ * Includes standard pagination, sorting, search, and fragments for:
+ * - User enrichment (includeRelatedUsers)
+ * - User specific filters (roleId)
+ */
+export const userQuerySchema = createQuerySchema(
+  USER_SORTABLE_FIELDS,
+  USER_SEARCHABLE_FIELDS
+).extend({
+  ...UserEnrichmentFields,
+  roleId: z.string().optional(),
+});
+
+/**
+ * Type for user list queries.
+ * Used to type filters, pagination and search parameters.
+ */
+export type UserQueryInput = Partial<z.infer<typeof userQuerySchema>>;

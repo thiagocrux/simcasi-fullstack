@@ -99,10 +99,9 @@ const COLUMN_LABELS: Record<Column, string> = {
 
 const FILTERABLE_COLUMNS: Column[] = [
   'treponemalTestType',
-  'nontreponemalVdrlTest',
+  'treponemalTestLocation',
   'nontreponemalTestTitration',
   'referenceObservations',
-  'otherNontreponemalTest',
 ];
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN: Column = 'treponemalTestType';
@@ -166,6 +165,7 @@ export function ExamsTable({
       'find-exams',
       pagination,
       searchValue,
+      selectedFilterOption,
       sorting,
       mounted,
       dateFilter,
@@ -184,6 +184,8 @@ export function ExamsTable({
         startDate: dateFilter?.start,
         endDate: dateFilter?.end,
         timezoneOffset: getTimezoneOffset(),
+        includeRelatedPatients: true,
+        includeRelatedUsers: true,
       });
     },
     enabled: mounted,

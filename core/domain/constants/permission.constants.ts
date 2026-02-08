@@ -106,3 +106,19 @@ export function isPermission(
 ): value is (typeof PERMISSION_CODES)[number] {
   return PERMISSION_CODES.includes(value);
 }
+
+/**
+ * Fields of the Permission entity that are allowed for sorting in list requests.
+ */
+export const PERMISSION_SORTABLE_FIELDS = [
+  'id',
+  'code',
+  'label',
+  'createdAt',
+  'updatedAt',
+] as const;
+
+/**
+ * Fields of the Permission entity that are allowed for text search.
+ */
+export const PERMISSION_SEARCHABLE_FIELDS = ['code', 'label'] as const;

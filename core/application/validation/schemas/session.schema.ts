@@ -1,7 +1,17 @@
 import * as z from 'zod';
 
+import {
+  SESSION_SEARCHABLE_FIELDS,
+  SESSION_SORTABLE_FIELDS,
+} from '@/core/domain/constants/session.constants';
+
 import { messages } from '../messages';
 import { regex } from '../regex';
+import {
+  createQuerySchema,
+  UserEnrichmentFields,
+  UserFilterFields,
+} from './common.schema';
 
 /**
  * Main schema for session (login) validation.
@@ -14,6 +24,29 @@ export const sessionSchema = z.object({
   password: z.string().nonempty(messages.REQUIRED_FIELD('senha')),
   rememberMe: z.boolean(),
 });
+
+/**
+ * Standardized query schema for listing sessions.
+ *
+ * Includes standard pagination, sorting, search, and fragments for:
+ * - User filtering (userId)
+ * - User enrichment (includeRelatedUsers)
+ */
+export const sessionQuerySchema = createQuerySchema(
+  SESSION_SORTABLE_FIELDS,
+  SESSION_SEARCHABLE_FIELDS
+).extend({
+  ...UserFilterFields,
+  ...UserEnrichmentFields,
+});
+
+/**
+ * Type for session query input.
+ *
+ * Includes filters, pagination, and sorting for listing sessions.
+ * Used in server actions and use cases.
+ */
+export type SessionQueryInput = Partial<z.infer<typeof sessionQuerySchema>>;
 
 /**
  * Type for session (login) form usage.

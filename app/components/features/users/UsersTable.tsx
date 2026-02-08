@@ -145,6 +145,7 @@ export function UsersTable({
       'find-users',
       pagination,
       searchValue,
+      selectedFilterOption,
       sorting,
       mounted,
       dateFilter,
@@ -165,6 +166,7 @@ export function UsersTable({
         startDate: dateFilter?.start,
         endDate: dateFilter?.end,
         timezoneOffset: getTimezoneOffset(),
+        includeRelatedUsers: true,
       });
     },
     enabled: mounted,

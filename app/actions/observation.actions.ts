@@ -2,14 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 
-import {
-  IdSchema,
-  QueryInput,
-  QuerySchema,
-} from '@/core/application/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreateObservationInput,
+  ObservationQueryInput,
   UpdateObservationInput,
+  observationQuerySchema,
   observationSchema,
 } from '@/core/application/validation/schemas/observation.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
@@ -23,14 +21,16 @@ import {
 } from '@/core/infrastructure/factories/observation.factory';
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
-export async function findObservations(
-  query?: QueryInput & { patientId?: string }
-) {
+/**
+ * Find observations with filters.
+ *
+ * @param query - The search and filter parameters.
+ * @returns The list of observations and count.
+ */
+export async function findObservations(query?: ObservationQueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:observation'], async () => {
     // 1. Validate query input.
-    const parsed = QuerySchema.extend({
-      patientId: IdSchema.optional(),
-    }).safeParse(query);
+    const parsed = observationQuerySchema.safeParse(query);
 
     // 2. Initialize use case.
     const findObservationsUseCase = makeFindObservationsUseCase();

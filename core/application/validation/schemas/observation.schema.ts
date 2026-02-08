@@ -1,6 +1,17 @@
 import * as z from 'zod';
 
+import {
+  OBSERVATION_SEARCHABLE_FIELDS,
+  OBSERVATION_SORTABLE_FIELDS,
+} from '@/core/domain/constants/observation.constants';
+
 import { messages } from '../messages';
+import {
+  createQuerySchema,
+  PatientEnrichmentFields,
+  PatientFilterFields,
+  UserEnrichmentFields,
+} from './common.schema';
 
 /**
  * Main schema for observation entity validation.
@@ -13,6 +24,31 @@ export const observationSchema = z.object({
   observations: z.string().optional(),
   hasPartnerBeingTreated: z.boolean(),
 });
+
+/**
+ * Standardized query schema for listing observations.
+ *
+ * Includes standard pagination, sorting, search, and fragments for:
+ * - Patent filtering (patientId)
+ * - Patient enrichment (includeRelatedPatients)
+ * - User enrichment (includeRelatedUsers)
+ */
+export const observationQuerySchema = createQuerySchema(
+  OBSERVATION_SORTABLE_FIELDS,
+  OBSERVATION_SEARCHABLE_FIELDS
+).extend({
+  ...PatientFilterFields,
+  ...PatientEnrichmentFields,
+  ...UserEnrichmentFields,
+});
+
+/**
+ * Type for observation list queries.
+ * Used to type filters, pagination and search parameters.
+ */
+export type ObservationQueryInput = Partial<
+  z.infer<typeof observationQuerySchema>
+>;
 
 /**
  * Type for observation creation.

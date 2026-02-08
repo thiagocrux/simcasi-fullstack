@@ -6,14 +6,12 @@ import { FindUsersOutput } from '@/core/application/contracts/user/find-users.co
 import { GetUserOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
 import { RegisterUserOutput } from '@/core/application/contracts/user/register-user.contract';
 import { UpdateUserOutput } from '@/core/application/contracts/user/update-user.contract';
-import {
-  IdSchema,
-  QueryInput,
-  QuerySchema,
-} from '@/core/application/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreateUserInput,
   UpdateUserInput,
+  UserQueryInput,
+  userQuerySchema,
   userSchema,
 } from '@/core/application/validation/schemas/user.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
@@ -30,14 +28,15 @@ import {
   withSecuredActionAndAutomaticRetry,
 } from '@/lib/actions.utils';
 
+/**
+ * Fetch a paginated list of users with optional search filtering.
+ */
 export async function findUsers(
-  query?: QueryInput & { roleId?: string }
+  query?: UserQueryInput
 ): Promise<ActionResponse<FindUsersOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
-    // 1. Validate query input.
-    const parsed = QuerySchema.extend({
-      roleId: IdSchema.optional(),
-    }).safeParse(query);
+    // 1. Validate query input using centralized entity schema.
+    const parsed = userQuerySchema.safeParse(query);
 
     // 2. Initialize use case.
     const findUsersUseCase = makeFindUsersUseCase();

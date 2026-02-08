@@ -129,13 +129,10 @@ const COLUMN_LABELS: Record<Column, string> = {
 
 const FILTERABLE_COLUMNS: Column[] = [
   'name',
+  'socialName',
   'cpf',
   'susCardNumber',
   'motherName',
-  'email',
-  'phone',
-  'city',
-  'state',
 ];
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN: Column = 'name';
@@ -217,10 +214,11 @@ export function PatientsTable({
         orderDir: sorting[0]?.desc ? 'desc' : 'asc',
         search: searchValue,
         searchBy: selectedFilterOption,
-        includeDeleted: false,
         startDate: dateFilter?.start,
         endDate: dateFilter?.end,
         timezoneOffset: getTimezoneOffset(),
+        includeRelatedUsers: true,
+        includeDeleted: false,
       });
     },
     enabled: mounted,

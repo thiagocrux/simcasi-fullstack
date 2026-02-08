@@ -1,3 +1,4 @@
+import { auditLogQuerySchema } from '@/core/application/validation/schemas/audit-log.schema';
 import { User } from '@/core/domain/entities/user.entity';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
@@ -19,23 +20,30 @@ export class FindAuditLogsUseCase implements UseCase<
     private readonly userRepository: UserRepository
   ) {}
 
+  /**
+   * Executes the use case to find audit logs.
+   */
   async execute(input: FindAuditLogsInput): Promise<FindAuditLogsOutput> {
-    const { items, total } = await this.auditLogRepository.findAll(input);
+    const validatedInput = auditLogQuerySchema.parse(
+      input
+    ) as FindAuditLogsInput;
 
-    // Extract unique user IDs from userId if requested
+    const { items, total } =
+      await this.auditLogRepository.findAll(validatedInput);
+
     const userIds = new Set<string>();
-    if (input.includeRelatedUsers) {
+    if (validatedInput.includeRelatedUsers) {
       items.forEach((item) => {
         if (item.userId) userIds.add(item.userId);
       });
     }
 
+    // Fetch and sanitize related users if requested
     const relatedUsers =
       userIds.size > 0
         ? await this.userRepository.findByIds(Array.from(userIds))
         : [];
 
-    // Sanitize users
     const sanitizedUsers = relatedUsers.map((user) => {
       const { password: _, ...rest } = user;
       return rest;
@@ -44,7 +52,9 @@ export class FindAuditLogsUseCase implements UseCase<
     return {
       items,
       total,
-      ...(input.includeRelatedUsers && { relatedUsers: sanitizedUsers }),
+      ...(validatedInput.includeRelatedUsers && {
+        relatedUsers: sanitizedUsers,
+      }),
     };
   }
 }

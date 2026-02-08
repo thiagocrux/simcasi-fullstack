@@ -18,25 +18,82 @@ export const IdSchema = z.uuid(messages.INVALID_UUID);
 export type IdFormInput = z.infer<typeof IdSchema>;
 
 /**
+ * Enrichment fields for patient-related data.
+ */
+export const PatientEnrichmentFields = {
+  includeRelatedPatients: z.coerce.boolean().optional().default(false),
+};
+
+/**
+ * Enrichment fields for user-related data.
+ */
+export const UserEnrichmentFields = {
+  includeRelatedUsers: z.coerce.boolean().optional().default(false),
+};
+
+/**
+ * Filter fields for patient-specific queries.
+ */
+export const PatientFilterFields = {
+  patientId: z.string().uuid(messages.INVALID_UUID).optional(),
+};
+
+/**
+ * Filter fields for user-specific queries.
+ */
+export const UserFilterFields = {
+  userId: z.string().uuid(messages.INVALID_UUID).optional(),
+};
+
+/**
  * Main schema for paginated and filtered list requests.
  *
  * Defines all standard fields for pagination, sorting, searching, and date filtering in list endpoints.
  * Used for validating query params in list APIs and forms throughout the application.
  */
-export const QuerySchema = z.object({
-  skip: z.coerce.number().min(0).optional().default(0),
-  take: z.coerce.number().min(1).max(100).optional().default(10),
-  orderBy: z.string().optional(),
-  orderDir: z.enum(['asc', 'desc']).optional().default('asc'),
-  search: z.string().optional(),
-  searchBy: z.string().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
-  timezoneOffset: z.string().optional(),
-  includeRelatedPatients: z.coerce.boolean().optional().default(false),
-  includeRelatedUsers: z.coerce.boolean().optional().default(false),
-  includeDeleted: z.coerce.boolean().optional().default(false),
-});
+export function createQuerySchema(
+  sortableFields: readonly string[] = [],
+  searchableFields: readonly string[] = []
+) {
+  return z.object({
+    skip: z.coerce.number().min(0).optional().default(0),
+    take: z.coerce.number().min(1).max(100).optional().default(10),
+    orderBy: z
+      .string()
+      .optional()
+      .refine(
+        (val) =>
+          !val || sortableFields.length === 0 || sortableFields.includes(val),
+        {
+          message: `Invalid sort field. Valid fields: ${sortableFields.join(
+            ', '
+          )}`,
+        }
+      ),
+    orderDir: z.enum(['asc', 'desc']).optional().default('asc'),
+    search: z.string().optional(),
+    searchBy: z
+      .string()
+      .optional()
+      .refine(
+        (val) =>
+          !val ||
+          searchableFields.length === 0 ||
+          searchableFields.includes(val),
+        {
+          message: `Invalid search field. Valid fields: ${searchableFields.join(
+            ', '
+          )}`,
+        }
+      ),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+    timezoneOffset: z.string().optional(),
+    includeDeleted: z.coerce.boolean().optional().default(false),
+  });
+}
+
+export const QuerySchema = createQuerySchema();
 
 /**
  * Type for query form usage.

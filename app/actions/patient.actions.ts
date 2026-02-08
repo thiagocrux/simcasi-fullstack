@@ -7,14 +7,12 @@ import { FindPatientsOutput } from '@/core/application/contracts/patient/find-pa
 import { GetPatientOutput } from '@/core/application/contracts/patient/get-patient-by-id.contract';
 import { RegisterPatientOutput } from '@/core/application/contracts/patient/register-patient.contract';
 import { UpdatePatientOutput } from '@/core/application/contracts/patient/update-patient.contract';
-import {
-  IdSchema,
-  QueryInput,
-  QuerySchema,
-} from '@/core/application/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreatePatientInput,
+  PatientQueryInput,
   UpdatePatientInput,
+  patientQuerySchema,
   patientSchema,
 } from '@/core/application/validation/schemas/patient.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
@@ -36,11 +34,11 @@ import {
  * Fetch a paginated list of patients with optional search filtering.
  */
 export async function findPatients(
-  query?: QueryInput
+  query?: PatientQueryInput
 ): Promise<ActionResponse<FindPatientsOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:patient'], async () => {
-    // 1. Validate query input.
-    const parsed = QuerySchema.safeParse(query);
+    // 1. Validate query input using centralized entity schema.
+    const parsed = patientQuerySchema.safeParse(query);
 
     // 2. Initialize use case.
     const useCase = makeFindPatientsUseCase();

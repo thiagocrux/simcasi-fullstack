@@ -1,3 +1,32 @@
+/**
+ * Fields of the Patient entity that are allowed for sorting in list requests.
+ */
+export const PATIENT_SORTABLE_FIELDS = [
+  'id',
+  'susCardNumber',
+  'name',
+  'cpf',
+  'socialName',
+  'birthDate',
+  'createdAt',
+  'updatedAt',
+  'motherName',
+] as const;
+
+/**
+ * Fields of the Patient entity that are allowed for text search.
+ */
+export const PATIENT_SEARCHABLE_FIELDS = [
+  'name',
+  'cpf',
+  'susCardNumber',
+  'socialName',
+  'motherName',
+] as const;
+
+/**
+ * List of gender identity options for patient registration.
+ */
 export const GENDER_OPTIONS = [
   { label: 'Feminino', value: 'Feminino' },
   { label: 'Masculino', value: 'Masculino' },
@@ -5,11 +34,17 @@ export const GENDER_OPTIONS = [
   { label: 'Não declarado', value: 'Não declarado' },
 ];
 
+/**
+ * List of nationality options for patient registration.
+ */
 export const NATIONALITY_OPTIONS = [
   { label: 'Brasileira', value: 'Brasileira' },
   { label: 'Estrangeira', value: 'Estrangeira' },
 ];
 
+/**
+ * List of race/ethnicity options for patient registration.
+ */
 export const RACE_OPTIONS = [
   { label: 'Branca', value: 'Branca' },
   { label: 'Preta', value: 'Preta' },
@@ -19,6 +54,9 @@ export const RACE_OPTIONS = [
   { label: 'Não declarado', value: 'Não declarado' },
 ];
 
+/**
+ * List of biological sex options for patient registration.
+ */
 export const SEX_OPTIONS = [
   { label: 'Feminino', value: 'Feminino' },
   { label: 'Masculino', value: 'Masculino' },
@@ -26,6 +64,9 @@ export const SEX_OPTIONS = [
   { label: 'Não declarado', value: 'Não declarado' },
 ];
 
+/**
+ * List of sexual orientation options for patient registration.
+ */
 export const SEXUALITY_OPTIONS = [
   { label: 'Heterossexual', value: 'Heterossexual' },
   { label: 'Homossexual', value: 'Homossexual' },
@@ -35,6 +76,9 @@ export const SEXUALITY_OPTIONS = [
   { label: 'Não declarado', value: 'Não declarado' },
 ];
 
+/**
+ * List of education/schooling level options for patient registration.
+ */
 export const SCHOOLING_OPTIONS = [
   { label: 'Analfabeto', value: 'Analfabeto' },
   { label: 'Fundamental incompleto', value: 'Fundamental incompleto' },

@@ -1,3 +1,4 @@
+import { notificationQuerySchema } from '@/core/application/validation/schemas/notification.schema';
 import { User } from '@/core/domain/entities/user.entity';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
@@ -21,25 +22,33 @@ export class FindNotificationsUseCase implements UseCase<
     private readonly patientRepository: PatientRepository
   ) {}
 
+  /**
+   * Executes the use case to find notifications.
+   */
   async execute(
     input: FindNotificationsInput
   ): Promise<FindNotificationsOutput> {
-    const { items, total } = await this.notificationRepository.findAll(input);
+    const validatedInput = notificationQuerySchema.parse(
+      input
+    ) as FindNotificationsInput;
 
-    // Extract unique user and patient IDs if requested
+    const { items, total } =
+      await this.notificationRepository.findAll(validatedInput);
+
     const userIds = new Set<string>();
     const patientIds = new Set<string>();
 
     items.forEach((item) => {
-      if (input.includeRelatedUsers) {
+      if (validatedInput.includeRelatedUsers) {
         if (item.createdBy) userIds.add(item.createdBy);
         if (item.updatedBy) userIds.add(item.updatedBy);
       }
-      if (input.includeRelatedPatients) {
+      if (validatedInput.includeRelatedPatients) {
         if (item.patientId) patientIds.add(item.patientId);
       }
     });
 
+    // Fetch related users and patients in parallel for enrichment
     const [relatedUsers, relatedPatients] = await Promise.all([
       userIds.size > 0
         ? this.userRepository.findByIds(Array.from(userIds))
@@ -49,7 +58,6 @@ export class FindNotificationsUseCase implements UseCase<
         : Promise.resolve([]),
     ]);
 
-    // Sanitize users
     const sanitizedUsers = relatedUsers.map((user) => {
       const { password: _, ...rest } = user;
       return rest;
@@ -58,8 +66,10 @@ export class FindNotificationsUseCase implements UseCase<
     return {
       items,
       total,
-      ...(input.includeRelatedUsers && { relatedUsers: sanitizedUsers }),
-      ...(input.includeRelatedPatients && { relatedPatients }),
+      ...(validatedInput.includeRelatedUsers && {
+        relatedUsers: sanitizedUsers,
+      }),
+      ...(validatedInput.includeRelatedPatients && { relatedPatients }),
     };
   }
 }

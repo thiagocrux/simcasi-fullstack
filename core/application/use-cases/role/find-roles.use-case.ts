@@ -1,3 +1,4 @@
+import { roleQuerySchema } from '@/core/application/validation/schemas/role.schema';
 import { Role } from '@/core/domain/entities/role.entity';
 import { User } from '@/core/domain/entities/user.entity';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
@@ -20,24 +21,28 @@ export class FindRolesUseCase implements UseCase<
     private readonly userRepository: UserRepository
   ) {}
 
+  /**
+   * Executes the use case to find roles.
+   */
   async execute(input: FindRolesInput): Promise<FindRolesOutput> {
-    const { items, total } = await this.roleRepository.findAll(input);
+    const validatedInput = roleQuerySchema.parse(input) as FindRolesInput;
 
-    // Extract unique user IDs if requested
+    const { items, total } = await this.roleRepository.findAll(validatedInput);
+
     const userIds = new Set<string>();
-    if (input.includeRelatedUsers) {
+    if (validatedInput.includeRelatedUsers) {
       items.forEach((item: Role) => {
         if (item.createdBy) userIds.add(item.createdBy);
         if (item.updatedBy) userIds.add(item.updatedBy);
       });
     }
 
+    // Fetch and sanitize related users if requested
     const relatedUsers =
       userIds.size > 0
         ? await this.userRepository.findByIds(Array.from(userIds))
         : [];
 
-    // Sanitize users
     const sanitizedUsers = relatedUsers.map((user) => {
       const { password: _, ...rest } = user;
       return rest;
@@ -46,7 +51,9 @@ export class FindRolesUseCase implements UseCase<
     return {
       items,
       total,
-      ...(input.includeRelatedUsers && { relatedUsers: sanitizedUsers }),
+      ...(validatedInput.includeRelatedUsers && {
+        relatedUsers: sanitizedUsers,
+      }),
     };
   }
 }

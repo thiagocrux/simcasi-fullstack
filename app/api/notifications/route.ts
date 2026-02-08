@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 
-import { PAGINATION } from '@/core/domain/constants/pagination.constants';
 import {
   makeFindNotificationsUseCase,
   makeRegisterNotificationUseCase,
@@ -14,35 +13,9 @@ import { withAuthentication } from '@/lib/api.utils';
 export const GET = withAuthentication(
   ['read:notification'],
   async (request) => {
-    const { searchParams } = new URL(request.url);
-    const page = Number(searchParams.get('page')) || PAGINATION.DEFAULT_PAGE;
-    const limit = Math.min(
-      Number(searchParams.get('limit')) || PAGINATION.DEFAULT_LIMIT,
-      PAGINATION.MAX_LIMIT
-    );
-    const timezoneOffset =
-      request.headers.get('x-timezone-offset') ||
-      searchParams.get('timezoneOffset') ||
-      undefined;
-
+    const searchParams = Object.fromEntries(request.nextUrl.searchParams);
     const useCase = makeFindNotificationsUseCase();
-
-    const result = await useCase.execute({
-      skip: (page - 1) * limit,
-      take: limit,
-      orderBy: searchParams.get('orderBy') || undefined,
-      orderDir: (searchParams.get('orderDir') as 'asc' | 'desc') || 'asc',
-      search: searchParams.get('search') || undefined,
-      searchBy: searchParams.get('searchBy') || undefined,
-      startDate: searchParams.get('startDate') || undefined,
-      endDate: searchParams.get('endDate') || undefined,
-      timezoneOffset,
-      patientId: searchParams.get('patientId') || undefined,
-      includeRelatedUsers: searchParams.get('includeRelatedUsers') === 'true',
-      includeRelatedPatients:
-        searchParams.get('includeRelatedPatients') === 'true',
-      includeDeleted: searchParams.get('includeDeleted') === 'true',
-    });
+    const result = await useCase.execute(searchParams);
 
     return NextResponse.json(result);
   }

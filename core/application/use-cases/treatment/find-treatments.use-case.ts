@@ -1,3 +1,4 @@
+import { treatmentQuerySchema } from '@/core/application/validation/schemas/treatment.schema';
 import { User } from '@/core/domain/entities/user.entity';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
@@ -21,10 +22,17 @@ export class FindTreatmentsUseCase implements UseCase<
     private readonly patientRepository: PatientRepository
   ) {}
 
+  /**
+   * Executes the use case to find treatments.
+   */
   async execute(input: FindTreatmentsInput): Promise<FindTreatmentsOutput> {
-    const { items, total } = await this.treatmentRepository.findAll(input);
+    const validatedInput = treatmentQuerySchema.parse(
+      input
+    ) as FindTreatmentsInput;
 
-    // Extract unique user and patient IDs if requested
+    const { items, total } =
+      await this.treatmentRepository.findAll(validatedInput);
+
     const userIds = new Set<string>();
     const patientIds = new Set<string>();
 
@@ -38,6 +46,7 @@ export class FindTreatmentsUseCase implements UseCase<
       }
     });
 
+    // Fetch related users and patients in parallel for enrichment
     const [relatedUsers, relatedPatients] = await Promise.all([
       userIds.size > 0
         ? this.userRepository.findByIds(Array.from(userIds))
@@ -47,7 +56,6 @@ export class FindTreatmentsUseCase implements UseCase<
         : Promise.resolve([]),
     ]);
 
-    // Sanitize users (remove passwords)
     const sanitizedUsers = relatedUsers.map((user) => {
       const { password: _, ...rest } = user;
       return rest;

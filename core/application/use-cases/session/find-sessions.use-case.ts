@@ -1,3 +1,4 @@
+import { sessionQuerySchema } from '@/core/application/validation/schemas/session.schema';
 import { User } from '@/core/domain/entities/user.entity';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
@@ -19,23 +20,28 @@ export class FindSessionsUseCase implements UseCase<
     private readonly userRepository: UserRepository
   ) {}
 
+  /**
+   * Executes the use case to find sessions.
+   */
   async execute(input: FindSessionsInput): Promise<FindSessionsOutput> {
-    const { items, total } = await this.sessionRepository.findAll(input);
+    const validatedInput = sessionQuerySchema.parse(input) as FindSessionsInput;
 
-    // Extract unique user IDs from sessions if requested
+    const { items, total } =
+      await this.sessionRepository.findAll(validatedInput);
+
     const userIds = new Set<string>();
-    if (input.includeRelatedUsers) {
+    if (validatedInput.includeRelatedUsers) {
       items.forEach((item) => {
         if (item.userId) userIds.add(item.userId);
       });
     }
 
+    // Fetch and sanitize related users if requested
     const relatedUsers =
       userIds.size > 0
         ? await this.userRepository.findByIds(Array.from(userIds))
         : [];
 
-    // Sanitize users
     const sanitizedUsers = relatedUsers.map((user) => {
       const { password: _, ...rest } = user;
       return rest;
@@ -52,7 +58,9 @@ export class FindSessionsUseCase implements UseCase<
         deletedAt: session.deletedAt ?? null,
       })),
       total,
-      ...(input.includeRelatedUsers && { relatedUsers: sanitizedUsers }),
+      ...(validatedInput.includeRelatedUsers && {
+        relatedUsers: sanitizedUsers,
+      }),
     };
   }
 }

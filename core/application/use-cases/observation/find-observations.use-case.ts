@@ -1,3 +1,4 @@
+import { observationQuerySchema } from '@/core/application/validation/schemas/observation.schema';
 import { User } from '@/core/domain/entities/user.entity';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
@@ -21,23 +22,31 @@ export class FindObservationsUseCase implements UseCase<
     private readonly patientRepository: PatientRepository
   ) {}
 
+  /**
+   * Executes the use case to find observations.
+   */
   async execute(input: FindObservationsInput): Promise<FindObservationsOutput> {
-    const { items, total } = await this.observationRepository.findAll(input);
+    const validatedInput = observationQuerySchema.parse(
+      input
+    ) as FindObservationsInput;
 
-    // Extract unique user and patient IDs if requested
+    const { items, total } =
+      await this.observationRepository.findAll(validatedInput);
+
     const userIds = new Set<string>();
     const patientIds = new Set<string>();
 
     items.forEach((item) => {
-      if (input.includeRelatedUsers) {
+      if (validatedInput.includeRelatedUsers) {
         if (item.createdBy) userIds.add(item.createdBy);
         if (item.updatedBy) userIds.add(item.updatedBy);
       }
-      if (input.includeRelatedPatients) {
+      if (validatedInput.includeRelatedPatients) {
         if (item.patientId) patientIds.add(item.patientId);
       }
     });
 
+    // Fetch related users and patients in parallel for enrichment
     const [relatedUsers, relatedPatients] = await Promise.all([
       userIds.size > 0
         ? this.userRepository.findByIds(Array.from(userIds))
@@ -47,7 +56,6 @@ export class FindObservationsUseCase implements UseCase<
         : Promise.resolve([]),
     ]);
 
-    // Sanitize users
     const sanitizedUsers = relatedUsers.map((user) => {
       const { password: _, ...rest } = user;
       return rest;
@@ -56,8 +64,10 @@ export class FindObservationsUseCase implements UseCase<
     return {
       items,
       total,
-      ...(input.includeRelatedUsers && { relatedUsers: sanitizedUsers }),
-      ...(input.includeRelatedPatients && { relatedPatients }),
+      ...(validatedInput.includeRelatedUsers && {
+        relatedUsers: sanitizedUsers,
+      }),
+      ...(validatedInput.includeRelatedPatients && { relatedPatients }),
     };
   }
 }

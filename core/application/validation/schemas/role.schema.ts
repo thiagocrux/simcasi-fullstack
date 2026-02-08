@@ -1,6 +1,12 @@
 import { z } from 'zod';
 
+import {
+  ROLE_SEARCHABLE_FIELDS,
+  ROLE_SORTABLE_FIELDS,
+} from '@/core/domain/constants/role.constants';
+
 import { messages } from '../messages';
+import { createQuerySchema, UserEnrichmentFields } from './common.schema';
 
 /**
  * Main schema for role entity validation.
@@ -20,7 +26,26 @@ export const roleSchema = z.object({
    */
   permissionIds: z.array(z.uuid()).optional(),
 });
+/**
+ * Standardized query schema for listing roles.
+ *
+ * Includes standard pagination, sorting, search, and fragments for:
+ * - User enrichment (includeRelatedUsers)
+ */
+export const roleQuerySchema = createQuerySchema(
+  ROLE_SORTABLE_FIELDS,
+  ROLE_SEARCHABLE_FIELDS
+).extend({
+  ...UserEnrichmentFields,
+});
 
+/**
+ * Type for role query input.
+ *
+ * Includes filters, pagination, and sorting for listing roles.
+ * Used in server actions and use cases.
+ */
+export type RoleQueryInput = Partial<z.infer<typeof roleQuerySchema>>;
 /**
  * Type for role creation.
  *

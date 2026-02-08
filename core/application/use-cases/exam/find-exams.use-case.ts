@@ -1,3 +1,4 @@
+import { examQuerySchema } from '@/core/application/validation/schemas/exam.schema';
 import { User } from '@/core/domain/entities/user.entity';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
@@ -21,10 +22,14 @@ export class FindExamsUseCase implements UseCase<
     private readonly patientRepository: PatientRepository
   ) {}
 
+  /**
+   * Executes the use case to find exams.
+   */
   async execute(input: FindExamsInput): Promise<FindExamsOutput> {
-    const { items, total } = await this.examRepository.findAll(input);
+    const validatedInput = examQuerySchema.parse(input) as FindExamsInput;
 
-    // Extract unique user and patient IDs if requested
+    const { items, total } = await this.examRepository.findAll(validatedInput);
+
     const userIds = new Set<string>();
     const patientIds = new Set<string>();
 
@@ -38,6 +43,7 @@ export class FindExamsUseCase implements UseCase<
       }
     });
 
+    // Fetch related users and patients in parallel for enrichment
     const [relatedUsers, relatedPatients] = await Promise.all([
       userIds.size > 0
         ? this.userRepository.findByIds(Array.from(userIds))
@@ -47,7 +53,6 @@ export class FindExamsUseCase implements UseCase<
         : Promise.resolve([]),
     ]);
 
-    // Sanitize users
     const sanitizedUsers = relatedUsers.map((user) => {
       const { password: _, ...rest } = user;
       return rest;

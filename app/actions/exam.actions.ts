@@ -2,14 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 
-import {
-  IdSchema,
-  QueryInput,
-  QuerySchema,
-} from '@/core/application/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreateExamInput,
+  ExamQueryInput,
   UpdateExamInput,
+  examQuerySchema,
   examSchema,
 } from '@/core/application/validation/schemas/exam.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
@@ -23,12 +21,13 @@ import {
 } from '@/core/infrastructure/factories/exam.factory';
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
-export async function findExams(query?: QueryInput & { patientId?: string }) {
+/**
+ * Fetch a paginated list of exams with optional search filtering.
+ */
+export async function findExams(query?: ExamQueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:exam'], async () => {
-    // 1. Validate query input.
-    const parsed = QuerySchema.extend({
-      patientId: IdSchema.optional(),
-    }).safeParse(query);
+    // 1. Validate query input using centralized entity schema.
+    const parsed = examQuerySchema.safeParse(query);
 
     // 2. Initialize use case.
     const findExamsUseCase = makeFindExamsUseCase();

@@ -165,6 +165,7 @@ export function TreatmentsTable({
       'find-treatments',
       pagination,
       searchValue,
+      selectedFilterOption,
       sorting,
       mounted,
       dateFilter,
@@ -186,6 +187,8 @@ export function TreatmentsTable({
         startDate: dateFilter?.start,
         endDate: dateFilter?.end,
         timezoneOffset: getTimezoneOffset(),
+        includeRelatedPatients: true,
+        includeRelatedUsers: true,
       });
     },
     enabled: mounted,

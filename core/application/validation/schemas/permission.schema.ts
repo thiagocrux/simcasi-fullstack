@@ -1,6 +1,12 @@
 import { z } from 'zod';
 
+import {
+  PERMISSION_SEARCHABLE_FIELDS,
+  PERMISSION_SORTABLE_FIELDS,
+} from '@/core/domain/constants/permission.constants';
+
 import { messages } from '../messages';
+import { createQuerySchema, UserEnrichmentFields } from './common.schema';
 
 /**
  * Main schema for permission entity validation.
@@ -20,7 +26,28 @@ export const permissionSchema = z.object({
    */
   roleIds: z.array(z.uuid()).optional(),
 });
+/**
+ * Standardized query schema for listing permissions.
+ *
+ * Includes standard pagination, sorting, search, and fragments for:
+ * - User enrichment (includeRelatedUsers)
+ */
+export const permissionQuerySchema = createQuerySchema(
+  PERMISSION_SORTABLE_FIELDS,
+  PERMISSION_SEARCHABLE_FIELDS
+).extend({
+  ...UserEnrichmentFields,
+});
 
+/**
+ * Type for permission query input.
+ *
+ * Includes filters, pagination, and sorting for listing permissions.
+ * Used in server actions and use cases.
+ */
+export type PermissionQueryInput = Partial<
+  z.infer<typeof permissionQuerySchema>
+>;
 /**
  * Type for permission creation.
  *

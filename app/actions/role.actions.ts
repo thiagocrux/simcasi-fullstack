@@ -2,14 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 
-import {
-  IdSchema,
-  QueryInput,
-  QuerySchema,
-} from '@/core/application/validation/schemas/common.schema';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreateRoleInput,
+  RoleQueryInput,
   UpdateRoleInput,
+  roleQuerySchema,
   roleSchema,
 } from '@/core/application/validation/schemas/role.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
@@ -28,9 +26,9 @@ import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
  * Fetch a paginated list of all roles.
  * Useful for administrative views and role selection components.
  */
-export async function findRoles(query?: QueryInput) {
+export async function findRoles(query?: RoleQueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:role'], async () => {
-    const parsed = QuerySchema.safeParse(query);
+    const parsed = roleQuerySchema.safeParse(query);
     const useCase = makeFindRolesUseCase();
     return await useCase.execute(parsed.data || {});
   });

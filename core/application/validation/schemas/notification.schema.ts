@@ -1,7 +1,18 @@
 import * as z from 'zod';
 
+import {
+  NOTIFICATION_SEARCHABLE_FIELDS,
+  NOTIFICATION_SORTABLE_FIELDS,
+} from '@/core/domain/constants/notification.constants';
+
 import { messages } from '../messages';
 import { regex } from '../regex';
+import {
+  createQuerySchema,
+  PatientEnrichmentFields,
+  PatientFilterFields,
+  UserEnrichmentFields,
+} from './common.schema';
 
 /**
  * Main schema for notification entity validation.
@@ -17,6 +28,31 @@ export const notificationSchema = z.object({
     .regex(regex.SINAN, messages.INVALID_SINAN),
   observations: z.string().optional(),
 });
+
+/**
+ * Standardized query schema for listing notifications.
+ *
+ * Includes standard pagination, sorting, search, and fragments for:
+ * - Patent filtering (patientId)
+ * - Patient enrichment (includeRelatedPatients)
+ * - User enrichment (includeRelatedUsers)
+ */
+export const notificationQuerySchema = createQuerySchema(
+  NOTIFICATION_SORTABLE_FIELDS,
+  NOTIFICATION_SEARCHABLE_FIELDS
+).extend({
+  ...PatientFilterFields,
+  ...PatientEnrichmentFields,
+  ...UserEnrichmentFields,
+});
+
+/**
+ * Type for notification list queries.
+ * Used to type filters, pagination and search parameters.
+ */
+export type NotificationQueryInput = Partial<
+  z.infer<typeof notificationQuerySchema>
+>;
 
 /**
  * Type for notification creation.

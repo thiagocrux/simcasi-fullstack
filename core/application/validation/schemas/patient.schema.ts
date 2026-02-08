@@ -3,13 +3,17 @@ import * as z from 'zod';
 import {
   GENDER_OPTIONS,
   NATIONALITY_OPTIONS,
+  PATIENT_SEARCHABLE_FIELDS,
+  PATIENT_SORTABLE_FIELDS,
   RACE_OPTIONS,
   SCHOOLING_OPTIONS,
   SEX_OPTIONS,
   SEXUALITY_OPTIONS,
 } from '@/core/domain/constants/patient.constants';
+
 import { messages } from '../messages';
 import { regex } from '../regex';
+import { createQuerySchema, UserEnrichmentFields } from './common.schema';
 
 /**
  * Main schema for patient entity validation.
@@ -113,3 +117,22 @@ export type UpdatePatientInput = Partial<z.infer<typeof patientSchema>> & {
  * - Used to type patient creation/edit forms (e.g., with React Hook Form).
  */
 export type PatientFormInput = z.infer<typeof patientSchema>;
+
+/**
+ * Standardized query schema for listing patients.
+ *
+ * Includes standard pagination, sorting, search, and fragments for:
+ * - User enrichment (includeRelatedUsers)
+ */
+export const patientQuerySchema = createQuerySchema(
+  PATIENT_SORTABLE_FIELDS,
+  PATIENT_SEARCHABLE_FIELDS
+).extend({
+  ...UserEnrichmentFields,
+});
+
+/**
+ * Type for patient list queries.
+ * Used to type filters, pagination and search parameters.
+ */
+export type PatientQueryInput = Partial<z.infer<typeof patientQuerySchema>>;
