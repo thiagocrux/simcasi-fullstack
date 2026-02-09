@@ -1,6 +1,6 @@
 'use client';
 
-import { Patient } from '@prisma/client';
+import { Patient, User } from '@prisma/client';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import {
   getCoreRowModel,
@@ -30,14 +30,21 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { deletePatient, findPatients } from '@/app/actions/patient.actions';
+import { FindPatientsOutput } from '@/core/application/contracts/patient/find-patients.contract';
 import { usePermission } from '@/hooks/usePermission';
+import { ActionResponse } from '@/lib/actions.utils';
 import { exportToCsv } from '@/lib/csv.utils';
 import {
   applyMask,
   formatCalendarDate,
   formatDate,
 } from '@/lib/formatters.utils';
-import { getTimezoneOffset, renderOrFallback } from '@/lib/shared.utils';
+import { logger } from '@/lib/logger.utils';
+import {
+  findRecordById,
+  getTimezoneOffset,
+  renderOrFallback,
+} from '@/lib/shared.utils';
 import { getNextSortDirection } from '@/lib/sort.utils';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
@@ -54,6 +61,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../../ui/dropdown-menu';
+import { UserPreviewDialog } from '../users/UserPreviewDialog';
 
 interface PatientsTableProps {
   pageSize?: number;
@@ -191,8 +199,8 @@ export function PatientsTable({
   const {
     data: patientList,
     refetch: refetchPatientList,
-    isPending,
-    error,
+    isPending: isPatientListPending,
+    error: patientListError,
   } = useQuery({
     queryKey: [
       'find-patients',
@@ -204,7 +212,10 @@ export function PatientsTable({
     ],
     queryFn: async () => {
       if (!mounted) {
-        return { success: true, data: { items: [], total: 0 } };
+        return {
+          success: true,
+          data: { items: [], total: 0 },
+        } as ActionResponse<FindPatientsOutput>;
       }
 
       return await findPatients({
@@ -230,10 +241,17 @@ export function PatientsTable({
       return patientList.data.items;
     }
     if (patientList && !patientList.success) {
-      console.error('Error fetching patients:', error);
+      logger.error('Error fetching patients:', patientListError);
     }
     return [];
-  }, [patientList, error]);
+  }, [patientList, patientListError]);
+
+  const relatedUsers = useMemo(() => {
+    if (patientList?.success) {
+      return patientList.data.relatedUsers;
+    }
+    return [];
+  }, [patientList]);
 
   const handleDelete = useCallback(
     (id: string) => {
@@ -1099,18 +1117,28 @@ export function PatientsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('createdBy'), (value) => (
-              <HighlightedText
-                text={value as string}
-                highlight={
-                  selectedFilterOption === 'createdBy' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const user = findRecordById(
+            relatedUsers || [],
+            row.getValue('createdBy')
+          );
+
+          return (
+            <UserPreviewDialog
+              title="Informações do criador"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              user={user as Omit<User, 'password'>}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {user?.name}
+              </Button>
+            </UserPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'createdAt',
@@ -1171,18 +1199,28 @@ export function PatientsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('updatedBy'), (value) => (
-              <HighlightedText
-                text={String(value)}
-                highlight={
-                  selectedFilterOption === 'updatedBy' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const user = findRecordById(
+            relatedUsers || [],
+            row.getValue('updatedBy')
+          );
+
+          return (
+            <UserPreviewDialog
+              title="Informações do editor"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              user={user as Omit<User, 'password'>}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {user?.name}
+              </Button>
+            </UserPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'updatedAt',
@@ -1279,12 +1317,13 @@ export function PatientsTable({
       },
     ];
   }, [
+    showIdColumn,
     selectedFilterOption,
     searchValue,
+    relatedUsers,
+    can,
     router,
     handleDelete,
-    showIdColumn,
-    can,
   ]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -1356,7 +1395,7 @@ export function PatientsTable({
         </AppTableToolbar>
       )}
 
-      {isPending ? (
+      {isPatientListPending ? (
         <CustomSkeleton variant="item-list" />
       ) : hasRows || isFiltering ? (
         <>

@@ -28,10 +28,19 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { deleteExam, findExams } from '@/app/actions/exam.actions';
+import { FindExamsOutput } from '@/core/application/contracts/exam/find-exams.contract';
+import { Patient } from '@/core/domain/entities/patient.entity';
+import { User } from '@/core/domain/entities/user.entity';
 import { usePermission } from '@/hooks/usePermission';
+import { ActionResponse } from '@/lib/actions.utils';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatCalendarDate, formatDate } from '@/lib/formatters.utils';
-import { getTimezoneOffset, renderOrFallback } from '@/lib/shared.utils';
+import { logger } from '@/lib/logger.utils';
+import {
+  findRecordById,
+  getTimezoneOffset,
+  renderOrFallback,
+} from '@/lib/shared.utils';
 import { getNextSortDirection } from '@/lib/sort.utils';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
@@ -49,6 +58,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../../ui/dropdown-menu';
+import { PatientPreviewDialog } from '../patients/PatientPreviewDialog';
+import { UserPreviewDialog } from '../users/UserPreviewDialog';
 
 interface ExamsTableProps {
   pageSize?: number;
@@ -89,7 +100,7 @@ const COLUMN_LABELS: Record<Column, string> = {
   nontreponemalTestTitration: 'Titulação do teste não treponêmico',
   nontreponemalTestDate: 'Data do teste não treponêmico',
   otherNontreponemalTest: 'Outro teste não treponêmico',
-  otherNontreponemalTestDate: 'Data de outro teste não treponêmico',
+  otherNontreponemalTestDate: 'Data do outro teste não treponêmico',
   referenceObservations: 'Observações de referência',
   createdBy: 'Criado por',
   createdAt: 'Criado em',
@@ -159,7 +170,8 @@ export function ExamsTable({
   const {
     data: examList,
     refetch: refetchExamList,
-    isPending,
+    isPending: isExamListPending,
+    error: examListError,
   } = useQuery({
     queryKey: [
       'find-exams',
@@ -171,7 +183,13 @@ export function ExamsTable({
       dateFilter,
     ],
     queryFn: async () => {
-      if (!mounted) return { success: true, data: { items: [], total: 0 } };
+      if (!mounted) {
+        return {
+          success: true,
+          data: { items: [], total: 0 },
+        } as ActionResponse<FindExamsOutput>;
+      }
+
       return await findExams({
         skip: pagination.pageIndex * pagination.pageSize,
         take: pagination.pageSize,
@@ -195,6 +213,23 @@ export function ExamsTable({
   const exams = useMemo(() => {
     if (examList?.success) {
       return examList.data.items;
+    }
+    if (examList && !examList.success) {
+      logger.error('Error fetching patients:', examListError);
+    }
+    return [];
+  }, [examList, examListError]);
+
+  const relatedUsers = useMemo(() => {
+    if (examList?.success) {
+      return examList.data.relatedUsers;
+    }
+    return [];
+  }, [examList]);
+
+  const relatedPatients = useMemo(() => {
+    if (examList?.success) {
+      return examList.data.relatedPatients;
     }
     return [];
   }, [examList]);
@@ -596,7 +631,7 @@ export function ExamsTable({
             }}
             className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Data de outro teste não treponêmico
+            Data do outro teste não treponêmico
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -689,18 +724,28 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('patientId'), (value) => (
-              <HighlightedText
-                text={String(value)}
-                highlight={
-                  selectedFilterOption === 'patientId' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const patient = findRecordById(
+            relatedPatients || [],
+            row.getValue('patientId')
+          );
+
+          return (
+            <PatientPreviewDialog
+              title="Informações do paciente"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              patient={patient as Patient}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {patient?.name}
+              </Button>
+            </PatientPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'createdBy',
@@ -726,18 +771,28 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('createdBy'), (value) => (
-              <HighlightedText
-                text={String(value)}
-                highlight={
-                  selectedFilterOption === 'createdBy' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const user = findRecordById(
+            relatedUsers || [],
+            row.getValue('createdBy')
+          );
+
+          return (
+            <UserPreviewDialog
+              title="Informações do criador"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              user={user as Omit<User, 'password'>}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {user?.name}
+              </Button>
+            </UserPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'createdAt',
@@ -804,18 +859,28 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('updatedBy'), (value) => (
-              <HighlightedText
-                text={String(value)}
-                highlight={
-                  selectedFilterOption === 'updatedBy' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const user = findRecordById(
+            relatedUsers || [],
+            row.getValue('updatedBy')
+          );
+
+          return (
+            <UserPreviewDialog
+              title="Informações do editor"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              user={user as Omit<User, 'password'>}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {user?.name}
+              </Button>
+            </UserPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'updatedAt',
@@ -919,12 +984,14 @@ export function ExamsTable({
       },
     ];
   }, [
+    showIdColumn,
     selectedFilterOption,
     searchValue,
+    relatedPatients,
+    relatedUsers,
+    can,
     router,
     handleDelete,
-    showIdColumn,
-    can,
   ]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -992,7 +1059,7 @@ export function ExamsTable({
         </AppTableToolbar>
       )}
 
-      {isPending ? (
+      {isExamListPending ? (
         <CustomSkeleton variant="item-list" />
       ) : hasRows || isFiltering ? (
         <>

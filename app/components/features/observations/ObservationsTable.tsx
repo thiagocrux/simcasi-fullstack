@@ -34,10 +34,19 @@ import {
   findObservations,
 } from '@/app/actions/observation.actions';
 
+import { FindObservationsOutput } from '@/core/application/contracts/observation/find-observations.contract';
+import { Patient } from '@/core/domain/entities/patient.entity';
+import { User } from '@/core/domain/entities/user.entity';
 import { usePermission } from '@/hooks/usePermission';
+import { ActionResponse } from '@/lib/actions.utils';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
-import { getTimezoneOffset, renderOrFallback } from '@/lib/shared.utils';
+import { logger } from '@/lib/logger.utils';
+import {
+  findRecordById,
+  getTimezoneOffset,
+  renderOrFallback,
+} from '@/lib/shared.utils';
 import { getNextSortDirection } from '@/lib/sort.utils';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
@@ -53,6 +62,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../../ui/dropdown-menu';
+import { PatientPreviewDialog } from '../patients/PatientPreviewDialog';
+import { UserPreviewDialog } from '../users/UserPreviewDialog';
 
 interface ObservationsTableProps {
   pageSize?: number;
@@ -144,7 +155,8 @@ export function ObservationsTable({
   const {
     data: observationList,
     refetch: refetchObservationList,
-    isPending,
+    isPending: isObservationListPending,
+    error: observationListError,
   } = useQuery({
     queryKey: [
       'find-observations',
@@ -157,7 +169,10 @@ export function ObservationsTable({
     ],
     queryFn: async () => {
       if (!mounted) {
-        return { success: true, data: { items: [], total: 0 } };
+        return {
+          success: true,
+          data: { items: [], total: 0 },
+        } as ActionResponse<FindObservationsOutput>;
       }
 
       return await findObservations({
@@ -183,6 +198,23 @@ export function ObservationsTable({
   const observations = useMemo(() => {
     if (observationList?.success) {
       return observationList.data.items;
+    }
+    if (observationList && !observationList.success) {
+      logger.error('Error fetching patients:', observationListError);
+    }
+    return [];
+  }, [observationList, observationListError]);
+
+  const relatedUsers = useMemo(() => {
+    if (observationList?.success) {
+      return observationList.data.relatedUsers;
+    }
+    return [];
+  }, [observationList]);
+
+  const relatedPatients = useMemo(() => {
+    if (observationList?.success) {
+      return observationList.data.relatedPatients;
     }
     return [];
   }, [observationList]);
@@ -334,18 +366,28 @@ export function ObservationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('patientId'), (value) => (
-              <HighlightedText
-                text={String(value)}
-                highlight={
-                  selectedFilterOption === 'patientId' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const patient = findRecordById(
+            relatedPatients || [],
+            row.getValue('patientId')
+          );
+
+          return (
+            <PatientPreviewDialog
+              title="Informações do paciente"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              patient={patient as Patient}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {patient?.name}
+              </Button>
+            </PatientPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'createdBy',
@@ -371,18 +413,28 @@ export function ObservationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('createdBy'), (value) => (
-              <HighlightedText
-                text={value as string}
-                highlight={
-                  selectedFilterOption === 'createdBy' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const user = findRecordById(
+            relatedUsers || [],
+            row.getValue('createdBy')
+          );
+
+          return (
+            <UserPreviewDialog
+              title="Informações do criador"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              user={user as Omit<User, 'password'>}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {user?.name}
+              </Button>
+            </UserPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'createdAt',
@@ -449,18 +501,28 @@ export function ObservationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('updatedBy'), (value) => (
-              <HighlightedText
-                text={String(value)}
-                highlight={
-                  selectedFilterOption === 'updatedBy' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const user = findRecordById(
+            relatedUsers || [],
+            row.getValue('updatedBy')
+          );
+
+          return (
+            <UserPreviewDialog
+              title="Informações do editor"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              user={user as Omit<User, 'password'>}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {user?.name}
+              </Button>
+            </UserPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'updatedAt',
@@ -564,12 +626,14 @@ export function ObservationsTable({
       },
     ];
   }, [
+    showIdColumn,
     selectedFilterOption,
     searchValue,
+    relatedPatients,
+    relatedUsers,
+    can,
     router,
     handleDelete,
-    showIdColumn,
-    can,
   ]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -642,7 +706,7 @@ export function ObservationsTable({
         </AppTableToolbar>
       )}
 
-      {isPending ? (
+      {isObservationListPending ? (
         <CustomSkeleton variant="item-list" />
       ) : hasRows || isFiltering ? (
         <>

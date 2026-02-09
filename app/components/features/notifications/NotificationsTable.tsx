@@ -33,10 +33,19 @@ import {
   findNotifications,
 } from '@/app/actions/notification.actions';
 
+import { FindNotificationsOutput } from '@/core/application/contracts/notification/find-notifications.contract';
+import { Patient } from '@/core/domain/entities/patient.entity';
+import { User } from '@/core/domain/entities/user.entity';
 import { usePermission } from '@/hooks/usePermission';
+import { ActionResponse } from '@/lib/actions.utils';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
-import { getTimezoneOffset, renderOrFallback } from '@/lib/shared.utils';
+import { logger } from '@/lib/logger.utils';
+import {
+  findRecordById,
+  getTimezoneOffset,
+  renderOrFallback,
+} from '@/lib/shared.utils';
 import { getNextSortDirection } from '@/lib/sort.utils';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { AppTable } from '../../common/AppTable';
@@ -53,6 +62,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../../ui/dropdown-menu';
+import { PatientPreviewDialog } from '../patients/PatientPreviewDialog';
+import { UserPreviewDialog } from '../users/UserPreviewDialog';
 
 interface NotificationsTableProps {
   pageSize?: number;
@@ -144,7 +155,8 @@ export function NotificationsTable({
   const {
     data: notificationList,
     refetch: refetchNotificationList,
-    isPending,
+    isPending: isNotificationListPending,
+    error: notificationListError,
   } = useQuery({
     queryKey: [
       'find-notifications',
@@ -157,7 +169,10 @@ export function NotificationsTable({
     ],
     queryFn: async () => {
       if (!mounted) {
-        return { success: true, data: { items: [], total: 0 } };
+        return {
+          success: true,
+          data: { items: [], total: 0 },
+        } as ActionResponse<FindNotificationsOutput>;
       }
 
       return await findNotifications({
@@ -183,6 +198,23 @@ export function NotificationsTable({
   const notifications = useMemo(() => {
     if (notificationList?.success) {
       return notificationList.data.items;
+    }
+    if (notificationList && !notificationList.success) {
+      logger.error('Error fetching patients:', notificationListError);
+    }
+    return [];
+  }, [notificationList, notificationListError]);
+
+  const relatedUsers = useMemo(() => {
+    if (notificationList?.success) {
+      return notificationList.data.relatedUsers;
+    }
+    return [];
+  }, [notificationList]);
+
+  const relatedPatients = useMemo(() => {
+    if (notificationList?.success) {
+      return notificationList.data.relatedPatients;
     }
     return [];
   }, [notificationList]);
@@ -332,18 +364,28 @@ export function NotificationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('patientId'), (value) => (
-              <HighlightedText
-                text={String(value)}
-                highlight={
-                  selectedFilterOption === 'patientId' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const patient = findRecordById(
+            relatedPatients || [],
+            row.getValue('patientId')
+          );
+
+          return (
+            <PatientPreviewDialog
+              title="Informações do paciente"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              patient={patient as Patient}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {patient?.name}
+              </Button>
+            </PatientPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'createdBy',
@@ -369,18 +411,28 @@ export function NotificationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('createdBy'), (value) => (
-              <HighlightedText
-                text={value as string}
-                highlight={
-                  selectedFilterOption === 'createdBy' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const user = findRecordById(
+            relatedUsers || [],
+            row.getValue('createdBy')
+          );
+
+          return (
+            <UserPreviewDialog
+              title="Informações do criador"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              user={user as Omit<User, 'password'>}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {user?.name}
+              </Button>
+            </UserPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'createdAt',
@@ -447,18 +499,28 @@ export function NotificationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('updatedBy'), (value) => (
-              <HighlightedText
-                text={String(value)}
-                highlight={
-                  selectedFilterOption === 'updatedBy' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const user = findRecordById(
+            relatedUsers || [],
+            row.getValue('updatedBy')
+          );
+
+          return (
+            <UserPreviewDialog
+              title="Informações do editor"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              user={user as Omit<User, 'password'>}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {user?.name}
+              </Button>
+            </UserPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'updatedAt',
@@ -564,6 +626,8 @@ export function NotificationsTable({
     showIdColumn,
     selectedFilterOption,
     searchValue,
+    relatedPatients,
+    relatedUsers,
     can,
     router,
     handleDelete,
@@ -635,7 +699,7 @@ export function NotificationsTable({
         </AppTableToolbar>
       )}
 
-      {isPending ? (
+      {isNotificationListPending ? (
         <CustomSkeleton variant="item-list" />
       ) : hasRows || isFiltering ? (
         <>

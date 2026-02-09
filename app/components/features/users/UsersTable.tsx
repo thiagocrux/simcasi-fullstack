@@ -27,11 +27,18 @@ import {
 import { useRouter } from 'next/navigation';
 
 import { deleteUser, findUsers } from '@/app/actions/user.actions';
+import { FindUsersOutput } from '@/core/application/contracts/user/find-users.contract';
 import { usePermission } from '@/hooks/usePermission';
 import { useRole } from '@/hooks/useRole';
+import { ActionResponse } from '@/lib/actions.utils';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
-import { getTimezoneOffset, renderOrFallback } from '@/lib/shared.utils';
+import { logger } from '@/lib/logger.utils';
+import {
+  findRecordById,
+  getTimezoneOffset,
+  renderOrFallback,
+} from '@/lib/shared.utils';
 import { getNextSortDirection } from '@/lib/sort.utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
@@ -49,6 +56,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../../ui/dropdown-menu';
+import { UserPreviewDialog } from './UserPreviewDialog';
 
 interface UsersTableProps {
   pageSize?: number;
@@ -139,7 +147,8 @@ export function UsersTable({
   const {
     data: userList,
     refetch: refetchUserList,
-    isPending,
+    isPending: isUserListPending,
+    error: userListError,
   } = useQuery({
     queryKey: [
       'find-users',
@@ -152,7 +161,10 @@ export function UsersTable({
     ],
     queryFn: async () => {
       if (!mounted) {
-        return { success: true, data: { items: [], total: 0 } };
+        return {
+          success: true,
+          data: { items: [], total: 0 },
+        } as ActionResponse<FindUsersOutput>;
       }
 
       return await findUsers({
@@ -176,6 +188,16 @@ export function UsersTable({
   const users = useMemo(() => {
     if (userList?.success) {
       return userList.data.items;
+    }
+    if (userList && !userList.success) {
+      logger.error('Error fetching patients:', userListError);
+    }
+    return [];
+  }, [userList, userListError]);
+
+  const relatedUsers = useMemo(() => {
+    if (userList?.success) {
+      return userList.data.relatedUsers;
     }
     return [];
   }, [userList]);
@@ -358,18 +380,28 @@ export function UsersTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('createdBy'), (value) => (
-              <HighlightedText
-                text={value as string}
-                highlight={
-                  selectedFilterOption === 'createdBy' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const user = findRecordById(
+            relatedUsers || [],
+            row.getValue('createdBy')
+          );
+
+          return (
+            <UserPreviewDialog
+              title="Informações do criador"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              user={user as Omit<User, 'password'>}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {user?.name}
+              </Button>
+            </UserPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'createdAt',
@@ -436,18 +468,28 @@ export function UsersTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('updatedBy'), (value) => (
-              <HighlightedText
-                text={value as string}
-                highlight={
-                  selectedFilterOption === 'updatedBy' ? searchValue : ''
-                }
-              />
-            ))}
-          </div>
-        ),
+        cell: ({ row }) => {
+          const user = findRecordById(
+            relatedUsers || [],
+            row.getValue('updatedBy')
+          );
+
+          return (
+            <UserPreviewDialog
+              title="Informações do editor"
+              description="Pré-visualize os detalhes e acesse o perfil completo para mais informações."
+              user={user as Omit<User, 'password'>}
+            >
+              <Button
+                variant="link"
+                size="sm"
+                className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
+              >
+                {user?.name}
+              </Button>
+            </UserPreviewDialog>
+          );
+        },
       },
       {
         accessorKey: 'updatedAt',
@@ -547,13 +589,14 @@ export function UsersTable({
       },
     ];
   }, [
-    searchValue,
-    selectedFilterOption,
-    handleDelete,
-    router,
-    getRoleLabel,
     showIdColumn,
+    selectedFilterOption,
+    searchValue,
+    getRoleLabel,
+    relatedUsers,
     can,
+    router,
+    handleDelete,
   ]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -632,7 +675,7 @@ export function UsersTable({
         </AppTableToolbar>
       )}
 
-      {isPending ? (
+      {isUserListPending ? (
         <CustomSkeleton variant="item-list" />
       ) : hasRows || isFiltering ? (
         <>
