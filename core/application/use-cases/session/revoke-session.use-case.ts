@@ -1,3 +1,7 @@
+import {
+  AUDIT_LOG_ACTION,
+  AUDIT_LOG_ENTITY,
+} from '@/core/domain/constants/audit-log.constants';
 import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
@@ -33,8 +37,8 @@ export class RevokeSessionUseCase implements UseCase<
     // Create audit log.
     await this.auditLogRepository.create({
       userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-      action: 'REVOKE_SESSION',
-      entityName: 'SESSION',
+      action: AUDIT_LOG_ACTION.REVOKE_SESSION,
+      entityName: AUDIT_LOG_ENTITY.SESSION,
       entityId: id,
       oldValues: session,
       ipAddress,

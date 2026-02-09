@@ -1,5 +1,9 @@
 import { examSchema } from '@/core/application/validation/schemas/exam.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import {
+  AUDIT_LOG_ACTION,
+  AUDIT_LOG_ENTITY,
+} from '@/core/domain/constants/audit-log.constants';
 import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
@@ -57,8 +61,8 @@ export class RegisterExamUseCase implements UseCase<
     // 4. Create audit log.
     await this.auditLogRepository.create({
       userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-      action: 'CREATE',
-      entityName: 'EXAM',
+      action: AUDIT_LOG_ACTION.CREATE,
+      entityName: AUDIT_LOG_ENTITY.EXAM,
       entityId: exam.id,
       newValues: exam,
       ipAddress,

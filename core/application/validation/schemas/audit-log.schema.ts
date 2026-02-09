@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
 import {
+  AUDIT_LOG_ACTIONS,
+  AUDIT_LOG_ENTITY_NAMES,
   AUDIT_LOG_SEARCHABLE_FIELDS,
   AUDIT_LOG_SORTABLE_FIELDS,
 } from '@/core/domain/constants/audit-log.constants';
@@ -25,8 +27,8 @@ export const auditLogQuerySchema = createQuerySchema(
 ).extend({
   ...UserFilterFields,
   ...UserEnrichmentFields,
-  action: z.string().optional(),
-  entityName: z.string().optional(),
+  action: z.enum(AUDIT_LOG_ACTIONS).optional(),
+  entityName: z.enum(AUDIT_LOG_ENTITY_NAMES).optional(),
   entityId: z.string().optional(),
 });
 

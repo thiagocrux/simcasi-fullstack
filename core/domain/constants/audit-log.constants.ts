@@ -20,3 +20,55 @@ export const AUDIT_LOG_SEARCHABLE_FIELDS = [
   'ipAddress',
   'userAgent',
 ] as const;
+
+/**
+ * Valid actions that can be recorded in the Audit Log.
+ */
+export const AUDIT_LOG_ACTIONS = [
+  'CREATE',
+  'UPDATE',
+  'DELETE',
+  'RESTORE',
+  'REVOKE_SESSION',
+] as const;
+
+/**
+ * Audit Log Actions mapped to constants for use in code.
+ */
+export const AUDIT_LOG_ACTION = {
+  CREATE: 'CREATE',
+  UPDATE: 'UPDATE',
+  DELETE: 'DELETE',
+  RESTORE: 'RESTORE',
+  REVOKE_SESSION: 'REVOKE_SESSION',
+} as const;
+
+/**
+ * Valid entity names that can be targets of Audit Log actions.
+ */
+export const AUDIT_LOG_ENTITY_NAMES = [
+  'EXAM',
+  'NOTIFICATION',
+  'SESSION',
+  'TREATMENT',
+  'PERMISSION',
+  'PATIENT',
+  'USER',
+  'OBSERVATION',
+  'ROLE',
+] as const;
+
+/**
+ * Audit Log Entity Names mapped to constants for use in code.
+ */
+export const AUDIT_LOG_ENTITY = {
+  EXAM: 'EXAM',
+  NOTIFICATION: 'NOTIFICATION',
+  SESSION: 'SESSION',
+  TREATMENT: 'TREATMENT',
+  PERMISSION: 'PERMISSION',
+  PATIENT: 'PATIENT',
+  USER: 'USER',
+  OBSERVATION: 'OBSERVATION',
+  ROLE: 'ROLE',
+} as const;

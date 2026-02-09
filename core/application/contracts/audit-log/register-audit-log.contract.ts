@@ -1,9 +1,13 @@
-import { AuditLog } from '@/core/domain/entities/audit-log.entity';
+import {
+  Action,
+  AuditLog,
+  EntityName,
+} from '@/core/domain/entities/audit-log.entity';
 
 export interface RegisterAuditLogInput {
   userId: string;
-  action: string;
-  entityName: string;
+  action: Action;
+  entityName: EntityName;
   entityId: string;
   oldValues?: unknown;
   newValues?: unknown;
