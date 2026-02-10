@@ -287,7 +287,7 @@ export function PatientsTable({
               cell: ({ row }) => (
                 <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
                   <HighlightedText
-                    text={String(row.getValue('id'))}
+                    text={String(row.original.id)}
                     highlight={selectedFilterOption === 'id' ? searchValue : ''}
                   />
                 </div>

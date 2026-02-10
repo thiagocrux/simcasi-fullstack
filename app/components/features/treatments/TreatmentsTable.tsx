@@ -270,7 +270,7 @@ export function TreatmentsTable({
               ),
               cell: ({ row }) => (
                 <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-                  {renderOrFallback(row.getValue('id'), (value) => (
+                  {renderOrFallback(row.original.id, (value) => (
                     <HighlightedText
                       text={String(value)}
                       highlight={

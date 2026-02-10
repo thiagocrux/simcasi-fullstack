@@ -548,7 +548,7 @@ export function UsersTable({
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onClick={() =>
-                    router.push(`/users/${row.getValue('id')}/details`)
+                    router.push(`/users/${row.original.id}/details`)
                   }
                 >
                   <Eye /> Ver detalhes
@@ -557,7 +557,7 @@ export function UsersTable({
                 {can('update:user') && (
                   <DropdownMenuItem
                     className="cursor-pointer"
-                    onClick={() => router.push(`/users/${row.getValue('id')}`)}
+                    onClick={() => router.push(`/users/${row.original.id}`)}
                   >
                     <Pen />
                     Editar usuário
@@ -570,7 +570,7 @@ export function UsersTable({
                     description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
                     cancelAction={{ action: () => {} }}
                     continueAction={{
-                      action: () => handleDelete(row.getValue('id')),
+                      action: () => handleDelete(String(row.original.id)),
                     }}
                   >
                     <DropdownMenuItem
