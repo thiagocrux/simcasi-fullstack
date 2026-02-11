@@ -30,15 +30,22 @@ export function useLogout() {
     // 2. Clear cookies and server-side session.
     logger.info('[CLIENT_LOGOUT] Calling Server Action signOutUser...');
     try {
-      await signOutUser();
-      logger.success('[CLIENT_LOGOUT] signOutUser success.');
+      const response = await signOutUser();
+      if (response.success) {
+        logger.success('[CLIENT_LOGOUT] signOutUser success.');
+      } else {
+        logger.error(
+          '[CLIENT_LOGOUT] signOutUser logic failed:',
+          response.error
+        );
+      }
     } catch (error) {
-      logger.error('[CLIENT_LOGOUT] signOutUser failed:', error);
+      logger.error('[CLIENT_LOGOUT] signOutUser unexpected failure:', error);
     }
 
     // 3. Redirect to login page.
-    logger.info('[CLIENT_LOGOUT] Redirecting to /auth/login...');
-    router.push('/auth/login');
+    logger.info('[CLIENT_LOGOUT] Redirecting to /auth/sign-in...');
+    router.push('/auth/sign-in');
   }
 
   return { handleLogout };

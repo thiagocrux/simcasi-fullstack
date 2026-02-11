@@ -2,7 +2,6 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 import {
   CreateSessionInput,
@@ -92,8 +91,7 @@ export async function signInUser(input: CreateSessionInput) {
 /**
  * Terminates the current user session.
  * Clears authentication cookies and attempts to invalidate the session record in the database.
- * Always redirects the user to the sign-in page.
- * @return A promise that resolves to a redirection.
+ * @return A promise that resolves to a success indicator.
  */
 export async function signOutUser() {
   try {
@@ -121,10 +119,10 @@ export async function signOutUser() {
         );
       }
     }
+    return { success: true };
   } catch (error: any) {
     logger.error('[SIGNOUT_ERROR]', error);
-  } finally {
-    redirect('/auth/sign-in');
+    return { success: false, error };
   }
 }
 
