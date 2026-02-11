@@ -2,10 +2,11 @@ import { ForbiddenError } from '@/core/domain/errors/app.error';
 import { makeValidatePermissionsUseCase } from '../factories/permission.factory';
 
 /**
- * Checks if a specific role has a permission.
- * @param roleId The ID of the role.
- * @param permissionCode The code of the permission (e.g., 'create:patient').
- * @returns True if the role has the permission, false otherwise.
+ * Checks if a specific role has the specified permission.
+ *
+ * @param roleId The unique identifier of the role to check.
+ * @param permissionCode The code representing the permission (e.g., 'create:patient').
+ * @return A promise that resolves to true if the role has the permission, false otherwise.
  */
 export async function checkPermission(
   roleId: string,
@@ -21,7 +22,14 @@ export async function checkPermission(
 }
 
 /**
- * Ensures the user has at least one of the required permissions.
+ * Authorizes a role by ensuring it has at least one of the required permissions.
+ *
+ * If the `requiredPermissions` array is empty, the authorization check is skipped.
+ *
+ * @param roleId The unique identifier of the role to authorize.
+ * @param requiredPermissions An array of permission codes required for the action.
+ * @return A promise that resolves if the role is authorized.
+ * @throws {ForbiddenError} If the role does not have any of the required permissions.
  */
 export async function authorize(
   roleId: string,
