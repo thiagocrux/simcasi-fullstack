@@ -16,6 +16,12 @@ export class FindRolesUseCase implements UseCase<
   FindRolesInput,
   FindRolesOutput
 > {
+  /**
+   * Initializes a new instance of the FindRolesUseCase class.
+   *
+   * @param roleRepository The repository for role persistence.
+   * @param userRepository The repository for user details.
+   */
   constructor(
     private readonly roleRepository: RoleRepository,
     private readonly userRepository: UserRepository
@@ -23,6 +29,9 @@ export class FindRolesUseCase implements UseCase<
 
   /**
    * Executes the use case to find roles.
+   *
+   * @param input The query parameters for finding roles.
+   * @return A promise that resolves to the paginated roles and related data.
    */
   async execute(input: FindRolesInput): Promise<FindRolesOutput> {
     const validatedInput = roleQuerySchema.parse(input) as FindRolesInput;

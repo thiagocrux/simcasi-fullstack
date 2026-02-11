@@ -17,11 +17,25 @@ export class RegisterPermissionUseCase implements UseCase<
   RegisterPermissionInput,
   RegisterPermissionOutput
 > {
+  /**
+   * Initializes a new instance of the RegisterPermissionUseCase class.
+   *
+   * @param permissionRepository The repository for permission persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly permissionRepository: PermissionRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to register a new permission.
+   *
+   * @param input The data for the new permission.
+   * @return A promise that resolves to the registered or restored permission.
+   * @throws {ValidationError} If the input data is invalid.
+   * @throws {ConflictError} If a permission with the same code already exists.
+   */
   async execute(
     input: RegisterPermissionInput
   ): Promise<RegisterPermissionOutput> {

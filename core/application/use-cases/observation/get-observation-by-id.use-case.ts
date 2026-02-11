@@ -13,8 +13,20 @@ export class GetObservationByIdUseCase implements UseCase<
   GetObservationByIdInput,
   GetObservationByIdOutput
 > {
+  /**
+   * Initializes a new instance of the GetObservationByIdUseCase class.
+   *
+   * @param observationRepository The repository for observation persistence.
+   */
   constructor(private readonly observationRepository: ObservationRepository) {}
 
+  /**
+   * Executes the use case to get an observation by its ID.
+   *
+   * @param input The data containing the observation ID.
+   * @return A promise that resolves to the found observation.
+   * @throws {NotFoundError} If the observation is not found.
+   */
   async execute(
     input: GetObservationByIdInput
   ): Promise<GetObservationByIdOutput> {

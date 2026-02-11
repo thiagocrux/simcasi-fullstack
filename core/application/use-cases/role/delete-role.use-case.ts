@@ -15,11 +15,24 @@ export class DeleteRoleUseCase implements UseCase<
   DeleteRoleInput,
   DeleteRoleOutput
 > {
+  /**
+   * Initializes a new instance of the DeleteRoleUseCase class.
+   *
+   * @param roleRepository The repository for role persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly roleRepository: RoleRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to soft delete a role.
+   *
+   * @param input The data containing the role ID and auditor info.
+   * @return A promise that resolves when the deletion is complete.
+   * @throws {NotFoundError} If the role is not found.
+   */
   async execute(input: DeleteRoleInput): Promise<DeleteRoleOutput> {
     const { id, userId, ipAddress, userAgent } = input;
 

@@ -12,6 +12,15 @@ import { UseCase } from '../use-case.interface';
  * Use case to authenticate an user and generate tokens.
  */
 export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
+  /**
+   * Initializes a new instance of the LoginUseCase class.
+   *
+   * @param userRepository The repository for user details.
+   * @param sessionRepository The repository for session persistence.
+   * @param permissionRepository The repository for permission mapping.
+   * @param hashProvider The provider for password hashing and comparison.
+   * @param tokenProvider The provider for token generation and validation.
+   */
   constructor(
     private readonly userRepository: UserRepository,
     private readonly sessionRepository: SessionRepository,
@@ -20,6 +29,13 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
     private readonly tokenProvider: TokenProvider
   ) {}
 
+  /**
+   * Executes the use case to authenticate a user.
+   *
+   * @param input The user credentials and context info.
+   * @return A promise that resolves to the authentication tokens and user info.
+   * @throws {UnauthorizedError} If the credentials are invalid or user is inactive.
+   */
   async execute(input: LoginInput): Promise<SessionOutput> {
     // 1. Find user by email.
     const user = await this.userRepository.findByEmail(input.email);

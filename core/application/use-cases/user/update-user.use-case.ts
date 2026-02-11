@@ -23,6 +23,13 @@ export class UpdateUserUseCase implements UseCase<
   UpdateUserInput,
   UpdateUserOutput
 > {
+  /**
+   * Creates an instance of UpdateUserUseCase.
+   * @param userRepository The repository for user data operations.
+   * @param roleRepository The repository for role data operations.
+   * @param hashProvider The provider for password hashing.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly userRepository: UserRepository,
     private readonly roleRepository: RoleRepository,
@@ -30,6 +37,14 @@ export class UpdateUserUseCase implements UseCase<
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to update a user.
+   * @param input The user update data and audit info.
+   * @return A promise that resolves to the updated user.
+   * @throws {ValidationError} If the update data is invalid.
+   * @throws {NotFoundError} If the user or role is not found.
+   * @throws {ConflictError} If the new email is already in use.
+   */
   async execute(input: UpdateUserInput): Promise<UpdateUserOutput> {
     const { id, data, userId, ipAddress, userAgent } = input;
 

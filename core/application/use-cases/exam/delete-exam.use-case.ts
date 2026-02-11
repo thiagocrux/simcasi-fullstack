@@ -19,11 +19,24 @@ export class DeleteExamUseCase implements UseCase<
   DeleteExamInput,
   DeleteExamOutput
 > {
+  /**
+   * Initializes a new instance of the DeleteExamUseCase class.
+   *
+   * @param examRepository The repository for exam persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly examRepository: ExamRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to soft delete an exam.
+   *
+   * @param input The data containing the exam ID and auditor info.
+   * @return A promise that resolves when the deletion is complete.
+   * @throws {NotFoundError} If the exam is not found.
+   */
   async execute(input: DeleteExamInput): Promise<DeleteExamOutput> {
     const { id, userId, ipAddress, userAgent } = input;
 

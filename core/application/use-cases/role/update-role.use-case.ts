@@ -22,12 +22,28 @@ export class UpdateRoleUseCase implements UseCase<
   UpdateRoleInput,
   UpdateRoleOutput
 > {
+  /**
+   * Initializes a new instance of the UpdateRoleUseCase class.
+   *
+   * @param roleRepository The repository for role persistence.
+   * @param permissionRepository The repository for permission validation.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly roleRepository: RoleRepository,
     private readonly permissionRepository: PermissionRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to update an existing role.
+   *
+   * @param input The data to update the role.
+   * @return A promise that resolves to the updated role.
+   * @throws {ValidationError} If the input data is invalid.
+   * @throws {NotFoundError} If the role or one of the permissions is not found.
+   * @throws {ConflictError} If the new role name is already in use.
+   */
   async execute(input: UpdateRoleInput): Promise<UpdateRoleOutput> {
     const { id, userId, ipAddress, userAgent, ...data } = input;
 

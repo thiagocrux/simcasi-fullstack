@@ -16,6 +16,13 @@ export class FindNotificationsUseCase implements UseCase<
   FindNotificationsInput,
   FindNotificationsOutput
 > {
+  /**
+   * Initializes a new instance of the FindNotificationsUseCase class.
+   *
+   * @param notificationRepository The repository for notification persistence.
+   * @param userRepository The repository for user data.
+   * @param patientRepository The repository for patient data.
+   */
   constructor(
     private readonly notificationRepository: NotificationRepository,
     private readonly userRepository: UserRepository,
@@ -24,6 +31,9 @@ export class FindNotificationsUseCase implements UseCase<
 
   /**
    * Executes the use case to find notifications.
+   *
+   * @param input The query parameters for finding notifications.
+   * @return A promise that resolves to the paginated notifications and related data.
    */
   async execute(
     input: FindNotificationsInput

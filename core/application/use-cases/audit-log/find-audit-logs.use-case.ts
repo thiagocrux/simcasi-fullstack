@@ -15,6 +15,12 @@ export class FindAuditLogsUseCase implements UseCase<
   FindAuditLogsInput,
   FindAuditLogsOutput
 > {
+  /**
+   * Initializes a new instance of the FindAuditLogsUseCase class.
+   *
+   * @param auditLogRepository The repository for audit log persistence.
+   * @param userRepository The repository for user data.
+   */
   constructor(
     private readonly auditLogRepository: AuditLogRepository,
     private readonly userRepository: UserRepository
@@ -22,6 +28,9 @@ export class FindAuditLogsUseCase implements UseCase<
 
   /**
    * Executes the use case to find audit logs.
+   *
+   * @param input The query parameters for finding audit logs.
+   * @return A promise that resolves to the paginated audit logs and related users.
    */
   async execute(input: FindAuditLogsInput): Promise<FindAuditLogsOutput> {
     const validatedInput = auditLogQuerySchema.parse(

@@ -15,11 +15,24 @@ export class DeleteObservationUseCase implements UseCase<
   DeleteObservationInput,
   DeleteObservationOutput
 > {
+  /**
+   * Initializes a new instance of the DeleteObservationUseCase class.
+   *
+   * @param observationRepository The repository for observation persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly observationRepository: ObservationRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to soft delete an observation.
+   *
+   * @param input The data containing the observation ID and auditor info.
+   * @return A promise that resolves when the deletion is complete.
+   * @throws {NotFoundError} If the observation is not found.
+   */
   async execute(
     input: DeleteObservationInput
   ): Promise<DeleteObservationOutput> {

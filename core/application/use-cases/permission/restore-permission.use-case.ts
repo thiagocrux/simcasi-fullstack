@@ -15,11 +15,24 @@ export class RestorePermissionUseCase implements UseCase<
   RestorePermissionInput,
   RestorePermissionOutput
 > {
+  /**
+   * Initializes a new instance of the RestorePermissionUseCase class.
+   *
+   * @param permissionRepository The repository for permission persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly permissionRepository: PermissionRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to restore a soft-deleted permission.
+   *
+   * @param input The data containing the permission ID and auditor info.
+   * @return A promise that resolves to the restored permission.
+   * @throws {NotFoundError} If the permission is not found.
+   */
   async execute(
     input: RestorePermissionInput
   ): Promise<RestorePermissionOutput> {

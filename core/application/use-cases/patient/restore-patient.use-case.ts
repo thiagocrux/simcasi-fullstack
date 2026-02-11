@@ -19,6 +19,16 @@ export class RestorePatientUseCase implements UseCase<
   RestorePatientInput,
   RestorePatientOutput
 > {
+  /**
+   * Initializes a new instance of the RestorePatientUseCase class.
+   *
+   * @param patientRepository The repository for patient persistence.
+   * @param examRepository The repository for exam persistence.
+   * @param notificationRepository The repository for notification persistence.
+   * @param observationRepository The repository for observation persistence.
+   * @param treatmentRepository The repository for treatment persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly patientRepository: PatientRepository,
     private readonly examRepository: ExamRepository,
@@ -28,6 +38,13 @@ export class RestorePatientUseCase implements UseCase<
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to restore a soft-deleted patient and related records.
+   *
+   * @param input The data containing the patient ID and auditor info.
+   * @return A promise that resolves to the restored patient data.
+   * @throws {NotFoundError} If the patient is not found.
+   */
   async execute(input: RestorePatientInput): Promise<RestorePatientOutput> {
     const { id, userId, ipAddress, userAgent } = input;
 

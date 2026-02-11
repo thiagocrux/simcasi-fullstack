@@ -13,10 +13,22 @@ export class GetNotificationByIdUseCase implements UseCase<
   GetNotificationByIdInput,
   GetNotificationByIdOutput
 > {
+  /**
+   * Initializes a new instance of the GetNotificationByIdUseCase class.
+   *
+   * @param notificationRepository The repository for notification persistence.
+   */
   constructor(
     private readonly notificationRepository: NotificationRepository
   ) {}
 
+  /**
+   * Executes the use case to get a notification by its ID.
+   *
+   * @param input The data containing the notification ID.
+   * @return A promise that resolves to the found notification.
+   * @throws {NotFoundError} If the notification is not found.
+   */
   async execute(
     input: GetNotificationByIdInput
   ): Promise<GetNotificationByIdOutput> {

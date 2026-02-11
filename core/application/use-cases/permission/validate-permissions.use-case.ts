@@ -12,8 +12,19 @@ export class ValidatePermissionsUseCase implements UseCase<
   ValidatePermissionsInput,
   ValidatePermissionsOutput
 > {
+  /**
+   * Initializes a new instance of the ValidatePermissionsUseCase class.
+   *
+   * @param roleRepository The repository for role and permission validation.
+   */
   constructor(private readonly roleRepository: RoleRepository) {}
 
+  /**
+   * Executes the use case to validate permissions for a role.
+   *
+   * @param input The data containing the role ID and required permission codes.
+   * @return A promise that resolves to the validation result.
+   */
   async execute(
     input: ValidatePermissionsInput
   ): Promise<ValidatePermissionsOutput> {

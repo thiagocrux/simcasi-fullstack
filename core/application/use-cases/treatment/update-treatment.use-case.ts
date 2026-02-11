@@ -17,11 +17,23 @@ export class UpdateTreatmentUseCase implements UseCase<
   UpdateTreatmentInput,
   UpdateTreatmentOutput
 > {
+  /**
+   * Creates an instance of UpdateTreatmentUseCase.
+   * @param treatmentRepository The repository for treatment data operations.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly treatmentRepository: TreatmentRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to update a treatment.
+   * @param input The treatment update data and audit info.
+   * @return A promise that resolves to the updated treatment.
+   * @throws {ValidationError} If the update data is invalid.
+   * @throws {NotFoundError} If the treatment is not found.
+   */
   async execute(input: UpdateTreatmentInput): Promise<UpdateTreatmentOutput> {
     const { id, userId, ipAddress, userAgent, ...data } = input;
 

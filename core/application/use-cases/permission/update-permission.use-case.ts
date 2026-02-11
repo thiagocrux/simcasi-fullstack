@@ -21,11 +21,26 @@ export class UpdatePermissionUseCase implements UseCase<
   UpdatePermissionInput,
   UpdatePermissionOutput
 > {
+  /**
+   * Initializes a new instance of the UpdatePermissionUseCase class.
+   *
+   * @param permissionRepository The repository for permission persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly permissionRepository: PermissionRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to update an existing permission.
+   *
+   * @param input The data to update the permission.
+   * @return A promise that resolves to the updated permission.
+   * @throws {ValidationError} If the input data is invalid.
+   * @throws {NotFoundError} If the permission is not found.
+   * @throws {ConflictError} If the new permission code is already in use.
+   */
   async execute(input: UpdatePermissionInput): Promise<UpdatePermissionOutput> {
     const { id, userId, ipAddress, userAgent, ...data } = input;
 

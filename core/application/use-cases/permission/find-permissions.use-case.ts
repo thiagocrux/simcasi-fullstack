@@ -16,6 +16,12 @@ export class FindPermissionsUseCase implements UseCase<
   FindPermissionsInput,
   FindPermissionsOutput
 > {
+  /**
+   * Initializes a new instance of the FindPermissionsUseCase class.
+   *
+   * @param permissionRepository The repository for permission persistence.
+   * @param userRepository The repository for user details.
+   */
   constructor(
     private readonly permissionRepository: PermissionRepository,
     private readonly userRepository: UserRepository
@@ -23,6 +29,9 @@ export class FindPermissionsUseCase implements UseCase<
 
   /**
    * Executes the use case to find permissions.
+   *
+   * @param input The query parameters for finding permissions.
+   * @return A promise that resolves to the paginated permissions and related data.
    */
   async execute(input: FindPermissionsInput): Promise<FindPermissionsOutput> {
     const validatedInput = permissionQuerySchema.parse(

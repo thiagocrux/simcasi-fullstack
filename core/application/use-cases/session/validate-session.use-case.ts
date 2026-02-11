@@ -17,11 +17,25 @@ export class ValidateSessionUseCase implements UseCase<
   ValidateSessionInput,
   ValidateSessionOutput
 > {
+  /**
+   * Initializes a new instance of the ValidateSessionUseCase class.
+   *
+   * @param sessionRepository The repository for session persistence.
+   * @param tokenProvider The provider for token verification.
+   */
   constructor(
     private readonly sessionRepository: SessionRepository,
     private readonly tokenProvider: TokenProvider
   ) {}
 
+  /**
+   * Executes the use case to validate a session.
+   *
+   * @param input The token to validate.
+   * @return A promise that resolves to the session validation result.
+   * @throws {InvalidTokenError} If the token is invalid or expired.
+   * @throws {SessionExpiredError} If the session has been revoked.
+   */
   async execute(input: ValidateSessionInput): Promise<ValidateSessionOutput> {
     // 1. Cryptographic Validation
     // The provider now decodes the payload even if expired.

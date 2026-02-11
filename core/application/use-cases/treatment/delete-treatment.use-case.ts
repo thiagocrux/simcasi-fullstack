@@ -15,11 +15,22 @@ export class DeleteTreatmentUseCase implements UseCase<
   DeleteTreatmentInput,
   DeleteTreatmentOutput
 > {
+  /**
+   * Creates an instance of DeleteTreatmentUseCase.
+   * @param treatmentRepository The repository for treatment data operations.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly treatmentRepository: TreatmentRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to soft delete a treatment.
+   * @param input The ID of the treatment to delete and audit info.
+   * @return A promise that resolves to the deleted treatment info.
+   * @throws {NotFoundError} If the treatment is not found.
+   */
   async execute(input: DeleteTreatmentInput): Promise<DeleteTreatmentOutput> {
     const { id, userId, ipAddress, userAgent } = input;
 

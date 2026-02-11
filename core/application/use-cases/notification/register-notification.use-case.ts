@@ -18,12 +18,27 @@ export class RegisterNotificationUseCase implements UseCase<
   RegisterNotificationInput,
   RegisterNotificationOutput
 > {
+  /**
+   * Initializes a new instance of the RegisterNotificationUseCase class.
+   *
+   * @param notificationRepository The repository for notification persistence.
+   * @param patientRepository The repository for patient data.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly notificationRepository: NotificationRepository,
     private readonly patientRepository: PatientRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to register a new notification.
+   *
+   * @param input The data for the new notification.
+   * @return A promise that resolves to the registered notification.
+   * @throws {ValidationError} If the input data is invalid.
+   * @throws {NotFoundError} If the patient is not found.
+   */
   async execute(
     input: RegisterNotificationInput
   ): Promise<RegisterNotificationOutput> {

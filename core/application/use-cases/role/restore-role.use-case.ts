@@ -15,11 +15,24 @@ export class RestoreRoleUseCase implements UseCase<
   RestoreRoleInput,
   RestoreRoleOutput
 > {
+  /**
+   * Initializes a new instance of the RestoreRoleUseCase class.
+   *
+   * @param roleRepository The repository for role persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly roleRepository: RoleRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to restore a soft-deleted role.
+   *
+   * @param input The data containing the role ID and auditor info.
+   * @return A promise that resolves to the restored role.
+   * @throws {NotFoundError} If the role is not found.
+   */
   async execute(input: RestoreRoleInput): Promise<RestoreRoleOutput> {
     const { id, userId, ipAddress, userAgent } = input;
 

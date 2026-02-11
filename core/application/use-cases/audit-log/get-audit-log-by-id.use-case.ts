@@ -13,8 +13,20 @@ export class GetAuditLogByIdUseCase implements UseCase<
   GetAuditLogByIdInput,
   GetAuditLogByIdOutput
 > {
+  /**
+   * Initializes a new instance of the GetAuditLogByIdUseCase class.
+   *
+   * @param auditLogRepository The repository for audit log persistence.
+   */
   constructor(private readonly auditLogRepository: AuditLogRepository) {}
 
+  /**
+   * Executes the use case to get an audit log by its ID.
+   *
+   * @param input The data containing the audit log ID.
+   * @return A promise that resolves to the found audit log.
+   * @throws {NotFoundError} If the audit log is not found.
+   */
   async execute(input: GetAuditLogByIdInput): Promise<GetAuditLogByIdOutput> {
     // 1. Find the audit log by ID.
     const auditLog = await this.auditLogRepository.findById(input.id);

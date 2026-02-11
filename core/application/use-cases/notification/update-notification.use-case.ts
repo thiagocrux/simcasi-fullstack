@@ -17,11 +17,25 @@ export class UpdateNotificationUseCase implements UseCase<
   UpdateNotificationInput,
   UpdateNotificationOutput
 > {
+  /**
+   * Initializes a new instance of the UpdateNotificationUseCase class.
+   *
+   * @param notificationRepository The repository for notification persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly notificationRepository: NotificationRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to update an existing notification.
+   *
+   * @param input The data to update the notification.
+   * @return A promise that resolves to the updated notification.
+   * @throws {ValidationError} If the input data is invalid.
+   * @throws {NotFoundError} If the notification is not found.
+   */
   async execute(
     input: UpdateNotificationInput
   ): Promise<UpdateNotificationOutput> {

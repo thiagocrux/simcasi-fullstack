@@ -15,11 +15,24 @@ export class DeletePermissionUseCase implements UseCase<
   DeletePermissionInput,
   DeletePermissionOutput
 > {
+  /**
+   * Initializes a new instance of the DeletePermissionUseCase class.
+   *
+   * @param permissionRepository The repository for permission persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly permissionRepository: PermissionRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to soft delete a permission.
+   *
+   * @param input The data containing the permission ID and auditor info.
+   * @return A promise that resolves when the deletion is complete.
+   * @throws {NotFoundError} If the permission is not found.
+   */
   async execute(input: DeletePermissionInput): Promise<DeletePermissionOutput> {
     const { id, userId, ipAddress, userAgent } = input;
 

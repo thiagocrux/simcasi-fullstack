@@ -23,6 +23,13 @@ export class RegisterUserUseCase implements UseCase<
   RegisterUserInput,
   RegisterUserOutput
 > {
+  /**
+   * Creates an instance of RegisterUserUseCase.
+   * @param userRepository The repository for user data operations.
+   * @param roleRepository The repository for role data operations.
+   * @param hashProvider The provider for password hashing.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly userRepository: UserRepository,
     private readonly roleRepository: RoleRepository,
@@ -30,6 +37,14 @@ export class RegisterUserUseCase implements UseCase<
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to register a new user.
+   * @param input The user data.
+   * @return A promise that resolves to the registered user.
+   * @throws {ValidationError} If the user data is invalid.
+   * @throws {NotFoundError} If the assigned role is not found.
+   * @throws {ConflictError} If the email is already in use.
+   */
   async execute(input: RegisterUserInput): Promise<RegisterUserOutput> {
     // 1. Validate input.
     const validation = userSchema.safeParse(input);

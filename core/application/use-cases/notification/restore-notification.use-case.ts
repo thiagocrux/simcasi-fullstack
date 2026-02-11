@@ -15,11 +15,24 @@ export class RestoreNotificationUseCase implements UseCase<
   RestoreNotificationInput,
   RestoreNotificationOutput
 > {
+  /**
+   * Initializes a new instance of the RestoreNotificationUseCase class.
+   *
+   * @param notificationRepository The repository for notification persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly notificationRepository: NotificationRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to restore a soft-deleted notification.
+   *
+   * @param input The data containing the notification ID and auditor info.
+   * @return A promise that resolves to the restored notification.
+   * @throws {NotFoundError} If the notification is not found.
+   */
   async execute(
     input: RestoreNotificationInput
   ): Promise<RestoreNotificationOutput> {

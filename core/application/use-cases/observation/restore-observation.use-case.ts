@@ -15,11 +15,24 @@ export class RestoreObservationUseCase implements UseCase<
   RestoreObservationInput,
   RestoreObservationOutput
 > {
+  /**
+   * Initializes a new instance of the RestoreObservationUseCase class.
+   *
+   * @param observationRepository The repository for observation persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly observationRepository: ObservationRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to restore a soft-deleted observation.
+   *
+   * @param input The data containing the observation ID and auditor info.
+   * @return A promise that resolves to the restored observation.
+   * @throws {NotFoundError} If the observation is not found.
+   */
   async execute(
     input: RestoreObservationInput
   ): Promise<RestoreObservationOutput> {

@@ -21,11 +21,25 @@ export class UpdateExamUseCase implements UseCase<
   UpdateExamInput,
   UpdateExamOutput
 > {
+  /**
+   * Initializes a new instance of the UpdateExamUseCase class.
+   *
+   * @param examRepository The repository for exam persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly examRepository: ExamRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to update an existing exam.
+   *
+   * @param input The data to update the exam.
+   * @return A promise that resolves to the updated exam.
+   * @throws {ValidationError} If the input data is invalid.
+   * @throws {NotFoundError} If the exam is not found.
+   */
   async execute(input: UpdateExamInput): Promise<UpdateExamOutput> {
     const { id, userId, ipAddress, userAgent, ...data } = input;
 

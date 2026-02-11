@@ -15,6 +15,12 @@ export class FindPatientsUseCase implements UseCase<
   FindPatientsInput,
   FindPatientsOutput
 > {
+  /**
+   * Initializes a new instance of the FindPatientsUseCase class.
+   *
+   * @param patientRepository The repository for patient persistence.
+   * @param userRepository The repository for user details.
+   */
   constructor(
     private readonly patientRepository: PatientRepository,
     private readonly userRepository: UserRepository
@@ -22,6 +28,9 @@ export class FindPatientsUseCase implements UseCase<
 
   /**
    * Executes the use case to find patients.
+   *
+   * @param input The query parameters for finding patients.
+   * @return A promise that resolves to the paginated patients and related data.
    */
   async execute(input: FindPatientsInput): Promise<FindPatientsOutput> {
     const validatedInput = patientQuerySchema.parse(input) as FindPatientsInput;

@@ -16,6 +16,13 @@ export class FindObservationsUseCase implements UseCase<
   FindObservationsInput,
   FindObservationsOutput
 > {
+  /**
+   * Initializes a new instance of the FindObservationsUseCase class.
+   *
+   * @param observationRepository The repository for observation persistence.
+   * @param userRepository The repository for user data.
+   * @param patientRepository The repository for patient data.
+   */
   constructor(
     private readonly observationRepository: ObservationRepository,
     private readonly userRepository: UserRepository,
@@ -24,6 +31,9 @@ export class FindObservationsUseCase implements UseCase<
 
   /**
    * Executes the use case to find observations.
+   *
+   * @param input The query parameters for finding observations.
+   * @return A promise that resolves to the paginated observations and related data.
    */
   async execute(input: FindObservationsInput): Promise<FindObservationsOutput> {
     const validatedInput = observationQuerySchema.parse(

@@ -15,11 +15,24 @@ export class RestoreExamUseCase implements UseCase<
   RestoreExamInput,
   RestoreExamOutput
 > {
+  /**
+   * Initializes a new instance of the RestoreExamUseCase class.
+   *
+   * @param examRepository The repository for exam persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly examRepository: ExamRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to restore a soft-deleted exam.
+   *
+   * @param input The data containing the exam ID and auditor info.
+   * @return A promise that resolves to the restored exam.
+   * @throws {NotFoundError} If the exam is not found.
+   */
   async execute(input: RestoreExamInput): Promise<RestoreExamOutput> {
     const { id, userId, ipAddress, userAgent } = input;
 

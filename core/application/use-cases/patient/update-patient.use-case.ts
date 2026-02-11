@@ -21,11 +21,26 @@ export class UpdatePatientUseCase implements UseCase<
   UpdatePatientInput,
   UpdatePatientOutput
 > {
+  /**
+   * Initializes a new instance of the UpdatePatientUseCase class.
+   *
+   * @param patientRepository The repository for patient persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly patientRepository: PatientRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to update an existing patient.
+   *
+   * @param input The data to update the patient.
+   * @return A promise that resolves to the updated patient.
+   * @throws {ValidationError} If the input data is invalid.
+   * @throws {NotFoundError} If the patient is not found.
+   * @throws {ConflictError} If the new CPF or SUS card is already in use.
+   */
   async execute(input: UpdatePatientInput): Promise<UpdatePatientOutput> {
     const { id, userId, ipAddress, userAgent, ...data } = input;
 

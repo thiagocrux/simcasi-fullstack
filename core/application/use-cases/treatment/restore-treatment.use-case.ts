@@ -15,11 +15,22 @@ export class RestoreTreatmentUseCase implements UseCase<
   RestoreTreatmentInput,
   RestoreTreatmentOutput
 > {
+  /**
+   * Creates an instance of RestoreTreatmentUseCase.
+   * @param treatmentRepository The repository for treatment data operations.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly treatmentRepository: TreatmentRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to restore a soft-deleted treatment.
+   * @param input The ID of the treatment to restore and audit info.
+   * @return A promise that resolves to the restored treatment.
+   * @throws {NotFoundError} If the treatment is not found.
+   */
   async execute(input: RestoreTreatmentInput): Promise<RestoreTreatmentOutput> {
     const { id, userId, ipAddress, userAgent } = input;
 

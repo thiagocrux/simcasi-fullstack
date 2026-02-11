@@ -22,12 +22,28 @@ export class RegisterRoleUseCase implements UseCase<
   RegisterRoleInput,
   RegisterRoleOutput
 > {
+  /**
+   * Initializes a new instance of the RegisterRoleUseCase class.
+   *
+   * @param roleRepository The repository for role persistence.
+   * @param permissionRepository The repository for permission validation.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly roleRepository: RoleRepository,
     private readonly permissionRepository: PermissionRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to register a new role.
+   *
+   * @param input The data for the new role.
+   * @return A promise that resolves to the registered or restored role.
+   * @throws {ValidationError} If the input data is invalid.
+   * @throws {ConflictError} If a role with the same name already exists.
+   * @throws {NotFoundError} If one or more provided permissions are not found.
+   */
   async execute(input: RegisterRoleInput): Promise<RegisterRoleOutput> {
     const { ipAddress, userAgent, userId, ...roleData } = input;
 

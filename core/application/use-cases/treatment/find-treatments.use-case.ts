@@ -16,6 +16,12 @@ export class FindTreatmentsUseCase implements UseCase<
   FindTreatmentsInput,
   FindTreatmentsOutput
 > {
+  /**
+   * Creates an instance of FindTreatmentsUseCase.
+   * @param treatmentRepository The repository for treatment data operations.
+   * @param userRepository The repository for user data operations.
+   * @param patientRepository The repository for patient data operations.
+   */
   constructor(
     private readonly treatmentRepository: TreatmentRepository,
     private readonly userRepository: UserRepository,
@@ -24,6 +30,8 @@ export class FindTreatmentsUseCase implements UseCase<
 
   /**
    * Executes the use case to find treatments.
+   * @param input The pagination and filter criteria.
+   * @return A promise that resolves to the list of treatments and total count.
    */
   async execute(input: FindTreatmentsInput): Promise<FindTreatmentsOutput> {
     const validatedInput = treatmentQuerySchema.parse(

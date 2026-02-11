@@ -16,11 +16,22 @@ export class RestoreUserUseCase implements UseCase<
   RestoreUserInput,
   RestoreUserOutput
 > {
+  /**
+   * Creates an instance of RestoreUserUseCase.
+   * @param userRepository The repository for user data operations.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly userRepository: UserRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to restore a soft-deleted user.
+   * @param input The ID of the user to restore and audit info.
+   * @return A promise that resolves to the restored user.
+   * @throws {NotFoundError} If the user is not found.
+   */
   async execute(input: RestoreUserInput): Promise<RestoreUserOutput> {
     const { id, userId, ipAddress, userAgent } = input;
 

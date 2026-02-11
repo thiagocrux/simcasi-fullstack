@@ -18,12 +18,25 @@ export class RegisterTreatmentUseCase implements UseCase<
   RegisterTreatmentInput,
   RegisterTreatmentOutput
 > {
+  /**
+   * Creates an instance of RegisterTreatmentUseCase.
+   * @param treatmentRepository The repository for treatment data operations.
+   * @param patientRepository The repository for patient data operations.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly treatmentRepository: TreatmentRepository,
     private readonly patientRepository: PatientRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to register a new treatment.
+   * @param input The treatment data and audit info.
+   * @return A promise that resolves to the registered treatment.
+   * @throws {ValidationError} If the treatment data is invalid.
+   * @throws {NotFoundError} If the patient is not found.
+   */
   async execute(
     input: RegisterTreatmentInput
   ): Promise<RegisterTreatmentOutput> {

@@ -13,8 +13,20 @@ export class GetPermissionByIdUseCase implements UseCase<
   GetPermissionByIdInput,
   GetPermissionByIdOutput
 > {
+  /**
+   * Initializes a new instance of the GetPermissionByIdUseCase class.
+   *
+   * @param permissionRepository The repository for permission persistence.
+   */
   constructor(private readonly permissionRepository: PermissionRepository) {}
 
+  /**
+   * Executes the use case to get a permission by its ID.
+   *
+   * @param input The data containing the permission ID.
+   * @return A promise that resolves to the found permission.
+   * @throws {NotFoundError} If the permission is not found.
+   */
   async execute(
     input: GetPermissionByIdInput
   ): Promise<GetPermissionByIdOutput> {

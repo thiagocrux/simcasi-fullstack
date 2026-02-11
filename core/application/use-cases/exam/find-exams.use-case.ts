@@ -16,6 +16,13 @@ export class FindExamsUseCase implements UseCase<
   FindExamsInput,
   FindExamsOutput
 > {
+  /**
+   * Initializes a new instance of the FindExamsUseCase class.
+   *
+   * @param examRepository The repository for exam persistence.
+   * @param userRepository The repository for user data.
+   * @param patientRepository The repository for patient data.
+   */
   constructor(
     private readonly examRepository: ExamRepository,
     private readonly userRepository: UserRepository,
@@ -24,6 +31,9 @@ export class FindExamsUseCase implements UseCase<
 
   /**
    * Executes the use case to find exams.
+   *
+   * @param input The query parameters for finding exams.
+   * @return A promise that resolves to the paginated exams and related data.
    */
   async execute(input: FindExamsInput): Promise<FindExamsOutput> {
     const validatedInput = examQuerySchema.parse(input) as FindExamsInput;

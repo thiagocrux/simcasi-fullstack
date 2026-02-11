@@ -18,12 +18,27 @@ export class RegisterObservationUseCase implements UseCase<
   RegisterObservationInput,
   RegisterObservationOutput
 > {
+  /**
+   * Initializes a new instance of the RegisterObservationUseCase class.
+   *
+   * @param observationRepository The repository for observation persistence.
+   * @param patientRepository The repository for patient data.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly observationRepository: ObservationRepository,
     private readonly patientRepository: PatientRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to register a new observation.
+   *
+   * @param input The data for the new observation.
+   * @return A promise that resolves to the registered observation.
+   * @throws {ValidationError} If the input data is invalid.
+   * @throws {NotFoundError} If the patient is not found.
+   */
   async execute(
     input: RegisterObservationInput
   ): Promise<RegisterObservationOutput> {

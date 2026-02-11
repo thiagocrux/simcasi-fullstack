@@ -15,11 +15,24 @@ export class DeleteNotificationUseCase implements UseCase<
   DeleteNotificationInput,
   DeleteNotificationOutput
 > {
+  /**
+   * Initializes a new instance of the DeleteNotificationUseCase class.
+   *
+   * @param notificationRepository The repository for notification persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly notificationRepository: NotificationRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to soft delete a notification.
+   *
+   * @param input The data containing the notification ID and auditor info.
+   * @return A promise that resolves when the deletion is complete.
+   * @throws {NotFoundError} If the notification is not found.
+   */
   async execute(
     input: DeleteNotificationInput
   ): Promise<DeleteNotificationOutput> {

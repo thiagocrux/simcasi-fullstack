@@ -16,12 +16,24 @@ export class DeleteUserUseCase implements UseCase<
   DeleteUserInput,
   DeleteUserOutput
 > {
+  /**
+   * Creates an instance of DeleteUserUseCase.
+   * @param userRepository The repository for user data operations.
+   * @param sessionRepository The repository for session data operations.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly userRepository: UserRepository,
     private readonly sessionRepository: SessionRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to soft delete a user.
+   * @param input The ID of the user to delete and audit info.
+   * @return A promise that resolves to the deleted user info.
+   * @throws {NotFoundError} If the user is not found.
+   */
   async execute(input: DeleteUserInput): Promise<DeleteUserOutput> {
     const { id, userId, ipAddress, userAgent } = input;
 

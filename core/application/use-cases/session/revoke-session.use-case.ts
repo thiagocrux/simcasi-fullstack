@@ -19,11 +19,24 @@ export class RevokeSessionUseCase implements UseCase<
   RevokeSessionInput,
   RevokeSessionOutput
 > {
+  /**
+   * Initializes a new instance of the RevokeSessionUseCase class.
+   *
+   * @param sessionRepository The repository for session persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly sessionRepository: SessionRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to revoke a session.
+   *
+   * @param input The data containing the session ID and auditor info.
+   * @return A promise that resolves when the session is revoked.
+   * @throws {NotFoundError} If the session is not found.
+   */
   async execute(input: RevokeSessionInput): Promise<RevokeSessionOutput> {
     const { id, userId, ipAddress, userAgent } = input;
     const session = await this.sessionRepository.findById(id);

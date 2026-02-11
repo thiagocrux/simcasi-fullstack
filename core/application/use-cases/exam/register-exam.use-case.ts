@@ -22,12 +22,27 @@ export class RegisterExamUseCase implements UseCase<
   RegisterExamInput,
   RegisterExamOutput
 > {
+  /**
+   * Initializes a new instance of the RegisterExamUseCase class.
+   *
+   * @param examRepository The repository for exam persistence.
+   * @param patientRepository The repository for patient data.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly examRepository: ExamRepository,
     private readonly patientRepository: PatientRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to register a new exam.
+   *
+   * @param input The data for the new exam.
+   * @return A promise that resolves to the registered exam.
+   * @throws {ValidationError} If the input data is invalid.
+   * @throws {NotFoundError} If the patient is not found.
+   */
   async execute(input: RegisterExamInput): Promise<RegisterExamOutput> {
     const { userId, ipAddress, userAgent, ...examData } = input;
 

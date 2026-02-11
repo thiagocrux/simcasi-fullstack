@@ -15,11 +15,24 @@ export class UpdateObservationUseCase implements UseCase<
   UpdateObservationInput,
   UpdateObservationOutput
 > {
+  /**
+   * Initializes a new instance of the UpdateObservationUseCase class.
+   *
+   * @param observationRepository The repository for observation persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly observationRepository: ObservationRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to update an existing observation.
+   *
+   * @param input The data to update the observation.
+   * @return A promise that resolves to the updated observation.
+   * @throws {NotFoundError} If the observation is not found.
+   */
   async execute(
     input: UpdateObservationInput
   ): Promise<UpdateObservationOutput> {

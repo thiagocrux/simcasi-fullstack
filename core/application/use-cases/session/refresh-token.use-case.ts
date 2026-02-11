@@ -21,6 +21,14 @@ export class RefreshTokenUseCase implements UseCase<
   RefreshTokenInput,
   SessionOutput
 > {
+  /**
+   * Initializes a new instance of the RefreshTokenUseCase class.
+   *
+   * @param userRepository The repository for user details.
+   * @param sessionRepository The repository for session persistence.
+   * @param permissionRepository The repository for permission mapping.
+   * @param tokenProvider The provider for token validation and generation.
+   */
   constructor(
     private readonly userRepository: UserRepository,
     private readonly sessionRepository: SessionRepository,
@@ -28,6 +36,14 @@ export class RefreshTokenUseCase implements UseCase<
     private readonly tokenProvider: TokenProvider
   ) {}
 
+  /**
+   * Executes the use case to refresh a token.
+   *
+   * @param input The data containing the refresh token.
+   * @return A promise that resolves to new authentication tokens.
+   * @throws {InvalidTokenError} If the token is invalid.
+   * @throws {SessionExpiredError} If the session is not found or expired.
+   */
   async execute(input: RefreshTokenInput): Promise<SessionOutput> {
     // 1. Verify the refresh token.
     const decoded = await this.tokenProvider.verifyToken<{

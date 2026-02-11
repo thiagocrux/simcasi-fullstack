@@ -23,11 +23,25 @@ export class RegisterPatientUseCase implements UseCase<
   RegisterPatientInput,
   RegisterPatientOutput
 > {
+  /**
+   * Initializes a new instance of the RegisterPatientUseCase class.
+   *
+   * @param patientRepository The repository for patient persistence.
+   * @param auditLogRepository The repository for audit logging.
+   */
   constructor(
     private readonly patientRepository: PatientRepository,
     private readonly auditLogRepository: AuditLogRepository
   ) {}
 
+  /**
+   * Executes the use case to register a new patient.
+   *
+   * @param input The data for the new patient.
+   * @return A promise that resolves to the registered or restored patient.
+   * @throws {ValidationError} If the input data is invalid.
+   * @throws {ConflictError} If a patient with the same CPF or SUS card already exists.
+   */
   async execute(input: RegisterPatientInput): Promise<RegisterPatientOutput> {
     const { userId, ipAddress, userAgent, ...patientData } = input;
 

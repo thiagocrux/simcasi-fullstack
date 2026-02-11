@@ -13,8 +13,18 @@ export class GetUserByIdUseCase implements UseCase<
   GetUserInput,
   GetUserOutput
 > {
+  /**
+   * Creates an instance of GetUserByIdUseCase.
+   * @param userRepository The repository for user data operations.
+   */
   constructor(private readonly userRepository: UserRepository) {}
 
+  /**
+   * Executes the use case to retrieve a user by ID.
+   * @param input The user ID and options.
+   * @return A promise that resolves to the user details.
+   * @throws {NotFoundError} If the user is not found.
+   */
   async execute(input: GetUserInput): Promise<GetUserOutput> {
     const user = await this.userRepository.findById(
       input.id,

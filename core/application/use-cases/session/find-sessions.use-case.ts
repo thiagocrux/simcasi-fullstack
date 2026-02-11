@@ -15,6 +15,12 @@ export class FindSessionsUseCase implements UseCase<
   FindSessionsInput,
   FindSessionsOutput
 > {
+  /**
+   * Initializes a new instance of the FindSessionsUseCase class.
+   *
+   * @param sessionRepository The repository for session persistence.
+   * @param userRepository The repository for user details.
+   */
   constructor(
     private readonly sessionRepository: SessionRepository,
     private readonly userRepository: UserRepository
@@ -22,6 +28,9 @@ export class FindSessionsUseCase implements UseCase<
 
   /**
    * Executes the use case to find sessions.
+   *
+   * @param input The query parameters for finding sessions.
+   * @return A promise that resolves to the paginated sessions and related data.
    */
   async execute(input: FindSessionsInput): Promise<FindSessionsOutput> {
     const validatedInput = sessionQuerySchema.parse(input) as FindSessionsInput;
