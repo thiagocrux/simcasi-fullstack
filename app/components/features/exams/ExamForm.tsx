@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Save } from 'lucide-react';
+import { Save, Undo2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -28,6 +28,7 @@ import { useUser } from '@/hooks/useUser';
 import { toCalendarISOString } from '@/lib/formatters.utils';
 import { logger } from '@/lib/logger.utils';
 import { useEffect } from 'react';
+import { Separator } from '../../ui/separator';
 
 interface ExamFormProps {
   isEditMode?: boolean;
@@ -359,15 +360,28 @@ export function ExamForm({
           </div>
         </FieldGroup>
 
-        <Button
-          type="submit"
-          size="lg"
-          className="mt-8 w-full cursor-pointer"
-          disabled={isFormBusy}
-        >
-          {isSubmitting ? <Spinner /> : <Save />}
-          {isEditMode ? 'Atualizar' : 'Salvar'}
-        </Button>
+        <Separator className="col-span-full my-8" />
+        <div className="gap-4 grid sm:grid-cols-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="cursor-pointer select-none"
+            onClick={() => router.back()}
+          >
+            <Undo2 />
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            size="lg"
+            className="cursor-pointer select-none"
+            disabled={isFormBusy}
+          >
+            {isSubmitting ? <Spinner /> : <Save />}
+            {isEditMode ? 'Atualizar' : 'Salvar'}
+          </Button>
+        </div>
       </form>
     </Card>
   );
