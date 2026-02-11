@@ -7,14 +7,27 @@ import { PrismaUserRepository } from '../repositories/prisma/user.prisma.reposit
 const auditLogRepository = new PrismaAuditLogRepository();
 const userRepository = new PrismaUserRepository();
 
+/**
+ * Factory function to create an instance of FindAuditLogsUseCase.
+ * Injects the required repositories for audit logs and user data.
+ * @returns A fully initialized FindAuditLogsUseCase.
+ */
 export function makeFindAuditLogsUseCase() {
   return new FindAuditLogsUseCase(auditLogRepository, userRepository);
 }
 
+/**
+ * Factory function to create an instance of GetAuditLogByIdUseCase.
+ * @returns A fully initialized GetAuditLogByIdUseCase.
+ */
 export function makeGetAuditLogByIdUseCase() {
   return new GetAuditLogByIdUseCase(auditLogRepository);
 }
 
+/**
+ * Factory function to create an instance of RegisterAuditLogUseCase.
+ * @returns A fully initialized RegisterAuditLogUseCase.
+ */
 export function makeRegisterAuditLogUseCase() {
   return new RegisterAuditLogUseCase(auditLogRepository);
 }

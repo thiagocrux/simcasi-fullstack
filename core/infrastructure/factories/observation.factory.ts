@@ -14,6 +14,11 @@ const patientRepository = new PrismaPatientRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
 const userRepository = new PrismaUserRepository();
 
+/**
+ * Factory function to create an instance of RegisterObservationUseCase.
+ * Injects repositories for observations, patients, and audit logging.
+ * @returns A fully initialized RegisterObservationUseCase.
+ */
 export function makeRegisterObservationUseCase() {
   return new RegisterObservationUseCase(
     observationRepository,
@@ -22,6 +27,11 @@ export function makeRegisterObservationUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of FindObservationsUseCase.
+ * Injects repositories for observations, users, and patients.
+ * @returns A fully initialized FindObservationsUseCase.
+ */
 export function makeFindObservationsUseCase() {
   return new FindObservationsUseCase(
     observationRepository,
@@ -30,10 +40,18 @@ export function makeFindObservationsUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of GetObservationByIdUseCase.
+ * @returns A fully initialized GetObservationByIdUseCase.
+ */
 export function makeGetObservationByIdUseCase() {
   return new GetObservationByIdUseCase(observationRepository);
 }
 
+/**
+ * Factory function to create an instance of UpdateObservationUseCase.
+ * @returns A fully initialized UpdateObservationUseCase.
+ */
 export function makeUpdateObservationUseCase() {
   return new UpdateObservationUseCase(
     observationRepository,
@@ -41,6 +59,10 @@ export function makeUpdateObservationUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of DeleteObservationUseCase.
+ * @returns A fully initialized DeleteObservationUseCase.
+ */
 export function makeDeleteObservationUseCase() {
   return new DeleteObservationUseCase(
     observationRepository,
@@ -48,6 +70,10 @@ export function makeDeleteObservationUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of RestoreObservationUseCase.
+ * @returns A fully initialized RestoreObservationUseCase.
+ */
 export function makeRestoreObservationUseCase() {
   return new RestoreObservationUseCase(
     observationRepository,

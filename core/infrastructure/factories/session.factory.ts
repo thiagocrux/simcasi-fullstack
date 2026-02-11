@@ -18,7 +18,9 @@ const tokenProvider = makeTokenProvider();
 const hashProvider = makeHashProvider();
 
 /**
- * Creates an instance of LoginUseCase.
+ * Factory function to create an instance of LoginUseCase.
+ * Injects repositories for users, sessions, permissions, and security providers.
+ * @returns A fully initialized LoginUseCase.
  */
 export function makeLoginUseCase() {
   return new LoginUseCase(
@@ -30,18 +32,34 @@ export function makeLoginUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of FindSessionsUseCase.
+ * @returns A fully initialized FindSessionsUseCase.
+ */
 export function makeFindSessionsUseCase() {
   return new FindSessionsUseCase(sessionRepository, userRepository);
 }
 
+/**
+ * Factory function to create an instance of RevokeSessionUseCase.
+ * @returns A fully initialized RevokeSessionUseCase.
+ */
 export function makeRevokeSessionUseCase() {
   return new RevokeSessionUseCase(sessionRepository, auditLogRepository);
 }
 
+/**
+ * Factory function to create an instance of LogoutUseCase.
+ * @returns A fully initialized LogoutUseCase.
+ */
 export function makeLogoutUseCase() {
   return new LogoutUseCase(sessionRepository);
 }
 
+/**
+ * Factory function to create an instance of RefreshTokenUseCase.
+ * @returns A fully initialized RefreshTokenUseCase.
+ */
 export function makeRefreshTokenUseCase() {
   return new RefreshTokenUseCase(
     userRepository,
@@ -51,6 +69,10 @@ export function makeRefreshTokenUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of ValidateSessionUseCase.
+ * @returns A fully initialized ValidateSessionUseCase.
+ */
 export function makeValidateSessionUseCase() {
   return new ValidateSessionUseCase(sessionRepository, tokenProvider);
 }

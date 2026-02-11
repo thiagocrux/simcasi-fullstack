@@ -14,6 +14,11 @@ const patientRepository = new PrismaPatientRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
 const userRepository = new PrismaUserRepository();
 
+/**
+ * Factory function to create an instance of RegisterTreatmentUseCase.
+ * Injects repositories for treatments, patients, and audit logging.
+ * @returns A fully initialized RegisterTreatmentUseCase.
+ */
 export function makeRegisterTreatmentUseCase() {
   return new RegisterTreatmentUseCase(
     repository,
@@ -22,6 +27,11 @@ export function makeRegisterTreatmentUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of FindTreatmentsUseCase.
+ * Injects repositories for treatments, users, and patients.
+ * @returns A fully initialized FindTreatmentsUseCase.
+ */
 export function makeFindTreatmentsUseCase() {
   return new FindTreatmentsUseCase(
     repository,
@@ -30,18 +40,34 @@ export function makeFindTreatmentsUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of GetTreatmentByIdUseCase.
+ * @returns A fully initialized GetTreatmentByIdUseCase.
+ */
 export function makeGetTreatmentByIdUseCase() {
   return new GetTreatmentByIdUseCase(repository);
 }
 
+/**
+ * Factory function to create an instance of UpdateTreatmentUseCase.
+ * @returns A fully initialized UpdateTreatmentUseCase.
+ */
 export function makeUpdateTreatmentUseCase() {
   return new UpdateTreatmentUseCase(repository, auditLogRepository);
 }
 
+/**
+ * Factory function to create an instance of DeleteTreatmentUseCase.
+ * @returns A fully initialized DeleteTreatmentUseCase.
+ */
 export function makeDeleteTreatmentUseCase() {
   return new DeleteTreatmentUseCase(repository, auditLogRepository);
 }
 
+/**
+ * Factory function to create an instance of RestoreTreatmentUseCase.
+ * @returns A fully initialized RestoreTreatmentUseCase.
+ */
 export function makeRestoreTreatmentUseCase() {
   return new RestoreTreatmentUseCase(repository, auditLogRepository);
 }

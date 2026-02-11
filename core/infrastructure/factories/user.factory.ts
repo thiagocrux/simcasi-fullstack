@@ -16,6 +16,11 @@ const hashProvider = makeHashProvider();
 const auditLogRepository = new PrismaAuditLogRepository();
 const sessionRepository = new PrismaSessionRepository();
 
+/**
+ * Factory function to create an instance of RegisterUserUseCase.
+ * Injects repositories for users, roles, audit logging, and a hash provider.
+ * @returns A fully initialized RegisterUserUseCase.
+ */
 export function makeRegisterUserUseCase() {
   return new RegisterUserUseCase(
     repository,
@@ -25,14 +30,26 @@ export function makeRegisterUserUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of FindUsersUseCase.
+ * @returns A fully initialized FindUsersUseCase.
+ */
 export function makeFindUsersUseCase() {
   return new FindUsersUseCase(repository);
 }
 
+/**
+ * Factory function to create an instance of GetUserByIdUseCase.
+ * @returns A fully initialized GetUserByIdUseCase.
+ */
 export function makeGetUserByIdUseCase() {
   return new GetUserByIdUseCase(repository);
 }
 
+/**
+ * Factory function to create an instance of UpdateUserUseCase.
+ * @returns A fully initialized UpdateUserUseCase.
+ */
 export function makeUpdateUserUseCase() {
   return new UpdateUserUseCase(
     repository,
@@ -42,6 +59,10 @@ export function makeUpdateUserUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of DeleteUserUseCase.
+ * @returns A fully initialized DeleteUserUseCase.
+ */
 export function makeDeleteUserUseCase() {
   return new DeleteUserUseCase(
     repository,
@@ -50,6 +71,10 @@ export function makeDeleteUserUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of RestoreUserUseCase.
+ * @returns A fully initialized RestoreUserUseCase.
+ */
 export function makeRestoreUserUseCase() {
   return new RestoreUserUseCase(repository, auditLogRepository);
 }

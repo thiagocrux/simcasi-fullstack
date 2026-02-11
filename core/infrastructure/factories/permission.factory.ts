@@ -15,6 +15,10 @@ const roleRepository = new PrismaRoleRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
 const userRepository = new PrismaUserRepository();
 
+/**
+ * Factory function to create an instance of RegisterPermissionUseCase.
+ * @returns A fully initialized RegisterPermissionUseCase.
+ */
 export function makeRegisterPermissionUseCase() {
   return new RegisterPermissionUseCase(
     permissionRepository,
@@ -22,26 +26,50 @@ export function makeRegisterPermissionUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of FindPermissionsUseCase.
+ * @returns A fully initialized FindPermissionsUseCase.
+ */
 export function makeFindPermissionsUseCase() {
   return new FindPermissionsUseCase(permissionRepository, userRepository);
 }
 
+/**
+ * Factory function to create an instance of GetPermissionByIdUseCase.
+ * @returns A fully initialized GetPermissionByIdUseCase.
+ */
 export function makeGetPermissionByIdUseCase() {
   return new GetPermissionByIdUseCase(permissionRepository);
 }
 
+/**
+ * Factory function to create an instance of UpdatePermissionUseCase.
+ * @returns A fully initialized UpdatePermissionUseCase.
+ */
 export function makeUpdatePermissionUseCase() {
   return new UpdatePermissionUseCase(permissionRepository, auditLogRepository);
 }
 
+/**
+ * Factory function to create an instance of DeletePermissionUseCase.
+ * @returns A fully initialized DeletePermissionUseCase.
+ */
 export function makeDeletePermissionUseCase() {
   return new DeletePermissionUseCase(permissionRepository, auditLogRepository);
 }
 
+/**
+ * Factory function to create an instance of RestorePermissionUseCase.
+ * @returns A fully initialized RestorePermissionUseCase.
+ */
 export function makeRestorePermissionUseCase() {
   return new RestorePermissionUseCase(permissionRepository, auditLogRepository);
 }
 
+/**
+ * Factory function to create an instance of ValidatePermissionsUseCase.
+ * @returns A fully initialized ValidatePermissionsUseCase.
+ */
 export function makeValidatePermissionsUseCase() {
   return new ValidatePermissionsUseCase(roleRepository);
 }

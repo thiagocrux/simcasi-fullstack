@@ -14,6 +14,11 @@ const patientRepository = new PrismaPatientRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
 const userRepository = new PrismaUserRepository();
 
+/**
+ * Factory function to create an instance of RegisterExamUseCase.
+ * Injects repositories for exams, patients, and audit logging.
+ * @returns A fully initialized RegisterExamUseCase.
+ */
 export function makeRegisterExamUseCase() {
   return new RegisterExamUseCase(
     examRepository,
@@ -22,6 +27,11 @@ export function makeRegisterExamUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of FindExamsUseCase.
+ * Injects repositories for exams, users, and patients.
+ * @returns A fully initialized FindExamsUseCase.
+ */
 export function makeFindExamsUseCase() {
   return new FindExamsUseCase(
     examRepository,
@@ -30,18 +40,34 @@ export function makeFindExamsUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of GetExamByIdUseCase.
+ * @returns A fully initialized GetExamByIdUseCase.
+ */
 export function makeGetExamByIdUseCase() {
   return new GetExamByIdUseCase(examRepository);
 }
 
+/**
+ * Factory function to create an instance of UpdateExamUseCase.
+ * @returns A fully initialized UpdateExamUseCase.
+ */
 export function makeUpdateExamUseCase() {
   return new UpdateExamUseCase(examRepository, auditLogRepository);
 }
 
+/**
+ * Factory function to create an instance of DeleteExamUseCase.
+ * @returns A fully initialized DeleteExamUseCase.
+ */
 export function makeDeleteExamUseCase() {
   return new DeleteExamUseCase(examRepository, auditLogRepository);
 }
 
+/**
+ * Factory function to create an instance of RestoreExamUseCase.
+ * @returns A fully initialized RestoreExamUseCase.
+ */
 export function makeRestoreExamUseCase() {
   return new RestoreExamUseCase(examRepository, auditLogRepository);
 }

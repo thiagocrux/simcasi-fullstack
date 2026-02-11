@@ -14,6 +14,11 @@ const patientRepository = new PrismaPatientRepository();
 const auditLogRepository = new PrismaAuditLogRepository();
 const userRepository = new PrismaUserRepository();
 
+/**
+ * Factory function to create an instance of RegisterNotificationUseCase.
+ * Injects repositories for notifications, patients, and audit logging.
+ * @returns A fully initialized RegisterNotificationUseCase.
+ */
 export function makeRegisterNotificationUseCase() {
   return new RegisterNotificationUseCase(
     notificationRepository,
@@ -22,6 +27,11 @@ export function makeRegisterNotificationUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of FindNotificationsUseCase.
+ * Injects repositories for notifications, users, and patients.
+ * @returns A fully initialized FindNotificationsUseCase.
+ */
 export function makeFindNotificationsUseCase() {
   return new FindNotificationsUseCase(
     notificationRepository,
@@ -30,10 +40,18 @@ export function makeFindNotificationsUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of GetNotificationByIdUseCase.
+ * @returns A fully initialized GetNotificationByIdUseCase.
+ */
 export function makeGetNotificationByIdUseCase() {
   return new GetNotificationByIdUseCase(notificationRepository);
 }
 
+/**
+ * Factory function to create an instance of UpdateNotificationUseCase.
+ * @returns A fully initialized UpdateNotificationUseCase.
+ */
 export function makeUpdateNotificationUseCase() {
   return new UpdateNotificationUseCase(
     notificationRepository,
@@ -41,6 +59,10 @@ export function makeUpdateNotificationUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of DeleteNotificationUseCase.
+ * @returns A fully initialized DeleteNotificationUseCase.
+ */
 export function makeDeleteNotificationUseCase() {
   return new DeleteNotificationUseCase(
     notificationRepository,
@@ -48,6 +70,10 @@ export function makeDeleteNotificationUseCase() {
   );
 }
 
+/**
+ * Factory function to create an instance of RestoreNotificationUseCase.
+ * @returns A fully initialized RestoreNotificationUseCase.
+ */
 export function makeRestoreNotificationUseCase() {
   return new RestoreNotificationUseCase(
     notificationRepository,
