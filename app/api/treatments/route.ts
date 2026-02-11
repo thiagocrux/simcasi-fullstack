@@ -7,8 +7,10 @@ import {
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * GET - /api/treatments
- * List all treatments with pagination and filters
+ * [GET] /api/treatments
+ * Retrieves a paginated list of treatment records with optional filtering.
+ * @param request The incoming Next.js request.
+ * @return A promise resolving to the list of treatments and metadata.
  */
 export const GET = withAuthentication(['read:treatment'], async (request) => {
   const searchParams = Object.fromEntries(request.nextUrl.searchParams);
@@ -19,15 +21,17 @@ export const GET = withAuthentication(['read:treatment'], async (request) => {
 });
 
 /**
- * POST - /api/treatments
- * Register a new treatment
+ * [POST] /api/treatments
+ * Registers a new treatment record in the system.
+ * @param request The incoming Next.js request.
+ * @param context The request context containing auth metadata.
+ * @return A promise resolving to the created treatment record.
  */
 export const POST = withAuthentication(
   ['create:treatment'],
   async (request, { auth }) => {
     const body = await request.json();
     const useCase = makeRegisterTreatmentUseCase();
-
     const treatment = await useCase.execute({
       ...body,
       createdBy: auth.userId,

@@ -8,14 +8,16 @@ import {
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * GET - /api/exams/[id]
- * Get exam details by ID
+ * [GET] /api/exams/[id]
+ * Retrieves a single exam record by its unique identifier.
+ * @param request The incoming Next.js request.
+ * @param context The request context containing route parameters.
+ * @return A promise resolving to the exam data.
  */
 export const GET = withAuthentication(
   ['read:exam'],
   async (request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
-
     const getExamByIdUseCase = makeGetExamByIdUseCase();
     const exam = await getExamByIdUseCase.execute({ id });
 
@@ -24,8 +26,11 @@ export const GET = withAuthentication(
 );
 
 /**
- * PATCH - /api/exams/[id]
- * Update exam information
+ * [PATCH] /api/exams/[id]
+ * Updates an existing exam record.
+ * @param request The incoming Next.js request.
+ * @param context The request context containing route parameters and auth metadata.
+ * @return A promise resolving to the updated exam record.
  */
 export const PATCH = withAuthentication(
   ['update:exam'],
@@ -33,7 +38,6 @@ export const PATCH = withAuthentication(
     const { id } = await (params as Promise<{ id: string }>);
     const body = await request.json();
     const updateUseCase = makeUpdateExamUseCase();
-
     const updated = await updateUseCase.execute({
       id,
       ...body,
@@ -47,14 +51,16 @@ export const PATCH = withAuthentication(
 );
 
 /**
- * DELETE - /api/exams/[id]
- * Soft delete an exam
+ * [DELETE] /api/exams/[id]
+ * Performs a soft delete on an exam record.
+ * @param request The incoming Next.js request.
+ * @param context The request context containing route parameters and auth metadata.
+ * @return A response confirming deletion (204 No Content).
  */
 export const DELETE = withAuthentication(
   ['delete:exam'],
   async (request, { params, auth }) => {
     const { id } = await (params as Promise<{ id: string }>);
-
     const deleteUseCase = makeDeleteExamUseCase();
     await deleteUseCase.execute({
       id,

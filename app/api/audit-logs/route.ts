@@ -4,8 +4,10 @@ import { makeFindAuditLogsUseCase } from '@/core/infrastructure/factories/audit-
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * GET - /api/audit-logs
- * List all audit logs with pagination and filters
+ * [GET] /api/audit-logs
+ * Retrieves a paginated list of audit log records with optional filtering.
+ * @param request The incoming Next.js request.
+ * @return A promise resolving to the list of audit logs and metadata.
  */
 export const GET = withAuthentication(['read:audit-log'], async (request) => {
   const searchParams = Object.fromEntries(request.nextUrl.searchParams);

@@ -7,8 +7,10 @@ import {
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * GET - /api/users
- * List all users with pagination and filters
+ * [GET] /api/users
+ * Retrieves a paginated list of user records with optional filtering.
+ * @param request The incoming Next.js request.
+ * @return A promise resolving to the list of users and metadata.
  */
 export const GET = withAuthentication(['read:user'], async (request) => {
   const searchParams = Object.fromEntries(request.nextUrl.searchParams);
@@ -19,8 +21,11 @@ export const GET = withAuthentication(['read:user'], async (request) => {
 });
 
 /**
- * POST - /api/users
- * Register a new user
+ * [POST] /api/users
+ * Registers a new user record in the system.
+ * @param request The incoming Next.js request.
+ * @param context The request context containing auth metadata.
+ * @return A promise resolving to the created user record.
  */
 export const POST = withAuthentication(
   ['create:user'],

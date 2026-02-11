@@ -7,8 +7,10 @@ import {
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * GET - /api/permissions
- * List all permissions with pagination and filters
+ * [GET] /api/permissions
+ * Retrieves a paginated list of permission records with optional filtering.
+ * @param request The incoming Next.js request.
+ * @return A promise resolving to the list of permissions and metadata.
  */
 export const GET = withAuthentication(['read:permission'], async (request) => {
   const searchParams = Object.fromEntries(request.nextUrl.searchParams);
@@ -19,15 +21,17 @@ export const GET = withAuthentication(['read:permission'], async (request) => {
 });
 
 /**
- * POST - /api/permissions
- * Register a new permission
+ * [POST] /api/permissions
+ * Registers a new permission record in the system.
+ * @param request The incoming Next.js request.
+ * @param context The request context containing auth metadata.
+ * @return A promise resolving to the created permission record.
  */
 export const POST = withAuthentication(
   ['create:permission'],
   async (request, { auth }) => {
     const body = await request.json();
     const useCase = makeRegisterPermissionUseCase();
-
     const permission = await useCase.execute({
       ...body,
       createdBy: auth.userId,

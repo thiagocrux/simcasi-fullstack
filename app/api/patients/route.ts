@@ -7,8 +7,10 @@ import {
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * GET - /api/patients
- * List patients (Requires view permission)
+ * [GET] /api/patients
+ * Retrieves a paginated list of patient records with optional filtering.
+ * @param request The incoming Next.js request.
+ * @return A promise resolving to the list of patients and pagination metadata.
  */
 export const GET = withAuthentication(['read:patient'], async (request) => {
   const searchParams = Object.fromEntries(request.nextUrl.searchParams);
@@ -19,15 +21,17 @@ export const GET = withAuthentication(['read:patient'], async (request) => {
 });
 
 /**
- * POST - /api/patients
- * Register a new patient (Requires create permission + Audit)
+ * [POST] /api/patients
+ * Registers a new patient record in the system.
+ * @param request The incoming Next.js request.
+ * @param context The request context containing auth metadata.
+ * @return A promise resolving to the created patient record.
  */
 export const POST = withAuthentication(
   ['create:patient'],
   async (request, { auth }) => {
     const body = await request.json();
     const registerUseCase = makeRegisterPatientUseCase();
-
     const patient = await registerUseCase.execute({
       ...body,
       userId: auth.userId,

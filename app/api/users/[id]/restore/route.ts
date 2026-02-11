@@ -4,14 +4,16 @@ import { makeRestoreUserUseCase } from '@/core/infrastructure/factories/user.fac
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * PATCH - /api/users/[id]/restore
- * Restore a soft-deleted user
+ * [PATCH] /api/users/[id]/restore
+ * Restores a previously soft-deleted user record.
+ * @param request The incoming Next.js request.
+ * @param context The request context containing route parameters and auth metadata.
+ * @return A response confirming restoration (204 No Content).
  */
 export const PATCH = withAuthentication(
   ['update:user'],
   async (request, { params, auth }) => {
     const { id } = await (params as Promise<{ id: string }>);
-
     const useCase = makeRestoreUserUseCase();
     await useCase.execute({
       id,

@@ -5,19 +5,17 @@ import { makeRefreshTokenUseCase } from '@/core/infrastructure/factories/session
 import { logger } from '@/lib/logger.utils';
 
 /**
- * POST - /api/auth/refresh
- * Refresh access token using a refresh token
+ * [POST] /api/auth/refresh
+ * Refreshes the access token using a valid refresh token.
+ * @param request The incoming Next.js request.
+ * @return A promise resolving to the new authentication tokens.
  */
 export async function POST(request: NextRequest) {
   logger.info('[API] POST /api/auth/refresh - Iniciando renovação de token');
 
   try {
     let refreshToken = '';
-
-    // 1. Try to get from cookies (Web)
     const cookieToken = request.cookies.get('refresh_token')?.value;
-
-    // 2. Try to get from body (Mobile/Postman)
     const body = await request.json().catch(() => ({}));
     const bodyToken = body.refreshToken;
 
@@ -36,7 +34,6 @@ export async function POST(request: NextRequest) {
     const refreshUseCase = makeRefreshTokenUseCase();
     const ipAddress = request.headers.get('x-forwarded-for') || 'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
-
     const result = await refreshUseCase.execute({
       refreshToken,
       ipAddress,
@@ -44,8 +41,6 @@ export async function POST(request: NextRequest) {
     });
 
     const response = NextResponse.json(result);
-
-    // Update Refresh Token in cookie
     const cookieOptions: NonNullable<
       Parameters<NextResponse['cookies']['set']>[2]
     > = {

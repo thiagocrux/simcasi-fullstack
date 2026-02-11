@@ -4,8 +4,10 @@ import { makeFindSessionsUseCase } from '@/core/infrastructure/factories/session
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * GET - /api/sessions
- * List all sessions with pagination and filters
+ * [GET] /api/sessions
+ * Retrieves a paginated list of session records with optional filtering.
+ * @param request The incoming Next.js request.
+ * @return A promise resolving to the list of sessions and metadata.
  */
 export const GET = withAuthentication(['read:session'], async (request) => {
   const searchParams = Object.fromEntries(request.nextUrl.searchParams);

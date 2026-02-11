@@ -4,14 +4,16 @@ import { makeRestoreExamUseCase } from '@/core/infrastructure/factories/exam.fac
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * PATCH - /api/exams/[id]/restore
- * Restore a soft-deleted exam
+ * [PATCH] /api/exams/[id]/restore
+ * Restores a previously soft-deleted exam record.
+ * @param request The incoming Next.js request.
+ * @param context The request context containing route parameters and auth metadata.
+ * @return A promise resolving to the restored exam record.
  */
 export const PATCH = withAuthentication(
   ['update:exam'],
   async (request, { params, auth }) => {
     const { id } = await (params as Promise<{ id: string }>);
-
     const restoreUseCase = makeRestoreExamUseCase();
     const restored = await restoreUseCase.execute({
       id,

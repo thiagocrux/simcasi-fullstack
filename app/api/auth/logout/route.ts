@@ -4,12 +4,13 @@ import { makeLogoutUseCase } from '@/core/infrastructure/factories/session.facto
 import { JoseTokenProvider } from '@/core/infrastructure/providers/jose-token.provider';
 
 /**
- * POST - /api/auth/logout
- * Invalidate current session and clear cookies
+ * [POST] /api/auth/logout
+ * Invalidates the current user session and clears authentication cookies.
+ * @param request The incoming Next.js request.
+ * @return A promise resolving to a success message.
  */
 export async function POST(request: NextRequest) {
   try {
-    // 1. Get token from header or cookie
     const authHeader = request.headers.get('authorization');
     const token =
       authHeader?.replace('Bearer ', '') ||
@@ -22,7 +23,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Decode to get sid (Session ID)
     const tokenProvider = new JoseTokenProvider();
     const decoded = await tokenProvider.verifyToken<{ sid: string }>(token);
 
@@ -33,14 +33,12 @@ export async function POST(request: NextRequest) {
 
     const response = NextResponse.json({ message: 'Logged out successfully' });
 
-    // 3. Clear cookies
     response.cookies.delete('refresh_token');
-    response.cookies.delete('access_token'); // Just in case it was used
+    response.cookies.delete('access_token');
 
     return response;
   } catch (error) {
     console.error('[LOGOUT_API_ERROR]', error);
-    // Even if it fails, we return 200 to the client as the local session should be cleared
     return NextResponse.json({ message: 'Logged out' }, { status: 200 });
   }
 }

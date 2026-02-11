@@ -4,17 +4,17 @@ import { makeLoginUseCase } from '@/core/infrastructure/factories/session.factor
 import { handleApiError } from '@/lib/api.utils';
 
 /**
- * POST - /api/auth/login
- * Authenticate user and create a session
+ * [POST] /api/auth/login
+ * Authenticates a user and creates a new session.
+ * @param request The incoming Next.js request.
+ * @return A promise resolving to the authentication result including tokens.
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const loginUseCase = makeLoginUseCase();
-
     const ipAddress = request.headers.get('x-forwarded-for') || 'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
-
     const result = await loginUseCase.execute({
       email: body.email,
       password: body.password,
@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
     });
 
     const response = NextResponse.json(result);
-
     // Set Refresh Token in an HTTP-only cookie for Web clients.
     const cookieOptions: NonNullable<
       Parameters<NextResponse['cookies']['set']>[2]

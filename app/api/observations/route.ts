@@ -7,8 +7,10 @@ import {
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * GET - /api/observations
- * List all observations with pagination and filters
+ * [GET] /api/observations
+ * Retrieves a paginated list of observation records with optional filtering.
+ * @param request The incoming Next.js request.
+ * @return A promise resolving to the list of observations and metadata.
  */
 export const GET = withAuthentication(['read:observation'], async (request) => {
   const searchParams = Object.fromEntries(request.nextUrl.searchParams);
@@ -19,15 +21,17 @@ export const GET = withAuthentication(['read:observation'], async (request) => {
 });
 
 /**
- * POST - /api/observations
- * Register a new observation
+ * [POST] /api/observations
+ * Registers a new observation record in the system.
+ * @param request The incoming Next.js request.
+ * @param context The request context containing auth metadata.
+ * @return A promise resolving to the created observation record.
  */
 export const POST = withAuthentication(
   ['create:observation'],
   async (request, { auth }) => {
     const body = await request.json();
     const useCase = makeRegisterObservationUseCase();
-
     const observation = await useCase.execute({
       ...body,
       createdBy: auth.userId,

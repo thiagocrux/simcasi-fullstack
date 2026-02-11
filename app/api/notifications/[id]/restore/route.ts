@@ -4,14 +4,16 @@ import { makeRestoreNotificationUseCase } from '@/core/infrastructure/factories/
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
- * PATCH - /api/notifications/[id]/restore
- * Restore a soft-deleted notification
+ * [PATCH] /api/notifications/[id]/restore
+ * Restores a previously soft-deleted notification record.
+ * @param request The incoming Next.js request.
+ * @param context The request context containing route parameters and auth metadata.
+ * @return A promise resolving to the restored notification.
  */
 export const PATCH = withAuthentication(
   ['update:notification'],
   async (request, { params, auth }) => {
     const { id } = await (params as Promise<{ id: string }>);
-
     const restoreUseCase = makeRestoreNotificationUseCase();
     const restored = await restoreUseCase.execute({
       id,
