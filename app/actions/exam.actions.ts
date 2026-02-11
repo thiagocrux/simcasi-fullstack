@@ -22,45 +22,48 @@ import {
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
 /**
- * Fetch a paginated list of exams with optional search filtering.
+ * Retrieves a paginated list of exam records with optional filtering.
+ * @param query Optional filtering and pagination parameters.
+ * @return A promise resolving to the list of exams and metadata.
  */
 export async function findExams(query?: ExamQueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:exam'], async () => {
-    // 1. Validate query input using centralized entity schema.
     const parsed = examQuerySchema.safeParse(query);
-
-    // 2. Initialize use case.
     const findExamsUseCase = makeFindExamsUseCase();
-
-    // 3. Execute use case.
     return await findExamsUseCase.execute(parsed.data || {});
   });
 }
 
+/**
+ * Retrieves a single exam record by its unique identifier.
+ * @param id The UUID of the exam record.
+ * @return A promise resolving to the exam data.
+ * @throws ValidationError If the provided ID is invalid.
+ */
 export async function getExam(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:exam'], async () => {
-    // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
-
     if (!parsed.success) {
       throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
 
-    // 2. Initialize use case.
     const getExamByIdUseCase = makeGetExamByIdUseCase();
-
-    // 3. Execute use case.
     return await getExamByIdUseCase.execute({ id: parsed.data });
   });
 }
 
+/**
+ * Registers a new exam record in the system.
+ * Handles cache revalidation for both the direct exams list and patient-specific history.
+ * @param input The laboratory test data to register.
+ * @return A promise resolving to the created exam record.
+ * @throws ValidationError If the exam data is malformed.
+ */
 export async function createExam(input: CreateExamInput) {
   return withSecuredActionAndAutomaticRetry(
     ['create:exam'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form input.
       const parsed = examSchema.safeParse(input);
-
       if (!parsed.success) {
         throw new ValidationError(
           'Dados do exame inválidos',
@@ -68,10 +71,7 @@ export async function createExam(input: CreateExamInput) {
         );
       }
 
-      // 2. Initialize use case.
       const registerExamUseCase = makeRegisterExamUseCase();
-
-      // 3. Execute use case with audit data.
       const exam = await registerExamUseCase.execute({
         ...parsed.data,
         userId,
@@ -79,7 +79,6 @@ export async function createExam(input: CreateExamInput) {
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath(`/patients/${input.patientId}/exams`);
       revalidatePath('/exams');
 
@@ -88,14 +87,18 @@ export async function createExam(input: CreateExamInput) {
   );
 }
 
+/**
+ * Updates an existing exam record.
+ * @param id The UUID of the exam record to update.
+ * @param input The updated data fields.
+ * @return A promise resolving to the updated exam record.
+ */
 export async function updateExam(id: string, input: UpdateExamInput) {
   return withSecuredActionAndAutomaticRetry(
     ['update:exam'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form/ID input.
       const parsedId = IdSchema.safeParse(id);
       const parsedData = examSchema.partial().safeParse(input);
-
       if (!parsedId.success) {
         throw new ValidationError(
           'Invalid ID.',
@@ -110,10 +113,7 @@ export async function updateExam(id: string, input: UpdateExamInput) {
         );
       }
 
-      // 2. Initialize use case.
       const updateExamUseCase = makeUpdateExamUseCase();
-
-      // 3. Execute use case with audit data.
       const exam = await updateExamUseCase.execute({
         ...parsedData.data,
         id: parsedId.data,
@@ -122,7 +122,6 @@ export async function updateExam(id: string, input: UpdateExamInput) {
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/exams');
 
       return exam;
@@ -130,21 +129,21 @@ export async function updateExam(id: string, input: UpdateExamInput) {
   );
 }
 
+/**
+ * Performs a soft delete on an exam record.
+ * @param id The UUID of the exam to delete.
+ * @return A success object upon completion.
+ */
 export async function deleteExam(id: string) {
   return withSecuredActionAndAutomaticRetry(
     ['delete:exam'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate ID input.
       const parsed = IdSchema.safeParse(id);
-
       if (!parsed.success) {
         throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
-      // 2. Initialize use case.
       const deleteExamUseCase = makeDeleteExamUseCase();
-
-      // 3. Execute use case with audit data.
       await deleteExamUseCase.execute({
         id: parsed.data,
         userId,
@@ -152,7 +151,6 @@ export async function deleteExam(id: string) {
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/exams');
 
       return { success: true };

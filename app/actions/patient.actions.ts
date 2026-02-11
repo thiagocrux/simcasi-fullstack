@@ -31,32 +31,31 @@ import {
 } from '@/lib/actions.utils';
 
 /**
- * Fetch a paginated list of patients with optional search filtering.
+ * Retrieves a paginated list of patient records with optional filtering.
+ * @param query Optional filtering and pagination parameters.
+ * @return A promise resolving to the list of patients and pagination metadata.
  */
 export async function findPatients(
   query?: PatientQueryInput
 ): Promise<ActionResponse<FindPatientsOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:patient'], async () => {
-    // 1. Validate query input using centralized entity schema.
     const parsed = patientQuerySchema.safeParse(query);
-
-    // 2. Initialize use case.
     const useCase = makeFindPatientsUseCase();
-
-    // 3. Execute use case.
     return await useCase.execute(parsed.data || {});
   });
 }
 
 /**
- * Retrieve detailed information for a single patient by their unique ID.
+ * Retrieves a single patient record by its unique identifier.
+ * @param id The UUID of the patient to retrieve.
+ * @return A promise resolving to the patient data.
+ * @throws ValidationError If the provided ID is invalid.
  */
 export async function getPatient(
   id: string
 ): Promise<ActionResponse<GetPatientOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:patient'], async () => {
     const parsed = IdSchema.safeParse(id);
-
     if (!parsed.success) {
       throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
@@ -67,8 +66,11 @@ export async function getPatient(
 }
 
 /**
- * Register a new patient in the system.
- * Handles automatic restoration if a record with the same CPF or SUS card was previously soft-deleted.
+ * Registers a new patient record in the system.
+ * Handles revalidation of the patients list path upon success.
+ * @param input The data required to register a new patient.
+ * @return A promise resolving to the created patient record.
+ * @throws ValidationError If the patient data fails validation.
  */
 export async function createPatient(
   input: CreatePatientInput
@@ -77,7 +79,6 @@ export async function createPatient(
     ['create:patient'],
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = patientSchema.safeParse(input);
-
       if (!parsed.success) {
         throw new ValidationError(
           'Dados do paciente inválidos',
@@ -100,7 +101,10 @@ export async function createPatient(
 }
 
 /**
- * Update an existing patient's demographic or contact information.
+ * Updates an existing patient record.
+ * @param id The UUID of the patient to update.
+ * @param input The updated data fields.
+ * @return A promise resolving to the updated patient record.
  */
 export async function updatePatient(
   id: string,
@@ -111,14 +115,12 @@ export async function updatePatient(
     async ({ userId, ipAddress, userAgent }) => {
       const parsedId = IdSchema.safeParse(id);
       const parsedData = patientSchema.partial().safeParse(input);
-
       if (!parsedId.success) {
         throw new ValidationError(
           'Invalid ID.',
           formatZodError(parsedId.error)
         );
       }
-
       if (!parsedData.success) {
         throw new ValidationError(
           'Dados de atualização inválidos',
@@ -142,7 +144,9 @@ export async function updatePatient(
 }
 
 /**
- * Delete a patient and their related health records (soft-delete).
+ * Performs a soft delete on a patient and related medical records.
+ * @param id The UUID of the patient to delete.
+ * @return A promise that resolves when the operation is complete.
  */
 export async function deletePatient(
   id: string
@@ -151,7 +155,6 @@ export async function deletePatient(
     ['delete:patient'],
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
-
       if (!parsed.success) {
         throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
@@ -170,14 +173,15 @@ export async function deletePatient(
 }
 
 /**
- * Restore a soft-deleted patient and their previously associated health records.
+ * Restores a previously soft-deleted patient record and their associated history.
+ * @param id The UUID of the patient to restore.
+ * @return A promise that resolves when the restoration is complete.
  */
 export async function restorePatient(id: string) {
   return withSecuredActionAndAutomaticRetry(
     ['update:patient'],
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
-
       if (!parsed.success) {
         throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }

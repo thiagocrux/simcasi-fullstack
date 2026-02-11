@@ -23,8 +23,10 @@ import {
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
 /**
- * Fetch a paginated list of all roles.
+ * Retrieves a paginated list of role records with optional filtering.
  * Useful for administrative views and role selection components.
+ * @param query Criteria for filtering and pagination.
+ * @return A promise resolving to the list of roles and metadata.
  */
 export async function findRoles(query?: RoleQueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:role'], async () => {
@@ -35,12 +37,14 @@ export async function findRoles(query?: RoleQueryInput) {
 }
 
 /**
- * Retrieve detailed information about a single role by its unique ID.
+ * Retrieves a single role record by its unique identifier.
+ * @param id The UUID of the role.
+ * @return A promise resolving to the role data.
+ * @throws ValidationError If the ID is invalid.
  */
 export async function getRole(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:role'], async () => {
     const parsed = IdSchema.safeParse(id);
-
     if (!parsed.success) {
       throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
@@ -51,15 +55,17 @@ export async function getRole(id: string) {
 }
 
 /**
- * Register a new role in the system.
- * This will also handle automatic restoration if the role code was previously soft-deleted.
+ * Registers a new role record in the system.
+ * Handles automatic restoration if the role code was previously soft-deleted.
+ * @param input The role name and associated permission slugs.
+ * @return A promise resolving to the created/restored role.
+ * @throws ValidationError If the role data is invalid.
  */
 export async function createRole(input: CreateRoleInput) {
   return withSecuredActionAndAutomaticRetry(
     ['create:role'],
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = roleSchema.safeParse(input);
-
       if (!parsed.success) {
         throw new ValidationError(
           'Dados do cargo inválidos',
@@ -82,7 +88,11 @@ export async function createRole(input: CreateRoleInput) {
 }
 
 /**
- * Update an existing role's code or its associated permissions.
+ * Updates an existing role record.
+ * @param id The UUID of the role to update.
+ * @param input The partial fields to update.
+ * @return A promise resolving to the updated role.
+ * @throws ValidationError If the update data or ID is invalid.
  */
 export async function updateRole(id: string, input: UpdateRoleInput) {
   return withSecuredActionAndAutomaticRetry(
@@ -90,7 +100,6 @@ export async function updateRole(id: string, input: UpdateRoleInput) {
     async ({ userId, ipAddress, userAgent }) => {
       const parsedId = IdSchema.safeParse(id);
       const parsedData = roleSchema.partial().safeParse(input);
-
       if (!parsedId.success) {
         throw new ValidationError(
           'Invalid ID.',
@@ -121,14 +130,16 @@ export async function updateRole(id: string, input: UpdateRoleInput) {
 }
 
 /**
- * Perform a soft delete on a role using its ID.
+ * Performs a soft delete on a role record.
+ * @param id The UUID of the role to delete.
+ * @return A promise resolving to void.
+ * @throws ValidationError If the ID is invalid.
  */
 export async function deleteRole(id: string) {
   return withSecuredActionAndAutomaticRetry(
     ['delete:role'],
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
-
       if (!parsed.success) {
         throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
@@ -147,14 +158,16 @@ export async function deleteRole(id: string) {
 }
 
 /**
- * Restore a previously soft-deleted role.
+ * Restores a previously soft-deleted role record.
+ * @param id The UUID of the role to restore.
+ * @return A promise resolving to void.
+ * @throws ValidationError If the ID is invalid.
  */
 export async function restoreRole(id: string) {
   return withSecuredActionAndAutomaticRetry(
     ['update:role'],
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
-
       if (!parsed.success) {
         throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }

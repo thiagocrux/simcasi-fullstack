@@ -22,50 +22,50 @@ import {
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
 /**
- * Find observations with filters.
- *
- * @param query - The search and filter parameters.
- * @returns The list of observations and count.
+ * Retrieves a paginated list of observation records with optional filtering.
+ * @param query Criteria for filtering and pagination.
+ * @return A promise resolving to the observations and metadata.
  */
 export async function findObservations(query?: ObservationQueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:observation'], async () => {
-    // 1. Validate query input.
     const parsed = observationQuerySchema.safeParse(query);
-
-    // 2. Initialize use case.
     const findObservationsUseCase = makeFindObservationsUseCase();
-
-    // 3. Execute use case.
     return await findObservationsUseCase.execute(parsed.data || {});
   });
 }
 
+/**
+ * Retrieves a single observation record by its unique identifier.
+ * @param id The UUID of the observation.
+ * @return A promise resolving to the observation data.
+ * @throws ValidationError If the ID is invalid.
+ */
 export async function getObservation(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:observation'], async () => {
-    // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
-
     if (!parsed.success) {
       throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
 
-    // 2. Initialize use case.
     const getObservationByIdUseCase = makeGetObservationByIdUseCase();
-
-    // 3. Execute use case.
     return await getObservationByIdUseCase.execute({
       id: parsed.data,
     });
   });
 }
 
+/**
+ * Registers a new observation record in the system.
+ * Revalidates the patient-specific observation history.
+ * @param input The observation data to create.
+ * @return A promise resolving to the created observation.
+ * @throws ValidationError If the input data is malformed.
+ */
 export async function createObservation(input: CreateObservationInput) {
   return withSecuredActionAndAutomaticRetry(
     ['create:observation'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form input.
       const parsed = observationSchema.safeParse(input);
-
       if (!parsed.success) {
         throw new ValidationError(
           'Dados da observação inválidos',
@@ -73,10 +73,7 @@ export async function createObservation(input: CreateObservationInput) {
         );
       }
 
-      // 2. Initialize use case.
       const registerObservationUseCase = makeRegisterObservationUseCase();
-
-      // 3. Execute use case with audit data.
       const observation = await registerObservationUseCase.execute({
         ...parsed.data,
         userId,
@@ -84,7 +81,6 @@ export async function createObservation(input: CreateObservationInput) {
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath(`/patients/${input.patientId}/observations`);
       revalidatePath('/observations');
 
@@ -93,6 +89,13 @@ export async function createObservation(input: CreateObservationInput) {
   );
 }
 
+/**
+ * Updates an existing observation record.
+ * @param id The UUID of the observation to update.
+ * @param input The partial observation fields to modify.
+ * @return A promise resolving to the updated observation.
+ * @throws ValidationError If the update data or ID is invalid.
+ */
 export async function updateObservation(
   id: string,
   input: UpdateObservationInput
@@ -100,10 +103,8 @@ export async function updateObservation(
   return withSecuredActionAndAutomaticRetry(
     ['update:observation'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form/ID input.
       const parsedId = IdSchema.safeParse(id);
       const parsedData = observationSchema.partial().safeParse(input);
-
       if (!parsedId.success) {
         throw new ValidationError(
           'Invalid ID.',
@@ -118,10 +119,7 @@ export async function updateObservation(
         );
       }
 
-      // 2. Initialize use case.
       const updateObservationUseCase = makeUpdateObservationUseCase();
-
-      // 3. Execute use case with audit data.
       const observation = await updateObservationUseCase.execute({
         ...parsedData.data,
         id: parsedId.data,
@@ -130,7 +128,6 @@ export async function updateObservation(
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/observations');
 
       return observation;
@@ -138,21 +135,22 @@ export async function updateObservation(
   );
 }
 
+/**
+ * Performs a soft delete on an observation record.
+ * @param id The UUID of the observation to delete.
+ * @return A success object upon completion.
+ * @throws ValidationError If the ID is invalid.
+ */
 export async function deleteObservation(id: string) {
   return withSecuredActionAndAutomaticRetry(
     ['delete:observation'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate ID input.
       const parsed = IdSchema.safeParse(id);
-
       if (!parsed.success) {
         throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
-      // 2. Initialize use case.
       const deleteObservationUseCase = makeDeleteObservationUseCase();
-
-      // 3. Execute use case with audit data.
       await deleteObservationUseCase.execute({
         id: parsed.data,
         userId,
@@ -160,7 +158,6 @@ export async function deleteObservation(id: string) {
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/observations');
 
       return { success: true };

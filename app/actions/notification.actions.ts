@@ -22,47 +22,50 @@ import {
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
 /**
- * Fetch a paginated list of notifications with optional search filtering.
+ * Retrieves a paginated list of notification records with optional filtering.
+ * @param query Optional filtering and pagination criteria for notifications.
+ * @return A promise resolving to the list of notifications and metadata.
  */
 export async function findNotifications(query?: NotificationQueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:notification'], async () => {
-    // 1. Validate query input using centralized entity schema.
     const parsed = notificationQuerySchema.safeParse(query);
-
-    // 2. Initialize use case.
     const findNotificationsUseCase = makeFindNotificationsUseCase();
-
-    // 3. Execute use case.
     return await findNotificationsUseCase.execute(parsed.data || {});
   });
 }
 
+/**
+ * Retrieves a single notification record by its unique identifier.
+ * @param id The UUID of the notification.
+ * @return A promise resolving to the notification details.
+ * @throws ValidationError If the ID format is invalid.
+ */
 export async function getNotification(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:notification'], async () => {
-    // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
-
     if (!parsed.success) {
       throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
 
-    // 2. Initialize use case.
     const getNotificationByIdUseCase = makeGetNotificationByIdUseCase();
-
-    // 3. Execute use case.
     return await getNotificationByIdUseCase.execute({
       id: parsed.data,
     });
   });
 }
 
+/**
+ * Registers a new notification record in the system.
+ * Records a state-mandated health notification (SINAN) for a case.
+ * @param input The epidemiological notification data.
+ * @return A promise resolving to the created notification record.
+ * @throws ValidationError If notification data violates validation rules.
+ */
 export async function createNotification(input: CreateNotificationInput) {
   return withSecuredActionAndAutomaticRetry(
     ['create:notification'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form input.
       const parsed = notificationSchema.safeParse(input);
-
       if (!parsed.success) {
         throw new ValidationError(
           'Dados da notificação inválidos',
@@ -70,10 +73,7 @@ export async function createNotification(input: CreateNotificationInput) {
         );
       }
 
-      // 2. Initialize use case.
       const registerNotificationUseCase = makeRegisterNotificationUseCase();
-
-      // 3. Execute use case with audit data.
       const notification = await registerNotificationUseCase.execute({
         ...parsed.data,
         userId,
@@ -81,7 +81,6 @@ export async function createNotification(input: CreateNotificationInput) {
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath(`/patients/${input.patientId}/notifications`);
       revalidatePath('/notifications');
 
@@ -90,6 +89,14 @@ export async function createNotification(input: CreateNotificationInput) {
   );
 }
 
+/**
+ * Updates an existing notification record.
+ * Primarily used to correct form data or add supplemental epidemiological information.
+ * @param id The UUID of the notification to update.
+ * @param input The updated notification fields.
+ * @return A promise resolving to the updated notification.
+ * @throws ValidationError If the update data is invalid.
+ */
 export async function updateNotification(
   id: string,
   input: UpdateNotificationInput
@@ -97,10 +104,8 @@ export async function updateNotification(
   return withSecuredActionAndAutomaticRetry(
     ['update:notification'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form/ID input.
       const parsedId = IdSchema.safeParse(id);
       const parsedData = notificationSchema.partial().safeParse(input);
-
       if (!parsedId.success) {
         throw new ValidationError(
           'Invalid ID.',
@@ -115,10 +120,7 @@ export async function updateNotification(
         );
       }
 
-      // 2. Initialize use case.
       const updateNotificationUseCase = makeUpdateNotificationUseCase();
-
-      // 3. Execute use case with audit data.
       const notification = await updateNotificationUseCase.execute({
         ...parsedData.data,
         id: parsedId.data,
@@ -127,7 +129,6 @@ export async function updateNotification(
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/notifications');
 
       return notification;
@@ -135,21 +136,22 @@ export async function updateNotification(
   );
 }
 
+/**
+ * Performs a soft delete on a notification record.
+ * @param id The UUID of the notification to delete.
+ * @return A success object upon completion.
+ * @throws ValidationError If the ID is invalid.
+ */
 export async function deleteNotification(id: string) {
   return withSecuredActionAndAutomaticRetry(
     ['delete:notification'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate ID input.
       const parsed = IdSchema.safeParse(id);
-
       if (!parsed.success) {
         throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
-      // 2. Initialize use case.
       const deleteNotificationUseCase = makeDeleteNotificationUseCase();
-
-      // 3. Execute use case with audit data.
       await deleteNotificationUseCase.execute({
         id: parsed.data,
         userId,
@@ -157,7 +159,6 @@ export async function deleteNotification(id: string) {
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/notifications');
 
       return { success: true };

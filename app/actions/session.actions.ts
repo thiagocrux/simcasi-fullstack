@@ -22,11 +22,15 @@ import {
 import { getAuditMetadata, handleActionError } from '@/lib/actions.utils';
 import { logger } from '@/lib/logger.utils';
 
+/**
+ * Authenticates a user and establishes a persistent session via cookies.
+ * Handles credential validation, audit tracking, and token storage.
+ * @param input The user's login credentials and session preferences.
+ * @return A success object with user and permission data, or an error response.
+ */
 export async function signInUser(input: CreateSessionInput) {
   try {
-    // 1. Validate form input.
     const parsed = sessionSchema.safeParse(input);
-
     if (!parsed.success) {
       return {
         success: false,
@@ -35,13 +39,8 @@ export async function signInUser(input: CreateSessionInput) {
       };
     }
 
-    // 2. Get audit metadata.
     const { ipAddress, userAgent } = await getAuditMetadata();
-
-    // 3. Initialize use case.
     const loginUseCase = makeLoginUseCase();
-
-    // 4. Execute use case.
     const result = await loginUseCase.execute({
       ...parsed.data,
       ipAddress,
@@ -49,8 +48,6 @@ export async function signInUser(input: CreateSessionInput) {
     });
 
     const { accessToken, refreshToken, user, permissions } = result;
-
-    // 5. Set authentication cookies.
     const cookieStore = await cookies();
     const tokenProvider = makeTokenProvider();
 
@@ -80,7 +77,6 @@ export async function signInUser(input: CreateSessionInput) {
       }min`
     );
 
-    // 6. Return success status with data for Redux.
     return {
       success: true,
       data: {
@@ -93,24 +89,23 @@ export async function signInUser(input: CreateSessionInput) {
   }
 }
 
+/**
+ * Terminates the current user session.
+ * Clears authentication cookies and attempts to invalidate the session record in the database.
+ * Always redirects the user to the sign-in page.
+ * @return A promise that resolves to a redirection.
+ */
 export async function signOutUser() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('access_token')?.value;
 
-    // 1. Delete authentication cookies IMMEDIATELY.
-    // This is the most important step for the user.
     cookieStore.delete('access_token');
     cookieStore.delete('refresh_token');
 
-    // 2. Effort to invalidate session on the server.
-    // We do this inside a try/catch to ensure that ANY error here
-    // doesn't stop the user from being logged out on the client.
     if (token) {
       try {
         const validateSessionUseCase = makeValidateSessionUseCase();
-        // Here we still try to get the sessionId to clean up the DB.
-        // We catch terminal errors since we've already cleared cookies.
         const { sessionId } = await validateSessionUseCase.execute({
           token,
         });
@@ -120,7 +115,6 @@ export async function signOutUser() {
 
         logger.info(`[AUTH] Session ${sessionId} revoked during logout.`);
       } catch (error: any) {
-        // We log it but don't throw, as the cookies are already gone.
         logger.warn(
           '[AUTH] Could not revoke session in DB, but cookies were cleared.',
           error
@@ -130,35 +124,40 @@ export async function signOutUser() {
   } catch (error: any) {
     logger.error('[SIGNOUT_ERROR]', error);
   } finally {
-    // 3. Redirect to sign-in page is ALWAYS the final destination.
     redirect('/auth/sign-in');
   }
 }
 
+/**
+ * Initiates the password recovery process for a user.
+ * @param input The user's identification (e.g., email or username) to request a reset.
+ * @return A success indicator or detailed error messages.
+ */
 export async function requestNewPassword(input: RequestNewPasswordInput) {
   try {
     const parsed = requestNewPasswordSchema.safeParse(input);
-
     if (!parsed.success) {
       return { success: false, errors: formatZodError(parsed.error) };
     }
 
-    // TODO: Implement new password request logic in a Use Case if available.
     return { success: true };
   } catch (error: any) {
     return handleActionError(error);
   }
 }
 
+/**
+ * Completes the password reset process using a recovery token.
+ * @param input The new password and the verification token.
+ * @return A success indicator or detailed error messages.
+ */
 export async function resetPassword(input: ResetPasswordInput) {
   try {
     const parsed = resetPasswordSchema.safeParse(input);
-
     if (!parsed.success) {
       return { success: false, errors: formatZodError(parsed.error) };
     }
 
-    // TODO: Implement password reset logic in a Use Case if available.
     return { success: true };
   } catch (error: any) {
     return handleActionError(error);

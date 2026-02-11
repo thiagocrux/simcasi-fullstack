@@ -22,50 +22,50 @@ import {
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
 /**
- * Find treatments with filters.
- *
- * @param query - The search and filter parameters.
- * @returns The list of treatments and count.
+ * Retrieves a paginated list of treatment records with optional filtering.
+ * @param query Criteria for filtering and pagination.
+ * @return A promise resolving to the treatments and metadata.
  */
 export async function findTreatments(query?: TreatmentQueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:treatment'], async () => {
-    // 1. Validate query input.
     const parsed = treatmentQuerySchema.safeParse(query);
-
-    // 2. Initialize use case.
     const findTreatmentsUseCase = makeFindTreatmentsUseCase();
-
-    // 3. Execute use case.
     return await findTreatmentsUseCase.execute(parsed.data || {});
   });
 }
 
+/**
+ * Retrieves a single treatment record by its unique identifier.
+ * @param id The UUID of the treatment.
+ * @return A promise resolving to the treatment data.
+ * @throws ValidationError If the ID is invalid.
+ */
 export async function getTreatment(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:treatment'], async () => {
-    // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
-
     if (!parsed.success) {
       throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
 
-    // 2. Initialize use case.
     const getTreatmentByIdUseCase = makeGetTreatmentByIdUseCase();
-
-    // 3. Execute use case.
     return await getTreatmentByIdUseCase.execute({
       id: parsed.data,
     });
   });
 }
 
+/**
+ * Registers a new treatment record in the system.
+ * Handles revalidation for the active patient treatments view.
+ * @param input The treatment data to register.
+ * @return A promise resolving to the created treatment record.
+ * @throws ValidationError If the treatment data is invalid.
+ */
 export async function createTreatment(input: CreateTreatmentInput) {
   return withSecuredActionAndAutomaticRetry(
     ['create:treatment'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form input.
       const parsed = treatmentSchema.safeParse(input);
-
       if (!parsed.success) {
         throw new ValidationError(
           'Dados do tratamento inválidos',
@@ -73,10 +73,7 @@ export async function createTreatment(input: CreateTreatmentInput) {
         );
       }
 
-      // 2. Initialize use case.
       const registerTreatmentUseCase = makeRegisterTreatmentUseCase();
-
-      // 3. Execute use case with audit data.
       const treatment = await registerTreatmentUseCase.execute({
         ...parsed.data,
         userId,
@@ -84,7 +81,6 @@ export async function createTreatment(input: CreateTreatmentInput) {
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath(`/patients/${input.patientId}/treatments`);
       revalidatePath('/treatments');
 
@@ -93,14 +89,19 @@ export async function createTreatment(input: CreateTreatmentInput) {
   );
 }
 
+/**
+ * Updates an existing treatment record.
+ * @param id The UUID of the treatment record.
+ * @param input The updated data fields.
+ * @return A promise resolving to the updated treatment.
+ * @throws ValidationError If input data or ID is invalid.
+ */
 export async function updateTreatment(id: string, input: UpdateTreatmentInput) {
   return withSecuredActionAndAutomaticRetry(
     ['update:treatment'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form/ID input.
       const parsedId = IdSchema.safeParse(id);
       const parsedData = treatmentSchema.partial().safeParse(input);
-
       if (!parsedId.success) {
         throw new ValidationError(
           'Invalid ID.',
@@ -115,10 +116,7 @@ export async function updateTreatment(id: string, input: UpdateTreatmentInput) {
         );
       }
 
-      // 2. Initialize use case.
       const updateTreatmentUseCase = makeUpdateTreatmentUseCase();
-
-      // 3. Execute use case with audit data.
       const treatment = await updateTreatmentUseCase.execute({
         ...parsedData.data,
         id: parsedId.data,
@@ -127,7 +125,6 @@ export async function updateTreatment(id: string, input: UpdateTreatmentInput) {
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/treatments');
 
       return treatment;
@@ -135,21 +132,22 @@ export async function updateTreatment(id: string, input: UpdateTreatmentInput) {
   );
 }
 
+/**
+ * Performs a soft delete on a treatment record.
+ * @param id The UUID of the treatment to delete.
+ * @return A success object upon completion.
+ * @throws ValidationError If the ID is invalid.
+ */
 export async function deleteTreatment(id: string) {
   return withSecuredActionAndAutomaticRetry(
     ['delete:treatment'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate ID input.
       const parsed = IdSchema.safeParse(id);
-
       if (!parsed.success) {
         throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
-      // 2. Initialize use case.
       const deleteTreatmentUseCase = makeDeleteTreatmentUseCase();
-
-      // 3. Execute use case with audit data.
       await deleteTreatmentUseCase.execute({
         id: parsed.data,
         userId,
@@ -157,7 +155,6 @@ export async function deleteTreatment(id: string) {
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/treatments');
 
       return { success: true };

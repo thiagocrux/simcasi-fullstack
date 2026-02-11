@@ -23,7 +23,10 @@ import {
 import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
 
 /**
- * Fetch a paginated list of all permissions available in the system.
+ * Retrieves a paginated list of permission records with optional filtering.
+ * Useful for RBAC (Role-Based Access Control) configuration.
+ * @param query Criteria for filtering and pagination.
+ * @return A promise resolving to the list of permissions.
  */
 export async function findPermissions(query?: PermissionQueryInput) {
   return withSecuredActionAndAutomaticRetry(['read:permission'], async () => {
@@ -34,12 +37,14 @@ export async function findPermissions(query?: PermissionQueryInput) {
 }
 
 /**
- * Retrieve detailed information about a single permission by its unique ID.
+ * Retrieves a single permission record by its unique identifier.
+ * @param id The UUID of the permission.
+ * @return A promise resolving to the permission data.
+ * @throws ValidationError If the ID is invalid.
  */
 export async function getPermission(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:permission'], async () => {
     const parsed = IdSchema.safeParse(id);
-
     if (!parsed.success) {
       throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
@@ -50,15 +55,17 @@ export async function getPermission(id: string) {
 }
 
 /**
- * Register a new permission in the system.
+ * Registers a new permission record in the system.
  * Handles automatic restoration if the permission code was previously soft-deleted.
+ * @param input The permission code and resource mapping data.
+ * @return A promise resolving to the created/restored permission record.
+ * @throws ValidationError If the permission data is invalid.
  */
 export async function createPermission(input: CreatePermissionInput) {
   return withSecuredActionAndAutomaticRetry(
     ['create:permission'],
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = permissionSchema.safeParse(input);
-
       if (!parsed.success) {
         throw new ValidationError(
           'Dados da permissão inválidos',
@@ -81,7 +88,11 @@ export async function createPermission(input: CreatePermissionInput) {
 }
 
 /**
- * Update an existing permission's code or its associated roles.
+ * Updates an existing permission record.
+ * @param id The UUID of the permission record.
+ * @param input The partial update fields.
+ * @return A promise resolving to the updated permission.
+ * @throws ValidationError If input data or ID is invalid.
  */
 export async function updatePermission(
   id: string,
@@ -92,7 +103,6 @@ export async function updatePermission(
     async ({ userId, ipAddress, userAgent }) => {
       const parsedId = IdSchema.safeParse(id);
       const parsedData = permissionSchema.partial().safeParse(input);
-
       if (!parsedId.success) {
         throw new ValidationError(
           'Invalid ID.',
@@ -123,14 +133,16 @@ export async function updatePermission(
 }
 
 /**
- * Delete a permission record (soft-delete).
+ * Performs a soft delete on a permission record.
+ * @param id The UUID of the permission to delete.
+ * @return A promise resolving to void.
+ * @throws ValidationError If the ID is invalid.
  */
 export async function deletePermission(id: string) {
   return withSecuredActionAndAutomaticRetry(
     ['delete:permission'],
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
-
       if (!parsed.success) {
         throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
@@ -149,14 +161,16 @@ export async function deletePermission(id: string) {
 }
 
 /**
- * Restore a previously soft-deleted permission back to its active state.
+ * Restores a previously soft-deleted permission record.
+ * @param id The UUID of the permission record to restore.
+ * @return A promise resolving to void.
+ * @throws ValidationError If the ID is invalid.
  */
 export async function restorePermission(id: string) {
   return withSecuredActionAndAutomaticRetry(
     ['update:permission'],
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
-
       if (!parsed.success) {
         throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }

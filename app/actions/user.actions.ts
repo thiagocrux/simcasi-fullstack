@@ -29,51 +29,53 @@ import {
 } from '@/lib/actions.utils';
 
 /**
- * Fetch a paginated list of users with optional search filtering.
+ * Retrieves a paginated list of user records with optional filtering.
+ * @param query Criteria for filtering and pagination.
+ * @return A promise resolving to the list of users and metadata.
  */
 export async function findUsers(
   query?: UserQueryInput
 ): Promise<ActionResponse<FindUsersOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
-    // 1. Validate query input using centralized entity schema.
     const parsed = userQuerySchema.safeParse(query);
-
-    // 2. Initialize use case.
     const findUsersUseCase = makeFindUsersUseCase();
-
-    // 3. Execute use case.
     return await findUsersUseCase.execute(parsed.data || {});
   });
 }
 
+/**
+ * Retrieves a single user record by its unique identifier.
+ * @param id The UUID of the user.
+ * @return A promise resolving to the user profile data.
+ * @throws ValidationError If the ID is invalid.
+ */
 export async function getUser(
   id: string
 ): Promise<ActionResponse<GetUserOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
-    // 1. Validate ID input.
     const parsed = IdSchema.safeParse(id);
-
     if (!parsed.success) {
       throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
     }
 
-    // 2. Initialize use case.
     const getUserByIdUseCase = makeGetUserByIdUseCase();
-
-    // 3. Execute use case.
     return await getUserByIdUseCase.execute({ id: parsed.data });
   });
 }
 
+/**
+ * Registers a new user record in the system.
+ * @param input The user profile and credential data.
+ * @return A promise resolving to the created user record.
+ * @throws ValidationError If user data is invalid.
+ */
 export async function createUser(
   input: CreateUserInput
 ): Promise<ActionResponse<RegisterUserOutput>> {
   return withSecuredActionAndAutomaticRetry(
     ['create:user'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form input.
       const parsed = userSchema.safeParse(input);
-
       if (!parsed.success) {
         throw new ValidationError(
           'Dados do usuário inválidos',
@@ -81,10 +83,7 @@ export async function createUser(
         );
       }
 
-      // 2. Initialize use case.
       const registerUserUseCase = makeRegisterUserUseCase();
-
-      // 3. Execute use case with audit data.
       const user = await registerUserUseCase.execute({
         ...parsed.data,
         userId,
@@ -92,7 +91,6 @@ export async function createUser(
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/users');
 
       return user;
@@ -100,6 +98,13 @@ export async function createUser(
   );
 }
 
+/**
+ * Updates an existing user record.
+ * @param id The UUID of the user to update.
+ * @param input The partial user fields to modify.
+ * @return A promise resolving to the updated user record.
+ * @throws ValidationError If the update data or ID is invalid.
+ */
 export async function updateUser(
   id: string,
   input: UpdateUserInput
@@ -107,10 +112,8 @@ export async function updateUser(
   return withSecuredActionAndAutomaticRetry(
     ['update:user'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate form/ID input.
       const parsedId = IdSchema.safeParse(id);
       const parsedData = userSchema.partial().safeParse(input);
-
       if (!parsedId.success) {
         throw new ValidationError(
           'Invalid ID.',
@@ -125,10 +128,7 @@ export async function updateUser(
         );
       }
 
-      // 2. Initialize use case.
       const updateUserUseCase = makeUpdateUserUseCase();
-
-      // 3. Execute use case with audit data.
       const user = await updateUserUseCase.execute({
         id: parsedId.data,
         data: parsedData.data,
@@ -137,7 +137,6 @@ export async function updateUser(
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/users');
 
       return user;
@@ -145,23 +144,24 @@ export async function updateUser(
   );
 }
 
+/**
+ * Performs a soft delete on a user record.
+ * @param id The UUID of the user to delete.
+ * @return A success object upon completion.
+ * @throws ValidationError If the ID is invalid.
+ */
 export async function deleteUser(
   id: string
 ): Promise<ActionResponse<{ success: boolean }>> {
   return withSecuredActionAndAutomaticRetry(
     ['delete:user'],
     async ({ userId, ipAddress, userAgent }) => {
-      // 1. Validate ID input.
       const parsed = IdSchema.safeParse(id);
-
       if (!parsed.success) {
         throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
       }
 
-      // 2. Initialize use case.
       const deleteUserUseCase = makeDeleteUserUseCase();
-
-      // 3. Execute use case with audit data.
       await deleteUserUseCase.execute({
         id: parsed.data,
         userId,
@@ -169,7 +169,6 @@ export async function deleteUser(
         userAgent,
       });
 
-      // 4. Revalidate cache.
       revalidatePath('/users');
 
       return { success: true };
