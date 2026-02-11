@@ -16,7 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { findPatients } from '@/app/actions/patient.actions';
 import { GetPatientOutput } from '@/core/application/contracts/patient/get-patient-by-id.contract';
@@ -71,7 +71,9 @@ export function NewMedicalRecordDialog({
 }: NewMedicalRecordDialogProps) {
   const router = useRouter();
 
-  const totalWithoutFilter = useRef<number | null>(null);
+  const [totalWithoutFilter, setTotalWithoutFilter] = useState<number | null>(
+    null
+  );
   const [searchValue, setSearchValue] = useState<string>('');
   const [searchBy, setSearchBy] = useState<ValidColumns>('name');
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
@@ -145,7 +147,7 @@ export function NewMedicalRecordDialog({
 
   useEffect(() => {
     if (patientList?.success && !searchValue) {
-      totalWithoutFilter.current = patientList.data.total;
+      setTotalWithoutFilter(patientList.data.total);
     }
   }, [patientList, searchValue]);
 
@@ -154,7 +156,7 @@ export function NewMedicalRecordDialog({
   }, [searchValue]);
 
   const hasPatientsInDatabase =
-    totalWithoutFilter.current !== null && totalWithoutFilter.current > 0;
+    totalWithoutFilter !== null && totalWithoutFilter > 0;
 
   return (
     <AppDialog
@@ -181,7 +183,7 @@ export function NewMedicalRecordDialog({
       content={
         <div className="flex flex-col gap-2">
           {isPending && <CustomSkeleton variant="item-list" />}
-          {!!totalWithoutFilter.current && totalWithoutFilter.current > 0 && (
+          {hasPatientsInDatabase && (
             <InputGroup className="max-w-full md:max-w-[500px]">
               <InputGroupInput
                 type="text"
@@ -333,7 +335,7 @@ export function NewMedicalRecordDialog({
             </>
           )}
 
-          {!hasPatientsInDatabase ? (
+          {totalWithoutFilter === 0 ? (
             <EmptyTableFeedback variant="patients" />
           ) : null}
         </div>
