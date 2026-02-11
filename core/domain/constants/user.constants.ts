@@ -14,5 +14,6 @@ export const USER_SORTABLE_FIELDS = [
 
 /**
  * Fields of the User entity that are allowed for text search.
+ * Only non-sensitive descriptors like name and email are searchable.
  */
 export const USER_SEARCHABLE_FIELDS = ['name', 'email'] as const;

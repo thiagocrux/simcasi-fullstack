@@ -1,5 +1,6 @@
 /**
  * Canonical list of roles used by the database seed process (prisma/seed.ts).
+ * Standardizes the user hierarchy within the SIMCASI ecosystem.
  *
  * NOTES:
  * - This constant initializes the database and is used by the seed script.
@@ -8,7 +9,7 @@
  *   at runtime (e.g. via useRole/findRoles).
  * - Each item contains:
  *   - code: technical identifier (used in DB and permission mappings)
- *   - label: human-friendly display text used by UI/seed
+ *   - label: human-friendly display text used by UI/seed (Portuguese labels)
  */
 export const ROLES = [
   { code: 'admin', label: 'Administrador' },

@@ -45,6 +45,7 @@ export const AUDIT_LOG_ACTION = {
 
 /**
  * Valid entity names that can be targets of Audit Log actions.
+ * Groups all clinical and administrative entities tracked by the system.
  */
 export const AUDIT_LOG_ENTITY_NAMES = [
   'EXAM',
@@ -59,7 +60,7 @@ export const AUDIT_LOG_ENTITY_NAMES = [
 ] as const;
 
 /**
- * Audit Log Entity Names mapped to constants for use in code.
+ * Audit Log entity names mapped to constants for type-safe reference.
  */
 export const AUDIT_LOG_ENTITY = {
   EXAM: 'EXAM',

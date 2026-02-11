@@ -1,12 +1,13 @@
 /**
- * Permission constants used across the application.
+ * Permission constants used across the application to define granular access capabilities.
+ * Follows a standard "action:entity" or "action" format.
  *
  * - `PERMISSIONS` is a canonical list of all permissions with code and human label.
  *   Example entry: { code: 'create:user', label: 'Criação de usuário' }.
- * - `PERMISSION_CODES` exposes the string codes for compatibility with existing logic.
+ * - `PERMISSION_CODES` exposes the string codes for compatibility with mapping and search logic.
  *
  * IMPORTANT: The existence of a permission code represents a capability (e.g. `update:user`),
- * but business rules (for example, "an user may only update their own account") must be
+ * but business rules (for example, "a user may only update their own account") must be
  * enforced in the application or domain layer (use cases, services, policies), not solely
  * by checking permission strings.
  */
@@ -62,21 +63,19 @@ export const PERMISSIONS = [
 ] as const;
 
 /**
- * Convenience array with only permission codes (keeps backward compatibility with existing code).
+ * Convenience array containing only permission codes for lookup and search operations.
  */
 export const PERMISSION_CODES = PERMISSIONS.map(
   (p) => p.code
 ) as unknown as readonly string[];
 
 /**
- * Mapping of role code -> allowed permission codes.
+ * Hierarchical mapping of role code -> allowed permission codes for standard access control.
  *
  * Notes:
- * - `admin` receives all permissions.
- * - `user` receives the same permissions as `admin` **except** the ability to create/delete other
- *   users and all audit-log related permissions. The `update:user` permission for a `user` role must be
- *   interpreted as "update own account only" and enforced in the business logic (services/use-cases).
- * - `viewer` is intended to have read-only access.
+ * - `admin`: Receives all existing permissions across all modules.
+ * - `user`: Broad permissions except for sensitive administrative actions (user creation, audit logs).
+ * - `viewer`: Read-only access to clinical data; excluded from audit-log metadata visibility.
  */
 export const PERMISSIONS_BY_ROLE: Record<string, readonly string[]> = {
   admin: [...PERMISSION_CODES],
@@ -92,14 +91,9 @@ export const PERMISSIONS_BY_ROLE: Record<string, readonly string[]> = {
 };
 
 /**
- * Type guard that checks whether a value is a valid permission code defined in `PERMISSION_CODES`.
- *
- * Usage:
- * ```ts
- * if (isPermission(value)) {
- *   // `value` is now narrowed to a valid permission string
- * }
- * ```
+ * Type guard that checks whether a value is a valid permission code.
+ * @param value The raw string to validate.
+ * @return True if the value is a defined permission code.
  */
 export function isPermission(
   value: string

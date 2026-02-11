@@ -1,7 +1,4 @@
 /**
- * Exam search and sort constants.
- */
-/**
  * Fields of the Exam entity that are allowed for sorting in list requests.
  */
 export const EXAM_SORTABLE_FIELDS = [
@@ -18,6 +15,7 @@ export const EXAM_SORTABLE_FIELDS = [
 
 /**
  * Fields of the Exam entity that are allowed for text search.
+ * Includes technical test types and clinical locations.
  */
 export const EXAM_SEARCHABLE_FIELDS = [
   'treponemalTestType',

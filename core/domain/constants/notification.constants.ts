@@ -21,4 +21,8 @@ export const NOTIFICATION_SEARCHABLE_FIELDS = [
 /**
  * Miscellaneous constants related to notifications.
  */
+/**
+ * The standard length of the SINAN identification number.
+ * Based on the Brazilian Ministério da Saúde protocols.
+ */
 export const SINAN_LENGTH = 7;

@@ -14,6 +14,7 @@ export const TREATMENT_SORTABLE_FIELDS = [
 
 /**
  * Fields of the Treatment entity that are allowed for text search.
+ * Focuses on medication names, health units (Unidades de Saúde), and partner follow-up.
  */
 export const TREATMENT_SEARCHABLE_FIELDS = [
   'medication',

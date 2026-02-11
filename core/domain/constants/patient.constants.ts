@@ -26,6 +26,7 @@ export const PATIENT_SEARCHABLE_FIELDS = [
 
 /**
  * List of gender identity options for patient registration.
+ * Follows contemporary identification standards for inclusive healthcare.
  */
 export const GENDER_OPTIONS = [
   { label: 'Feminino', value: 'Feminino' },
@@ -44,6 +45,7 @@ export const NATIONALITY_OPTIONS = [
 
 /**
  * List of race/ethnicity options for patient registration.
+ * Follows IBGE (Instituto Brasileiro de Geografia e Estatística) canonical classifications.
  */
 export const RACE_OPTIONS = [
   { label: 'Branca', value: 'Branca' },
@@ -78,6 +80,7 @@ export const SEXUALITY_OPTIONS = [
 
 /**
  * List of education/schooling level options for patient registration.
+ * Standardized according to Brazilian educational levels.
  */
 export const SCHOOLING_OPTIONS = [
   { label: 'Analfabeto', value: 'Analfabeto' },
