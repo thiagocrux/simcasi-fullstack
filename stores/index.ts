@@ -1,14 +1,19 @@
 import { configureStore } from '@reduxjs/toolkit';
+
 import { authReducer } from './auth/auth.slice';
 
-export const makeStore = () => {
+/**
+ * Factory function to create a new Redux store instance.
+ * @returns A configured Redux store.
+ */
+export function makeStore() {
   return configureStore({
     reducer: {
       auth: authReducer,
     },
     devTools: process.env.NODE_ENV !== 'production',
   });
-};
+}
 
 // Infer the type of makeStore.
 export type AppStore = ReturnType<typeof makeStore>;

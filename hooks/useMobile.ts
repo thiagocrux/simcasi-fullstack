@@ -2,19 +2,32 @@ import * as React from 'react';
 
 const MOBILE_BREAKPOINT = 768;
 
-export function useIsMobile() {
+/**
+ * Hook to determine if the device viewport matches the mobile breakpoint.
+ * Uses matchMedia for efficient window resizing updates.
+ * @returns True if the viewport is mobile-sized, otherwise false.
+ */
+export function useIsMobile(): boolean {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
     undefined
   );
 
-  React.useEffect(() => {
+  React.useEffect(function setupMobileCheck() {
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
-    const onChange = () => {
+
+    /**
+     * Updates the mobile state based on current window dimensions.
+     */
+    function checkMobile(): void {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    }
+
+    mql.addEventListener('change', checkMobile);
+    checkMobile();
+
+    return function cleanup() {
+      mql.removeEventListener('change', checkMobile);
     };
-    mql.addEventListener('change', onChange);
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-    return () => mql.removeEventListener('change', onChange);
   }, []);
 
   return !!isMobile;
