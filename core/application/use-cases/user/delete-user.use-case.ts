@@ -33,7 +33,10 @@ export class DeleteUserUseCase implements UseCase<
     }
 
     // 2. Soft delete the user.
-    await this.userRepository.softDelete(id);
+    await this.userRepository.softDelete(
+      id,
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 3. Revoke all active sessions (force logout everywhere).
     await this.sessionRepository.revokeAllByUserId(id);

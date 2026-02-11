@@ -32,10 +32,13 @@ export class UpdateObservationUseCase implements UseCase<
     }
 
     // 2. Update the observation.
-    const updatedObservation = await this.observationRepository.update(id, {
-      ...data,
-      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-    });
+    const updatedObservation = await this.observationRepository.update(
+      id,
+      {
+        ...data,
+      },
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 3. Create audit log.
     await this.auditLogRepository.create({

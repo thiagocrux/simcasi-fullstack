@@ -57,13 +57,16 @@ export class UpdatePatientUseCase implements UseCase<
     }
 
     // 4. Delegate update to repository.
-    const updated = await this.patientRepository.update(id, {
-      ...validation.data,
-      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-      birthDate: validation.data.birthDate
-        ? new Date(validation.data.birthDate)
-        : undefined,
-    });
+    const updated = await this.patientRepository.update(
+      id,
+      {
+        ...validation.data,
+        birthDate: validation.data.birthDate
+          ? new Date(validation.data.birthDate)
+          : undefined,
+      },
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 5. Audit the update.
     await this.auditLogRepository.create({

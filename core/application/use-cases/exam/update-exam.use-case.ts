@@ -45,19 +45,22 @@ export class UpdateExamUseCase implements UseCase<
     }
 
     // 3. Update the exam.
-    const updatedExam = await this.examRepository.update(id, {
-      ...validation.data,
-      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-      treponemalTestDate: validation.data.treponemalTestDate
-        ? new Date(validation.data.treponemalTestDate)
-        : undefined,
-      nontreponemalTestDate: validation.data.nontreponemalTestDate
-        ? new Date(validation.data.nontreponemalTestDate)
-        : undefined,
-      otherNontreponemalTestDate: validation.data.otherNontreponemalTestDate
-        ? new Date(validation.data.otherNontreponemalTestDate)
-        : undefined,
-    });
+    const updatedExam = await this.examRepository.update(
+      id,
+      {
+        ...validation.data,
+        treponemalTestDate: validation.data.treponemalTestDate
+          ? new Date(validation.data.treponemalTestDate)
+          : undefined,
+        nontreponemalTestDate: validation.data.nontreponemalTestDate
+          ? new Date(validation.data.nontreponemalTestDate)
+          : undefined,
+        otherNontreponemalTestDate: validation.data.otherNontreponemalTestDate
+          ? new Date(validation.data.otherNontreponemalTestDate)
+          : undefined,
+      },
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 4. Create audit log.
     await this.auditLogRepository.create({

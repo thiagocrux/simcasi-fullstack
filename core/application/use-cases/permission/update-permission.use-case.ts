@@ -56,10 +56,13 @@ export class UpdatePermissionUseCase implements UseCase<
     }
 
     // 4. Update the permission.
-    const updatedPermission = await this.permissionRepository.update(id, {
-      ...validation.data,
-      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-    });
+    const updatedPermission = await this.permissionRepository.update(
+      id,
+      {
+        ...validation.data,
+      },
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 5. Create audit log.
     await this.auditLogRepository.create({

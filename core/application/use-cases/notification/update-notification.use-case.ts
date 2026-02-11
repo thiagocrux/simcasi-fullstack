@@ -43,10 +43,13 @@ export class UpdateNotificationUseCase implements UseCase<
     }
 
     // 3. Update the notification.
-    const updatedNotification = await this.notificationRepository.update(id, {
-      ...data,
-      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-    });
+    const updatedNotification = await this.notificationRepository.update(
+      id,
+      {
+        ...data,
+      },
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 4. Create audit log.
     await this.auditLogRepository.create({

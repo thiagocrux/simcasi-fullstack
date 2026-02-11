@@ -7,10 +7,11 @@ import { prisma } from '../../lib/prisma';
 
 export class PrismaPatientRepository implements PatientRepository {
   /**
-   * Finds a patient by their unique ID.
+   * Finds a patient by its unique ID.
+   *
    * @param id The patient ID.
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The patient or null if not found.
+   * @return The found patient or null if not found.
    */
   async findById(id: string, includeDeleted = false): Promise<Patient | null> {
     const patient = await prisma.patient.findFirst({
@@ -25,8 +26,9 @@ export class PrismaPatientRepository implements PatientRepository {
 
   /**
    * Finds multiple patients by their IDs.
+   *
    * @param ids The list of patient IDs.
-   * @returns A list of patients.
+   * @return A list of found patients.
    */
   async findByIds(ids: string[]): Promise<Patient[]> {
     if (ids.length === 0) return [];
@@ -42,9 +44,10 @@ export class PrismaPatientRepository implements PatientRepository {
 
   /**
    * Finds a patient by their CPF.
+   *
    * @param cpf The CPF to search for.
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The patient or null if not found.
+   * @return The found patient or null if not found.
    */
   async findByCpf(
     cpf: string,
@@ -62,9 +65,10 @@ export class PrismaPatientRepository implements PatientRepository {
 
   /**
    * Finds a patient by their SUS card number.
+   *
    * @param susCardNumber The SUS card number to search for.
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The patient or null if not found.
+   * @return The found patient or null if not found.
    */
   async findBySusCardNumber(
     susCardNumber: string,
@@ -81,9 +85,10 @@ export class PrismaPatientRepository implements PatientRepository {
   }
 
   /**
-   * Retrieves a paginated list of patients with optional search filtering.
+   * Retrieves a paginated list of patients with optional filtering.
+   *
    * @param params Filtering and pagination parameters.
-   * @returns An object containing the list of patients and the total count.
+   * @return An object containing the list of patients and the total count.
    */
   async findAll(params?: {
     skip?: number;
@@ -170,8 +175,9 @@ export class PrismaPatientRepository implements PatientRepository {
 
   /**
    * Creates a new patient record in the database.
+   *
    * @param data The patient data to create.
-   * @returns The newly created patient.
+   * @return The newly created patient.
    */
   async create(
     data: Omit<Patient, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
@@ -185,18 +191,22 @@ export class PrismaPatientRepository implements PatientRepository {
 
   /**
    * Updates an existing patient record.
+   *
    * @param id The patient ID.
    * @param data The partial data to update.
-   * @returns The updated patient.
+   * @param updatedBy The user performing the update.
+   * @return The updated patient.
    */
   async update(
     id: string,
-    data: Partial<Omit<Patient, 'id' | 'createdAt'>>
+    data: Partial<Omit<Patient, 'id' | 'createdAt'>>,
+    updatedBy: string
   ): Promise<Patient> {
     const patient = await prisma.patient.update({
       where: { id },
       data: {
         ...data,
+        updatedBy,
         updatedAt: new Date(),
       },
     });
@@ -206,27 +216,35 @@ export class PrismaPatientRepository implements PatientRepository {
 
   /**
    * Performs a soft delete on a patient.
+   *
    * @param id The patient ID.
+   * @param updatedBy The user performing the update.
+   * @return A promise that resolves when the operation is complete.
    */
-  async softDelete(id: string): Promise<void> {
+  async softDelete(id: string, updatedBy: string): Promise<void> {
     await prisma.patient.update({
       where: { id },
       data: {
         deletedAt: new Date(),
+        updater: { connect: { id: updatedBy } },
       },
     });
   }
 
   /**
    * Restores a soft-deleted patient.
+   *
    * @param id The patient ID.
+   * @param updatedBy The ID of the user restoring the records.
+   * @return A promise that resolves when the operation is complete.
    */
   async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.patient.update({
       where: { id },
       data: {
         deletedAt: null,
-        updatedBy,
+        updater: { connect: { id: updatedBy } },
+        updatedAt: new Date(),
       },
     });
   }

@@ -69,13 +69,17 @@ export class RegisterPatientUseCase implements UseCase<
     const deletedPatient = existingByCpf || existingBySus;
 
     if (deletedPatient) {
+      const updaterId = userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
       // Perform restoration by updating the record and clearing deletedAt.
-      const patient = await this.patientRepository.update(deletedPatient.id, {
-        ...validation.data,
-        birthDate: new Date(validation.data.birthDate),
-        updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-        deletedAt: null,
-      });
+      const patient = await this.patientRepository.update(
+        deletedPatient.id,
+        {
+          ...validation.data,
+          birthDate: new Date(validation.data.birthDate),
+          deletedAt: null,
+        },
+        updaterId
+      );
 
       // 5. Audit the RESTORE action.
       await this.auditLogRepository.create({

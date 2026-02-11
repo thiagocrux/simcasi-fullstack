@@ -67,14 +67,17 @@ export class UpdateUserUseCase implements UseCase<
     // 4. Hash the password if it is being changed.
     const updateData = {
       ...data,
-      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
     };
     if (data.password) {
       updateData.password = await this.hashProvider.hash(data.password);
     }
 
     // 5. Update the user.
-    const updatedUser = await this.userRepository.update(id, updateData);
+    const updatedUser = await this.userRepository.update(
+      id,
+      updateData,
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 6. Create audit log.
     const { password: __, ...oldValuesWithoutPassword } = existing;

@@ -68,10 +68,13 @@ export class UpdateRoleUseCase implements UseCase<
     }
 
     // 5. Update the role.
-    const updatedRole = await this.roleRepository.update(id, {
-      ...validation.data,
-      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-    });
+    const updatedRole = await this.roleRepository.update(
+      id,
+      {
+        ...validation.data,
+      },
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 6. Create audit log.
     await this.auditLogRepository.create({

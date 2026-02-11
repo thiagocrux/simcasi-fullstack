@@ -7,10 +7,11 @@ import { prisma } from '../../lib/prisma';
 
 export class PrismaNotificationRepository implements NotificationRepository {
   /**
-   * Finds a notification by its ID.
+   * Finds a notification by its unique ID.
+   *
    * @param id The notification ID.
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The notification or null if not found.
+   * @return The found notification or null if not found.
    */
   async findById(
     id: string,
@@ -26,9 +27,10 @@ export class PrismaNotificationRepository implements NotificationRepository {
   }
 
   /**
-   * Retrieves a paginated list of notifications with optional filters.
+   * Retrieves a paginated list of notifications with optional filtering.
+   *
    * @param params Filtering and pagination parameters.
-   * @returns An object containing the list of notifications and the total count.
+   * @return An object containing the list of notifications and the total count.
    */
   async findAll(params?: {
     skip?: number;
@@ -105,32 +107,48 @@ export class PrismaNotificationRepository implements NotificationRepository {
 
   /**
    * Creates a new notification record.
+   *
    * @param data The notification data.
-   * @returns The newly created notification.
+   * @return The newly created notification.
    */
   async create(
     data: Omit<Notification, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
   ): Promise<Notification> {
+    const { patientId, createdBy, updatedBy, ...rest } = data;
+
     const notification = await prisma.notification.create({
-      data,
+      data: {
+        ...rest,
+        patient: { connect: { id: patientId } },
+        creator: { connect: { id: createdBy } },
+        updater: updatedBy ? { connect: { id: updatedBy } } : undefined,
+      },
     });
+
     return notification as Notification;
   }
 
   /**
    * Updates an existing notification record.
+   *
    * @param id The notification ID.
    * @param data The partial data to update.
-   * @returns The updated notification.
+   * @param updatedBy The user performing the update.
+   * @return The updated notification.
    */
   async update(
     id: string,
-    data: Partial<Omit<Notification, 'id' | 'createdAt'>>
+    data: Partial<Omit<Notification, 'id' | 'createdAt'>>,
+    updatedBy: string
   ): Promise<Notification> {
+    const { patientId, ...updateData } = data as any;
+
     const notification = await prisma.notification.update({
       where: { id },
       data: {
-        ...data,
+        ...updateData,
+        patient: patientId ? { connect: { id: patientId } } : undefined,
+        updater: { connect: { id: updatedBy } },
         updatedAt: new Date(),
       },
     });
@@ -138,55 +156,67 @@ export class PrismaNotificationRepository implements NotificationRepository {
   }
 
   /**
-   * Performs a soft delete on a notification.
+   * Performs a soft delete on a single notification.
+   *
    * @param id The notification ID.
+   * @param updatedBy The user performing the deletion.
+   * @return A promise that resolves when the operation is complete.
    */
-  async softDelete(id: string): Promise<void> {
+  async softDelete(id: string, updatedBy: string): Promise<void> {
     await prisma.notification.update({
       where: { id },
       data: {
         deletedAt: new Date(),
+        updater: { connect: { id: updatedBy } },
       },
     });
   }
 
   /**
-   * Performs a soft delete on all notifications associated with a patient.
+   * Performs a soft delete on all notifications of a patient.
+   *
    * @param patientId The patient ID.
+   * @param updatedBy The user performing the deletion.
+   * @return A promise that resolves when the operation is complete.
    */
-  async softDeleteByPatientId(patientId: string): Promise<void> {
+  async softDeleteByPatientId(
+    patientId: string,
+    updatedBy: string
+  ): Promise<void> {
     await prisma.notification.updateMany({
       where: { patientId, deletedAt: null },
       data: {
         deletedAt: new Date(),
+        updatedBy: updatedBy,
       },
     });
   }
 
   /**
-   * Restores a soft-deleted notification.
-   * @param id The notification ID.
-   */
-  /**
    * Restores a soft-deleted notification record.
+   *
    * @param id The notification ID.
-   * @param updatedBy The ID of the user performing the restoration.
+   * @param updatedBy The user performing the restoration.
+   * @return A promise that resolves when the operation is complete.
    */
   async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.notification.update({
       where: { id },
       data: {
         deletedAt: null,
-        updatedBy,
+        updater: { connect: { id: updatedBy } },
+        updatedAt: new Date(),
       },
     });
   }
 
   /**
-   * Restores soft-deleted notifications for a specific patient, deleted after a certain date.
+   * Restores multiple soft-deleted notifications for a patient.
+   *
    * @param patientId The patient ID.
-   * @param updatedBy The ID of the user performing the restoration.
-   * @param since The date after which deletions should be restored (optional).
+   * @param updatedBy The user performing the restoration.
+   * @param since Optional date to restore deletions from.
+   * @return A promise that resolves when the operation is complete.
    */
   async restoreByPatientId(
     patientId: string,
@@ -201,6 +231,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
       data: {
         deletedAt: null,
         updatedBy,
+        updatedAt: new Date(),
       },
     });
   }

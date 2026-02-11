@@ -7,10 +7,11 @@ import { prisma } from '../../lib/prisma';
 
 export class PrismaObservationRepository implements ObservationRepository {
   /**
-   * Finds an observation by its ID.
+   * Finds an observation by its unique ID.
+   *
    * @param id The observation ID.
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The observation or null if not found.
+   * @return The found observation or null if not found.
    */
   async findById(
     id: string,
@@ -26,9 +27,10 @@ export class PrismaObservationRepository implements ObservationRepository {
   }
 
   /**
-   * Retrieves a paginated list of observations with optional filters.
+   * Retrieves a paginated list of observations with optional filtering.
+   *
    * @param params Filtering and pagination parameters.
-   * @returns An object containing the list of observations and the total count.
+   * @return An object containing the list of observations and the total count.
    */
   async findAll(params?: {
     skip?: number;
@@ -102,32 +104,48 @@ export class PrismaObservationRepository implements ObservationRepository {
 
   /**
    * Creates a new observation record.
+   *
    * @param data The observation data.
-   * @returns The newly created observation.
+   * @return The newly created observation.
    */
   async create(
     data: Omit<Observation, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
   ): Promise<Observation> {
+    const { patientId, createdBy, updatedBy, ...rest } = data;
+
     const observation = await prisma.observation.create({
-      data,
+      data: {
+        ...rest,
+        patient: { connect: { id: patientId } },
+        creator: { connect: { id: createdBy } },
+        updater: updatedBy ? { connect: { id: updatedBy } } : undefined,
+      },
     });
+
     return observation as Observation;
   }
 
   /**
    * Updates an existing observation record.
+   *
    * @param id The observation ID.
    * @param data The partial data to update.
-   * @returns The updated observation.
+   * @param updatedBy The user performing the update.
+   * @return The updated observation.
    */
   async update(
     id: string,
-    data: Partial<Omit<Observation, 'id' | 'createdAt'>>
+    data: Partial<Omit<Observation, 'id' | 'createdAt'>>,
+    updatedBy: string
   ): Promise<Observation> {
+    const { patientId, ...updateData } = data as any;
+
     const observation = await prisma.observation.update({
       where: { id },
       data: {
-        ...data,
+        ...updateData,
+        patient: patientId ? { connect: { id: patientId } } : undefined,
+        updater: { connect: { id: updatedBy } },
         updatedAt: new Date(),
       },
     });
@@ -135,26 +153,37 @@ export class PrismaObservationRepository implements ObservationRepository {
   }
 
   /**
-   * Performs a soft delete on an observation.
+   * Performs a soft delete on a single observation.
+   *
    * @param id The observation ID.
+   * @param updatedBy The user performing the deletion.
+   * @return A promise that resolves when the operation is complete.
    */
-  async softDelete(id: string): Promise<void> {
+  async softDelete(id: string, updatedBy: string): Promise<void> {
     await prisma.observation.update({
       where: { id },
       data: {
         deletedAt: new Date(),
+        updater: { connect: { id: updatedBy } },
       },
     });
   }
 
   /**
-   * Performs a soft delete on all observations associated with a patient.
+   * Performs a soft delete on all observations of a patient.
+   *
    * @param patientId The patient ID.
+   * @param updatedBy The user performing the deletion.
+   * @return A promise that resolves when the operation is complete.
    */
-  async softDeleteByPatientId(patientId: string): Promise<void> {
+  async softDeleteByPatientId(
+    patientId: string,
+    updatedBy: string
+  ): Promise<void> {
     await prisma.observation.updateMany({
       where: { patientId, deletedAt: null },
       data: {
+        updatedBy,
         deletedAt: new Date(),
       },
     });
@@ -162,24 +191,29 @@ export class PrismaObservationRepository implements ObservationRepository {
 
   /**
    * Restores a soft-deleted observation record.
+   *
    * @param id The observation ID.
-   * @param updatedBy The ID of the user performing the restoration.
+   * @param updatedBy The user performing the restoration.
+   * @return A promise that resolves when the operation is complete.
    */
   async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.observation.update({
       where: { id },
       data: {
         deletedAt: null,
-        updatedBy,
+        updater: { connect: { id: updatedBy } },
+        updatedAt: new Date(),
       },
     });
   }
 
   /**
-   * Restores soft-deleted observations for a specific patient, deleted after a certain date.
+   * Restores multiple soft-deleted observations for a patient.
+   *
    * @param patientId The patient ID.
-   * @param updatedBy The ID of the user performing the restoration.
-   * @param since The date after which deletions should be restored (optional).
+   * @param updatedBy The user performing the restoration.
+   * @param since Optional date to restore deletions from.
+   * @return A promise that resolves when the operation is complete.
    */
   async restoreByPatientId(
     patientId: string,
@@ -194,6 +228,7 @@ export class PrismaObservationRepository implements ObservationRepository {
       data: {
         deletedAt: null,
         updatedBy,
+        updatedAt: new Date(),
       },
     });
   }

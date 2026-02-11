@@ -30,7 +30,10 @@ export class DeletePermissionUseCase implements UseCase<
     }
 
     // 2. Soft delete the permission.
-    await this.permissionRepository.softDelete(id);
+    await this.permissionRepository.softDelete(
+      id,
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 3. Create audit log.
     await this.auditLogRepository.create({

@@ -7,10 +7,11 @@ import { prisma } from '../../lib/prisma';
 
 export class PrismaExamRepository implements ExamRepository {
   /**
-   * Finds an exam by its ID.
+   * Finds an exam by its unique ID.
+   *
    * @param id The exam ID.
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The exam or null if not found.
+   * @return The found exam or null if not found.
    */
   async findById(id: string, includeDeleted = false): Promise<Exam | null> {
     const exam = await prisma.exam.findFirst({
@@ -23,9 +24,10 @@ export class PrismaExamRepository implements ExamRepository {
   }
 
   /**
-   * Retrieves a paginated list of exams with optional filters.
+   * Retrieves a paginated list of exams with optional filtering.
+   *
    * @param params Filtering and pagination parameters.
-   * @returns An object containing the list of exams and the total count.
+   * @return An object containing the list of exams and the total count.
    */
   async findAll(params?: {
     skip?: number;
@@ -110,32 +112,48 @@ export class PrismaExamRepository implements ExamRepository {
 
   /**
    * Creates a new exam record.
+   *
    * @param data The exam data.
-   * @returns The newly created exam.
+   * @return The newly created exam.
    */
   async create(
     data: Omit<Exam, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
   ): Promise<Exam> {
+    const { patientId, createdBy, updatedBy, ...rest } = data;
+
     const exam = await prisma.exam.create({
-      data,
+      data: {
+        ...rest,
+        patient: { connect: { id: patientId } },
+        creator: { connect: { id: createdBy } },
+        updater: updatedBy ? { connect: { id: updatedBy } } : undefined,
+      },
     });
+
     return exam as Exam;
   }
 
   /**
    * Updates an existing exam record.
+   *
    * @param id The exam ID.
    * @param data The partial data to update.
-   * @returns The updated exam.
+   * @param updatedBy The user performing the update.
+   * @return The updated exam.
    */
   async update(
     id: string,
-    data: Partial<Omit<Exam, 'id' | 'createdAt'>>
+    data: Partial<Omit<Exam, 'id' | 'createdAt'>>,
+    updatedBy: string
   ): Promise<Exam> {
+    const { patientId, ...updateData } = data as any;
+
     const exam = await prisma.exam.update({
       where: { id },
       data: {
-        ...data,
+        ...updateData,
+        patient: patientId ? { connect: { id: patientId } } : undefined,
+        updater: { connect: { id: updatedBy } },
         updatedAt: new Date(),
       },
     });
@@ -143,51 +161,67 @@ export class PrismaExamRepository implements ExamRepository {
   }
 
   /**
-   * Performs a soft delete on an exam.
+   * Performs a soft delete on a single exam.
+   *
    * @param id The exam ID.
+   * @param updatedBy The user performing the deletion.
+   * @return A promise that resolves when the operation is complete.
    */
-  async softDelete(id: string): Promise<void> {
+  async softDelete(id: string, updatedBy: string): Promise<void> {
     await prisma.exam.update({
       where: { id },
       data: {
         deletedAt: new Date(),
+        updater: { connect: { id: updatedBy } },
       },
     });
   }
 
   /**
-   * Performs a soft delete on all exams associated with a patient.
+   * Performs a soft delete on all exams of a patient.
+   *
    * @param patientId The patient ID.
+   * @param updatedBy The user performing the deletion.
+   * @return A promise that resolves when the operation is complete.
    */
-  async softDeleteByPatientId(patientId: string): Promise<void> {
+  async softDeleteByPatientId(
+    patientId: string,
+    updatedBy: string
+  ): Promise<void> {
     await prisma.exam.updateMany({
       where: { patientId, deletedAt: null },
       data: {
         deletedAt: new Date(),
-      },
-    });
-  }
-
-  /**
-   * Restores a soft-deleted exam.
-   * @param id The exam ID.
-   * @param updatedBy The ID of the user performing the restoration.
-   */
-  async restore(id: string, updatedBy: string): Promise<void> {
-    await prisma.exam.update({
-      where: { id },
-      data: {
-        deletedAt: null,
         updatedBy,
       },
     });
   }
 
   /**
-   * Restores soft-deleted exams for a specific patient, deleted after a certain date.
+   * Restores a soft-deleted exam record.
+   *
+   * @param id The exam ID.
+   * @param updatedBy The user performing the restoration.
+   * @return A promise that resolves when the operation is complete.
+   */
+  async restore(id: string, updatedBy: string): Promise<void> {
+    await prisma.exam.update({
+      where: { id },
+      data: {
+        deletedAt: null,
+        updater: { connect: { id: updatedBy } },
+        updatedAt: new Date(),
+      },
+    });
+  }
+
+  /**
+   * Restores multiple soft-deleted exams for a patient.
+   *
    * @param patientId The patient ID.
-   * @param updatedBy The ID of the user performing the restoration.
-   * @param since The date after which deletions should be restored (optional).
+   * @param updatedBy The user performing the restoration.
+   * @param since Optional date to restore deletions from.
+   * @return A promise that resolves when the operation is complete.
    */
   async restoreByPatientId(
     patientId: string,
@@ -202,6 +236,7 @@ export class PrismaExamRepository implements ExamRepository {
       data: {
         deletedAt: null,
         updatedBy,
+        updatedAt: new Date(),
       },
     });
   }

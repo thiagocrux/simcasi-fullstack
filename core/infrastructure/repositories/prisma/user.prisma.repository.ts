@@ -7,10 +7,11 @@ import { prisma } from '../../lib/prisma';
 
 export class PrismaUserRepository implements UserRepository {
   /**
-   * Finds an user by their unique ID.
+   * Finds a user by its unique ID.
+   *
    * @param id The user ID.
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The user or null if not found.
+   * @return The found user or null if not found.
    */
   async findById(id: string, includeDeleted = false): Promise<User | null> {
     const user = await prisma.user.findFirst({
@@ -25,8 +26,9 @@ export class PrismaUserRepository implements UserRepository {
 
   /**
    * Finds multiple users by their IDs.
+   *
    * @param ids The list of user IDs.
-   * @returns A list of users.
+   * @return A list of found users.
    */
   async findByIds(ids: string[]): Promise<User[]> {
     if (ids.length === 0) return [];
@@ -41,10 +43,11 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   /**
-   * Finds an user by their unique email.
-   * @param email The user email.
+   * Finds a user by their unique email.
+   *
+   * @param email The user's email.
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The user or null if not found.
+   * @return The found user or null if not found.
    */
   async findByEmail(
     email: string,
@@ -62,8 +65,9 @@ export class PrismaUserRepository implements UserRepository {
 
   /**
    * Retrieves a paginated list of users with optional filtering.
+   *
    * @param params Filtering and pagination parameters.
-   * @returns An object containing the list of users and the total count.
+   * @return An object containing the list of users and the total count.
    */
   async findAll(params?: {
     skip?: number;
@@ -141,8 +145,9 @@ export class PrismaUserRepository implements UserRepository {
 
   /**
    * Creates a new user or restores a soft-deleted one with the same email.
+   *
    * @param data The user data.
-   * @returns The newly created or restored user.
+   * @return The newly created or restored user.
    */
   async create(
     data: Omit<User, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> & {
@@ -155,11 +160,25 @@ export class PrismaUserRepository implements UserRepository {
 
     if (existing) {
       if (existing.deletedAt) {
+        const {
+          roleId,
+          createdBy: inputCreatedBy,
+          updatedBy: inputUpdatedBy,
+          ...updateData
+        } = data as any;
+        const finalCreatorId = (existing.createdBy as string) || inputCreatedBy;
+
         return (await prisma.user.update({
           where: { id: existing.id },
           data: {
-            ...data,
-            createdBy: (existing.createdBy as string) || data.createdBy,
+            ...updateData,
+            role: roleId ? { connect: { id: roleId } } : undefined,
+            creator: finalCreatorId
+              ? { connect: { id: finalCreatorId } }
+              : undefined,
+            updater: inputUpdatedBy
+              ? { connect: { id: inputUpdatedBy } }
+              : undefined,
             deletedAt: null,
             updatedAt: new Date(),
           },
@@ -167,8 +186,15 @@ export class PrismaUserRepository implements UserRepository {
       }
     }
 
+    const { roleId, createdBy, updatedBy, ...userData } = data;
+
     const user = await prisma.user.create({
-      data,
+      data: {
+        ...userData,
+        creator: createdBy ? { connect: { id: createdBy } } : undefined,
+        updater: updatedBy ? { connect: { id: updatedBy } } : undefined,
+        role: { connect: { id: roleId } },
+      },
     });
 
     return user as User;
@@ -176,18 +202,25 @@ export class PrismaUserRepository implements UserRepository {
 
   /**
    * Updates an existing user record.
+   *
    * @param id The user ID.
-   * @param data The partial data to update.
-   * @returns The updated user.
+   * @param data The partial data for the update.
+   * @param updatedBy The user performing the update.
+   * @return The updated user.
    */
   async update(
     id: string,
-    data: Partial<Omit<User, 'id' | 'createdAt'>>
+    data: Partial<Omit<User, 'id' | 'createdAt'>>,
+    updatedBy: string
   ): Promise<User> {
+    const { roleId, ...updateData } = data as any;
+
     const user = await prisma.user.update({
       where: { id },
       data: {
-        ...data,
+        ...updateData,
+        role: roleId ? { connect: { id: roleId } } : undefined,
+        updater: { connect: { id: updatedBy } },
         updatedAt: new Date(),
       },
     });
@@ -196,28 +229,61 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   /**
-   * Performs a soft delete on an user.
+   * Updates the password of an existing user.
+   *
    * @param id The user ID.
+   * @param newPassword The new hashed password.
+   * @param updatedBy The user performing the update.
+   * @return The updated user with the new password.
    */
-  async softDelete(id: string): Promise<void> {
+  async updatePassword(
+    id: string,
+    newPassword: string,
+    updatedBy: string
+  ): Promise<User> {
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        password: newPassword,
+        updater: { connect: { id: updatedBy } },
+        updatedAt: new Date(),
+      },
+    });
+
+    return user as User;
+  }
+
+  /**
+   * Performs a soft delete on a user.
+   *
+   * @param id The user ID.
+   * @param updatedBy The user performing the deletion.
+   * @return A promise that resolves when the operation is complete.
+   */
+  async softDelete(id: string, updatedBy: string): Promise<void> {
     await prisma.user.update({
       where: { id },
       data: {
         deletedAt: new Date(),
+        updater: { connect: { id: updatedBy } },
       },
     });
   }
 
   /**
    * Restores a soft-deleted user.
+   *
    * @param id The user ID.
+   * @param updatedBy The ID of the user performing the restoration.
+   * @return A promise that resolves when the operation is complete.
    */
   async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.user.update({
       where: { id },
       data: {
         deletedAt: null,
-        updatedBy,
+        updater: { connect: { id: updatedBy } },
+        updatedAt: new Date(),
       },
     });
   }

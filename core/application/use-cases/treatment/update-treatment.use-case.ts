@@ -41,13 +41,16 @@ export class UpdateTreatmentUseCase implements UseCase<
     }
 
     // 3. Update the treatment.
-    const updatedTreatment = await this.treatmentRepository.update(id, {
-      ...validation.data,
-      updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-      startDate: validation.data.startDate
-        ? new Date(validation.data.startDate)
-        : undefined,
-    });
+    const updatedTreatment = await this.treatmentRepository.update(
+      id,
+      {
+        ...validation.data,
+        startDate: validation.data.startDate
+          ? new Date(validation.data.startDate)
+          : undefined,
+      },
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 4. Create audit log.
     await this.auditLogRepository.create({

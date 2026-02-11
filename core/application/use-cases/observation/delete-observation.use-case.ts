@@ -32,7 +32,10 @@ export class DeleteObservationUseCase implements UseCase<
     }
 
     // 2. Soft delete the observation.
-    await this.observationRepository.softDelete(id);
+    await this.observationRepository.softDelete(
+      id,
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 3. Create audit log.
     await this.auditLogRepository.create({

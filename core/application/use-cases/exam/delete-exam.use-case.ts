@@ -34,7 +34,10 @@ export class DeleteExamUseCase implements UseCase<
     }
 
     // 2. Soft delete the exam.
-    await this.examRepository.softDelete(id);
+    await this.examRepository.softDelete(
+      id,
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 3. Create audit log.
     await this.auditLogRepository.create({

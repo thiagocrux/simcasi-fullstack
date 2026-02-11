@@ -38,15 +38,17 @@ export class DeletePatientUseCase implements UseCase<
       throw new NotFoundError('Patient not found');
     }
 
+    const updaterId = userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
+
     // 2. Soft delete the patient.
-    await this.patientRepository.softDelete(id);
+    await this.patientRepository.softDelete(id, updaterId);
 
     // 3. Cascade soft delete to all related medical records.
     await Promise.all([
-      this.examRepository.softDeleteByPatientId(id),
-      this.notificationRepository.softDeleteByPatientId(id),
-      this.observationRepository.softDeleteByPatientId(id),
-      this.treatmentRepository.softDeleteByPatientId(id),
+      this.examRepository.softDeleteByPatientId(id, updaterId),
+      this.notificationRepository.softDeleteByPatientId(id, updaterId),
+      this.observationRepository.softDeleteByPatientId(id, updaterId),
+      this.treatmentRepository.softDeleteByPatientId(id, updaterId),
     ]);
 
     // 4. Audit the deletion.

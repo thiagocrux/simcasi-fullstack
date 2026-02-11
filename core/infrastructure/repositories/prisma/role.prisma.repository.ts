@@ -8,9 +8,10 @@ import { prisma } from '../../lib/prisma';
 export class PrismaRoleRepository implements RoleRepository {
   /**
    * Finds a role by its unique ID.
+   *
    * @param id The role ID.
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The role or null if not found.
+   * @return The found role or null if not found.
    */
   async findById(id: string, includeDeleted = false): Promise<Role | null> {
     const role = await prisma.role.findFirst({
@@ -24,9 +25,10 @@ export class PrismaRoleRepository implements RoleRepository {
 
   /**
    * Finds a role by its unique code.
+   *
    * @param code The role code (e.g., 'ADMIN', 'DOCTOR').
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The role or null if not found.
+   * @return The found role or null if not found.
    */
   async findByCode(code: string, includeDeleted = false): Promise<Role | null> {
     const role = await prisma.role.findFirst({
@@ -39,9 +41,10 @@ export class PrismaRoleRepository implements RoleRepository {
   }
 
   /**
-   * Retrieves a paginated list of roles with optional search filtering.
+   * Retrieves a paginated list of roles with optional filtering.
+   *
    * @param params Filtering and pagination parameters.
-   * @returns An object containing the list of roles and the total count.
+   * @return An object containing the list of roles and the total count.
    */
   async findAll(params?: {
     skip?: number;
@@ -110,9 +113,10 @@ export class PrismaRoleRepository implements RoleRepository {
 
   /**
    * Creates a new role record in the database.
-   * This method performs a simple insert and will fail if a role with the same code already exists.
-   * @param data The role data including optional permission IDs.
-   * @returns The newly created role entity.
+   * This method performs a simple insertion and will fail if a role with the same code already exists.
+   *
+   * @param data The role data, including optional permission IDs.
+   * @return The newly created role entity.
    */
   async create(
     data: Omit<Role, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> & {
@@ -137,30 +141,34 @@ export class PrismaRoleRepository implements RoleRepository {
 
   /**
    * Updates an existing role record.
+   *
    * @param id The role ID.
    * @param data The partial data to update.
-   * @returns The updated role.
+   * @param updatedBy The user performing the update.
+   * @return The updated role.
    */
   async update(
     id: string,
     data: Partial<Omit<Role, 'id' | 'createdAt'>> & {
       permissionIds?: string[];
-    }
+    },
+    updatedBy: string
   ): Promise<Role> {
-    const { permissionIds, ...roleData } = data;
+    const { permissionIds, ...roleData } = data as any;
     const role = await prisma.role.update({
       where: { id },
       data: {
         ...roleData,
         updatedAt: new Date(),
+        updater: { connect: { id: updatedBy } },
         /**
-         * Synchronize many-to-many relationships using Prisma's nested writes.
-         * Using deleteMany + create ensures the associations match the provided array exactly.
+         * Sincroniza relacionamentos muitos-para-muitos usando gravações aninhadas do Prisma.
+         * O uso de deleteMany + create garante que as associações correspondam exatamente ao array fornecido.
          */
         permission: permissionIds
           ? {
               deleteMany: {},
-              create: permissionIds.map((id) => ({ permissionId: id })),
+              create: permissionIds.map((id: string) => ({ permissionId: id })),
             }
           : undefined,
       },
@@ -170,21 +178,27 @@ export class PrismaRoleRepository implements RoleRepository {
 
   /**
    * Performs a soft delete on a role.
+   *
    * @param id The role ID.
+   * @param updatedBy The user performing the deletion.
+   * @return A promise that resolves when the operation is complete.
    */
-  async softDelete(id: string): Promise<void> {
+  async softDelete(id: string, updatedBy: string): Promise<void> {
     await prisma.role.update({
       where: { id },
       data: {
         deletedAt: new Date(),
+        updater: { connect: { id: updatedBy } },
       },
     });
   }
 
   /**
    * Restores a soft-deleted role record.
+   *
    * @param id The role ID.
    * @param updatedBy The ID of the user performing the restoration.
+   * @return A promise that resolves when the operation is complete.
    */
   async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.role.update({
@@ -197,10 +211,11 @@ export class PrismaRoleRepository implements RoleRepository {
   }
 
   /**
-   * Checks if a role has at least one of the required permissions.
+   * Checks if a role has at least one of the requested permissions.
+   *
    * @param roleId The role ID.
    * @param codes Array of permission codes.
-   * @returns True if the role has any of the requested permissions.
+   * @return True if the role has any of the requested permissions.
    */
   async hasPermissions(roleId: string, codes: string[]): Promise<boolean> {
     if (codes.length === 0) return true;

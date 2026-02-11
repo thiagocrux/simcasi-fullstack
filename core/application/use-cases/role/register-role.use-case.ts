@@ -64,12 +64,15 @@ export class RegisterRoleUseCase implements UseCase<
 
       // If the role was previously soft-deleted, we restore it by clearing 'deletedAt'
       // and updating it with the new provided data (like permissions).
-      const restoredRole = await this.roleRepository.update(roleExists.id, {
-        code: roleData.code,
-        permissionIds: roleData.permissionIds,
-        deletedAt: null,
-        updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-      });
+      const restoredRole = await this.roleRepository.update(
+        roleExists.id,
+        {
+          code: roleData.code,
+          permissionIds: roleData.permissionIds,
+          deletedAt: null,
+        },
+        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+      );
 
       // 4. Log the 'RESTORE' action for audit trailing.
       await this.auditLogRepository.create({

@@ -8,8 +8,9 @@ import { prisma } from '../../lib/prisma';
 export class PrismaAuditLogRepository implements AuditLogRepository {
   /**
    * Finds an audit log by its unique ID.
-   * @param id The ID of the audit log to find.
-   * @returns The audit log or null if not found.
+   *
+   * @param id The audit log ID to search for.
+   * @return The found audit log or null if not found.
    */
   async findById(id: string): Promise<AuditLog | null> {
     const log = await prisma.auditLog.findUnique({
@@ -20,8 +21,9 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
 
   /**
    * Retrieves a paginated list of audit logs with optional filters.
+   *
    * @param params Filtering and pagination parameters.
-   * @returns An object containing the list of audit logs and the total count.
+   * @return An object containing the list of audit logs and the total count.
    */
   async findAll(params?: {
     skip?: number;
@@ -109,8 +111,9 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
 
   /**
    * Creates a new audit log entry.
+   *
    * @param data The audit log data to create.
-   * @returns The newly created audit log.
+   * @return The newly created audit log.
    */
   async create(data: Omit<AuditLog, 'id' | 'createdAt'>): Promise<AuditLog> {
     const log = await prisma.auditLog.create({

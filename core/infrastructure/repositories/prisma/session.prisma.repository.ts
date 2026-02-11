@@ -7,9 +7,10 @@ import { prisma } from '../../lib/prisma';
 export class PrismaSessionRepository implements SessionRepository {
   /**
    * Finds a session by its unique ID.
+   *
    * @param id The session ID.
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The session or null if not found.
+   * @return The found session or null if not found.
    */
   async findById(id: string, includeDeleted = false): Promise<Session | null> {
     const session = await prisma.session.findFirst({
@@ -23,8 +24,9 @@ export class PrismaSessionRepository implements SessionRepository {
 
   /**
    * Retrieves a paginated list of sessions with optional filtering.
+   *
    * @param params Filtering and pagination parameters.
-   * @returns An object containing the list of sessions and the total count.
+   * @return An object containing the list of sessions and the total count.
    */
   async findAll(params?: {
     skip?: number;
@@ -90,8 +92,9 @@ export class PrismaSessionRepository implements SessionRepository {
 
   /**
    * Creates a new session record.
+   *
    * @param data The session data.
-   * @returns The newly created session.
+   * @return The newly created session.
    */
   async create(
     data: Omit<Session, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
@@ -103,10 +106,11 @@ export class PrismaSessionRepository implements SessionRepository {
   }
 
   /**
-   * Updates an existing session (e.g., refreshing expiration).
+   * Updates an existing session (e.g., renewing expiration).
+   *
    * @param id The session ID.
    * @param data The partial data to update.
-   * @returns The updated session.
+   * @return The updated session.
    */
   async update(
     id: string,
@@ -124,7 +128,9 @@ export class PrismaSessionRepository implements SessionRepository {
 
   /**
    * Performs a soft delete on a session (logout).
+   *
    * @param id The session ID.
+   * @return A promise that resolves when the operation is complete.
    */
   async softDelete(id: string): Promise<void> {
     await prisma.session.update({
@@ -137,7 +143,9 @@ export class PrismaSessionRepository implements SessionRepository {
 
   /**
    * Revokes all active sessions for a specific user.
+   *
    * @param userId The user ID.
+   * @return A promise that resolves when the operation is complete.
    */
   async revokeAllByUserId(userId: string): Promise<void> {
     await prisma.session.updateMany({
@@ -152,9 +160,11 @@ export class PrismaSessionRepository implements SessionRepository {
   }
 
   /**
-   * Revokes all active sessions for an user EXCEPT for the specified one.
-   * @param sessionId The session ID to keep active.
+   * Revokes all active sessions for a user EXCEPT the specified one.
+   *
+   * @param sessionId The session ID that should remain active.
    * @param userId The user ID.
+   * @return A promise that resolves when the operation is complete.
    */
   async revokeOtherSessions(sessionId: string, userId: string): Promise<void> {
     await prisma.session.updateMany({
@@ -171,7 +181,8 @@ export class PrismaSessionRepository implements SessionRepository {
 
   /**
    * Physically deletes expired sessions from the database.
-   * @returns The number of deleted sessions.
+   *
+   * @return The number of deleted sessions.
    */
   async deleteExpired(): Promise<number> {
     const result = await prisma.session.deleteMany({

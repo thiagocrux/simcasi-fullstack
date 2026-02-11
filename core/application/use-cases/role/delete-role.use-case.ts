@@ -30,7 +30,10 @@ export class DeleteRoleUseCase implements UseCase<
     }
 
     // 2. Soft delete the role.
-    await this.roleRepository.softDelete(id);
+    await this.roleRepository.softDelete(
+      id,
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 3. Create audit log.
     await this.auditLogRepository.create({

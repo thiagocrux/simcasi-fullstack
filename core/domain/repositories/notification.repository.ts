@@ -1,17 +1,24 @@
 import { Notification } from '../entities/notification.entity';
 
 /**
- * Repository interface for Notification entity.
- * Handles epidemiological notifications (e.g., SINAN).
+ * Repository interface for the Notification entity.
+ * Manages epidemiological notifications (e.g., SINAN).
  */
 export interface NotificationRepository {
   /**
-   * Searches for a notification by ID, including logically deleted ones if requested.
+   * Finds a notification by ID, including soft-deleted ones if requested.
+   *
+   * @param id The notification ID.
+   * @param includeDeleted Whether to include soft-deleted records.
+   * @return The found notification or null.
    */
   findById(id: string, includeDeleted?: boolean): Promise<Notification | null>;
 
   /**
-   * Lists all notifications with support for pagination and filtering.
+   * Lists all notifications with pagination and filtering support.
+   *
+   * @param params Pagination and filtering parameters.
+   * @return An object containing the list of notifications and the total count.
    */
   findAll(params?: {
     skip?: number;
@@ -29,6 +36,9 @@ export interface NotificationRepository {
 
   /**
    * Creates a new notification record.
+   *
+   * @param data Data for notification creation.
+   * @return The created notification.
    */
   create(
     data: Omit<Notification, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
@@ -36,29 +46,52 @@ export interface NotificationRepository {
 
   /**
    * Updates an existing notification record.
+   *
+   * @param id The notification ID.
+   * @param data Data for notification update.
+   * @param updatedBy User who performed the update.
+   * @return The updated notification.
    */
   update(
     id: string,
-    data: Partial<Omit<Notification, 'id' | 'createdAt'>>
+    data: Partial<Omit<Notification, 'id' | 'createdAt'>>,
+    updatedBy: string
   ): Promise<Notification>;
 
   /**
-   * Executes Soft Delete on a single notification.
+   * Performs a soft delete on a single notification.
+   *
+   * @param id The notification ID.
+   * @param updatedBy ID from the user who performed the update.
+   * @return A promise that resolves when the operation is complete.
    */
-  softDelete(id: string): Promise<void>;
+  softDelete(id: string, updatedBy: string): Promise<void>;
 
   /**
-   * Executes Soft Delete on all notifications of a patient (cascade deletion).
+   * Performs a soft delete on all notifications of a patient (cascade deletion).
+   *
+   * @param patientId The patient ID.
+   * @param updatedBy ID from the user who performed the update.
+   * @return A promise that resolves when the operation is complete.
    */
-  softDeleteByPatientId(patientId: string): Promise<void>;
+  softDeleteByPatientId(patientId: string, updatedBy: string): Promise<void>;
 
   /**
-   * Restores a single logically deleted notification.
+   * Restores a single soft-deleted notification.
+   *
+   * @param id The notification ID.
+   * @param updatedBy ID from the user who performed the restoration.
+   * @return A promise that resolves when the operation is complete.
    */
   restore(id: string, updatedBy: string): Promise<void>;
 
   /**
-   * Restores notifications of a patient deleted since a specific date (cascade restoration).
+   * Restores a patient's notifications deleted since a specific date.
+   *
+   * @param patientId The patient ID.
+   * @param updatedBy ID from the user who performed the restoration.
+   * @param since Optional date to filter the restoration.
+   * @return A promise that resolves when the operation is complete.
    */
   restoreByPatientId(
     patientId: string,

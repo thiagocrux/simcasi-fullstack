@@ -30,7 +30,10 @@ export class DeleteTreatmentUseCase implements UseCase<
     }
 
     // 2. Soft delete the treatment.
-    await this.treatmentRepository.softDelete(id);
+    await this.treatmentRepository.softDelete(
+      id,
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 3. Create audit log.
     await this.auditLogRepository.create({

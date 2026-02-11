@@ -8,9 +8,10 @@ import { prisma } from '../../lib/prisma';
 export class PrismaPermissionRepository implements PermissionRepository {
   /**
    * Finds a permission by its unique ID.
+   *
    * @param id The permission ID.
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The permission or null if not found.
+   * @return The found permission or null if not found.
    */
   async findById(
     id: string,
@@ -27,8 +28,9 @@ export class PrismaPermissionRepository implements PermissionRepository {
 
   /**
    * Finds multiple permissions by their IDs.
+   *
    * @param ids The list of permission IDs.
-   * @returns A list of found permissions.
+   * @return A list of found permissions.
    */
   async findByIds(ids: string[]): Promise<Permission[]> {
     const permissions = await prisma.permission.findMany({
@@ -42,9 +44,10 @@ export class PrismaPermissionRepository implements PermissionRepository {
 
   /**
    * Finds a permission by its unique code.
+   *
    * @param code The permission code (e.g., 'USER_CREATE').
    * @param includeDeleted Whether to include soft-deleted records.
-   * @returns The permission or null if not found.
+   * @return The found permission or null if not found.
    */
   async findByCode(
     code: string,
@@ -61,8 +64,9 @@ export class PrismaPermissionRepository implements PermissionRepository {
 
   /**
    * Finds all permissions assigned to a specific role.
+   *
    * @param roleId The role ID.
-   * @returns A list of permissions.
+   * @return A list of permissions for the role.
    */
   async findByRoleId(roleId: string): Promise<Permission[]> {
     const permissions = await prisma.permission.findMany({
@@ -82,8 +86,9 @@ export class PrismaPermissionRepository implements PermissionRepository {
 
   /**
    * Retrieves a paginated list of permissions.
+   *
    * @param params Filtering and pagination parameters.
-   * @returns An object containing the list of permissions and the total count.
+   * @return An object containing the list of permissions and the total count.
    */
   async findAll(params?: {
     skip?: number;
@@ -152,9 +157,9 @@ export class PrismaPermissionRepository implements PermissionRepository {
 
   /**
    * Creates a new permission record in the database.
-   * This is a simple insert operation; it does not handle restoration of deleted records.
-   * @param data The permission data including optional role IDs.
-   * @returns The newly created permission entity.
+   *
+   * @param data The permission data, including optional role IDs.
+   * @return The newly created permission entity.
    */
   async create(
     data: Omit<Permission, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'> & {
@@ -179,30 +184,34 @@ export class PrismaPermissionRepository implements PermissionRepository {
 
   /**
    * Updates an existing permission record.
+   *
    * @param id The permission ID.
-   * @param data The partial data to update.
-   * @returns The updated permission.
+   * @param data The partial data for the update.
+   * @param updatedBy The user who performed the update.
+   * @return The updated permission.
    */
   async update(
     id: string,
     data: Partial<Omit<Permission, 'id' | 'createdAt'>> & {
       roleIds?: string[];
-    }
+    },
+    updatedBy: string
   ): Promise<Permission> {
-    const { roleIds, ...permissionData } = data;
+    const { roleIds, ...permissionData } = data as any;
     const permission = await prisma.permission.update({
       where: { id },
       data: {
         ...permissionData,
         updatedAt: new Date(),
+        updater: { connect: { id: updatedBy } },
         /**
-         * Synchronize many-to-many relationships using Prisma's nested writes.
-         * Using deleteMany + create ensures the associations match the provided array exactly.
+         * Sincroniza relacionamentos muitos-para-muitos usando gravações aninhadas do Prisma.
+         * O uso de deleteMany + create garante que as associações correspondam exatamente ao array fornecido.
          */
         roles: roleIds
           ? {
               deleteMany: {},
-              create: roleIds.map((rid) => ({ roleId: rid })),
+              create: roleIds.map((rid: string) => ({ roleId: rid })),
             }
           : undefined,
       },
@@ -212,21 +221,27 @@ export class PrismaPermissionRepository implements PermissionRepository {
 
   /**
    * Performs a soft delete on a permission.
+   *
    * @param id The permission ID.
+   * @param updatedBy The user performing the deletion.
+   * @return A promise that resolves when the operation is complete.
    */
-  async softDelete(id: string): Promise<void> {
+  async softDelete(id: string, updatedBy: string): Promise<void> {
     await prisma.permission.update({
       where: { id },
       data: {
         deletedAt: new Date(),
+        updater: { connect: { id: updatedBy } },
       },
     });
   }
 
   /**
    * Restores a soft-deleted permission record.
+   *
    * @param id The permission ID.
    * @param updatedBy The ID of the user performing the restoration.
+   * @return A promise that resolves when the operation is complete.
    */
   async restore(id: string, updatedBy: string): Promise<void> {
     await prisma.permission.update({

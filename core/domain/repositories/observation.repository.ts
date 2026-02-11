@@ -1,17 +1,24 @@
 import { Observation } from '../entities/observation.entity';
 
 /**
- * Repository interface for Observation entity.
- * Handles ad-hoc notes and clinical observations for patients.
+ * Repository interface for the Observation entity.
+ * Manages ad-hoc notes and clinical observations for patients.
  */
 export interface ObservationRepository {
   /**
-   * Searches for an observation by ID, including logically deleted ones if requested.
+   * Finds an observation by ID, including soft-deleted ones if requested.
+   *
+   * @param id The observation ID.
+   * @param includeDeleted Whether to include soft-deleted records.
+   * @return The found observation or null.
    */
   findById(id: string, includeDeleted?: boolean): Promise<Observation | null>;
 
   /**
-   * Lists all observations with support for pagination and filtering.
+   * Lists all observations with pagination and filtering support.
+   *
+   * @param params Pagination and filtering parameters.
+   * @return An object containing the list of observations and the total count.
    */
   findAll(params?: {
     skip?: number;
@@ -29,6 +36,9 @@ export interface ObservationRepository {
 
   /**
    * Creates a new observation record.
+   *
+   * @param data Data for observation creation.
+   * @return The created observation.
    */
   create(
     data: Omit<Observation, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>
@@ -36,29 +46,52 @@ export interface ObservationRepository {
 
   /**
    * Updates an existing observation record.
+   *
+   * @param id The observation ID.
+   * @param data Data for observation update.
+   * @param updatedBy User who performed the update.
+   * @return The updated observation.
    */
   update(
     id: string,
-    data: Partial<Omit<Observation, 'id' | 'createdAt'>>
+    data: Partial<Omit<Observation, 'id' | 'createdAt'>>,
+    updatedBy: string
   ): Promise<Observation>;
 
   /**
-   * Executes Soft Delete on a single observation.
+   * Performs a soft delete on a single observation.
+   *
+   * @param id The observation ID.
+   * @param updatedBy ID from the user who performed the update.
+   * @return A promise that resolves when the operation is complete.
    */
-  softDelete(id: string): Promise<void>;
+  softDelete(id: string, updatedBy: string): Promise<void>;
 
   /**
-   * Executes Soft Delete on all observations of a patient (cascade deletion).
+   * Performs a soft delete on all observations of a patient (cascade deletion).
+   *
+   * @param patientId The patient ID.
+   * @param updatedBy ID from the user who performed the update.
+   * @return A promise that resolves when the operation is complete.
    */
-  softDeleteByPatientId(patientId: string): Promise<void>;
+  softDeleteByPatientId(patientId: string, updatedBy: string): Promise<void>;
 
   /**
-   * Restores a single logically deleted observation.
+   * Restores a single soft-deleted observation.
+   *
+   * @param id The observation ID.
+   * @param updatedBy ID from the user who performed the restoration.
+   * @return A promise that resolves when the operation is complete.
    */
   restore(id: string, updatedBy: string): Promise<void>;
 
   /**
-   * Restores observations of a patient deleted since a specific date (cascade restoration).
+   * Restores a patient's observations deleted since a specific date.
+   *
+   * @param patientId The patient ID.
+   * @param updatedBy ID from the user who performed the restoration.
+   * @param since Optional date to filter the restoration.
+   * @return A promise that resolves when the operation is complete.
    */
   restoreByPatientId(
     patientId: string,

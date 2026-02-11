@@ -54,8 +54,8 @@ export class RegisterPermissionUseCase implements UseCase<
         {
           ...validation.data,
           deletedAt: null,
-          updatedBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-        }
+        },
+        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
       );
 
       // 3. Log 'RESTORE' action for audit trailing.

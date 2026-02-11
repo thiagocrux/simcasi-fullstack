@@ -32,7 +32,10 @@ export class DeleteNotificationUseCase implements UseCase<
     }
 
     // 2. Soft delete the notification.
-    await this.notificationRepository.softDelete(id);
+    await this.notificationRepository.softDelete(
+      id,
+      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+    );
 
     // 3. Create audit log.
     await this.auditLogRepository.create({
