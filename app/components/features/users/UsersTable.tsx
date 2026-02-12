@@ -30,6 +30,7 @@ import { deleteUser, findUsers } from '@/app/actions/user.actions';
 import { FindUsersOutput } from '@/core/application/contracts/user/find-users.contract';
 import { usePermission } from '@/hooks/usePermission';
 import { useRole } from '@/hooks/useRole';
+import { useUser } from '@/hooks/useUser';
 import { ActionResponse } from '@/lib/actions.utils';
 import { exportToCsv } from '@/lib/csv.utils';
 import { formatDate } from '@/lib/formatters.utils';
@@ -102,8 +103,9 @@ export function UsersTable({
   showIdColumn = true,
 }: UsersTableProps) {
   const router = useRouter();
-  const { getRoleLabel } = useRole();
+  const { getRoleLabel, isUserAdmin } = useRole();
   const { can } = usePermission();
+  const { user: loggedUser } = useUser();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -209,6 +211,19 @@ export function UsersTable({
     },
     [refetchUserList]
   );
+
+  function canUpdateUser(targetUserId: string) {
+    if (!can('update:user')) {
+      return false;
+    }
+
+    const isUpdatingSelf = loggedUser?.id === targetUserId;
+    if (loggedUser && !isUserAdmin(loggedUser.roleId) && !isUpdatingSelf) {
+      return false;
+    }
+
+    return true;
+  }
 
   const columns = useMemo<ColumnDef<Partial<User>>[]>(() => {
     return [
@@ -554,7 +569,7 @@ export function UsersTable({
                   <Eye /> Ver detalhes
                 </DropdownMenuItem>
 
-                {can('update:user') && (
+                {canUpdateUser(row.original.id as string) && (
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() => router.push(`/users/${row.original.id}`)}
@@ -594,6 +609,7 @@ export function UsersTable({
     searchValue,
     getRoleLabel,
     relatedUsers,
+    canUpdateUser,
     can,
     router,
     handleDelete,
@@ -692,7 +708,7 @@ export function UsersTable({
                   <Eye className="mr-2 w-4 h-4" /> Ver detalhes
                 </ContextMenuItem>
 
-                {can('update:user') && (
+                {canUpdateUser(row.original.id as string) && (
                   <ContextMenuItem
                     className="cursor-pointer"
                     onClick={() => router.push(`/users/${row.original.id}`)}

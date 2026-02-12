@@ -41,13 +41,30 @@ export function useRole() {
    */
   const getRoleLabel = useCallback(
     function getLabel(roleId: string | null): string | null {
-      if (!roleId) return null;
-      if (isLoadingRoles) return 'Carregando...';
+      if (!roleId) {
+        return null;
+      }
+      if (isLoadingRoles) {
+        return 'Carregando...';
+      }
       const role = roles.find((role) => role.id === roleId);
       return role ? (role as Role).label : 'Desconhecido';
     },
     [roles, isLoadingRoles]
   );
 
-  return { roles, getRoleLabel, isLoadingRoles };
+  /**
+   * Checks if the user has the administrator role.
+   * @param roleId The unique identifier of the user's role.
+   * @returns `true` if the role code is 'admin', otherwise `false`.
+   */
+  const isUserAdmin = useCallback(
+    (roleId: string) => {
+      const foundRole = roles.find((role) => role.id === roleId);
+      return foundRole?.code === 'admin';
+    },
+    [roles]
+  );
+
+  return { roles, getRoleLabel, isLoadingRoles, isUserAdmin };
 }
