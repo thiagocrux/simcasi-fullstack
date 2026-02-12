@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
 
-import { hydrateStore } from './auth/auth.slice';
 import { makeStore } from './index';
+import { hydrateStore } from './slices/auth.slice';
 
 /**
  * Provider component to wrap the application with the Redux store.

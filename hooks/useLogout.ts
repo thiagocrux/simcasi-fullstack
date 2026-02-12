@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { signOutUser } from '@/app/actions/session.actions';
 import { useAppDispatch } from '@/hooks/redux.hooks';
 import { logger } from '@/lib/logger.utils';
-import { clearCredentials } from '@/stores/auth/auth.slice';
+import { clearCredentials } from '@/stores/slices/auth.slice';
 
 /**
  * Hook to handle user logout across client components.

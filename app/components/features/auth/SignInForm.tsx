@@ -14,7 +14,7 @@ import {
 } from '@/core/application/validation/schemas/session.schema';
 import { useAppDispatch } from '@/hooks/redux.hooks';
 import { logger } from '@/lib/logger.utils';
-import { setCredentials } from '@/stores/auth/auth.slice';
+import { setCredentials } from '@/stores/slices/auth.slice';
 import { FieldError } from '../../common/FieldError';
 import { PasswordInput } from '../../common/PasswordInput';
 import { Button } from '../../ui/button';
