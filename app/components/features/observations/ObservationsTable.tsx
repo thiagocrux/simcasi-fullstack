@@ -572,7 +572,7 @@ export function ObservationsTable({
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="p-0 w-8 h-8">
+                <Button variant="ghost" className="p-0 w-8 h-8 cursor-pointer">
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal />
                 </Button>

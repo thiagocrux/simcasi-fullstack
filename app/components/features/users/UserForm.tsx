@@ -47,9 +47,6 @@ export function UserForm({
   const { handleLogout } = useLogout();
   const { can } = usePermission();
 
-  // Only administrators can update user roles.
-  const canUpdateRole = isEditMode && isUserAdmin;
-
   const userFormSchema = getUserFormSchema(isEditMode);
 
   const {
@@ -106,6 +103,9 @@ export function UserForm({
 
   const isFormBusy =
     isPending || isSubmitting || (isEditMode && isFetchingUser);
+
+  // Only administrators can update user roles.
+  const canUpdateRole = !isFormBusy || isUserAdmin;
 
   async function onSubmit(input: UserFormInput) {
     if (!loggedUser?.id) {
@@ -199,7 +199,7 @@ export function UserForm({
                       placeholder="Selecione o cargo"
                       searchPlaceholder="Pesquisar..."
                       emptySearchMessage="Nenhum resultado encontrado."
-                      disabled={isFormBusy || !canUpdateRole}
+                      disabled={!canUpdateRole}
                       aria-invalid={!!formErrors.roleId}
                     />
                     {formErrors.roleId && (
