@@ -95,15 +95,16 @@ export function ObservationForm({
         ? updateObservation(observationId, payload as UpdateObservationInput)
         : createObservation(payload as CreateObservationInput);
     },
-    onSuccess: () => {
-      logger.success(
-        `The observation ${isEditMode ? 'update' : 'creation'} was successfull!`
-      );
+    onSuccess: (data) => {
+      if (data.success) {
+        logger.success(
+          `The observation ${isEditMode ? 'update' : 'creation'} was successfull!`
+        );
+      } else {
+        logger.error('[FORM_ERROR]', data.errors);
+      }
       reset();
       router.push('/observations');
-    },
-    onError: (error: unknown) => {
-      logger.error('[FORM_ERROR]', error);
     },
   });
 

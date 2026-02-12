@@ -116,15 +116,16 @@ export function ExamForm({
         ? updateExam(examId, payload as UpdateExamInput)
         : createExam(payload as CreateExamInput);
     },
-    onSuccess: () => {
-      logger.success(
-        `The exam ${isEditMode ? 'update' : 'creation'} was successfull!`
-      );
+    onSuccess: (data) => {
+      if (data.success) {
+        logger.success(
+          `The exam ${isEditMode ? 'update' : 'creation'} was successfull!`
+        );
+      } else {
+        logger.error('[FORM_ERROR]', data.errors);
+      }
       reset();
       router.push('/exams');
-    },
-    onError: (error: unknown) => {
-      logger.error('[FORM_ERROR]', error);
     },
   });
 

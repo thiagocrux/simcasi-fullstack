@@ -95,15 +95,16 @@ export function NotificationForm({
         ? updateNotification(notificationId, payload as UpdateNotificationInput)
         : createNotification(payload as CreateNotificationInput);
     },
-    onSuccess: () => {
-      logger.success(
-        `The notification ${isEditMode ? 'update' : 'creation'} was successfull!`
-      );
+    onSuccess: (data) => {
+      if (data.success) {
+        logger.success(
+          `The notification ${isEditMode ? 'update' : 'creation'} was successfull!`
+        );
+      } else {
+        logger.error('[FORM_ERROR]', data.errors);
+      }
       reset();
       router.push('/notifications');
-    },
-    onError: (error: unknown) => {
-      logger.error('[FORM_ERROR]', error);
     },
   });
 

@@ -105,15 +105,16 @@ export function TreatmentForm({
         ? updateTreatment(treatmentId, payload as UpdateTreatmentInput)
         : createTreatment(payload as CreateTreatmentInput);
     },
-    onSuccess: () => {
-      logger.success(
-        `The treatment ${isEditMode ? 'update' : 'creation'} was successfull!`
-      );
+    onSuccess: (data) => {
+      if (data.success) {
+        logger.success(
+          `The treatment ${isEditMode ? 'update' : 'creation'} was successfull!`
+        );
+      } else {
+        logger.error('[FORM_ERROR]', data.errors);
+      }
       reset();
       router.push('/treatments');
-    },
-    onError: (error: unknown) => {
-      logger.error('[FORM_ERROR]', error);
     },
   });
 

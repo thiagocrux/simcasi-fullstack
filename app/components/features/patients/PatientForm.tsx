@@ -153,11 +153,11 @@ export function PatientForm({
         logger.success(
           `The patient ${isEditMode ? 'update' : 'creation'} was successfull!`
         );
-        reset();
-        router.push('/patients');
       } else {
         logger.error('[FORM_ERROR]', data.errors);
       }
+      reset();
+      router.push('/patients');
     },
   });
 

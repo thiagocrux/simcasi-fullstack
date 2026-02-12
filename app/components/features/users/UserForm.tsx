@@ -97,15 +97,16 @@ export function UserForm({
         ? updateUser(userId, payload as UpdateUserInput)
         : createUser(payload as CreateUserInput);
     },
-    onSuccess: () => {
-      logger.success(
-        `The user ${isEditMode ? 'update' : 'creation'} was successfull!`
-      );
+    onSuccess: (data) => {
+      if (data.success) {
+        logger.success(
+          `The user ${isEditMode ? 'update' : 'creation'} was successfull!`
+        );
+      } else {
+        logger.error('[FORM_ERROR]', data.message);
+      }
       reset();
       router.push('/users');
-    },
-    onError: (error: unknown) => {
-      logger.error('[FORM_ERROR]', error);
     },
   });
 
