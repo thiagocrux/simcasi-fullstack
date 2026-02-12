@@ -6,14 +6,21 @@ import { useAppSelector } from './redux.hooks';
  * @returns Object with user details and status flags.
  */
 export function useUser() {
-  const { user, isAuthenticated, isHydrated } = useAppSelector(
+  const { user, roleCode, isAuthenticated, isHydrated } = useAppSelector(
     function selectAuthState(state) {
       return state.auth;
     }
   );
 
+  /**
+   * Indicates whether the authenticated user has the administrator role.
+   * @returns `true` if the user's role code is 'admin', otherwise `false`.
+   */
+  const isUserAdmin = roleCode === 'admin';
+
   return {
     user,
+    isUserAdmin,
     isAuthenticated,
     isHydrated,
   };

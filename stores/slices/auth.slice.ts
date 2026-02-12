@@ -20,6 +20,8 @@ interface AuthState {
   user: User | null;
   /** List of permission codes granted to the user. */
   permissions: string[];
+  /** The code of the role assigned to the authenticated user (e.g., 'admin', 'user'). */
+  roleCode: string | null;
   /** Flag indicating if the user has an active session. */
   isAuthenticated: boolean;
   /** Flag indicating if the state has been synchronized with persistent storage. */
@@ -29,6 +31,7 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   permissions: [],
+  roleCode: null,
   isAuthenticated: false,
   isHydrated: false,
 };
@@ -48,10 +51,15 @@ export const authSlice = createSlice({
      */
     setCredentials(
       state,
-      action: PayloadAction<{ user: User; permissions: string[] }>
+      action: PayloadAction<{
+        user: User;
+        roleCode: string;
+        permissions: string[];
+      }>
     ): void {
       state.user = action.payload.user;
       state.permissions = action.payload.permissions;
+      state.roleCode = action.payload.roleCode;
       state.isAuthenticated = true;
       state.isHydrated = true;
 
@@ -67,6 +75,7 @@ export const authSlice = createSlice({
     clearCredentials(state): void {
       state.user = null;
       state.permissions = [];
+      state.roleCode = null;
       state.isAuthenticated = false;
       state.isHydrated = true;
 
@@ -87,6 +96,7 @@ export const authSlice = createSlice({
             const parsed = JSON.parse(stored);
             state.user = parsed.user;
             state.permissions = parsed.permissions;
+            state.roleCode = parsed.roleCode;
             state.isAuthenticated = true;
           } catch (error) {
             logger.error('[AUTH_SLICE] Hydration failure:', error);

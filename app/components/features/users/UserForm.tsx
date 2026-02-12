@@ -14,6 +14,7 @@ import {
   UserFormInput,
 } from '@/core/application/validation/schemas/user.schema';
 import { useLogout } from '@/hooks/useLogout';
+import { usePermission } from '@/hooks/usePermission';
 import { useRole } from '@/hooks/useRole';
 import { useUser } from '@/hooks/useUser';
 import { logger } from '@/lib/logger.utils';
@@ -41,9 +42,13 @@ export function UserForm({
   className,
 }: UserFormProps) {
   const router = useRouter();
-  const { user: loggedUser } = useUser();
+  const { user: loggedUser, isUserAdmin } = useUser();
   const { roles: ROLE_OPTIONS } = useRole();
   const { handleLogout } = useLogout();
+  const { can } = usePermission();
+
+  // Only administrators can update user roles.
+  const canUpdateRole = isEditMode && isUserAdmin;
 
   const userFormSchema = getUserFormSchema(isEditMode);
 
@@ -69,17 +74,6 @@ export function UserForm({
     queryFn: async () => await getUser(userId as string),
     enabled: isEditMode,
   });
-
-  useEffect(() => {
-    if (user && user.success) {
-      const { name, email, roleId } = user.data;
-      reset({
-        name,
-        email,
-        roleId,
-      });
-    }
-  }, [user, reset]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: ({
@@ -123,7 +117,7 @@ export function UserForm({
     const selectedRole = ROLE_OPTIONS.find((role) => role.id === input.roleId);
     if (!selectedRole) {
       logger.error(
-        '[FORM_ERROR] O cargo selecionado é inválido ou não foi encontrado.'
+        '[FORM_ERROR] The selected role is either invalid or not found.'
       );
       return;
     }
@@ -135,6 +129,23 @@ export function UserForm({
       authorId: loggedUser?.id,
     });
   }
+
+  useEffect(() => {
+    if (user && user.success) {
+      const { name, email, roleId } = user.data;
+      reset({
+        name,
+        email,
+        roleId,
+      });
+    }
+  }, [user, reset]);
+
+  useEffect(() => {
+    if (!can('create:user')) {
+      router.replace('/dashboard'); // ou outra rota segura
+    }
+  }, [can, router]);
 
   return (
     <Card className="flex flex-col px-4 sm:px-8 py-8 sm:py-12">
@@ -188,7 +199,7 @@ export function UserForm({
                       placeholder="Selecione o cargo"
                       searchPlaceholder="Pesquisar..."
                       emptySearchMessage="Nenhum resultado encontrado."
-                      disabled={isFormBusy}
+                      disabled={isFormBusy || !canUpdateRole}
                       aria-invalid={!!formErrors.roleId}
                     />
                     {formErrors.roleId && (

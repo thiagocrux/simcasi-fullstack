@@ -53,18 +53,5 @@ export function useRole() {
     [roles, isLoadingRoles]
   );
 
-  /**
-   * Checks if the user has the administrator role.
-   * @param roleId The unique identifier of the user's role.
-   * @returns `true` if the role code is 'admin', otherwise `false`.
-   */
-  const isUserAdmin = useCallback(
-    (roleId: string) => {
-      const foundRole = roles.find((role) => role.id === roleId);
-      return foundRole?.code === 'admin';
-    },
-    [roles]
-  );
-
-  return { roles, getRoleLabel, isLoadingRoles, isUserAdmin };
+  return { roles, getRoleLabel, isLoadingRoles };
 }

@@ -103,9 +103,9 @@ export function UsersTable({
   showIdColumn = true,
 }: UsersTableProps) {
   const router = useRouter();
-  const { getRoleLabel, isUserAdmin } = useRole();
+  const { getRoleLabel } = useRole();
   const { can } = usePermission();
-  const { user: loggedUser } = useUser();
+  const { user: loggedUser, isUserAdmin } = useUser();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -212,18 +212,21 @@ export function UsersTable({
     [refetchUserList]
   );
 
-  function canUpdateUser(targetUserId: string) {
-    if (!can('update:user')) {
-      return false;
-    }
+  const canUpdateUser = useCallback(
+    (targetUserId: string) => {
+      if (!can('update:user')) {
+        return false;
+      }
 
-    const isUpdatingSelf = loggedUser?.id === targetUserId;
-    if (loggedUser && !isUserAdmin(loggedUser.roleId) && !isUpdatingSelf) {
-      return false;
-    }
+      const isUpdatingSelf = loggedUser?.id === targetUserId;
+      if (loggedUser && !isUserAdmin && !isUpdatingSelf) {
+        return false;
+      }
 
-    return true;
-  }
+      return true;
+    },
+    [can, isUserAdmin, loggedUser]
+  );
 
   const columns = useMemo<ColumnDef<Partial<User>>[]>(() => {
     return [

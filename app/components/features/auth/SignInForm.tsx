@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { findRoles } from '@/app/actions/role.actions';
 import { signInUser } from '@/app/actions/session.actions';
 import { messages } from '@/core/application/validation/messages';
 import {
   CreateSessionInput,
   sessionSchema,
 } from '@/core/application/validation/schemas/session.schema';
+import { NotFoundError } from '@/core/domain/errors/app.error';
 import { useAppDispatch } from '@/hooks/redux.hooks';
 import { logger } from '@/lib/logger.utils';
 import { setCredentials } from '@/stores/slices/auth.slice';
@@ -43,13 +45,24 @@ export function SignInForm({ className }: SignInFormProps) {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (input: CreateSessionInput) => signInUser(input),
-    onSuccess: (response) => {
+    onSuccess: async (response) => {
       if (response.success && response.data) {
+        const roleList = await findRoles({});
+        const roles = roleList.success ? roleList.data.items : [];
+        const role = roles.find(
+          (role) => role.id === response.data.user.roleId
+        );
+
+        if (!role) {
+          throw new NotFoundError('Role');
+        }
+
         // Dispatch credentials to the Redux store.
         dispatch(
           setCredentials({
             user: response.data.user,
             permissions: response.data.permissions,
+            roleCode: role.code,
           })
         );
         router.push('/dashboard');
