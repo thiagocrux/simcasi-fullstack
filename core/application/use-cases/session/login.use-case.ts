@@ -1,7 +1,11 @@
-import { UnauthorizedError } from '@/core/domain/errors/app.error';
+import {
+  NotFoundError,
+  UnauthorizedError,
+} from '@/core/domain/errors/app.error';
 import { HashProvider } from '@/core/domain/providers/hash.provider';
 import { TokenProvider } from '@/core/domain/providers/token.provider';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
+import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import { LoginInput } from '../../contracts/session/login.contract';
@@ -17,6 +21,7 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
    *
    * @param userRepository The repository for user details.
    * @param sessionRepository The repository for session persistence.
+   * @param roleRepository The repository for role data operations.
    * @param permissionRepository The repository for permission mapping.
    * @param hashProvider The provider for password hashing and comparison.
    * @param tokenProvider The provider for token generation and validation.
@@ -24,6 +29,7 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly sessionRepository: SessionRepository,
+    private readonly roleRepository: RoleRepository,
     private readonly permissionRepository: PermissionRepository,
     private readonly hashProvider: HashProvider,
     private readonly tokenProvider: TokenProvider
@@ -64,16 +70,23 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
       userAgent: input.userAgent || 'unknown',
     });
 
-    // 4. Fetch permissions for the user's role.
-    const permissions = await this.permissionRepository.findByRoleId(
-      user.roleId
-    );
-    const permissionCodes = permissions.map((p) => p.code);
+    // 4. Fetch permissions and role code for the user.
+    const [permissions, role] = await Promise.all([
+      this.permissionRepository.findByRoleId(user.roleId),
+      this.roleRepository.findById(user.roleId),
+    ]);
 
-    // 5. Generate tokens including Session ID (sid).
+    if (!role) {
+      throw new NotFoundError('Role not found for user.');
+    }
+
+    const permissionCodes = permissions.map((permission) => permission.code);
+
+    // 5. Generate tokens including session ID (sid) and role code.
     const accessToken = await this.tokenProvider.generateAccessToken({
       sub: user.id,
       roleId: user.roleId,
+      roleCode: role.code,
       sid: session.id,
     });
     const refreshToken = await this.tokenProvider.generateRefreshToken({

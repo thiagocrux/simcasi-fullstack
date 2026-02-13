@@ -3,6 +3,7 @@ import {
   SessionExpiredError,
 } from '@/core/domain/errors/session.error';
 import { TokenProvider } from '@/core/domain/providers/token.provider';
+import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import {
   ValidateSessionInput,
@@ -21,10 +22,12 @@ export class ValidateSessionUseCase implements UseCase<
    * Initializes a new instance of the ValidateSessionUseCase class.
    *
    * @param sessionRepository The repository for session persistence.
+   * @param roleRepository The repository for role data operations.
    * @param tokenProvider The provider for token verification.
    */
   constructor(
     private readonly sessionRepository: SessionRepository,
+    private readonly roleRepository: RoleRepository,
     private readonly tokenProvider: TokenProvider
   ) {}
 
@@ -42,6 +45,7 @@ export class ValidateSessionUseCase implements UseCase<
     const decoded = await this.tokenProvider.verifyToken<{
       sub: string;
       roleId: string;
+      roleCode?: string;
       sid: string;
       exp?: number;
     }>(input.token);
@@ -67,9 +71,17 @@ export class ValidateSessionUseCase implements UseCase<
       }
     }
 
+    // 4. Fallback for role code (if not in token)
+    let roleCode = decoded.roleCode;
+    if (!roleCode) {
+      const role = await this.roleRepository.findById(decoded.roleId);
+      roleCode = role?.code || 'unknown';
+    }
+
     return {
       userId: decoded.sub,
       roleId: decoded.roleId,
+      roleCode: roleCode,
       sessionId: decoded.sid,
     };
   }

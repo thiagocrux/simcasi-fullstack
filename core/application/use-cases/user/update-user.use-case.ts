@@ -1,8 +1,8 @@
 import { userSchema } from '@/core/application/validation/schemas/user.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
-import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import {
   ConflictError,
+  ForbiddenError,
   NotFoundError,
   ValidationError,
 } from '@/core/domain/errors/app.error';
@@ -10,6 +10,10 @@ import { HashProvider } from '@/core/domain/providers/hash.provider';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
+import {
+  getRequestContext,
+  isUserAdmin,
+} from '@/core/infrastructure/lib/request-context';
 import {
   UpdateUserInput,
   UpdateUserOutput,
@@ -46,7 +50,8 @@ export class UpdateUserUseCase implements UseCase<
    * @throws {ConflictError} If the new email is already in use.
    */
   async execute(input: UpdateUserInput): Promise<UpdateUserOutput> {
-    const { id, data, userId, ipAddress, userAgent } = input;
+    const { id, data } = input;
+    const { userId: executorId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Validate input.
     const validation = userSchema.partial().safeParse(data);
@@ -58,12 +63,31 @@ export class UpdateUserUseCase implements UseCase<
     }
 
     // 2. Check if the user exists.
-    const existing = await this.userRepository.findById(id);
-    if (!existing) {
+    const targetUser = await this.userRepository.findById(id);
+    if (!targetUser) {
       throw new NotFoundError('User');
     }
 
-    // 3. Check if the role exists (if provided).
+    // 3. Authorization check.
+    const isAdmin = isUserAdmin();
+    const isEditingSelf = id === executorId;
+    const isChangingRole = data.roleId && data.roleId !== targetUser.roleId;
+
+    if (!isAdmin) {
+      // Non-admins can only edit themselves.
+      if (!isEditingSelf) {
+        throw new ForbiddenError(
+          'You cannot update another user without admin privileges.'
+        );
+      }
+
+      // Non-admins cannot change their own role.
+      if (isChangingRole) {
+        throw new ForbiddenError('You cannot update your own role.');
+      }
+    }
+
+    // 4. Check if the role exists (if provided and allowed).
     if (data.roleId) {
       const role = await this.roleRepository.findById(data.roleId);
       if (!role) {
@@ -71,35 +95,35 @@ export class UpdateUserUseCase implements UseCase<
       }
     }
 
-    // 4. Check for duplicates if the email is being changed.
-    if (data.email && data.email !== existing.email) {
+    // 5. Check for duplicates if the email is being changed.
+    if (data.email && data.email !== targetUser.email) {
       const duplicate = await this.userRepository.findByEmail(data.email);
       if (duplicate) {
         throw new ConflictError(`Email ${data.email} is already in use.`);
       }
     }
 
-    // 4. Hash the password if it is being changed.
-    const updateData = {
-      ...data,
-    };
+    // 6. Handle password hashing.
+    const updateData = { ...data };
     if (data.password) {
       updateData.password = await this.hashProvider.hash(data.password);
     }
 
-    // 5. Update the user.
+    // 7. Update the user.
     const updatedUser = await this.userRepository.update(
       id,
       updateData,
-      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
+      executorId
     );
 
-    // 6. Create audit log.
-    const { password: __, ...oldValuesWithoutPassword } = existing;
-    const { password: ___, ...newValuesWithoutPassword } = updatedUser;
+    // 8. Audit logging.
+    const { password: _oldValuesPassword, ...oldValuesWithoutPassword } =
+      targetUser;
+    const { password: _newValuesPassword, ...newValuesWithoutPassword } =
+      updatedUser;
 
     await this.auditLogRepository.create({
-      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
+      userId: executorId,
       action: 'UPDATE',
       entityName: 'USER',
       entityId: id,

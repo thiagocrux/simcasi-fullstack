@@ -6,6 +6,7 @@ import { ZodError } from 'zod';
 import { AppError } from '@/core/domain/errors/app.error';
 import { makeTokenProvider } from '@/core/infrastructure/factories/security.factory';
 import { makeRefreshTokenUseCase } from '@/core/infrastructure/factories/session.factory';
+import { requestContextStore } from '@/core/infrastructure/lib/request-context';
 import {
   AuthenticationContext,
   authenticateRequest,
@@ -100,27 +101,29 @@ export function handleApiError(error: any) {
 export function withAuthentication(permissions: string[], handler: ApiHandler) {
   return async (request: NextRequest, { params }: { params: any }) => {
     const execute = async (tokenOverride?: string) => {
-      const authContext = await authenticateRequest(
-        tokenOverride
-          ? new NextRequest(request, {
-              headers: {
-                ...Object.fromEntries(request.headers),
-                authorization: `Bearer ${tokenOverride}`,
-              },
-            })
-          : request
-      );
+      // Pass tokenOverride directly to avoid re-instantiating NextRequest and consuming the body.
+      const authContext = await authenticateRequest(request, tokenOverride);
       await authorize(authContext.roleId, permissions);
       const { ipAddress, userAgent } = await getAuditMetadata();
 
-      return await handler(request, {
-        params,
-        auth: {
-          ...authContext,
+      return await requestContextStore.run(
+        {
+          userId: authContext.userId,
+          roleId: authContext.roleId,
+          roleCode: authContext.roleCode,
           ipAddress,
           userAgent,
         },
-      });
+        () =>
+          handler(request, {
+            params,
+            auth: {
+              ...authContext,
+              ipAddress,
+              userAgent,
+            },
+          })
+      );
     };
 
     try {

@@ -7,6 +7,7 @@ import {
 } from '@/core/domain/errors/session.error';
 import { TokenProvider } from '@/core/domain/providers/token.provider';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
+import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import { logger } from '@/lib/logger.utils';
@@ -26,12 +27,14 @@ export class RefreshTokenUseCase implements UseCase<
    *
    * @param userRepository The repository for user details.
    * @param sessionRepository The repository for session persistence.
+   * @param roleRepository The repository for role data operations.
    * @param permissionRepository The repository for permission mapping.
    * @param tokenProvider The provider for token validation and generation.
    */
   constructor(
     private readonly userRepository: UserRepository,
     private readonly sessionRepository: SessionRepository,
+    private readonly roleRepository: RoleRepository,
     private readonly permissionRepository: PermissionRepository,
     private readonly tokenProvider: TokenProvider
   ) {}
@@ -111,16 +114,23 @@ export class RefreshTokenUseCase implements UseCase<
       userAgent: input.userAgent || 'unknown',
     });
 
-    // 6. Fetch permissions for the user's role.
-    const permissions = await this.permissionRepository.findByRoleId(
-      user.roleId
-    );
+    // 6. Fetch permissions and role for the user's role.
+    const [permissions, role] = await Promise.all([
+      this.permissionRepository.findByRoleId(user.roleId),
+      this.roleRepository.findById(user.roleId),
+    ]);
+
+    if (!role) {
+      throw new UnauthorizedError('Role not found.');
+    }
+
     const permissionCodes = permissions.map((p) => p.code);
 
-    // 7. Generate new tokens with the new session ID.
+    // 7. Generate new tokens with the new session ID and role code.
     const newAccessToken = await this.tokenProvider.generateAccessToken({
       sub: user.id,
       roleId: user.roleId,
+      roleCode: role.code,
       sid: newSession.id,
     });
     const newRefreshToken = await this.tokenProvider.generateRefreshToken({

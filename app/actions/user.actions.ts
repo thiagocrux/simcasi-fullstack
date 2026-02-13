@@ -72,30 +72,21 @@ export async function getUser(
 export async function createUser(
   input: CreateUserInput
 ): Promise<ActionResponse<RegisterUserOutput>> {
-  return withSecuredActionAndAutomaticRetry(
-    ['create:user'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsed = userSchema.safeParse(input);
-      if (!parsed.success) {
-        throw new ValidationError(
-          'Dados do usuário inválidos',
-          formatZodError(parsed.error)
-        );
-      }
-
-      const registerUserUseCase = makeRegisterUserUseCase();
-      const user = await registerUserUseCase.execute({
-        ...parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/users');
-
-      return user;
+  return withSecuredActionAndAutomaticRetry(['create:user'], async () => {
+    const parsed = userSchema.safeParse(input);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Dados do usuário são inválidos',
+        formatZodError(parsed.error)
+      );
     }
-  );
+
+    const registerUserUseCase = makeRegisterUserUseCase();
+    const user = await registerUserUseCase.execute(parsed.data);
+
+    revalidatePath('/users');
+    return user;
+  });
 }
 
 /**
@@ -109,39 +100,29 @@ export async function updateUser(
   id: string,
   input: UpdateUserInput
 ): Promise<ActionResponse<UpdateUserOutput>> {
-  return withSecuredActionAndAutomaticRetry(
-    ['update:user'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsedId = IdSchema.safeParse(id);
-      const parsedData = userSchema.partial().safeParse(input);
-      if (!parsedId.success) {
-        throw new ValidationError(
-          'Invalid ID.',
-          formatZodError(parsedId.error)
-        );
-      }
-
-      if (!parsedData.success) {
-        throw new ValidationError(
-          'Dados do usuário inválidos',
-          formatZodError(parsedData.error)
-        );
-      }
-
-      const updateUserUseCase = makeUpdateUserUseCase();
-      const user = await updateUserUseCase.execute({
-        id: parsedId.data,
-        data: parsedData.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/users');
-
-      return user;
+  return withSecuredActionAndAutomaticRetry(['update:user'], async () => {
+    const parsedId = IdSchema.safeParse(id);
+    const parsedData = userSchema.partial().safeParse(input);
+    if (!parsedId.success) {
+      throw new ValidationError('Invalid ID.', formatZodError(parsedId.error));
     }
-  );
+
+    if (!parsedData.success) {
+      throw new ValidationError(
+        'Dados do usuário são inválidos.',
+        formatZodError(parsedData.error)
+      );
+    }
+
+    const updateUserUseCase = makeUpdateUserUseCase();
+    const user = await updateUserUseCase.execute({
+      id: parsedId.data,
+      data: parsedData.data,
+    });
+
+    revalidatePath('/users');
+    return user;
+  });
 }
 
 /**
@@ -153,25 +134,18 @@ export async function updateUser(
 export async function deleteUser(
   id: string
 ): Promise<ActionResponse<{ success: boolean }>> {
-  return withSecuredActionAndAutomaticRetry(
-    ['delete:user'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsed = IdSchema.safeParse(id);
-      if (!parsed.success) {
-        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
-      }
-
-      const deleteUserUseCase = makeDeleteUserUseCase();
-      await deleteUserUseCase.execute({
-        id: parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/users');
-
-      return { success: true };
+  return withSecuredActionAndAutomaticRetry(['delete:user'], async () => {
+    const parsed = IdSchema.safeParse(id);
+    if (!parsed.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
-  );
+
+    const deleteUserUseCase = makeDeleteUserUseCase();
+    await deleteUserUseCase.execute({
+      id: parsed.data,
+    });
+
+    revalidatePath('/users');
+    return { success: true };
+  });
 }

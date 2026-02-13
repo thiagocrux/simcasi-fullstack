@@ -27,18 +27,10 @@ export const GET = withAuthentication(['read:user'], async (request) => {
  * @param context The request context containing auth metadata.
  * @return A promise resolving to the created user record.
  */
-export const POST = withAuthentication(
-  ['create:user'],
-  async (request, { auth }) => {
-    const body = await request.json();
-    const useCase = makeRegisterUserUseCase();
-    const user = await useCase.execute({
-      ...body,
-      userId: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
-    });
+export const POST = withAuthentication(['create:user'], async (request) => {
+  const body = await request.json();
+  const useCase = makeRegisterUserUseCase();
+  const user = await useCase.execute(body);
 
-    return NextResponse.json(user, { status: 201 });
-  }
-);
+  return NextResponse.json(user, { status: 201 });
+});

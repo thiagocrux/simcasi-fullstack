@@ -1,8 +1,8 @@
-import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { User } from '@/core/domain/entities/user.entity';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RestoreUserInput,
   RestoreUserOutput,
@@ -33,7 +33,8 @@ export class RestoreUserUseCase implements UseCase<
    * @throws {NotFoundError} If the user is not found.
    */
   async execute(input: RestoreUserInput): Promise<RestoreUserOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { id } = input;
+    const { userId: executorId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Check if the user exists (including deleted).
     const user = await this.userRepository.findById(id, true);
@@ -44,18 +45,15 @@ export class RestoreUserUseCase implements UseCase<
 
     // 2. Perform the restoration if it was deleted.
     if (user.deletedAt) {
-      await this.userRepository.restore(
-        id,
-        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
-      );
+      await this.userRepository.restore(id, executorId);
       user.deletedAt = null;
-      user.updatedBy = userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
+      user.updatedBy = executorId;
 
       // 3. Create audit log.
       const { password: _, ...newValuesWithoutPassword } = user;
 
       await this.auditLogRepository.create({
-        userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
+        userId: executorId,
         action: 'RESTORE',
         entityName: 'USER',
         entityId: id,

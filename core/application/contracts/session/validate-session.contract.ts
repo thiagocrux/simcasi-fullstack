@@ -5,5 +5,6 @@ export interface ValidateSessionInput {
 export interface ValidateSessionOutput {
   userId: string;
   roleId: string;
+  roleCode: string;
   sessionId: string;
 }

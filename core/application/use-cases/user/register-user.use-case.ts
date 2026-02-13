@@ -1,6 +1,5 @@
 import { userSchema } from '@/core/application/validation/schemas/user.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
-import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import {
   ConflictError,
   NotFoundError,
@@ -10,6 +9,7 @@ import { HashProvider } from '@/core/domain/providers/hash.provider';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RegisterUserInput,
   RegisterUserOutput,
@@ -46,6 +46,8 @@ export class RegisterUserUseCase implements UseCase<
    * @throws {ConflictError} If the email is already in use.
    */
   async execute(input: RegisterUserInput): Promise<RegisterUserOutput> {
+    const { userId: executorId, ipAddress, userAgent } = getRequestContext();
+
     // 1. Validate input.
     const validation = userSchema.safeParse(input);
     if (!validation.success) {
@@ -68,21 +70,21 @@ export class RegisterUserUseCase implements UseCase<
     }
 
     // 4. Hash the password.
-    const { password, ipAddress, userAgent, userId, ...userData } = input;
+    const { password, ...userData } = input;
     const hashedPassword = await this.hashProvider.hash(password);
 
     // 5. Delegate to the repository (handles restoration if the email was soft-deleted).
     const user = await this.userRepository.create({
       ...userData,
       password: hashedPassword,
-      createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
-      updatedBy: userId ?? null,
+      createdBy: executorId,
+      updatedBy: null,
     });
 
     // 6. Create audit log.
     const { password: _, ...userWithoutPassword } = user;
     await this.auditLogRepository.create({
-      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
+      userId: executorId,
       action: 'CREATE',
       entityName: 'USER',
       entityId: user.id,

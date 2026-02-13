@@ -1,8 +1,8 @@
-import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   DeleteUserInput,
   DeleteUserOutput,
@@ -35,7 +35,8 @@ export class DeleteUserUseCase implements UseCase<
    * @throws {NotFoundError} If the user is not found.
    */
   async execute(input: DeleteUserInput): Promise<DeleteUserOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { id } = input;
+    const { userId: executorId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Check if the user exists.
     const user = await this.userRepository.findById(id);
@@ -45,10 +46,7 @@ export class DeleteUserUseCase implements UseCase<
     }
 
     // 2. Soft delete the user.
-    await this.userRepository.softDelete(
-      id,
-      userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
-    );
+    await this.userRepository.softDelete(id, executorId);
 
     // 3. Revoke all active sessions (force logout everywhere).
     await this.sessionRepository.revokeAllByUserId(id);
@@ -57,7 +55,7 @@ export class DeleteUserUseCase implements UseCase<
     const { password: _, ...oldValuesWithoutPassword } = user;
 
     await this.auditLogRepository.create({
-      userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
+      userId: executorId,
       action: 'DELETE',
       entityName: 'USER',
       entityId: id,

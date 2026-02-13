@@ -12,14 +12,11 @@ import { withAuthentication } from '@/lib/api.utils';
  */
 export const PATCH = withAuthentication(
   ['update:user'],
-  async (request, { params, auth }) => {
+  async (request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const useCase = makeRestoreUserUseCase();
     await useCase.execute({
       id,
-      userId: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
     });
 
     return new NextResponse(null, { status: 204 });

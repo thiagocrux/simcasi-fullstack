@@ -8,6 +8,7 @@ import {
   makeRefreshTokenUseCase,
   makeValidateSessionUseCase,
 } from '@/core/infrastructure/factories/session.factory';
+import { requestContextStore } from '@/core/infrastructure/lib/request-context';
 import { AuthenticationContext } from '@/core/infrastructure/middleware/authentication.middleware';
 import { authorize } from '@/core/infrastructure/middleware/authorization.middleware';
 
@@ -147,11 +148,21 @@ export async function withSecuredActionAndAutomaticRetry<T>(
     await authorize(authenticationContext.roleId, permissions);
     const { ipAddress, userAgent } = await getAuditMetadata();
 
-    return await actionFn({
-      ...authenticationContext,
-      ipAddress,
-      userAgent,
-    });
+    return await requestContextStore.run(
+      {
+        userId: authenticationContext.userId,
+        roleId: authenticationContext.roleId,
+        roleCode: authenticationContext.roleCode,
+        ipAddress,
+        userAgent,
+      },
+      () =>
+        actionFn({
+          ...authenticationContext,
+          ipAddress,
+          userAgent,
+        })
+    );
   };
 
   try {
