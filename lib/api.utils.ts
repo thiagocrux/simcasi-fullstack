@@ -34,7 +34,7 @@ export function handleApiError(error: any) {
     return NextResponse.json(
       {
         name: 'ValidationError',
-        message: 'Invalid input data',
+        message: 'Dados de entrada inválidos.',
         code: 'VALIDATION_ERROR',
         errors: error.issues.map((issue) => ({
           path: issue.path.join('.'),
@@ -72,7 +72,7 @@ export function handleApiError(error: any) {
     return NextResponse.json(
       {
         name: 'UnauthorizedError',
-        message: 'Your session has expired. Please log in again.',
+        message: 'Sua sessão expirou. Por favor, faça login novamente.',
         code: 'SESSION_EXPIRED',
       },
       { status: 401 }
@@ -84,7 +84,7 @@ export function handleApiError(error: any) {
   return NextResponse.json(
     {
       name: 'InternalServerError',
-      message: 'Internal server error',
+      message: 'Erro interno do servidor.',
       code: 'INTERNAL_ERROR',
     },
     { status: 500 }
@@ -159,11 +159,19 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
             const {
               accessToken: newAccessToken,
               refreshToken: newRefreshToken,
-            } = await refreshTokenUseCase.execute({
-              refreshToken,
-              ipAddress,
-              userAgent,
-            });
+            } = await requestContextStore.run(
+              {
+                userId: '',
+                roleId: '',
+                roleCode: '',
+                ipAddress,
+                userAgent,
+              },
+              () =>
+                refreshTokenUseCase.execute({
+                  refreshToken,
+                })
+            );
 
             logger.success('[REFRESH] Token successfully renewed..');
 
