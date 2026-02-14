@@ -24,7 +24,9 @@ export const userSchema = z.object({
     .string()
     .nonempty(messages.REQUIRED_FIELD('Senha'))
     .regex(regex.PASSWORD, messages.INVALID_PASSWORD),
-  roleId: z.string().nonempty(messages.REQUIRED_FIELD('Cargo')),
+  roleId: z
+    .uuid(messages.INVALID_UUID)
+    .nonempty(messages.REQUIRED_FIELD('Cargo')),
 });
 
 /**
@@ -102,23 +104,17 @@ export function getUserFormSchema(isEditMode: boolean) {
  * Type for user creation.
  *
  * - Based on the main schema (`userSchema`), including all required fields for creation.
- * - Adds the `createdBy` field to track the author of the creation (used for auditing and permission control).
  * - Used in server actions, use cases, and repositories when creating a new user.
  */
-export type CreateUserInput = z.infer<typeof userSchema> & {
-  createdBy: string;
-};
+export type CreateUserInput = z.infer<typeof userSchema>;
 
 /**
  * Type for user update.
  *
  * - All user fields are optional (via `Partial`), allowing partial updates.
- * - Adds the `updatedBy` field to track the author of the change (used for auditing and permission control).
  * - Used in server actions, use cases, and repositories when updating an existing user.
  */
-export type UpdateUserInput = Partial<z.infer<typeof userSchema>> & {
-  updatedBy: string;
-};
+export type UpdateUserInput = Partial<z.infer<typeof userSchema>>;
 
 /**
  * Type for user form usage.
@@ -147,7 +143,7 @@ export const userQuerySchema = createQuerySchema(
   USER_SEARCHABLE_FIELDS
 ).extend({
   ...UserEnrichmentFields,
-  roleId: z.string().optional(),
+  roleId: z.uuid(messages.INVALID_UUID).optional(),
 });
 
 /**

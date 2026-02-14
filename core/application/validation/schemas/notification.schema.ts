@@ -21,7 +21,9 @@ import {
  * Used for validating notification creation, update, and form data throughout the application.
  */
 export const notificationSchema = z.object({
-  patientId: z.string().nonempty(messages.REQUIRED_FIELD('Paciente')),
+  patientId: z
+    .uuid(messages.INVALID_UUID)
+    .nonempty(messages.REQUIRED_FIELD('Paciente')),
   sinan: z
     .string()
     .nonempty(messages.REQUIRED_FIELD('SINAN'))

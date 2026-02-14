@@ -7,6 +7,7 @@ import {
   AUDIT_LOG_SORTABLE_FIELDS,
 } from '@/core/domain/constants/audit-log.constants';
 
+import { messages } from '../messages';
 import {
   createQuerySchema,
   UserEnrichmentFields,
@@ -29,7 +30,7 @@ export const auditLogQuerySchema = createQuerySchema(
   ...UserEnrichmentFields,
   action: z.enum(AUDIT_LOG_ACTIONS).optional(),
   entityName: z.enum(AUDIT_LOG_ENTITY_NAMES).optional(),
-  entityId: z.string().optional(),
+  entityId: z.uuid(messages.INVALID_UUID).optional(),
 });
 
 /**

@@ -20,7 +20,9 @@ import {
  * Used for validating treatment creation, update, and form data throughout the application.
  */
 export const treatmentSchema = z.object({
-  patientId: z.string().nonempty(messages.REQUIRED_FIELD('Paciente')),
+  patientId: z
+    .uuid(messages.INVALID_UUID)
+    .nonempty(messages.REQUIRED_FIELD('Paciente')),
   medication: z.string().nonempty(messages.REQUIRED_FIELD('Medicação')),
   healthCenter: z
     .string()

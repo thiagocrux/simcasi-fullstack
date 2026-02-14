@@ -35,14 +35,14 @@ export const UserEnrichmentFields = {
  * Filter fields for patient-specific queries.
  */
 export const PatientFilterFields = {
-  patientId: z.string().uuid(messages.INVALID_UUID).optional(),
+  patientId: z.uuid(messages.INVALID_UUID).optional(),
 };
 
 /**
  * Filter fields for user-specific queries.
  */
 export const UserFilterFields = {
-  userId: z.string().uuid(messages.INVALID_UUID).optional(),
+  userId: z.uuid(messages.INVALID_UUID).optional(),
 };
 
 /**
@@ -65,9 +65,9 @@ export function createQuerySchema(
         (val) =>
           !val || sortableFields.length === 0 || sortableFields.includes(val),
         {
-          message: `Invalid sort field. Valid fields: ${sortableFields.join(
+          message: `Campo de ordenação inválido. Campos válidos: ${sortableFields.join(
             ', '
-          )}`,
+          )}.`,
         }
       ),
     orderDir: z.enum(['asc', 'desc']).optional().default('asc'),
@@ -81,9 +81,9 @@ export function createQuerySchema(
           searchableFields.length === 0 ||
           searchableFields.includes(val),
         {
-          message: `Invalid search field. Valid fields: ${searchableFields.join(
+          message: `Campo de pesquisa inválido. Campos válidos: ${searchableFields.join(
             ', '
-          )}`,
+          )}.`,
         }
       ),
     startDate: z.string().optional(),

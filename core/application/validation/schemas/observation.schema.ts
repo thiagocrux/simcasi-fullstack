@@ -20,7 +20,9 @@ import {
  * Used for validating observation creation, update, and form data throughout the application.
  */
 export const observationSchema = z.object({
-  patientId: z.string().nonempty(messages.REQUIRED_FIELD('Paciente')),
+  patientId: z
+    .uuid(messages.INVALID_UUID)
+    .nonempty(messages.REQUIRED_FIELD('Paciente')),
   observations: z.string().optional(),
   hasPartnerBeingTreated: z.boolean(),
 });

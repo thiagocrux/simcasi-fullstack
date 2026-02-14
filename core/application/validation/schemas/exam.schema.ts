@@ -20,7 +20,9 @@ import {
  * Used for validating exam creation, update, and form data throughout the application.
  */
 export const examSchema = z.object({
-  patientId: z.string().nonempty(messages.REQUIRED_FIELD('Paciente')),
+  patientId: z
+    .uuid(messages.INVALID_UUID)
+    .nonempty(messages.REQUIRED_FIELD('Paciente')),
   treponemalTestType: z
     .string()
     .nonempty(messages.REQUIRED_FIELD('Tipo de teste treponêmico')),
