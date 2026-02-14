@@ -48,7 +48,7 @@ export class UpdatePatientUseCase implements UseCase<
     const validation = patientSchema.partial().safeParse(data);
     if (!validation.success) {
       throw new ValidationError(
-        'Dados de atualização de observação inválidos.',
+        'Dados de atualização de paciente inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -71,7 +71,22 @@ export class UpdatePatientUseCase implements UseCase<
       }
     }
 
-    // 4. Delegate update to repository.
+    // 4. If SUS card is being updated, check if the new SUS card is already in use.
+    if (
+      validation.data.susCardNumber &&
+      validation.data.susCardNumber !== existing.susCardNumber
+    ) {
+      const duplicateSus = await this.patientRepository.findBySusCardNumber(
+        validation.data.susCardNumber
+      );
+      if (duplicateSus) {
+        throw new ConflictError(
+          `Já existe um paciente cadastrado com este número de Cartão SUS: ${validation.data.susCardNumber}.`
+        );
+      }
+    }
+
+    // 5. Delegate update to repository.
     const updated = await this.patientRepository.update(
       id,
       {
@@ -83,7 +98,7 @@ export class UpdatePatientUseCase implements UseCase<
       userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
     );
 
-    // 5. Audit the update.
+    // 6. Audit the update.
     await this.auditLogRepository.create({
       userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'UPDATE',
