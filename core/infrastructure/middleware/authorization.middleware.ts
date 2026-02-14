@@ -45,8 +45,6 @@ export async function authorize(
   });
 
   if (!isAuthorized) {
-    throw new ForbiddenError(
-      'You do not have permission to perform this action.'
-    );
+    throw new ForbiddenError('Você não tem permissão para executar esta ação.');
   }
 }

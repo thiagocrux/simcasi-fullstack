@@ -43,7 +43,7 @@ export class DeleteExamUseCase implements UseCase<
     // 1. Check if the exam exists.
     const exam = await this.examRepository.findById(id);
     if (!exam) {
-      throw new NotFoundError('Exam not found');
+      throw new NotFoundError('Exame');
     }
 
     // 2. Soft delete the exam.

@@ -51,7 +51,7 @@ export class UpdateRoleUseCase implements UseCase<
     const validation = roleSchema.partial().safeParse(data);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid update role data.',
+        'Dados de atualização de cargo inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -62,14 +62,17 @@ export class UpdateRoleUseCase implements UseCase<
         data.permissionIds
       );
       if (foundPermissions.length !== data.permissionIds.length) {
-        throw new NotFoundError('One or more permissions');
+        throw new NotFoundError(
+          'Uma ou mais permissões não foram enconttradas.',
+          true
+        );
       }
     }
 
     // 3. Check if the role exists.
     const existing = await this.roleRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('Role');
+      throw new NotFoundError('Cargo');
     }
 
     // 4. Check for duplicate code if it is being changed.
@@ -79,7 +82,7 @@ export class UpdateRoleUseCase implements UseCase<
         true
       );
       if (roleWithCode && roleWithCode.id !== id) {
-        throw new ConflictError('Role code already exists');
+        throw new ConflictError('Este cargo já existe.');
       }
     }
 

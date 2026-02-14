@@ -52,7 +52,7 @@ export class DeletePatientUseCase implements UseCase<
     const patient = await this.patientRepository.findById(id);
 
     if (!patient) {
-      throw new NotFoundError('Patient not found');
+      throw new NotFoundError('Paciente');
     }
 
     const updaterId = userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;

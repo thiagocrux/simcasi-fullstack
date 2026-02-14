@@ -39,7 +39,7 @@ export class DeleteRoleUseCase implements UseCase<
     // 1. Check if the role exists.
     const existing = await this.roleRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('Role not found');
+      throw new NotFoundError('Cargo');
     }
 
     // 2. Soft delete the role.

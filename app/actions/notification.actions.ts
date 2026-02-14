@@ -44,7 +44,7 @@ export async function getNotification(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:notification'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {
-      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
 
     const getNotificationByIdUseCase = makeGetNotificationByIdUseCase();
@@ -108,7 +108,7 @@ export async function updateNotification(
       const parsedData = notificationSchema.partial().safeParse(input);
       if (!parsedId.success) {
         throw new ValidationError(
-          'Invalid ID.',
+          'ID inválido.',
           formatZodError(parsedId.error)
         );
       }
@@ -148,7 +148,7 @@ export async function deleteNotification(id: string) {
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
       if (!parsed.success) {
-        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
       }
 
       const deleteNotificationUseCase = makeDeleteNotificationUseCase();

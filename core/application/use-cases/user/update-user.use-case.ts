@@ -57,7 +57,7 @@ export class UpdateUserUseCase implements UseCase<
     const validation = userSchema.partial().safeParse(data);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid update user data.',
+        'Dados de atualização de usuário inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -65,7 +65,7 @@ export class UpdateUserUseCase implements UseCase<
     // 2. Check if the user exists.
     const targetUser = await this.userRepository.findById(id);
     if (!targetUser) {
-      throw new NotFoundError('User');
+      throw new NotFoundError('Usuário');
     }
 
     // 3. Authorization check.
@@ -77,13 +77,15 @@ export class UpdateUserUseCase implements UseCase<
       // Non-admins can only edit themselves.
       if (!isEditingSelf) {
         throw new ForbiddenError(
-          'You cannot update another user without admin privileges.'
+          'Você não tem permissão para atualizar as informações de outros usuários.'
         );
       }
 
       // Non-admins cannot change their own role.
       if (isChangingRole) {
-        throw new ForbiddenError('You cannot update your own role.');
+        throw new ForbiddenError(
+          'Você não tem permissão para atualizar o seu próprio cargo.'
+        );
       }
     }
 
@@ -91,7 +93,7 @@ export class UpdateUserUseCase implements UseCase<
     if (data.roleId) {
       const role = await this.roleRepository.findById(data.roleId);
       if (!role) {
-        throw new NotFoundError('Role');
+        throw new NotFoundError('Cargo');
       }
     }
 
@@ -99,7 +101,9 @@ export class UpdateUserUseCase implements UseCase<
     if (data.email && data.email !== targetUser.email) {
       const duplicate = await this.userRepository.findByEmail(data.email);
       if (duplicate) {
-        throw new ConflictError(`Email ${data.email} is already in use.`);
+        throw new ConflictError(
+          `O e-mail ${data.email} já se encontra em uso por outro usuário do sistema.`
+        );
       }
     }
 

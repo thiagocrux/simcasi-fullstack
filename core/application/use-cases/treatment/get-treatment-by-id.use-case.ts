@@ -29,7 +29,7 @@ export class GetTreatmentByIdUseCase implements UseCase<
     // 1. Find the treatment by ID.
     const treatment = await this.treatmentRepository.findById(input.id);
     if (!treatment) {
-      throw new NotFoundError('Treatment not found');
+      throw new NotFoundError('Tratamento');
     }
 
     return treatment;

@@ -24,7 +24,7 @@ export class JoseTokenProvider implements TokenProvider {
 
     if (!secretKey) {
       throw new Error(
-        'JWT_SECRET is not defined in the environment variables. The system cannot start without a security secret.'
+        '[TOKEN_PROVIDER_ERROR] JWT_SECRET não está definido nas variáveis de ambiente. O sistema não pode iniciar sem uma chave de segurança.'
       );
     }
 

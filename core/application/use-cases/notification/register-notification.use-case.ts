@@ -48,7 +48,7 @@ export class RegisterNotificationUseCase implements UseCase<
     const validation = notificationSchema.safeParse(data);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid register notification data.',
+        'Dados de criação de notificação inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -56,7 +56,7 @@ export class RegisterNotificationUseCase implements UseCase<
     // 2. Verify that the patient exists.
     const patient = await this.patientRepository.findById(data.patientId);
     if (!patient) {
-      throw new NotFoundError('Patient not found');
+      throw new NotFoundError('Paciente');
     }
 
     // 3. Delegate to the repository.

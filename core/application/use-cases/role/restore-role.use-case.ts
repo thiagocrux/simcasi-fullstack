@@ -39,7 +39,7 @@ export class RestoreRoleUseCase implements UseCase<
     // 1. Check if the role exists (including deleted).
     const role = await this.roleRepository.findById(id, true);
     if (!role) {
-      throw new NotFoundError('Role not found');
+      throw new NotFoundError('Cargo');
     }
 
     // 2. Perform the restoration if it was deleted.

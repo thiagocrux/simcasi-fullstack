@@ -46,7 +46,7 @@ export async function getPermission(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:permission'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {
-      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
 
     const useCase = makeGetPermissionByIdUseCase();
@@ -105,7 +105,7 @@ export async function updatePermission(
       const parsedData = permissionSchema.partial().safeParse(input);
       if (!parsedId.success) {
         throw new ValidationError(
-          'Invalid ID.',
+          'ID inválido.',
           formatZodError(parsedId.error)
         );
       }
@@ -144,7 +144,7 @@ export async function deletePermission(id: string) {
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
       if (!parsed.success) {
-        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
       }
 
       const useCase = makeDeletePermissionUseCase();
@@ -172,7 +172,7 @@ export async function restorePermission(id: string) {
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
       if (!parsed.success) {
-        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
       }
 
       const useCase = makeRestorePermissionUseCase();

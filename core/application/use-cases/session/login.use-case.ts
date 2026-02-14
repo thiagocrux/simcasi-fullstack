@@ -46,19 +46,19 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
     // 1. Find user by email.
     const user = await this.userRepository.findByEmail(input.email);
     if (!user || user.deletedAt || user.isSystem) {
-      throw new UnauthorizedError('Invalid credentials.');
+      throw new UnauthorizedError('Credenciais inválidas.');
     }
 
     // 2. Validate password.
     if (!user.password) {
-      throw new UnauthorizedError('Invalid credentials.');
+      throw new UnauthorizedError('Credenciais inválidas.');
     }
     const isPasswordValid = await this.hashProvider.compare(
       input.password,
       user.password
     );
     if (!isPasswordValid) {
-      throw new UnauthorizedError('Invalid credentials.');
+      throw new UnauthorizedError('Credenciais inválidas.');
     }
 
     // 3. Create session in database.
@@ -77,7 +77,7 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
     ]);
 
     if (!role) {
-      throw new NotFoundError('Role not found for user.');
+      throw new NotFoundError('Cargo');
     }
 
     const permissionCodes = permissions.map((permission) => permission.code);

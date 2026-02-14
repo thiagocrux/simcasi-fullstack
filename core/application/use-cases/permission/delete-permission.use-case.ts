@@ -39,7 +39,7 @@ export class DeletePermissionUseCase implements UseCase<
     // 1. Check if the permission exists.
     const existing = await this.permissionRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('Permission not found');
+      throw new NotFoundError('Permissão');
     }
 
     // 2. Soft delete the permission.

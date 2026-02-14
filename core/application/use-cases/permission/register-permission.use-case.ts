@@ -45,7 +45,7 @@ export class RegisterPermissionUseCase implements UseCase<
     const validation = permissionSchema.safeParse(data);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid register permission data.',
+        'Dados de criação de permissão inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -59,7 +59,7 @@ export class RegisterPermissionUseCase implements UseCase<
     if (permissionExists) {
       // If the permission exists and is NOT deleted, we throw a conflict error.
       if (!permissionExists.deletedAt) {
-        throw new ConflictError('Permission code already exists');
+        throw new ConflictError('Esta permissão já existe.');
       }
 
       // If it exists but was previously soft-deleted, we restore and update it.

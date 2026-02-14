@@ -18,8 +18,13 @@ export abstract class AppError extends Error {
  * Thrown when a resource is not found. (HTTP 404)
  */
 export class NotFoundError extends AppError {
-  constructor(resource: string) {
-    super(`${resource} not found.`, 404);
+  /**
+   * @param resource The resource name (e.g., "User") or a full message.
+   * @param isFullMessage If true, uses the resource as the final message directly.
+   */
+  constructor(resource: string, isFullMessage = false) {
+    const message = isFullMessage ? resource : `${resource} não encontrado.`;
+    super(message, 404);
   }
 }
 

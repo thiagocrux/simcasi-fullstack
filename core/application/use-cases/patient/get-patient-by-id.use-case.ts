@@ -33,7 +33,7 @@ export class GetPatientByIdUseCase implements UseCase<
       input.includeDeleted
     );
     if (!patient) {
-      throw new NotFoundError('Patient');
+      throw new NotFoundError('Paciente');
     }
 
     return patient;

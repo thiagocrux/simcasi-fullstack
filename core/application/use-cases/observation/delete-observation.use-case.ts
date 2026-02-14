@@ -41,7 +41,7 @@ export class DeleteObservationUseCase implements UseCase<
     // 1. Check if the observation exists.
     const observation = await this.observationRepository.findById(id);
     if (!observation) {
-      throw new NotFoundError('Observation not found');
+      throw new NotFoundError('Observação');
     }
 
     // 2. Soft delete the observation.

@@ -33,7 +33,7 @@ export class GetObservationByIdUseCase implements UseCase<
     // 1. Find the observation by ID.
     const observation = await this.observationRepository.findById(input.id);
     if (!observation) {
-      throw new NotFoundError('Observation not found');
+      throw new NotFoundError('Observação');
     }
 
     return observation;

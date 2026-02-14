@@ -1,5 +1,8 @@
 import { SECURITY_CONSTANTS } from '@/core/domain/constants/security.constants';
-import { UnauthorizedError } from '@/core/domain/errors/app.error';
+import {
+  NotFoundError,
+  UnauthorizedError,
+} from '@/core/domain/errors/app.error';
 import {
   InvalidTokenError,
   SecurityBreachError,
@@ -100,7 +103,7 @@ export class RefreshTokenUseCase implements UseCase<
     // 4. Load the user and verify their status.
     const user = await this.userRepository.findById(decoded.sub);
     if (!user || user.deletedAt) {
-      throw new UnauthorizedError('User no longer exists or is inactive.');
+      throw new UnauthorizedError('Usuário inválido ou não existe.');
     }
 
     // 5. Perform token rotation (invalidate the old session and create a new one).
@@ -121,7 +124,7 @@ export class RefreshTokenUseCase implements UseCase<
     ]);
 
     if (!role) {
-      throw new UnauthorizedError('Role not found.');
+      throw new NotFoundError('Cargo');
     }
 
     const permissionCodes = permissions.map((p) => p.code);

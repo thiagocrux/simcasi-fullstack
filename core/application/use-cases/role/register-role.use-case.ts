@@ -51,7 +51,7 @@ export class RegisterRoleUseCase implements UseCase<
     const validation = roleSchema.safeParse(roleData);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid register role data.',
+        'Dados de criação de cargo inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -62,7 +62,10 @@ export class RegisterRoleUseCase implements UseCase<
         roleData.permissionIds
       );
       if (foundPermissions.length !== roleData.permissionIds.length) {
-        throw new NotFoundError('One or more permissions');
+        throw new NotFoundError(
+          'Uma ou mais permissões não foram encontradas',
+          true
+        );
       }
     }
 
@@ -75,7 +78,7 @@ export class RegisterRoleUseCase implements UseCase<
     if (roleExists) {
       // If the role exists and is NOT deleted, we throw a conflict error.
       if (!roleExists.deletedAt) {
-        throw new ConflictError('Role code already exists');
+        throw new ConflictError('Este cargo já existe.');
       }
 
       // If the role was previously soft-deleted, we restore it by clearing 'deletedAt'

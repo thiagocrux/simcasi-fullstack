@@ -45,7 +45,7 @@ export class UpdateNotificationUseCase implements UseCase<
     const validation = notificationSchema.partial().safeParse(data);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid update notification data.',
+        'Dados de atualização de notificação inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -53,7 +53,7 @@ export class UpdateNotificationUseCase implements UseCase<
     // 2. Check if the notification exists.
     const existing = await this.notificationRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('Notification not found');
+      throw new NotFoundError('Notificação');
     }
 
     // 3. Update the notification.

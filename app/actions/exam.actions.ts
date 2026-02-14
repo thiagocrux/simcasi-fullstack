@@ -44,7 +44,7 @@ export async function getExam(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:exam'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {
-      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
 
     const getExamByIdUseCase = makeGetExamByIdUseCase();
@@ -101,7 +101,7 @@ export async function updateExam(id: string, input: UpdateExamInput) {
       const parsedData = examSchema.partial().safeParse(input);
       if (!parsedId.success) {
         throw new ValidationError(
-          'Invalid ID.',
+          'ID inválido.',
           formatZodError(parsedId.error)
         );
       }
@@ -140,7 +140,7 @@ export async function deleteExam(id: string) {
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
       if (!parsed.success) {
-        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
       }
 
       const deleteExamUseCase = makeDeleteExamUseCase();

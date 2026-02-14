@@ -32,7 +32,7 @@ export class GetUserByIdUseCase implements UseCase<
     );
 
     if (!user) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('Usuário');
     }
 
     delete user.password; // Security: Never return the password from the use case.

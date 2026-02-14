@@ -51,7 +51,7 @@ export class RestorePatientUseCase implements UseCase<
     // 1. Check if patient exists (including deleted).
     const patient = await this.patientRepository.findById(id, true);
     if (!patient) {
-      throw new NotFoundError('Patient not found');
+      throw new NotFoundError('Paciente');
     }
 
     // 2. Perform restore if it was deleted.

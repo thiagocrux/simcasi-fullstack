@@ -33,7 +33,7 @@ export class GetPermissionByIdUseCase implements UseCase<
     // 1. Find the permission by ID.
     const permission = await this.permissionRepository.findById(input.id);
     if (!permission) {
-      throw new NotFoundError('Permission not found');
+      throw new NotFoundError('Permissão');
     }
 
     return permission;

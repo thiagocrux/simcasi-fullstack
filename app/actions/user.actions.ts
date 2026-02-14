@@ -55,7 +55,7 @@ export async function getUser(
   return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {
-      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
 
     const getUserByIdUseCase = makeGetUserByIdUseCase();
@@ -104,7 +104,7 @@ export async function updateUser(
     const parsedId = IdSchema.safeParse(id);
     const parsedData = userSchema.partial().safeParse(input);
     if (!parsedId.success) {
-      throw new ValidationError('Invalid ID.', formatZodError(parsedId.error));
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     if (!parsedData.success) {

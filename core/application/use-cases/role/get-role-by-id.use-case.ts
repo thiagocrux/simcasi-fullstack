@@ -31,7 +31,7 @@ export class GetRoleByIdUseCase implements UseCase<
     // 1. Find the role by ID.
     const role = await this.roleRepository.findById(input.id);
     if (!role) {
-      throw new NotFoundError('Role not found');
+      throw new NotFoundError('Cargo');
     }
 
     return role;

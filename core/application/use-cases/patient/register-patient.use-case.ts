@@ -62,7 +62,7 @@ export class RegisterPatientUseCase implements UseCase<
 
     if (existingByCpf && !existingByCpf.deletedAt) {
       throw new ConflictError(
-        `Patient with CPF ${patientData.cpf} is already registered and active.`
+        `Já existe um paciente de CPF ${patientData.cpf} cadastrado e ativo.`
       );
     }
 
@@ -74,7 +74,7 @@ export class RegisterPatientUseCase implements UseCase<
 
     if (existingBySus && !existingBySus.deletedAt) {
       throw new ConflictError(
-        `Patient with SUS Card Number ${patientData.susCardNumber} is already registered and active.`
+        `Já existe um paciente com número do cartão do SUS ${patientData.susCardNumber} cadastrado e ativo.`
       );
     }
 

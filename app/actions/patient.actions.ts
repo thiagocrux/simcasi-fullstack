@@ -57,7 +57,7 @@ export async function getPatient(
   return withSecuredActionAndAutomaticRetry(['read:patient'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {
-      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
 
     const useCase = makeGetPatientByIdUseCase();
@@ -117,7 +117,7 @@ export async function updatePatient(
       const parsedData = patientSchema.partial().safeParse(input);
       if (!parsedId.success) {
         throw new ValidationError(
-          'Invalid ID.',
+          'ID inválido.',
           formatZodError(parsedId.error)
         );
       }
@@ -156,7 +156,7 @@ export async function deletePatient(
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
       if (!parsed.success) {
-        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
       }
 
       const useCase = makeDeletePatientUseCase();
@@ -183,7 +183,7 @@ export async function restorePatient(id: string) {
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
       if (!parsed.success) {
-        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
       }
 
       const useCase = makeRestorePatientUseCase();

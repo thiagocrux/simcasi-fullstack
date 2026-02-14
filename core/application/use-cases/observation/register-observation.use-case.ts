@@ -48,7 +48,7 @@ export class RegisterObservationUseCase implements UseCase<
     const validation = observationSchema.safeParse(observationData);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid register observation data.',
+        'Dados de criação de observação inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -58,7 +58,7 @@ export class RegisterObservationUseCase implements UseCase<
       observationData.patientId
     );
     if (!patient) {
-      throw new NotFoundError('Patient not found');
+      throw new NotFoundError('Paciente');
     }
 
     // 3. Delegate to the repository.

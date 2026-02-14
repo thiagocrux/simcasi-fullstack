@@ -48,7 +48,7 @@ export class UpdatePermissionUseCase implements UseCase<
     const validation = permissionSchema.partial().safeParse(data);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid update permission data.',
+        'Dados de atualização de permissão inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -56,7 +56,7 @@ export class UpdatePermissionUseCase implements UseCase<
     // 2. Check if the permission exists.
     const existing = await this.permissionRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('Permission');
+      throw new NotFoundError('Permissão');
     }
 
     // 3. Check for duplicate code if it is being changed.
@@ -66,7 +66,7 @@ export class UpdatePermissionUseCase implements UseCase<
         true
       );
       if (permissionWithCode && permissionWithCode.id !== id) {
-        throw new ConflictError('Permission code already exists');
+        throw new ConflictError('Esta permissão já existe.');
       }
     }
 

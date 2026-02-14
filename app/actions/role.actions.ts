@@ -46,7 +46,7 @@ export async function getRole(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:role'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {
-      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
 
     const useCase = makeGetRoleByIdUseCase();
@@ -102,7 +102,7 @@ export async function updateRole(id: string, input: UpdateRoleInput) {
       const parsedData = roleSchema.partial().safeParse(input);
       if (!parsedId.success) {
         throw new ValidationError(
-          'Invalid ID.',
+          'ID inválido.',
           formatZodError(parsedId.error)
         );
       }
@@ -141,7 +141,7 @@ export async function deleteRole(id: string) {
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
       if (!parsed.success) {
-        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
       }
 
       const useCase = makeDeleteRoleUseCase();
@@ -169,7 +169,7 @@ export async function restoreRole(id: string) {
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
       if (!parsed.success) {
-        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
       }
 
       const useCase = makeRestoreRoleUseCase();

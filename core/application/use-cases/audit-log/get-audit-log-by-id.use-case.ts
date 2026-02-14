@@ -31,7 +31,7 @@ export class GetAuditLogByIdUseCase implements UseCase<
     // 1. Find the audit log by ID.
     const auditLog = await this.auditLogRepository.findById(input.id);
     if (!auditLog) {
-      throw new NotFoundError('Audit Log not found');
+      throw new NotFoundError('Log de auditoria');
     }
 
     return auditLog;

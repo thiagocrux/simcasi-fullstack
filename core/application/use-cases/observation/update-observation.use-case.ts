@@ -41,7 +41,7 @@ export class UpdateObservationUseCase implements UseCase<
     // 1. Check if the observation exists.
     const existing = await this.observationRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('Observation not found');
+      throw new NotFoundError('Observação');
     }
 
     // 2. Update the observation.

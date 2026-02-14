@@ -41,7 +41,7 @@ export class RestoreObservationUseCase implements UseCase<
     // 1. Check if the observation exists (including deleted).
     const observation = await this.observationRepository.findById(id, true);
     if (!observation) {
-      throw new NotFoundError('Observation not found');
+      throw new NotFoundError('Observação');
     }
 
     // 2. Perform the restoration if it was deleted.

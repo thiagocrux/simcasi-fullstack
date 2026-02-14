@@ -48,7 +48,7 @@ export class UpdatePatientUseCase implements UseCase<
     const validation = patientSchema.partial().safeParse(data);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid update patient data.',
+        'Dados de atualização de observação inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -56,7 +56,7 @@ export class UpdatePatientUseCase implements UseCase<
     // 2. Check if patient exists.
     const existing = await this.patientRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('Patient');
+      throw new NotFoundError('Paciente');
     }
 
     // 3. If CPF is being updated, check if the new CPF is already in use.
@@ -66,7 +66,7 @@ export class UpdatePatientUseCase implements UseCase<
       );
       if (duplicateCpf) {
         throw new ConflictError(
-          `The CPF ${validation.data.cpf} is already registered to another patient.`
+          `Já existe um paciente de CPF ${validation.data.cpf} cadastrado e ativo.`
         );
       }
     }

@@ -52,7 +52,7 @@ export class RegisterUserUseCase implements UseCase<
     const validation = userSchema.safeParse(input);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid register user data.',
+        'Dados de criação de usuário inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -60,13 +60,15 @@ export class RegisterUserUseCase implements UseCase<
     // 2. Check if the role exists.
     const role = await this.roleRepository.findById(input.roleId);
     if (!role) {
-      throw new NotFoundError('Role');
+      throw new NotFoundError('Cargo');
     }
 
     // 3. Check if the email is already in use (by an active user).
     const existing = await this.userRepository.findByEmail(input.email);
     if (existing) {
-      throw new ConflictError(`Email ${input.email} is already in use.`);
+      throw new ConflictError(
+        `O e-mail ${input.email} já se encontra em uso por outro usuário do sistema.`
+      );
     }
 
     // 4. Hash the password.

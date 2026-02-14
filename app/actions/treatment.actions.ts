@@ -44,7 +44,7 @@ export async function getTreatment(id: string) {
   return withSecuredActionAndAutomaticRetry(['read:treatment'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {
-      throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
 
     const getTreatmentByIdUseCase = makeGetTreatmentByIdUseCase();
@@ -104,7 +104,7 @@ export async function updateTreatment(id: string, input: UpdateTreatmentInput) {
       const parsedData = treatmentSchema.partial().safeParse(input);
       if (!parsedId.success) {
         throw new ValidationError(
-          'Invalid ID.',
+          'ID inválido.',
           formatZodError(parsedId.error)
         );
       }
@@ -144,7 +144,7 @@ export async function deleteTreatment(id: string) {
     async ({ userId, ipAddress, userAgent }) => {
       const parsed = IdSchema.safeParse(id);
       if (!parsed.success) {
-        throw new ValidationError('Invalid ID.', formatZodError(parsed.error));
+        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
       }
 
       const deleteTreatmentUseCase = makeDeleteTreatmentUseCase();

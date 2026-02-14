@@ -41,7 +41,7 @@ export class RestoreNotificationUseCase implements UseCase<
     // 1. Check if the notification exists (including deleted).
     const notification = await this.notificationRepository.findById(id, true);
     if (!notification) {
-      throw new NotFoundError('Notification not found');
+      throw new NotFoundError('Notificação');
     }
 
     // 2. Perform the restoration if it was deleted.

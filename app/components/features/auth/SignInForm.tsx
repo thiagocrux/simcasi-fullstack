@@ -54,7 +54,7 @@ export function SignInForm({ className }: SignInFormProps) {
         );
 
         if (!role) {
-          throw new NotFoundError('Role');
+          throw new NotFoundError('Cargo');
         }
 
         // Dispatch credentials to the Redux store.

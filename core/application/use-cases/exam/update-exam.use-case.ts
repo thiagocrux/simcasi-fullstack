@@ -47,7 +47,7 @@ export class UpdateExamUseCase implements UseCase<
     const validation = examSchema.partial().safeParse(data);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid update exam data.',
+        'Dados de atualização de exame inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -55,7 +55,7 @@ export class UpdateExamUseCase implements UseCase<
     // 2. Check if the exam exists.
     const existing = await this.examRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('Exam not found');
+      throw new NotFoundError('Exame');
     }
 
     // 3. Update the exam.

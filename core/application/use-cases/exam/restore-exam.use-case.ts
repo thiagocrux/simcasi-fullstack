@@ -39,7 +39,7 @@ export class RestoreExamUseCase implements UseCase<
     // 1. Check if the exam exists (including deleted).
     const exam = await this.examRepository.findById(id, true);
     if (!exam) {
-      throw new NotFoundError('Exam not found');
+      throw new NotFoundError('Exame');
     }
 
     // 2. Perform the restoration if it was deleted.

@@ -37,7 +37,7 @@ export class DeleteTreatmentUseCase implements UseCase<
     // 1. Check if the treatment exists.
     const treatment = await this.treatmentRepository.findById(id);
     if (!treatment) {
-      throw new NotFoundError('Treatment not found');
+      throw new NotFoundError('Tratamento');
     }
 
     // 2. Soft delete the treatment.

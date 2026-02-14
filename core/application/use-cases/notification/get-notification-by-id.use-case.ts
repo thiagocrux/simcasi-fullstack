@@ -35,7 +35,7 @@ export class GetNotificationByIdUseCase implements UseCase<
     // 1. Find the notification by ID.
     const notification = await this.notificationRepository.findById(input.id);
     if (!notification) {
-      throw new NotFoundError('Notification not found');
+      throw new NotFoundError('Notificação');
     }
 
     return notification;

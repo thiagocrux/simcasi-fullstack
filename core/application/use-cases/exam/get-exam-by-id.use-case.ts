@@ -31,7 +31,7 @@ export class GetExamByIdUseCase implements UseCase<
     // 1. Find the exam by ID.
     const exam = await this.examRepository.findById(input.id);
     if (!exam) {
-      throw new NotFoundError('Exam not found');
+      throw new NotFoundError('Exame');
     }
 
     return exam;

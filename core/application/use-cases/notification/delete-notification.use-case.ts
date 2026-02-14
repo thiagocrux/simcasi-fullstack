@@ -41,7 +41,7 @@ export class DeleteNotificationUseCase implements UseCase<
     // 1. Check if the notification exists.
     const existing = await this.notificationRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('Notification not found');
+      throw new NotFoundError('Notificação');
     }
 
     // 2. Soft delete the notification.

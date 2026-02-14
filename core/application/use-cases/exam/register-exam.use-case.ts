@@ -50,7 +50,7 @@ export class RegisterExamUseCase implements UseCase<
     const validation = examSchema.safeParse(examData);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid register exam data.',
+        'Dados de criação de exame inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -58,7 +58,7 @@ export class RegisterExamUseCase implements UseCase<
     // 2. Verify that the patient exists.
     const patient = await this.patientRepository.findById(examData.patientId);
     if (!patient) {
-      throw new NotFoundError('Patient not found');
+      throw new NotFoundError('Paciente');
     }
 
     // 3. Delegate to the repository.

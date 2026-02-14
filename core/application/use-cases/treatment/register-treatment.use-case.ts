@@ -46,7 +46,7 @@ export class RegisterTreatmentUseCase implements UseCase<
     const validation = treatmentSchema.safeParse(treatmentData);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid register treatment data.',
+        'Dados de criação de tratamento inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -56,7 +56,7 @@ export class RegisterTreatmentUseCase implements UseCase<
       treatmentData.patientId
     );
     if (!patient) {
-      throw new NotFoundError('Patient not found');
+      throw new NotFoundError('Paciente');
     }
 
     // 3. Delegate to the repository.

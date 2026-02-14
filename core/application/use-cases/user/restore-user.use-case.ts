@@ -40,7 +40,7 @@ export class RestoreUserUseCase implements UseCase<
     const user = await this.userRepository.findById(id, true);
 
     if (!user) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('Usuário');
     }
 
     // 2. Perform the restoration if it was deleted.

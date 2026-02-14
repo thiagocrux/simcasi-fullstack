@@ -42,7 +42,7 @@ export class RevokeSessionUseCase implements UseCase<
     const session = await this.sessionRepository.findById(id);
 
     if (!session) {
-      throw new NotFoundError('Session not found.');
+      throw new NotFoundError('Sessão');
     }
 
     await this.sessionRepository.softDelete(id);

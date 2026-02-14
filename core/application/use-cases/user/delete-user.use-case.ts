@@ -42,7 +42,7 @@ export class DeleteUserUseCase implements UseCase<
     const user = await this.userRepository.findById(id);
 
     if (!user) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError('Usuário');
     }
 
     // 2. Soft delete the user.

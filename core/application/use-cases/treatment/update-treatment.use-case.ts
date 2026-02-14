@@ -41,7 +41,7 @@ export class UpdateTreatmentUseCase implements UseCase<
     const validation = treatmentSchema.partial().safeParse(data);
     if (!validation.success) {
       throw new ValidationError(
-        'Invalid update treatment data.',
+        'Dados de atualização de tratamento inválidos.',
         formatZodError(validation.error)
       );
     }
@@ -49,7 +49,7 @@ export class UpdateTreatmentUseCase implements UseCase<
     // 2. Check if the treatment exists.
     const existing = await this.treatmentRepository.findById(id);
     if (!existing) {
-      throw new NotFoundError('Treatment not found');
+      throw new NotFoundError('Tratamento');
     }
 
     // 3. Update the treatment.

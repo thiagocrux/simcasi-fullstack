@@ -37,7 +37,7 @@ export class RestoreTreatmentUseCase implements UseCase<
     // 1. Check if the treatment exists (including deleted).
     const treatment = await this.treatmentRepository.findById(id, true);
     if (!treatment) {
-      throw new NotFoundError('Treatment not found');
+      throw new NotFoundError('Tratamento');
     }
 
     // 2. Perform the restoration if it was deleted.
