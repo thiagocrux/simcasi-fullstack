@@ -21,7 +21,7 @@ const hashProvider = makeHashProvider();
 
 /**
  * Factory function to create an instance of LoginUseCase.
- * Injects repositories for users, sessions, permissions, and security providers.
+ * Injects repositories for users, sessions, roles, permissions, and security providers.
  * @returns A fully initialized LoginUseCase.
  */
 export function makeLoginUseCase() {
