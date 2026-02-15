@@ -4,7 +4,7 @@ import { authReducer } from './slices/auth.slice';
 
 /**
  * Factory function to create a new Redux store instance.
- * @returns A configured Redux store.
+ * @return A configured Redux store.
  */
 export function makeStore() {
   return configureStore({

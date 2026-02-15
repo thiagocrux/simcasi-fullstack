@@ -72,12 +72,11 @@ export class RegisterUserUseCase implements UseCase<
     }
 
     // 4. Hash the password.
-    const { password, ...userData } = input;
-    const hashedPassword = await this.hashProvider.hash(password);
+    const hashedPassword = await this.hashProvider.hash(input.password);
 
     // 5. Delegate to the repository (handles restoration if the email was soft-deleted).
     const user = await this.userRepository.create({
-      ...userData,
+      ...input,
       password: hashedPassword,
       createdBy: executorId,
       updatedBy: null,

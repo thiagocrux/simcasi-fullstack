@@ -27,19 +27,16 @@ export const GET = withAuthentication(
  * [POST] /api/notifications
  * Registers a new notification record in the system.
  * @param request The incoming Next.js request.
- * @param context The request context containing auth metadata.
+ * @param context The request context.
  * @return A promise resolving to the created notification record.
  */
 export const POST = withAuthentication(
   ['create:notification'],
-  async (request, { auth }) => {
+  async (request) => {
     const body = await request.json();
     const useCase = makeRegisterNotificationUseCase();
     const notification = await useCase.execute({
       ...body,
-      userId: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
     });
 
     return NextResponse.json(notification, { status: 201 });

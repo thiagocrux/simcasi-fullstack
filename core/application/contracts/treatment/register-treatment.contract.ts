@@ -1,7 +1,6 @@
 import { Treatment } from '@/core/domain/entities/treatment.entity';
-import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RegisterTreatmentInput extends AuditMetadata {
+export interface RegisterTreatmentInput {
   patientId: string;
   medication: string;
   healthCenter: string;

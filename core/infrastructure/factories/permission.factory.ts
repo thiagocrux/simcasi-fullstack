@@ -17,7 +17,7 @@ const userRepository = new PrismaUserRepository();
 
 /**
  * Factory function to create an instance of RegisterPermissionUseCase.
- * @returns A fully initialized RegisterPermissionUseCase.
+ * @return A fully initialized RegisterPermissionUseCase.
  */
 export function makeRegisterPermissionUseCase() {
   return new RegisterPermissionUseCase(
@@ -28,7 +28,7 @@ export function makeRegisterPermissionUseCase() {
 
 /**
  * Factory function to create an instance of FindPermissionsUseCase.
- * @returns A fully initialized FindPermissionsUseCase.
+ * @return A fully initialized FindPermissionsUseCase.
  */
 export function makeFindPermissionsUseCase() {
   return new FindPermissionsUseCase(permissionRepository, userRepository);
@@ -36,7 +36,7 @@ export function makeFindPermissionsUseCase() {
 
 /**
  * Factory function to create an instance of GetPermissionByIdUseCase.
- * @returns A fully initialized GetPermissionByIdUseCase.
+ * @return A fully initialized GetPermissionByIdUseCase.
  */
 export function makeGetPermissionByIdUseCase() {
   return new GetPermissionByIdUseCase(permissionRepository);
@@ -44,7 +44,7 @@ export function makeGetPermissionByIdUseCase() {
 
 /**
  * Factory function to create an instance of UpdatePermissionUseCase.
- * @returns A fully initialized UpdatePermissionUseCase.
+ * @return A fully initialized UpdatePermissionUseCase.
  */
 export function makeUpdatePermissionUseCase() {
   return new UpdatePermissionUseCase(permissionRepository, auditLogRepository);
@@ -52,7 +52,7 @@ export function makeUpdatePermissionUseCase() {
 
 /**
  * Factory function to create an instance of DeletePermissionUseCase.
- * @returns A fully initialized DeletePermissionUseCase.
+ * @return A fully initialized DeletePermissionUseCase.
  */
 export function makeDeletePermissionUseCase() {
   return new DeletePermissionUseCase(permissionRepository, auditLogRepository);
@@ -60,7 +60,7 @@ export function makeDeletePermissionUseCase() {
 
 /**
  * Factory function to create an instance of RestorePermissionUseCase.
- * @returns A fully initialized RestorePermissionUseCase.
+ * @return A fully initialized RestorePermissionUseCase.
  */
 export function makeRestorePermissionUseCase() {
   return new RestorePermissionUseCase(permissionRepository, auditLogRepository);
@@ -68,7 +68,7 @@ export function makeRestorePermissionUseCase() {
 
 /**
  * Factory function to create an instance of ValidatePermissionsUseCase.
- * @returns A fully initialized ValidatePermissionsUseCase.
+ * @return A fully initialized ValidatePermissionsUseCase.
  */
 export function makeValidatePermissionsUseCase() {
   return new ValidatePermissionsUseCase(roleRepository);

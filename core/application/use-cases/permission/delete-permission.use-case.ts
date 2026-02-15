@@ -2,6 +2,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   DeletePermissionInput,
   DeletePermissionOutput,
@@ -29,12 +30,13 @@ export class DeletePermissionUseCase implements UseCase<
   /**
    * Executes the use case to soft delete a permission.
    *
-   * @param input The data containing the permission ID and auditor info.
+   * @param input The data containing the permission ID.
    * @return A promise that resolves when the deletion is complete.
    * @throws {NotFoundError} If the permission is not found.
    */
   async execute(input: DeletePermissionInput): Promise<DeletePermissionOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id } = input;
 
     // 1. Check if the permission exists.
     const existing = await this.permissionRepository.findById(id);

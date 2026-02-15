@@ -1,7 +1,6 @@
 import { Permission } from '@/core/domain/entities/permission.entity';
-import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RegisterPermissionInput extends AuditMetadata {
+export interface RegisterPermissionInput {
   code: string;
   label: string;
   /**

@@ -2,6 +2,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   DeleteNotificationInput,
   DeleteNotificationOutput,
@@ -29,14 +30,15 @@ export class DeleteNotificationUseCase implements UseCase<
   /**
    * Executes the use case to soft delete a notification.
    *
-   * @param input The data containing the notification ID and auditor info.
+   * @param input The data containing the notification ID.
    * @return A promise that resolves when the deletion is complete.
    * @throws {NotFoundError} If the notification is not found.
    */
   async execute(
     input: DeleteNotificationInput
   ): Promise<DeleteNotificationOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id } = input;
 
     // 1. Check if the notification exists.
     const existing = await this.notificationRepository.findById(id);

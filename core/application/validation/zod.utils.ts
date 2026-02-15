@@ -6,8 +6,8 @@ import * as z from 'zod';
  * This ensures compatibility with the latest Zod standards while maintaining
  * the Record<string, string[]> format for the UI.
  *
- * @param error - The ZodError to flatten.
- * @returns A flattened Record of field errors.
+ * @param error The ZodError to flatten.
+ * @return A flattened Record of field errors.
  */
 export function formatZodError(error: z.ZodError): Record<string, string[]> {
   const tree = (z as any).treeifyError(error);

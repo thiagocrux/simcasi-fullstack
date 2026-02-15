@@ -2,6 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { DeleteRoleOutput } from '@/core/application/contracts/role/delete-role.contract';
+import { FindRolesOutput } from '@/core/application/contracts/role/find-roles.contract';
+import { GetRoleByIdOutput } from '@/core/application/contracts/role/get-role-by-id.contract';
+import { RegisterRoleOutput } from '@/core/application/contracts/role/register-role.contract';
+import { RestoreRoleOutput } from '@/core/application/contracts/role/restore-role.contract';
+import { UpdateRoleOutput } from '@/core/application/contracts/role/update-role.contract';
 import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreateRoleInput,
@@ -11,7 +17,7 @@ import {
   roleSchema,
 } from '@/core/application/validation/schemas/role.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
-import { ValidationError } from '@/core/domain/errors/app.error';
+import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import {
   makeDeleteRoleUseCase,
   makeFindRolesUseCase,
@@ -20,7 +26,10 @@ import {
   makeRestoreRoleUseCase,
   makeUpdateRoleUseCase,
 } from '@/core/infrastructure/factories/role.factory';
-import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
+import {
+  ActionResponse,
+  withSecuredActionAndAutomaticRetry,
+} from '@/lib/actions.utils';
 
 /**
  * Retrieves a paginated list of role records with optional filtering.
@@ -28,7 +37,9 @@ import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
  * @param query Criteria for filtering and pagination.
  * @return A promise resolving to the list of roles and metadata.
  */
-export async function findRoles(query?: RoleQueryInput) {
+export async function findRoles(
+  query?: RoleQueryInput
+): Promise<ActionResponse<FindRolesOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:role'], async () => {
     const parsed = roleQuerySchema.safeParse(query);
     const useCase = makeFindRolesUseCase();
@@ -42,7 +53,9 @@ export async function findRoles(query?: RoleQueryInput) {
  * @return A promise resolving to the role data.
  * @throws ValidationError If the ID is invalid.
  */
-export async function getRole(id: string) {
+export async function getRole(
+  id: string
+): Promise<ActionResponse<GetRoleByIdOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:role'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {
@@ -61,30 +74,26 @@ export async function getRole(id: string) {
  * @return A promise resolving to the created/restored role.
  * @throws ValidationError If the role data is invalid.
  */
-export async function createRole(input: CreateRoleInput) {
-  return withSecuredActionAndAutomaticRetry(
-    ['create:role'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsed = roleSchema.safeParse(input);
-      if (!parsed.success) {
-        throw new ValidationError(
-          'Dados do cargo inválidos',
-          formatZodError(parsed.error)
-        );
-      }
-
-      const useCase = makeRegisterRoleUseCase();
-      const role = await useCase.execute({
-        ...parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/roles');
-      return role;
+export async function createRole(
+  input: CreateRoleInput
+): Promise<ActionResponse<RegisterRoleOutput>> {
+  return withSecuredActionAndAutomaticRetry(['create:role'], async () => {
+    const parsed = roleSchema.safeParse(input);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Dados do cargo inválidos',
+        formatZodError(parsed.error)
+      );
     }
-  );
+
+    const useCase = makeRegisterRoleUseCase();
+    const role = await useCase.execute({
+      ...parsed.data,
+    });
+
+    revalidatePath('/roles');
+    return role;
+  });
 }
 
 /**
@@ -94,39 +103,33 @@ export async function createRole(input: CreateRoleInput) {
  * @return A promise resolving to the updated role.
  * @throws ValidationError If the update data or ID is invalid.
  */
-export async function updateRole(id: string, input: UpdateRoleInput) {
-  return withSecuredActionAndAutomaticRetry(
-    ['update:role'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsedId = IdSchema.safeParse(id);
-      const parsedData = roleSchema.partial().safeParse(input);
-      if (!parsedId.success) {
-        throw new ValidationError(
-          'ID inválido.',
-          formatZodError(parsedId.error)
-        );
-      }
-
-      if (!parsedData.success) {
-        throw new ValidationError(
-          'Dados de atualização inválidos',
-          formatZodError(parsedData.error)
-        );
-      }
-
-      const useCase = makeUpdateRoleUseCase();
-      const role = await useCase.execute({
-        id: parsedId.data,
-        ...parsedData.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/roles');
-      return role;
+export async function updateRole(
+  id: string,
+  input: UpdateRoleInput
+): Promise<ActionResponse<UpdateRoleOutput>> {
+  return withSecuredActionAndAutomaticRetry(['update:role'], async () => {
+    const parsedId = IdSchema.safeParse(id);
+    const parsedData = roleSchema.partial().safeParse(input);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
-  );
+
+    if (!parsedData.success) {
+      throw new ValidationError(
+        'Dados de atualização inválidos',
+        formatZodError(parsedData.error)
+      );
+    }
+
+    const useCase = makeUpdateRoleUseCase();
+    const role = await useCase.execute({
+      id: parsedId.data,
+      ...parsedData.data,
+    });
+
+    revalidatePath('/roles');
+    return role;
+  });
 }
 
 /**
@@ -135,26 +138,22 @@ export async function updateRole(id: string, input: UpdateRoleInput) {
  * @return A promise resolving to void.
  * @throws ValidationError If the ID is invalid.
  */
-export async function deleteRole(id: string) {
-  return withSecuredActionAndAutomaticRetry(
-    ['delete:role'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsed = IdSchema.safeParse(id);
-      if (!parsed.success) {
-        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
-      }
-
-      const useCase = makeDeleteRoleUseCase();
-      await useCase.execute({
-        id: parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/roles');
+export async function deleteRole(
+  id: string
+): Promise<ActionResponse<DeleteRoleOutput>> {
+  return withSecuredActionAndAutomaticRetry(['delete:role'], async () => {
+    const parsed = IdSchema.safeParse(id);
+    if (!parsed.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
-  );
+
+    const useCase = makeDeleteRoleUseCase();
+    await useCase.execute({
+      id: parsed.data,
+    });
+
+    revalidatePath('/roles');
+  });
 }
 
 /**
@@ -163,24 +162,25 @@ export async function deleteRole(id: string) {
  * @return A promise resolving to void.
  * @throws ValidationError If the ID is invalid.
  */
-export async function restoreRole(id: string) {
-  return withSecuredActionAndAutomaticRetry(
-    ['update:role'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsed = IdSchema.safeParse(id);
-      if (!parsed.success) {
-        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
-      }
-
-      const useCase = makeRestoreRoleUseCase();
-      await useCase.execute({
-        id: parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/roles');
+export async function restoreRole(
+  id: string
+): Promise<ActionResponse<RestoreRoleOutput>> {
+  return withSecuredActionAndAutomaticRetry(['update:role'], async () => {
+    const parsed = IdSchema.safeParse(id);
+    if (!parsed.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
-  );
+
+    const useCase = makeRestoreRoleUseCase();
+    const role = await useCase.execute({
+      id: parsed.data,
+    });
+
+    if (!role) {
+      throw new NotFoundError('Cargo');
+    }
+
+    revalidatePath('/roles');
+    return role;
+  });
 }

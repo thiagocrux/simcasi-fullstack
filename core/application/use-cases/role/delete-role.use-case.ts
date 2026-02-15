@@ -2,6 +2,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   DeleteRoleInput,
   DeleteRoleOutput,
@@ -29,12 +30,13 @@ export class DeleteRoleUseCase implements UseCase<
   /**
    * Executes the use case to soft delete a role.
    *
-   * @param input The data containing the role ID and auditor info.
+   * @param input The data containing the role ID.
    * @return A promise that resolves when the deletion is complete.
    * @throws {NotFoundError} If the role is not found.
    */
   async execute(input: DeleteRoleInput): Promise<DeleteRoleOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id } = input;
 
     // 1. Check if the role exists.
     const existing = await this.roleRepository.findById(id);

@@ -18,12 +18,13 @@ import {
   makeLogoutUseCase,
   makeValidateSessionUseCase,
 } from '@/core/infrastructure/factories/session.factory';
+import { requestContextStore } from '@/core/infrastructure/lib/request-context';
 import { getAuditMetadata, handleActionError } from '@/lib/actions.utils';
 import { logger } from '@/lib/logger.utils';
 
 /**
  * Authenticates a user and establishes a persistent session via cookies.
- * Handles credential validation, audit tracking, and token storage.
+ * Handles credential validation and token storage.
  * @param input The user's login credentials and session preferences.
  * @return A success object with user and permission data, or an error response.
  */
@@ -39,12 +40,22 @@ export async function signInUser(input: CreateSessionInput) {
     }
 
     const { ipAddress, userAgent } = await getAuditMetadata();
-    const loginUseCase = makeLoginUseCase();
-    const result = await loginUseCase.execute({
-      ...parsed.data,
-      ipAddress,
-      userAgent,
-    });
+    const useCase = makeLoginUseCase();
+
+    // Identity fields are intentionally set to empty strings because the authentication
+    // is currently in progress. This ensures the Audit System (via AsyncLocalStorage)
+    // has a valid context to record the event, documenting an anonymous or
+    // pending-identity operation as required by the system governance.
+    const result = await requestContextStore.run(
+      {
+        userId: '',
+        roleId: '',
+        roleCode: '',
+        ipAddress,
+        userAgent,
+      },
+      () => useCase.execute(parsed.data)
+    );
 
     const { accessToken, refreshToken, user, permissions } = result;
     const cookieStore = await cookies();
@@ -108,8 +119,8 @@ export async function signOutUser() {
           token,
         });
 
-        const logoutUseCase = makeLogoutUseCase();
-        await logoutUseCase.execute({ sessionId });
+        const useCase = makeLogoutUseCase();
+        await useCase.execute({ sessionId });
 
         logger.info(`[AUTH] Session ${sessionId} revoked during logout.`);
       } catch (error: any) {

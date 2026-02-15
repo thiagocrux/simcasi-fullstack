@@ -2,6 +2,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   UpdateObservationInput,
   UpdateObservationOutput,
@@ -36,7 +37,8 @@ export class UpdateObservationUseCase implements UseCase<
   async execute(
     input: UpdateObservationInput
   ): Promise<UpdateObservationOutput> {
-    const { id, userId, ipAddress, userAgent, ...data } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id, ...data } = input;
 
     // 1. Check if the observation exists.
     const existing = await this.observationRepository.findById(id);

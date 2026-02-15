@@ -24,21 +24,13 @@ export const GET = withAuthentication(['read:role'], async (request) => {
  * [POST] /api/roles
  * Registers a new role record in the system.
  * @param request The incoming Next.js request.
- * @param context The request context containing auth metadata.
+ * @param context The request context.
  * @return A promise resolving to the created role record.
  */
-export const POST = withAuthentication(
-  ['create:role'],
-  async (request, { auth }) => {
-    const body = await request.json();
-    const useCase = makeRegisterRoleUseCase();
-    const role = await useCase.execute({
-      ...body,
-      createdBy: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
-    });
+export const POST = withAuthentication(['create:role'], async (request) => {
+  const body = await request.json();
+  const useCase = makeRegisterRoleUseCase();
+  const role = await useCase.execute(body);
 
-    return NextResponse.json(role, { status: 201 });
-  }
-);
+  return NextResponse.json(role, { status: 201 });
+});

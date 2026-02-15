@@ -47,7 +47,7 @@ import { logger } from './logger.utils';
  * Converts caught exceptions into a standardized `ActionResponse`.
  *
  * @param caughtError The error object caught in a try-catch block.
- * @returns A standardized failure response.
+ * @return A standardized failure response.
  */
 export function handleActionError(caughtError: any): ActionResponse<never> {
   // Use property checking as a fallback for instanceof. This is necessary because
@@ -93,7 +93,7 @@ export function handleActionError(caughtError: any): ActionResponse<never> {
 /**
  * Extracts audit metadata from request headers.
  *
- * @returns An object containing the client IP address and user agent.
+ * @return An object containing the client IP address and user agent.
  */
 export async function getAuditMetadata() {
   const headerList = await headers();
@@ -111,8 +111,8 @@ export async function getAuditMetadata() {
  *
  * Checks for a valid JWT in cookies or the Authorization header.
  *
- * @param overriddenToken - Optional token to bypass standard lookup (used for retries).
- * @returns The authentication context containing user and role data.
+ * @param overriddenToken Optional token to bypass standard lookup (used for retries).
+ * @return The authentication context containing user and role data.
  * @throws {InvalidTokenError} If no valid session is found.
  */
 export async function authenticateAction(
@@ -157,7 +157,7 @@ export async function authenticateAction(
  * @template T The return type of the business logic function.
  * @param permissions List of required permission slugs.
  * @param actionFn The business logic function to execute.
- * @returns A standardized `ActionResponse` with data or error details.
+ * @return A standardized `ActionResponse` with data or error details.
  */
 export async function withSecuredActionAndAutomaticRetry<T>(
   permissions: string[],
@@ -225,12 +225,10 @@ export async function withSecuredActionAndAutomaticRetry<T>(
           const refreshTokenUseCase = makeRefreshTokenUseCase();
           const { ipAddress, userAgent } = await getAuditMetadata();
 
-          // IDENTITY BOOTSTRAP:
-          // We run the refresh logic with empty identity strings. This is required
-          // because the RefreshTokenUseCase uses repositories that depend on the
-          // Request Context (ASL) for auditing, but since the session is currently
-          // expired, we don't have a valid User ID yet. Empty values satisfy the
-          // contract without providing false identity.
+          // Identity fields are intentionally set to empty strings because the authentication
+          // is currently in progress. This ensures the Audit System (via AsyncLocalStorage)
+          // has a valid context to record the event, documenting an anonymous or
+          // pending-identity operation as required by the system governance.
           const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
             await requestContextStore.run(
               {

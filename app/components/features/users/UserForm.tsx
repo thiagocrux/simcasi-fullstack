@@ -89,6 +89,7 @@ export function UserForm({
         : createUser(payload as CreateUserInput);
     },
     onSuccess: (data) => {
+      console.log(data);
       if (data.success) {
         logger.success(
           `The user ${isEditMode ? 'update' : 'creation'} was successfull!`

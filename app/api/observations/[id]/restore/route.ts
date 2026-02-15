@@ -7,19 +7,16 @@ import { withAuthentication } from '@/lib/api.utils';
  * [PATCH] /api/observations/[id]/restore
  * Restores a previously soft-deleted observation record.
  * @param request The incoming Next.js request.
- * @param context The request context containing route parameters and auth metadata.
+ * @param context The request context containing the route parameters.
  * @return A response confirming restoration (204 No Content).
  */
 export const PATCH = withAuthentication(
   ['update:observation'],
-  async (request, { params, auth }) => {
+  async (request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const useCase = makeRestoreObservationUseCase();
     await useCase.execute({
       id,
-      userId: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
     });
 
     return new NextResponse(null, { status: 204 });

@@ -8,7 +8,7 @@ import { clearCredentials } from '@/stores/slices/auth.slice';
 /**
  * Hook to handle user logout across client components.
  * Clears Redux state, deletes server cookies, and redirects to login.
- * @returns An object containing the logout handler.
+ * @return An object containing the logout handler.
  */
 export function useLogout() {
   const router = useRouter();

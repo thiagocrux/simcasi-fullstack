@@ -8,6 +8,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   UpdateExamInput,
   UpdateExamOutput,
@@ -41,7 +42,8 @@ export class UpdateExamUseCase implements UseCase<
    * @throws {NotFoundError} If the exam is not found.
    */
   async execute(input: UpdateExamInput): Promise<UpdateExamOutput> {
-    const { id, userId, ipAddress, userAgent, ...data } = input;
+    const { id, ...data } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Validate input.
     const validation = examSchema.partial().safeParse(data);

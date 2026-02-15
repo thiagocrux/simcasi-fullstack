@@ -4,6 +4,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { ConflictError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RegisterPatientInput,
   RegisterPatientOutput,
@@ -43,10 +44,10 @@ export class RegisterPatientUseCase implements UseCase<
    * @throws {ConflictError} If a patient with the same CPF or SUS card already exists.
    */
   async execute(input: RegisterPatientInput): Promise<RegisterPatientOutput> {
-    const { userId, ipAddress, userAgent, ...patientData } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Validate input data using Zod schema.
-    const validation = patientSchema.safeParse(patientData);
+    const validation = patientSchema.safeParse(input);
     if (!validation.success) {
       throw new ValidationError(
         'Invalid register patient data.',
@@ -56,25 +57,25 @@ export class RegisterPatientUseCase implements UseCase<
 
     // 2. Search for existing patient by CPF (including soft-deleted).
     const existingByCpf = await this.patientRepository.findByCpf(
-      patientData.cpf,
+      input.cpf,
       true
     );
 
     if (existingByCpf && !existingByCpf.deletedAt) {
       throw new ConflictError(
-        `Já existe um paciente de CPF ${patientData.cpf} cadastrado e ativo.`
+        `Já existe um paciente de CPF ${input.cpf} cadastrado e ativo.`
       );
     }
 
     // 3. Search for existing patient by SUS Card Number (including soft-deleted).
     const existingBySus = await this.patientRepository.findBySusCardNumber(
-      patientData.susCardNumber,
+      input.susCardNumber,
       true
     );
 
     if (existingBySus && !existingBySus.deletedAt) {
       throw new ConflictError(
-        `Já existe um paciente com número do cartão do SUS ${patientData.susCardNumber} cadastrado e ativo.`
+        `Já existe um paciente com número do cartão do SUS ${input.susCardNumber} cadastrado e ativo.`
       );
     }
 
@@ -101,7 +102,7 @@ export class RegisterPatientUseCase implements UseCase<
         action: 'RESTORE',
         entityName: 'PATIENT',
         entityId: patient.id,
-        newValues: patientData,
+        newValues: input,
         ipAddress,
         userAgent,
       });
@@ -122,7 +123,7 @@ export class RegisterPatientUseCase implements UseCase<
       action: 'CREATE',
       entityName: 'PATIENT',
       entityId: patient.id,
-      newValues: patientData,
+      newValues: input,
       ipAddress,
       userAgent,
     });

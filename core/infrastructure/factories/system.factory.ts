@@ -3,7 +3,7 @@ import { PrismaHealthCheckRepository } from '../repositories/prisma/system.prism
 
 /**
  * Factory for HealthCheckUseCase.
- * @returns A fully initialized HealthCheckUseCase.
+ * @return A fully initialized HealthCheckUseCase.
  */
 export function makeHealthCheckUseCase() {
   const repository = new PrismaHealthCheckRepository();

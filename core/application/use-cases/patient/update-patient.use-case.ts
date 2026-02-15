@@ -8,6 +8,7 @@ import {
 } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   UpdatePatientInput,
   UpdatePatientOutput,
@@ -42,7 +43,8 @@ export class UpdatePatientUseCase implements UseCase<
    * @throws {ConflictError} If the new CPF or SUS card is already in use.
    */
   async execute(input: UpdatePatientInput): Promise<UpdatePatientOutput> {
-    const { id, userId, ipAddress, userAgent, ...data } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id, ...data } = input;
 
     // 1. Validate input.
     const validation = patientSchema.partial().safeParse(data);
@@ -54,13 +56,13 @@ export class UpdatePatientUseCase implements UseCase<
     }
 
     // 2. Check if patient exists.
-    const existing = await this.patientRepository.findById(id);
-    if (!existing) {
+    const targetPatient = await this.patientRepository.findById(id);
+    if (!targetPatient) {
       throw new NotFoundError('Paciente');
     }
 
     // 3. If CPF is being updated, check if the new CPF is already in use.
-    if (validation.data.cpf && validation.data.cpf !== existing.cpf) {
+    if (validation.data.cpf && validation.data.cpf !== targetPatient.cpf) {
       const duplicateCpf = await this.patientRepository.findByCpf(
         validation.data.cpf
       );
@@ -74,7 +76,7 @@ export class UpdatePatientUseCase implements UseCase<
     // 4. If SUS card is being updated, check if the new SUS card is already in use.
     if (
       validation.data.susCardNumber &&
-      validation.data.susCardNumber !== existing.susCardNumber
+      validation.data.susCardNumber !== targetPatient.susCardNumber
     ) {
       const duplicateSus = await this.patientRepository.findBySusCardNumber(
         validation.data.susCardNumber
@@ -104,7 +106,7 @@ export class UpdatePatientUseCase implements UseCase<
       action: 'UPDATE',
       entityName: 'PATIENT',
       entityId: id,
-      oldValues: existing,
+      oldValues: targetPatient,
       newValues: validation.data,
       ipAddress,
       userAgent,

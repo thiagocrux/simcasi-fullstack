@@ -24,19 +24,15 @@ export const GET = withAuthentication(['read:observation'], async (request) => {
  * [POST] /api/observations
  * Registers a new observation record in the system.
  * @param request The incoming Next.js request.
- * @param context The request context containing auth metadata.
  * @return A promise resolving to the created observation record.
  */
 export const POST = withAuthentication(
   ['create:observation'],
-  async (request, { auth }) => {
+  async (request) => {
     const body = await request.json();
     const useCase = makeRegisterObservationUseCase();
     const observation = await useCase.execute({
       ...body,
-      createdBy: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
     });
 
     return NextResponse.json(observation, { status: 201 });

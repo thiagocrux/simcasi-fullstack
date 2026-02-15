@@ -1,7 +1,6 @@
 import { Patient } from '@/core/domain/entities/patient.entity';
-import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RegisterPatientInput extends AuditMetadata {
+export interface RegisterPatientInput {
   susCardNumber: string;
   name: string;
   cpf: string;

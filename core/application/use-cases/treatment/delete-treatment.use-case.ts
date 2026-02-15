@@ -2,6 +2,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   DeleteTreatmentInput,
   DeleteTreatmentOutput,
@@ -27,12 +28,13 @@ export class DeleteTreatmentUseCase implements UseCase<
 
   /**
    * Executes the use case to soft delete a treatment.
-   * @param input The ID of the treatment to delete and audit info.
+   * @param input The ID of the treatment to delete.
    * @return A promise that resolves to the deleted treatment info.
    * @throws {NotFoundError} If the treatment is not found.
    */
   async execute(input: DeleteTreatmentInput): Promise<DeleteTreatmentOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id } = input;
 
     // 1. Check if the treatment exists.
     const treatment = await this.treatmentRepository.findById(id);

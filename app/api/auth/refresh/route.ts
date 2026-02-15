@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { AppError } from '@/core/domain/errors/app.error';
 import { makeRefreshTokenUseCase } from '@/core/infrastructure/factories/session.factory';
+import { requestContextStore } from '@/core/infrastructure/lib/request-context';
 import { logger } from '@/lib/logger.utils';
 
 /**
@@ -34,11 +35,24 @@ export async function POST(request: NextRequest) {
     const refreshUseCase = makeRefreshTokenUseCase();
     const ipAddress = request.headers.get('x-forwarded-for') || 'unknown';
     const userAgent = request.headers.get('user-agent') || 'unknown';
-    const result = await refreshUseCase.execute({
-      refreshToken,
-      ipAddress,
-      userAgent,
-    });
+
+    // Identity fields are intentionally set to empty strings because the authentication
+    // is currently in progress. This ensures the Audit System (via AsyncLocalStorage)
+    // has a valid context to record the event, documenting an anonymous or
+    // pending-identity operation as required by the system governance.
+    const result = await requestContextStore.run(
+      {
+        userId: '',
+        roleId: '',
+        roleCode: '',
+        ipAddress,
+        userAgent,
+      },
+      () =>
+        refreshUseCase.execute({
+          refreshToken,
+        })
+    );
 
     const response = NextResponse.json(result);
     const cookieOptions: NonNullable<

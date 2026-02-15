@@ -4,6 +4,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   UpdateNotificationInput,
   UpdateNotificationOutput,
@@ -39,7 +40,8 @@ export class UpdateNotificationUseCase implements UseCase<
   async execute(
     input: UpdateNotificationInput
   ): Promise<UpdateNotificationOutput> {
-    const { id, userId, ipAddress, userAgent, ...data } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id, ...data } = input;
 
     // 1. Validate input.
     const validation = notificationSchema.partial().safeParse(data);

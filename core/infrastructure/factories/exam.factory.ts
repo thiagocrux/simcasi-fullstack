@@ -17,7 +17,7 @@ const userRepository = new PrismaUserRepository();
 /**
  * Factory function to create an instance of RegisterExamUseCase.
  * Injects repositories for exams, patients, and audit logging.
- * @returns A fully initialized RegisterExamUseCase.
+ * @return A fully initialized RegisterExamUseCase.
  */
 export function makeRegisterExamUseCase() {
   return new RegisterExamUseCase(
@@ -30,7 +30,7 @@ export function makeRegisterExamUseCase() {
 /**
  * Factory function to create an instance of FindExamsUseCase.
  * Injects repositories for exams, users, and patients.
- * @returns A fully initialized FindExamsUseCase.
+ * @return A fully initialized FindExamsUseCase.
  */
 export function makeFindExamsUseCase() {
   return new FindExamsUseCase(
@@ -42,7 +42,7 @@ export function makeFindExamsUseCase() {
 
 /**
  * Factory function to create an instance of GetExamByIdUseCase.
- * @returns A fully initialized GetExamByIdUseCase.
+ * @return A fully initialized GetExamByIdUseCase.
  */
 export function makeGetExamByIdUseCase() {
   return new GetExamByIdUseCase(examRepository);
@@ -50,7 +50,7 @@ export function makeGetExamByIdUseCase() {
 
 /**
  * Factory function to create an instance of UpdateExamUseCase.
- * @returns A fully initialized UpdateExamUseCase.
+ * @return A fully initialized UpdateExamUseCase.
  */
 export function makeUpdateExamUseCase() {
   return new UpdateExamUseCase(examRepository, auditLogRepository);
@@ -58,7 +58,7 @@ export function makeUpdateExamUseCase() {
 
 /**
  * Factory function to create an instance of DeleteExamUseCase.
- * @returns A fully initialized DeleteExamUseCase.
+ * @return A fully initialized DeleteExamUseCase.
  */
 export function makeDeleteExamUseCase() {
   return new DeleteExamUseCase(examRepository, auditLogRepository);
@@ -66,7 +66,7 @@ export function makeDeleteExamUseCase() {
 
 /**
  * Factory function to create an instance of RestoreExamUseCase.
- * @returns A fully initialized RestoreExamUseCase.
+ * @return A fully initialized RestoreExamUseCase.
  */
 export function makeRestoreExamUseCase() {
   return new RestoreExamUseCase(examRepository, auditLogRepository);

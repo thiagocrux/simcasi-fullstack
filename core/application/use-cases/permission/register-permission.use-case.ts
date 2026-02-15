@@ -4,6 +4,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { ConflictError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RegisterPermissionInput,
   RegisterPermissionOutput,
@@ -39,10 +40,10 @@ export class RegisterPermissionUseCase implements UseCase<
   async execute(
     input: RegisterPermissionInput
   ): Promise<RegisterPermissionOutput> {
-    const { userId, ipAddress, userAgent, ...data } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Validate input data using Zod schema.
-    const validation = permissionSchema.safeParse(data);
+    const validation = permissionSchema.safeParse(input);
     if (!validation.success) {
       throw new ValidationError(
         'Dados de criação de permissão inválidos.',
@@ -52,7 +53,7 @@ export class RegisterPermissionUseCase implements UseCase<
 
     // 2. Check if the permission code already exists, including soft-deleted ones.
     const permissionExists = await this.permissionRepository.findByCode(
-      data.code,
+      input.code,
       true
     );
 

@@ -28,7 +28,7 @@ export class RestoreUserUseCase implements UseCase<
 
   /**
    * Executes the use case to restore a soft-deleted user.
-   * @param input The ID of the user to restore and audit info.
+   * @param input The ID of the user to restore.
    * @return A promise that resolves to the restored user.
    * @throws {NotFoundError} If the user is not found.
    */

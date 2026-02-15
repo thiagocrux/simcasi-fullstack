@@ -9,6 +9,7 @@ import {
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   UpdateRoleInput,
   UpdateRoleOutput,
@@ -45,7 +46,8 @@ export class UpdateRoleUseCase implements UseCase<
    * @throws {ConflictError} If the new role name is already in use.
    */
   async execute(input: UpdateRoleInput): Promise<UpdateRoleOutput> {
-    const { id, userId, ipAddress, userAgent, ...data } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id, ...data } = input;
 
     // 1. Validate partial input.
     const validation = roleSchema.partial().safeParse(data);

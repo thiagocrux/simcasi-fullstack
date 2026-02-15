@@ -19,7 +19,6 @@ Notification:
 
 NotificationCreateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       required:
         - patientId
@@ -36,7 +35,6 @@ NotificationCreateRequest:
 
 NotificationUpdateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       properties:
         sinan:

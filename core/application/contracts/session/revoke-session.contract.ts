@@ -1,6 +1,4 @@
-import { AuditMetadata } from '../common/audit-metadata.contract';
-
-export interface RevokeSessionInput extends AuditMetadata {
+export interface RevokeSessionInput {
   id: string;
 }
 

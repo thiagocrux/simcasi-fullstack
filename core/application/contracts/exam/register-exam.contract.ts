@@ -1,7 +1,6 @@
 import { Exam } from '@/core/domain/entities/exam.entity';
-import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RegisterExamInput extends AuditMetadata {
+export interface RegisterExamInput {
   patientId: string;
   treponemalTestType: string;
   treponemalTestResult: string;

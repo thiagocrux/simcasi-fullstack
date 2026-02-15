@@ -9,7 +9,7 @@ const hashProvider = new BcryptHashProvider();
 
 /**
  * Factory for TokenProvider (JWT handling).
- * @returns A singleton instance of JoseTokenProvider.
+ * @return A singleton instance of JoseTokenProvider.
  */
 export function makeTokenProvider() {
   return tokenProvider;
@@ -17,7 +17,7 @@ export function makeTokenProvider() {
 
 /**
  * Factory for HashProvider (Password hashing).
- * @returns A singleton instance of BcryptHashProvider.
+ * @return A singleton instance of BcryptHashProvider.
  */
 export function makeHashProvider() {
   return hashProvider;

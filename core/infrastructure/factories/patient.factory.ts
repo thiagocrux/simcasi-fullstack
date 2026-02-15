@@ -22,7 +22,7 @@ const userRepository = new PrismaUserRepository();
 
 /**
  * Factory function to create an instance of RegisterPatientUseCase.
- * @returns A fully initialized RegisterPatientUseCase.
+ * @return A fully initialized RegisterPatientUseCase.
  */
 export function makeRegisterPatientUseCase() {
   return new RegisterPatientUseCase(patientRepository, auditLogRepository);
@@ -30,7 +30,7 @@ export function makeRegisterPatientUseCase() {
 
 /**
  * Factory function to create an instance of FindPatientsUseCase.
- * @returns A fully initialized FindPatientsUseCase.
+ * @return A fully initialized FindPatientsUseCase.
  */
 export function makeFindPatientsUseCase() {
   return new FindPatientsUseCase(patientRepository, userRepository);
@@ -38,7 +38,7 @@ export function makeFindPatientsUseCase() {
 
 /**
  * Factory function to create an instance of GetPatientByIdUseCase.
- * @returns A fully initialized GetPatientByIdUseCase.
+ * @return A fully initialized GetPatientByIdUseCase.
  */
 export function makeGetPatientByIdUseCase() {
   return new GetPatientByIdUseCase(patientRepository);
@@ -46,7 +46,7 @@ export function makeGetPatientByIdUseCase() {
 
 /**
  * Factory function to create an instance of UpdatePatientUseCase.
- * @returns A fully initialized UpdatePatientUseCase.
+ * @return A fully initialized UpdatePatientUseCase.
  */
 export function makeUpdatePatientUseCase() {
   return new UpdatePatientUseCase(patientRepository, auditLogRepository);
@@ -55,7 +55,7 @@ export function makeUpdatePatientUseCase() {
 /**
  * Factory function to create an instance of DeletePatientUseCase.
  * Injects repositories for patients, exams, notifications, observations, treatments, and audit logging.
- * @returns A fully initialized DeletePatientUseCase.
+ * @return A fully initialized DeletePatientUseCase.
  */
 export function makeDeletePatientUseCase() {
   return new DeletePatientUseCase(
@@ -71,7 +71,7 @@ export function makeDeletePatientUseCase() {
 /**
  * Factory function to create an instance of RestorePatientUseCase.
  * Injects repositories for patients, exams, notifications, observations, treatments, and audit logging.
- * @returns A fully initialized RestorePatientUseCase.
+ * @return A fully initialized RestorePatientUseCase.
  */
 export function makeRestorePatientUseCase() {
   return new RestorePatientUseCase(

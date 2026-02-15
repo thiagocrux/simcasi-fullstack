@@ -6,6 +6,7 @@ import { NotificationRepository } from '@/core/domain/repositories/notification.
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RestorePatientInput,
   RestorePatientOutput,
@@ -41,12 +42,13 @@ export class RestorePatientUseCase implements UseCase<
   /**
    * Executes the use case to restore a soft-deleted patient and related records.
    *
-   * @param input The data containing the patient ID and auditor info.
+   * @param input The data containing the patient ID.
    * @return A promise that resolves to the restored patient data.
    * @throws {NotFoundError} If the patient is not found.
    */
   async execute(input: RestorePatientInput): Promise<RestorePatientOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id } = input;
 
     // 1. Check if patient exists (including deleted).
     const patient = await this.patientRepository.findById(id, true);

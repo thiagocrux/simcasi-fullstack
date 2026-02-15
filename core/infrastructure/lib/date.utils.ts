@@ -5,7 +5,7 @@
  * @param dateString The date string to normalize (e.g., '2026-02-01').
  * @param type Whether the date should represent the 'start' or 'end' of the day.
  * @param timezoneOffset The timezone offset (e.g., '-03:00', '+05:30', or 'Z').
- * @returns A Date object or undefined if the input is invalid.
+ * @return A Date object or undefined if the input is invalid.
  */
 export function normalizeDateFilter(
   dateString?: string,

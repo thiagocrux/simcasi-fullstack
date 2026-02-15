@@ -2,6 +2,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RestoreRoleInput,
   RestoreRoleOutput,
@@ -29,12 +30,13 @@ export class RestoreRoleUseCase implements UseCase<
   /**
    * Executes the use case to restore a soft-deleted role.
    *
-   * @param input The data containing the role ID and auditor info.
+   * @param input The data containing the role ID.
    * @return A promise that resolves to the restored role.
    * @throws {NotFoundError} If the role is not found.
    */
   async execute(input: RestoreRoleInput): Promise<RestoreRoleOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id } = input;
 
     // 1. Check if the role exists (including deleted).
     const role = await this.roleRepository.findById(id, true);

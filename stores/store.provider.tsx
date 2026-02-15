@@ -10,7 +10,7 @@ import { hydrateStore } from './slices/auth.slice';
  * Provider component to wrap the application with the Redux store.
  * Handles lazy store initialization and hydration from persistent storage.
  * @param props.children React nodes to be wrapped by the provider.
- * @returns The Redux Provider component.
+ * @return The Redux Provider component.
  */
 export default function StoreProvider({
   children,

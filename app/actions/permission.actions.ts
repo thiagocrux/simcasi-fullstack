@@ -2,6 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { DeletePermissionOutput } from '@/core/application/contracts/permission/delete-permission.contract';
+import { FindPermissionsOutput } from '@/core/application/contracts/permission/find-permissions.contract';
+import { GetPermissionByIdOutput } from '@/core/application/contracts/permission/get-permission-by-id.contract';
+import { RegisterPermissionOutput } from '@/core/application/contracts/permission/register-permission.contract';
+import { RestorePermissionOutput } from '@/core/application/contracts/permission/restore-permission.contract';
+import { UpdatePermissionOutput } from '@/core/application/contracts/permission/update-permission.contract';
 import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreatePermissionInput,
@@ -11,7 +17,7 @@ import {
   permissionSchema,
 } from '@/core/application/validation/schemas/permission.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
-import { ValidationError } from '@/core/domain/errors/app.error';
+import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import {
   makeDeletePermissionUseCase,
   makeFindPermissionsUseCase,
@@ -20,7 +26,10 @@ import {
   makeRestorePermissionUseCase,
   makeUpdatePermissionUseCase,
 } from '@/core/infrastructure/factories/permission.factory';
-import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
+import {
+  ActionResponse,
+  withSecuredActionAndAutomaticRetry,
+} from '@/lib/actions.utils';
 
 /**
  * Retrieves a paginated list of permission records with optional filtering.
@@ -28,7 +37,9 @@ import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
  * @param query Criteria for filtering and pagination.
  * @return A promise resolving to the list of permissions.
  */
-export async function findPermissions(query?: PermissionQueryInput) {
+export async function findPermissions(
+  query?: PermissionQueryInput
+): Promise<ActionResponse<FindPermissionsOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:permission'], async () => {
     const parsed = permissionQuerySchema.safeParse(query);
     const useCase = makeFindPermissionsUseCase();
@@ -42,7 +53,9 @@ export async function findPermissions(query?: PermissionQueryInput) {
  * @return A promise resolving to the permission data.
  * @throws ValidationError If the ID is invalid.
  */
-export async function getPermission(id: string) {
+export async function getPermission(
+  id: string
+): Promise<ActionResponse<GetPermissionByIdOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:permission'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {
@@ -61,30 +74,26 @@ export async function getPermission(id: string) {
  * @return A promise resolving to the created/restored permission record.
  * @throws ValidationError If the permission data is invalid.
  */
-export async function createPermission(input: CreatePermissionInput) {
-  return withSecuredActionAndAutomaticRetry(
-    ['create:permission'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsed = permissionSchema.safeParse(input);
-      if (!parsed.success) {
-        throw new ValidationError(
-          'Dados da permissão inválidos',
-          formatZodError(parsed.error)
-        );
-      }
-
-      const useCase = makeRegisterPermissionUseCase();
-      const permission = await useCase.execute({
-        ...parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/permissions');
-      return permission;
+export async function createPermission(
+  input: CreatePermissionInput
+): Promise<ActionResponse<RegisterPermissionOutput>> {
+  return withSecuredActionAndAutomaticRetry(['create:permission'], async () => {
+    const parsed = permissionSchema.safeParse(input);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Dados da permissão inválidos',
+        formatZodError(parsed.error)
+      );
     }
-  );
+
+    const useCase = makeRegisterPermissionUseCase();
+    const permission = await useCase.execute({
+      ...parsed.data,
+    });
+
+    revalidatePath('/permissions');
+    return permission;
+  });
 }
 
 /**
@@ -97,39 +106,30 @@ export async function createPermission(input: CreatePermissionInput) {
 export async function updatePermission(
   id: string,
   input: UpdatePermissionInput
-) {
-  return withSecuredActionAndAutomaticRetry(
-    ['update:permission'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsedId = IdSchema.safeParse(id);
-      const parsedData = permissionSchema.partial().safeParse(input);
-      if (!parsedId.success) {
-        throw new ValidationError(
-          'ID inválido.',
-          formatZodError(parsedId.error)
-        );
-      }
-
-      if (!parsedData.success) {
-        throw new ValidationError(
-          'Dados de atualização inválidos',
-          formatZodError(parsedData.error)
-        );
-      }
-
-      const useCase = makeUpdatePermissionUseCase();
-      const permission = await useCase.execute({
-        id: parsedId.data,
-        ...parsedData.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/permissions');
-      return permission;
+): Promise<ActionResponse<UpdatePermissionOutput>> {
+  return withSecuredActionAndAutomaticRetry(['update:permission'], async () => {
+    const parsedId = IdSchema.safeParse(id);
+    const parsedData = permissionSchema.partial().safeParse(input);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
-  );
+
+    if (!parsedData.success) {
+      throw new ValidationError(
+        'Dados de atualização inválidos',
+        formatZodError(parsedData.error)
+      );
+    }
+
+    const useCase = makeUpdatePermissionUseCase();
+    const permission = await useCase.execute({
+      id: parsedId.data,
+      ...parsedData.data,
+    });
+
+    revalidatePath('/permissions');
+    return permission;
+  });
 }
 
 /**
@@ -138,26 +138,22 @@ export async function updatePermission(
  * @return A promise resolving to void.
  * @throws ValidationError If the ID is invalid.
  */
-export async function deletePermission(id: string) {
-  return withSecuredActionAndAutomaticRetry(
-    ['delete:permission'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsed = IdSchema.safeParse(id);
-      if (!parsed.success) {
-        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
-      }
-
-      const useCase = makeDeletePermissionUseCase();
-      await useCase.execute({
-        id: parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/permissions');
+export async function deletePermission(
+  id: string
+): Promise<ActionResponse<DeletePermissionOutput>> {
+  return withSecuredActionAndAutomaticRetry(['delete:permission'], async () => {
+    const parsed = IdSchema.safeParse(id);
+    if (!parsed.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
-  );
+
+    const useCase = makeDeletePermissionUseCase();
+    await useCase.execute({
+      id: parsed.data,
+    });
+
+    revalidatePath('/permissions');
+  });
 }
 
 /**
@@ -166,24 +162,25 @@ export async function deletePermission(id: string) {
  * @return A promise resolving to void.
  * @throws ValidationError If the ID is invalid.
  */
-export async function restorePermission(id: string) {
-  return withSecuredActionAndAutomaticRetry(
-    ['update:permission'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsed = IdSchema.safeParse(id);
-      if (!parsed.success) {
-        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
-      }
-
-      const useCase = makeRestorePermissionUseCase();
-      await useCase.execute({
-        id: parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/permissions');
+export async function restorePermission(
+  id: string
+): Promise<ActionResponse<RestorePermissionOutput>> {
+  return withSecuredActionAndAutomaticRetry(['update:permission'], async () => {
+    const parsed = IdSchema.safeParse(id);
+    if (!parsed.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
-  );
+
+    const useCase = makeRestorePermissionUseCase();
+    const permission = await useCase.execute({
+      id: parsed.data,
+    });
+
+    if (!permission) {
+      throw new NotFoundError('Permissão');
+    }
+
+    revalidatePath('/permissions');
+    return permission;
+  });
 }

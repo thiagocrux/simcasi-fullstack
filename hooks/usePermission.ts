@@ -12,7 +12,7 @@ export function usePermission() {
   /**
    * Checks if the user possesses a specific permission.
    * @param permissionCode The technical code of the permission (e.g., 'create:user').
-   * @returns True if the user has the permission.
+   * @return True if the user has the permission.
    */
   function can(permissionCode: string): boolean {
     return permissions.includes(permissionCode);
@@ -21,7 +21,7 @@ export function usePermission() {
   /**
    * Checks if the user has at least one of the provided permissions.
    * @param permissionCodes Array of technical permission codes.
-   * @returns True if any permission is found.
+   * @return True if any permission is found.
    */
   function hasAny(permissionCodes: string[]): boolean {
     return permissionCodes.some((code: string) => permissions.includes(code));
@@ -30,7 +30,7 @@ export function usePermission() {
   /**
    * Checks if the user has all of the provided permissions.
    * @param permissionCodes Array of technical permission codes.
-   * @returns True only if every permission is present.
+   * @return True only if every permission is present.
    */
   function hasAll(permissionCodes: string[]): boolean {
     return permissionCodes.every((code: string) => permissions.includes(code));

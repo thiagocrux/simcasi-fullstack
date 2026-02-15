@@ -9,6 +9,7 @@ import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RegisterExamInput,
   RegisterExamOutput,
@@ -44,10 +45,10 @@ export class RegisterExamUseCase implements UseCase<
    * @throws {NotFoundError} If the patient is not found.
    */
   async execute(input: RegisterExamInput): Promise<RegisterExamOutput> {
-    const { userId, ipAddress, userAgent, ...examData } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Validate input.
-    const validation = examSchema.safeParse(examData);
+    const validation = examSchema.safeParse(input);
     if (!validation.success) {
       throw new ValidationError(
         'Dados de criação de exame inválidos.',
@@ -56,7 +57,7 @@ export class RegisterExamUseCase implements UseCase<
     }
 
     // 2. Verify that the patient exists.
-    const patient = await this.patientRepository.findById(examData.patientId);
+    const patient = await this.patientRepository.findById(input.patientId);
     if (!patient) {
       throw new NotFoundError('Paciente');
     }

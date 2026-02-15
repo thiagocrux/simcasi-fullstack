@@ -24,21 +24,15 @@ export const GET = withAuthentication(['read:exam'], async (request) => {
  * [POST] /api/exams
  * Registers a new exam record in the system.
  * @param request The incoming Next.js request.
- * @param context The request context containing auth metadata.
+ * @param context The request context.
  * @return A promise resolving to the created exam record.
  */
-export const POST = withAuthentication(
-  ['create:exam'],
-  async (request, { auth }) => {
-    const body = await request.json();
-    const registerUseCase = makeRegisterExamUseCase();
-    const exam = await registerUseCase.execute({
-      ...body,
-      userId: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
-    });
+export const POST = withAuthentication(['create:exam'], async (request) => {
+  const body = await request.json();
+  const registerUseCase = makeRegisterExamUseCase();
+  const exam = await registerUseCase.execute({
+    ...body,
+  });
 
-    return NextResponse.json(exam, { status: 201 });
-  }
-);
+  return NextResponse.json(exam, { status: 201 });
+});

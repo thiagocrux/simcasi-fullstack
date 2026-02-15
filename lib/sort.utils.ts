@@ -8,7 +8,7 @@ export type SortDirection = 'asc' | 'desc' | false;
  * Returns the next cyclic sort state: asc -> desc -> false (reset).
  *
  * @param {SortDirection} current - The current sort direction.
- * @returns {SortDirection} The next sort direction in the cycle.
+ * @return {SortDirection} The next sort direction in the cycle.
  */
 export function getNextSortDirection(current: SortDirection): SortDirection {
   if (current === 'asc') return 'desc';

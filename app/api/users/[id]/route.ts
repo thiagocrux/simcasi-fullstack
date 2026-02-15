@@ -11,7 +11,7 @@ import { withAuthentication } from '@/lib/api.utils';
  * [GET] /api/users/[id]
  * Retrieves a single user record by its unique identifier.
  * @param request The incoming Next.js request.
- * @param context The request context containing route parameters.
+ * @param context The request context containing the route parameters.
  * @return A promise resolving to the user profile data.
  */
 export const GET = withAuthentication(
@@ -29,7 +29,7 @@ export const GET = withAuthentication(
  * [PATCH] /api/users/[id]
  * Updates an existing user record.
  * @param request The incoming Next.js request.
- * @param context The request context containing route parameters and auth metadata.
+ * @param context The request context containing the route parameters.
  * @return A promise resolving to the updated user record.
  */
 export const PATCH = withAuthentication(
@@ -40,7 +40,7 @@ export const PATCH = withAuthentication(
     const useCase = makeUpdateUserUseCase();
     const updated = await useCase.execute({
       id,
-      data: body,
+      ...body,
     });
 
     return NextResponse.json(updated);
@@ -51,7 +51,7 @@ export const PATCH = withAuthentication(
  * [DELETE] /api/users/[id]
  * Performs a soft delete on a user record.
  * @param request The incoming Next.js request.
- * @param context The request context containing route parameters and auth metadata.
+ * @param context The request context containing the route parameters.
  * @return A response confirming deletion (204 No Content).
  */
 export const DELETE = withAuthentication(

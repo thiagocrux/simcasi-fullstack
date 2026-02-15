@@ -26,7 +26,7 @@ export const requestContextStore = new AsyncLocalStorage<RequestContext>();
  * Retrieves the current request context.
  * Throws an error if accessed outside of a valid request scope.
  *
- * @returns The current RequestContext
+ * @return The current RequestContext
  * @throws Error if context is not found
  */
 export function getRequestContext(): RequestContext {
@@ -44,7 +44,7 @@ export function getRequestContext(): RequestContext {
 /**
  * Helper to check if the current user is an Administrator based on context.
  *
- * @returns boolean
+ * @return boolean
  */
 export function isUserAdmin(): boolean {
   try {

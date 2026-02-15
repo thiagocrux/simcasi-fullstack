@@ -13,6 +13,7 @@ import { PermissionRepository } from '@/core/domain/repositories/permission.repo
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import { logger } from '@/lib/logger.utils';
 import { RefreshTokenInput } from '../../contracts/session/refresh-token.contract';
 import { SessionOutput } from '../../contracts/session/session-output.contract';
@@ -109,12 +110,13 @@ export class RefreshTokenUseCase implements UseCase<
     // 5. Perform token rotation (invalidate the old session and create a new one).
     await this.sessionRepository.softDelete(decoded.sid);
 
+    const context = getRequestContext();
     const newSession = await this.sessionRepository.create({
       userId: user.id,
       issuedAt: new Date(),
       expiresAt: this.tokenProvider.getRefreshExpiryDate(),
-      ipAddress: input.ipAddress || 'unknown',
-      userAgent: input.userAgent || 'unknown',
+      ipAddress: context.ipAddress || 'unknown',
+      userAgent: context.userAgent || 'unknown',
     });
 
     // 6. Fetch permissions and role for the user's role.

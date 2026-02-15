@@ -2,6 +2,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RestorePermissionInput,
   RestorePermissionOutput,
@@ -29,14 +30,15 @@ export class RestorePermissionUseCase implements UseCase<
   /**
    * Executes the use case to restore a soft-deleted permission.
    *
-   * @param input The data containing the permission ID and auditor info.
+   * @param input The data containing the permission ID.
    * @return A promise that resolves to the restored permission.
    * @throws {NotFoundError} If the permission is not found.
    */
   async execute(
     input: RestorePermissionInput
   ): Promise<RestorePermissionOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id } = input;
 
     // 1. Check if the permission exists (including deleted).
     const permission = await this.permissionRepository.findById(id, true);

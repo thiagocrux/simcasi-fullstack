@@ -7,19 +7,16 @@ import { withAuthentication } from '@/lib/api.utils';
  * [PATCH] /api/patients/[id]/restore
  * Restores a previously soft-deleted patient record.
  * @param request The incoming Next.js request.
- * @param context The request context containing route parameters and auth metadata.
+ * @param context The request context containing the route parameters.
  * @return A promise resolving to the restored patient record.
  */
 export const PATCH = withAuthentication(
   ['update:patient'],
-  async (request, { params, auth }) => {
+  async (request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const restoreUseCase = makeRestorePatientUseCase();
     const restored = await restoreUseCase.execute({
       id,
-      userId: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
     });
 
     return NextResponse.json(restored);

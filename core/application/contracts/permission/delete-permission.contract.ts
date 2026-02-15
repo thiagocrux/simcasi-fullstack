@@ -1,6 +1,4 @@
-import { AuditMetadata } from '../common/audit-metadata.contract';
-
-export interface DeletePermissionInput extends AuditMetadata {
+export interface DeletePermissionInput {
   id: string;
 }
 

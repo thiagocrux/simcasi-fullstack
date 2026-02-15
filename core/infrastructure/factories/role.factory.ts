@@ -17,7 +17,7 @@ const userRepository = new PrismaUserRepository();
 /**
  * Factory function to create an instance of RegisterRoleUseCase.
  * Injects repositories for roles, permissions, and audit logging.
- * @returns A fully initialized RegisterRoleUseCase.
+ * @return A fully initialized RegisterRoleUseCase.
  */
 export function makeRegisterRoleUseCase() {
   return new RegisterRoleUseCase(
@@ -29,7 +29,7 @@ export function makeRegisterRoleUseCase() {
 
 /**
  * Factory function to create an instance of FindRolesUseCase.
- * @returns A fully initialized FindRolesUseCase.
+ * @return A fully initialized FindRolesUseCase.
  */
 export function makeFindRolesUseCase() {
   return new FindRolesUseCase(roleRepository, userRepository);
@@ -37,7 +37,7 @@ export function makeFindRolesUseCase() {
 
 /**
  * Factory function to create an instance of GetRoleByIdUseCase.
- * @returns A fully initialized GetRoleByIdUseCase.
+ * @return A fully initialized GetRoleByIdUseCase.
  */
 export function makeGetRoleByIdUseCase() {
   return new GetRoleByIdUseCase(roleRepository);
@@ -46,7 +46,7 @@ export function makeGetRoleByIdUseCase() {
 /**
  * Factory function to create an instance of UpdateRoleUseCase.
  * Injects repositories for roles, permissions, and audit logging.
- * @returns A fully initialized UpdateRoleUseCase.
+ * @return A fully initialized UpdateRoleUseCase.
  */
 export function makeUpdateRoleUseCase() {
   return new UpdateRoleUseCase(
@@ -58,7 +58,7 @@ export function makeUpdateRoleUseCase() {
 
 /**
  * Factory function to create an instance of DeleteRoleUseCase.
- * @returns A fully initialized DeleteRoleUseCase.
+ * @return A fully initialized DeleteRoleUseCase.
  */
 export function makeDeleteRoleUseCase() {
   return new DeleteRoleUseCase(roleRepository, auditLogRepository);
@@ -66,7 +66,7 @@ export function makeDeleteRoleUseCase() {
 
 /**
  * Factory function to create an instance of RestoreRoleUseCase.
- * @returns A fully initialized RestoreRoleUseCase.
+ * @return A fully initialized RestoreRoleUseCase.
  */
 export function makeRestoreRoleUseCase() {
   return new RestoreRoleUseCase(roleRepository, auditLogRepository);

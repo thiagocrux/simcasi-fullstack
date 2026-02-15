@@ -28,6 +28,9 @@ type ApiHandler = (
 
 /**
  * Standard error handler for Next.js API Route Handlers.
+ *
+ * @param error The error object caught during execution.
+ * @return A NextResponse containing standardized error details.
  */
 export function handleApiError(error: any) {
   if (error instanceof ZodError) {
@@ -95,8 +98,9 @@ export function handleApiError(error: any) {
  * Wrapper for API Route Handlers that require Authentication and Authorization.
  * Standardizes security checks and error handling.
  *
- * @param permissions - List of required permissions.
- * @param handler - The route handler business logic.
+ * @param permissions List of required permissions.
+ * @param handler The route handler business logic.
+ * @return An authenticated API route handler function.
  */
 export function withAuthentication(permissions: string[], handler: ApiHandler) {
   return async (request: NextRequest, { params }: { params: any }) => {
@@ -156,6 +160,11 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
             const { ipAddress, userAgent } = await getAuditMetadata();
 
             logger.info('[REFRESH] Executing RefreshTokenUseCase via API...');
+
+            // Identity fields are intentionally set to empty strings because the authentication
+            // is currently in progress. This ensures the Audit System (via AsyncLocalStorage)
+            // has a valid context to record the event, documenting an anonymous or
+            // pending-identity operation as required by the system governance.
             const {
               accessToken: newAccessToken,
               refreshToken: newRefreshToken,

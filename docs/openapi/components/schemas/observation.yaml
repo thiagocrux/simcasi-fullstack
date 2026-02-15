@@ -17,7 +17,6 @@ Observation:
 
 ObservationCreateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       required:
         - patientId
@@ -34,7 +33,6 @@ ObservationCreateRequest:
 
 ObservationUpdateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       properties:
         hasPartnerBeingTreated:

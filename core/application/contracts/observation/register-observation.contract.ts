@@ -1,7 +1,6 @@
 import { Observation } from '@/core/domain/entities/observation.entity';
-import { AuditMetadata } from '../common/audit-metadata.contract';
 
-export interface RegisterObservationInput extends AuditMetadata {
+export interface RegisterObservationInput {
   patientId: string;
   observations?: string | null;
   hasPartnerBeingTreated: boolean;

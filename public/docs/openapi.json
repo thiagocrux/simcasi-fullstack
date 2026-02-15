@@ -105,54 +105,30 @@
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "User's unique electronic mail address used for authentication.",
+                    "example": "dr.thiago@simcasi.gov.br"
                   },
-                  {
-                    "type": "object",
-                    "required": [
-                      "email",
-                      "password"
-                    ],
-                    "properties": {
-                      "email": {
-                        "type": "string",
-                        "format": "email",
-                        "description": "User's unique electronic mail address used for authentication.",
-                        "example": "dr.thiago@simcasi.gov.br"
-                      },
-                      "password": {
-                        "type": "string",
-                        "format": "password",
-                        "description": "Secret authentication string (will be hashed in storage).",
-                        "example": "StrongPassword#2026"
-                      },
-                      "rememberMe": {
-                        "type": "boolean",
-                        "description": "Whether to persist the session after the browser is closed.",
-                        "example": true
-                      }
-                    }
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "description": "Secret authentication string (will be hashed in storage).",
+                    "example": "StrongPassword#2026"
+                  },
+                  "rememberMe": {
+                    "type": "boolean",
+                    "description": "Whether to persist the session after the browser is closed.",
+                    "example": true
                   }
-                ]
+                }
               },
               "examples": {
                 "validCredentials": {
@@ -379,40 +355,16 @@
           "content": {
             "application/json": {
               "schema": {
-                "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "required": [
-                      "refreshToken"
-                    ],
-                    "properties": {
-                      "refreshToken": {
-                        "type": "string",
-                        "description": "Long-lived token used to obtain new access tokens and rotate the session."
-                      }
-                    }
+                "type": "object",
+                "required": [
+                  "refreshToken"
+                ],
+                "properties": {
+                  "refreshToken": {
+                    "type": "string",
+                    "description": "Long-lived token used to obtain new access tokens and rotate the session."
                   }
-                ]
+                }
               },
               "examples": {
                 "validRefreshToken": {
@@ -1001,26 +953,6 @@
             "application/json": {
               "schema": {
                 "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
                   {
                     "type": "object",
                     "required": [
@@ -1693,26 +1625,6 @@
             "application/json": {
               "schema": {
                 "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
                   {
                     "type": "object",
                     "properties": {
@@ -3044,26 +2956,6 @@
                   {
                     "type": "object",
                     "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "required": [
                       "name",
                       "susCardNumber",
                       "cpf",
@@ -3983,26 +3875,6 @@
             "application/json": {
               "schema": {
                 "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
                   {
                     "type": "object",
                     "properties": {
@@ -5488,26 +5360,6 @@
                   {
                     "type": "object",
                     "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "required": [
                       "code"
                     ],
                     "properties": {
@@ -6151,26 +6003,6 @@
             "application/json": {
               "schema": {
                 "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
                   {
                     "type": "object",
                     "properties": {
@@ -7380,26 +7212,6 @@
                   {
                     "type": "object",
                     "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "required": [
                       "code"
                     ],
                     "properties": {
@@ -7992,26 +7804,6 @@
             "application/json": {
               "schema": {
                 "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
                   {
                     "type": "object",
                     "properties": {
@@ -9285,26 +9077,6 @@
                   {
                     "type": "object",
                     "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "required": [
                       "patientId",
                       "treponemalTestType",
                       "treponemalTestResult",
@@ -10020,26 +9792,6 @@
             "application/json": {
               "schema": {
                 "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
                   {
                     "type": "object",
                     "properties": {
@@ -11347,26 +11099,6 @@
                   {
                     "type": "object",
                     "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "required": [
                       "patientId",
                       "medication",
                       "dosage",
@@ -12020,26 +11752,6 @@
             "application/json": {
               "schema": {
                 "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
                   {
                     "type": "object",
                     "properties": {
@@ -13273,26 +12985,6 @@
                   {
                     "type": "object",
                     "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "required": [
                       "patientId",
                       "sinan"
                     ],
@@ -13887,26 +13579,6 @@
             "application/json": {
               "schema": {
                 "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
                   {
                     "type": "object",
                     "properties": {
@@ -15085,26 +14757,6 @@
                   {
                     "type": "object",
                     "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
-                  {
-                    "type": "object",
-                    "required": [
                       "patientId",
                       "hasPartnerBeingTreated",
                       "observations"
@@ -15695,26 +15347,6 @@
             "application/json": {
               "schema": {
                 "allOf": [
-                  {
-                    "type": "object",
-                    "required": [
-                      "ipAddress",
-                      "userAgent"
-                    ],
-                    "properties": {
-                      "ipAddress": {
-                        "type": "string",
-                        "format": "ipv4",
-                        "description": "Client's IP address for security tracking.",
-                        "example": "127.0.0.1"
-                      },
-                      "userAgent": {
-                        "type": "string",
-                        "description": "Device and browser identifier string.",
-                        "example": "Mozilla/5.0"
-                      }
-                    }
-                  },
                   {
                     "type": "object",
                     "properties": {

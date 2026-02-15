@@ -4,6 +4,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   UpdateTreatmentInput,
   UpdateTreatmentOutput,
@@ -29,13 +30,14 @@ export class UpdateTreatmentUseCase implements UseCase<
 
   /**
    * Executes the use case to update a treatment.
-   * @param input The treatment update data and audit info.
+   * @param input The treatment update data.
    * @return A promise that resolves to the updated treatment.
    * @throws {ValidationError} If the update data is invalid.
    * @throws {NotFoundError} If the treatment is not found.
    */
   async execute(input: UpdateTreatmentInput): Promise<UpdateTreatmentOutput> {
-    const { id, userId, ipAddress, userAgent, ...data } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id, ...data } = input;
 
     // 1. Validate input.
     const validation = treatmentSchema.partial().safeParse(data);

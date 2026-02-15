@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { FindUsersOutput } from '@/core/application/contracts/user/find-users.contract';
 import { GetUserOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
 import { RegisterUserOutput } from '@/core/application/contracts/user/register-user.contract';
+import { RestoreUserOutput } from '@/core/application/contracts/user/restore-user.contract';
 import { UpdateUserOutput } from '@/core/application/contracts/user/update-user.contract';
 import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
@@ -15,12 +16,13 @@ import {
   userSchema,
 } from '@/core/application/validation/schemas/user.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
-import { ValidationError } from '@/core/domain/errors/app.error';
+import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import {
   makeDeleteUserUseCase,
   makeFindUsersUseCase,
   makeGetUserByIdUseCase,
   makeRegisterUserUseCase,
+  makeRestoreUserUseCase,
   makeUpdateUserUseCase,
 } from '@/core/infrastructure/factories/user.factory';
 import {
@@ -38,8 +40,8 @@ export async function findUsers(
 ): Promise<ActionResponse<FindUsersOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
     const parsed = userQuerySchema.safeParse(query);
-    const findUsersUseCase = makeFindUsersUseCase();
-    return await findUsersUseCase.execute(parsed.data || {});
+    const useCase = makeFindUsersUseCase();
+    return await useCase.execute(parsed.data || {});
   });
 }
 
@@ -58,8 +60,8 @@ export async function getUser(
       throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
 
-    const getUserByIdUseCase = makeGetUserByIdUseCase();
-    return await getUserByIdUseCase.execute({ id: parsed.data });
+    const useCase = makeGetUserByIdUseCase();
+    return await useCase.execute({ id: parsed.data });
   });
 }
 
@@ -81,8 +83,8 @@ export async function createUser(
       );
     }
 
-    const registerUserUseCase = makeRegisterUserUseCase();
-    const user = await registerUserUseCase.execute(parsed.data);
+    const useCase = makeRegisterUserUseCase();
+    const user = await useCase.execute(parsed.data);
 
     revalidatePath('/users');
     return user;
@@ -102,11 +104,11 @@ export async function updateUser(
 ): Promise<ActionResponse<UpdateUserOutput>> {
   return withSecuredActionAndAutomaticRetry(['update:user'], async () => {
     const parsedId = IdSchema.safeParse(id);
-    const parsedData = userSchema.partial().safeParse(input);
     if (!parsedId.success) {
       throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
+    const parsedData = userSchema.partial().safeParse(input);
     if (!parsedData.success) {
       throw new ValidationError(
         'Dados do usuário são inválidos.',
@@ -114,10 +116,10 @@ export async function updateUser(
       );
     }
 
-    const updateUserUseCase = makeUpdateUserUseCase();
-    const user = await updateUserUseCase.execute({
+    const useCase = makeUpdateUserUseCase();
+    const user = await useCase.execute({
       id: parsedId.data,
-      data: parsedData.data,
+      ...parsedData.data,
     });
 
     revalidatePath('/users');
@@ -140,12 +142,41 @@ export async function deleteUser(
       throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
 
-    const deleteUserUseCase = makeDeleteUserUseCase();
-    await deleteUserUseCase.execute({
+    const useCase = makeDeleteUserUseCase();
+    await useCase.execute({
       id: parsed.data,
     });
 
     revalidatePath('/users');
     return { success: true };
+  });
+}
+
+/**
+ * Restores a soft-deleted user record.
+ * @param id The UUID of the user to restore.
+ * @return A success object with restored user data.
+ * @throws ValidationError If the ID is invalid.
+ */
+export async function restoreUser(
+  id: string
+): Promise<ActionResponse<RestoreUserOutput>> {
+  return withSecuredActionAndAutomaticRetry(['update:user'], async () => {
+    const parsed = IdSchema.safeParse(id);
+    if (!parsed.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    }
+
+    const useCase = makeRestoreUserUseCase();
+    const user = await useCase.execute({
+      id: parsed.data,
+    });
+
+    if (!user) {
+      throw new NotFoundError('Usuário');
+    }
+
+    revalidatePath('/users');
+    return user;
   });
 }

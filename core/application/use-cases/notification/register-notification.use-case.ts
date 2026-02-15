@@ -5,6 +5,7 @@ import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RegisterNotificationInput,
   RegisterNotificationOutput,
@@ -42,10 +43,10 @@ export class RegisterNotificationUseCase implements UseCase<
   async execute(
     input: RegisterNotificationInput
   ): Promise<RegisterNotificationOutput> {
-    const { userId, ipAddress, userAgent, ...data } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Validate input.
-    const validation = notificationSchema.safeParse(data);
+    const validation = notificationSchema.safeParse(input);
     if (!validation.success) {
       throw new ValidationError(
         'Dados de criação de notificação inválidos.',
@@ -54,14 +55,14 @@ export class RegisterNotificationUseCase implements UseCase<
     }
 
     // 2. Verify that the patient exists.
-    const patient = await this.patientRepository.findById(data.patientId);
+    const patient = await this.patientRepository.findById(input.patientId);
     if (!patient) {
       throw new NotFoundError('Paciente');
     }
 
     // 3. Delegate to the repository.
     const notification = await this.notificationRepository.create({
-      ...data,
+      ...input,
       createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       updatedBy: null,
     });

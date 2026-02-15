@@ -34,7 +34,6 @@ Treatment:
 
 TreatmentCreateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       required:
         - patientId
@@ -64,7 +63,6 @@ TreatmentCreateRequest:
 
 TreatmentUpdateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       properties:
         medication:

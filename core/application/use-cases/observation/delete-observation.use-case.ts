@@ -2,6 +2,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   DeleteObservationInput,
   DeleteObservationOutput,
@@ -29,14 +30,15 @@ export class DeleteObservationUseCase implements UseCase<
   /**
    * Executes the use case to soft delete an observation.
    *
-   * @param input The data containing the observation ID and auditor info.
+   * @param input The data containing the observation ID.
    * @return A promise that resolves when the deletion is complete.
    * @throws {NotFoundError} If the observation is not found.
    */
   async execute(
     input: DeleteObservationInput
   ): Promise<DeleteObservationOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id } = input;
 
     // 1. Check if the observation exists.
     const observation = await this.observationRepository.findById(id);

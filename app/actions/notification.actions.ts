@@ -2,6 +2,10 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { FindNotificationsOutput } from '@/core/application/contracts/notification/find-notifications.contract';
+import { GetNotificationByIdOutput } from '@/core/application/contracts/notification/get-notification-by-id.contract';
+import { RegisterNotificationOutput } from '@/core/application/contracts/notification/register-notification.contract';
+import { UpdateNotificationOutput } from '@/core/application/contracts/notification/update-notification.contract';
 import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreateNotificationInput,
@@ -19,18 +23,23 @@ import {
   makeRegisterNotificationUseCase,
   makeUpdateNotificationUseCase,
 } from '@/core/infrastructure/factories/notification.factory';
-import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
+import {
+  ActionResponse,
+  withSecuredActionAndAutomaticRetry,
+} from '@/lib/actions.utils';
 
 /**
  * Retrieves a paginated list of notification records with optional filtering.
  * @param query Optional filtering and pagination criteria for notifications.
  * @return A promise resolving to the list of notifications and metadata.
  */
-export async function findNotifications(query?: NotificationQueryInput) {
+export async function findNotifications(
+  query?: NotificationQueryInput
+): Promise<ActionResponse<FindNotificationsOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:notification'], async () => {
     const parsed = notificationQuerySchema.safeParse(query);
-    const findNotificationsUseCase = makeFindNotificationsUseCase();
-    return await findNotificationsUseCase.execute(parsed.data || {});
+    const useCase = makeFindNotificationsUseCase();
+    return await useCase.execute(parsed.data || {});
   });
 }
 
@@ -40,15 +49,17 @@ export async function findNotifications(query?: NotificationQueryInput) {
  * @return A promise resolving to the notification details.
  * @throws ValidationError If the ID format is invalid.
  */
-export async function getNotification(id: string) {
+export async function getNotification(
+  id: string
+): Promise<ActionResponse<GetNotificationByIdOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:notification'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {
       throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
 
-    const getNotificationByIdUseCase = makeGetNotificationByIdUseCase();
-    return await getNotificationByIdUseCase.execute({
+    const useCase = makeGetNotificationByIdUseCase();
+    return await useCase.execute({
       id: parsed.data,
     });
   });
@@ -61,10 +72,12 @@ export async function getNotification(id: string) {
  * @return A promise resolving to the created notification record.
  * @throws ValidationError If notification data violates validation rules.
  */
-export async function createNotification(input: CreateNotificationInput) {
+export async function createNotification(
+  input: CreateNotificationInput
+): Promise<ActionResponse<RegisterNotificationOutput>> {
   return withSecuredActionAndAutomaticRetry(
     ['create:notification'],
-    async ({ userId, ipAddress, userAgent }) => {
+    async () => {
       const parsed = notificationSchema.safeParse(input);
       if (!parsed.success) {
         throw new ValidationError(
@@ -73,17 +86,13 @@ export async function createNotification(input: CreateNotificationInput) {
         );
       }
 
-      const registerNotificationUseCase = makeRegisterNotificationUseCase();
-      const notification = await registerNotificationUseCase.execute({
+      const useCase = makeRegisterNotificationUseCase();
+      const notification = await useCase.execute({
         ...parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
       });
 
       revalidatePath(`/patients/${input.patientId}/notifications`);
       revalidatePath('/notifications');
-
       return notification;
     }
   );
@@ -100,10 +109,10 @@ export async function createNotification(input: CreateNotificationInput) {
 export async function updateNotification(
   id: string,
   input: UpdateNotificationInput
-) {
+): Promise<ActionResponse<UpdateNotificationOutput>> {
   return withSecuredActionAndAutomaticRetry(
     ['update:notification'],
-    async ({ userId, ipAddress, userAgent }) => {
+    async () => {
       const parsedId = IdSchema.safeParse(id);
       const parsedData = notificationSchema.partial().safeParse(input);
       if (!parsedId.success) {
@@ -120,17 +129,13 @@ export async function updateNotification(
         );
       }
 
-      const updateNotificationUseCase = makeUpdateNotificationUseCase();
-      const notification = await updateNotificationUseCase.execute({
+      const useCase = makeUpdateNotificationUseCase();
+      const notification = await useCase.execute({
         ...parsedData.data,
         id: parsedId.data,
-        userId,
-        ipAddress,
-        userAgent,
       });
 
       revalidatePath('/notifications');
-
       return notification;
     }
   );
@@ -142,25 +147,23 @@ export async function updateNotification(
  * @return A success object upon completion.
  * @throws ValidationError If the ID is invalid.
  */
-export async function deleteNotification(id: string) {
+export async function deleteNotification(
+  id: string
+): Promise<ActionResponse<{ success: boolean }>> {
   return withSecuredActionAndAutomaticRetry(
     ['delete:notification'],
-    async ({ userId, ipAddress, userAgent }) => {
+    async () => {
       const parsed = IdSchema.safeParse(id);
       if (!parsed.success) {
         throw new ValidationError('ID inválido.', formatZodError(parsed.error));
       }
 
-      const deleteNotificationUseCase = makeDeleteNotificationUseCase();
-      await deleteNotificationUseCase.execute({
+      const useCase = makeDeleteNotificationUseCase();
+      await useCase.execute({
         id: parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
       });
 
       revalidatePath('/notifications');
-
       return { success: true };
     }
   );

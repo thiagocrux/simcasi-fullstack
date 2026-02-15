@@ -8,6 +8,7 @@ import { PermissionRepository } from '@/core/domain/repositories/permission.repo
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import { LoginInput } from '../../contracts/session/login.contract';
 import { SessionOutput } from '../../contracts/session/session-output.contract';
 import { UseCase } from '../use-case.interface';
@@ -62,12 +63,13 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
     }
 
     // 3. Create session in database.
+    const context = getRequestContext();
     const session = await this.sessionRepository.create({
       userId: user.id,
       issuedAt: new Date(),
       expiresAt: this.tokenProvider.getRefreshExpiryDate(),
-      ipAddress: input.ipAddress || 'unknown',
-      userAgent: input.userAgent || 'unknown',
+      ipAddress: context.ipAddress || 'unknown',
+      userAgent: context.userAgent || 'unknown',
     });
 
     // 4. Fetch permissions and role code for the user.

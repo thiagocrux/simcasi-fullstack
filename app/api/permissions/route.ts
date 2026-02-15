@@ -24,20 +24,15 @@ export const GET = withAuthentication(['read:permission'], async (request) => {
  * [POST] /api/permissions
  * Registers a new permission record in the system.
  * @param request The incoming Next.js request.
- * @param context The request context containing auth metadata.
+ * @param context The request context.
  * @return A promise resolving to the created permission record.
  */
 export const POST = withAuthentication(
   ['create:permission'],
-  async (request, { auth }) => {
+  async (request) => {
     const body = await request.json();
     const useCase = makeRegisterPermissionUseCase();
-    const permission = await useCase.execute({
-      ...body,
-      createdBy: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
-    });
+    const permission = await useCase.execute(body);
 
     return NextResponse.json(permission, { status: 201 });
   }

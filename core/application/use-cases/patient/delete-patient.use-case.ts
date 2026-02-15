@@ -6,6 +6,7 @@ import { NotificationRepository } from '@/core/domain/repositories/notification.
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   DeletePatientInput,
   DeletePatientOutput,
@@ -41,12 +42,13 @@ export class DeletePatientUseCase implements UseCase<
   /**
    * Executes the use case to soft delete a patient and related records.
    *
-   * @param input The data containing the patient ID and auditor info.
+   * @param input The data containing the patient ID.
    * @return A promise that resolves when the deletion is complete.
    * @throws {NotFoundError} If the patient is not found.
    */
   async execute(input: DeletePatientInput): Promise<DeletePatientOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id } = input;
 
     // 1. Check if patient exists.
     const patient = await this.patientRepository.findById(id);

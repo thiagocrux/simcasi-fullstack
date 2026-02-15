@@ -52,7 +52,7 @@ export function formatCalendarDate(date: Date | string | undefined | null) {
  * to avoid timezone shifts. Useful for pre-filling HTML form date inputs.
  *
  * @param {Date | string | undefined | null} date The date to be formatted.
- * @returns {string} A string in the format 'yyyy-MM-dd'.
+ * @return {string} A string in the format 'yyyy-MM-dd'.
  */
 export function toCalendarISOString(
   date: Date | string | undefined | null

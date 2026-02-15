@@ -24,19 +24,16 @@ export const GET = withAuthentication(['read:treatment'], async (request) => {
  * [POST] /api/treatments
  * Registers a new treatment record in the system.
  * @param request The incoming Next.js request.
- * @param context The request context containing auth metadata.
+ * @param context The request context.
  * @return A promise resolving to the created treatment record.
  */
 export const POST = withAuthentication(
   ['create:treatment'],
-  async (request, { auth }) => {
+  async (request) => {
     const body = await request.json();
     const useCase = makeRegisterTreatmentUseCase();
     const treatment = await useCase.execute({
       ...body,
-      createdBy: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
     });
 
     return NextResponse.json(treatment, { status: 201 });

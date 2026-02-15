@@ -2,6 +2,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RestoreExamInput,
   RestoreExamOutput,
@@ -29,12 +30,13 @@ export class RestoreExamUseCase implements UseCase<
   /**
    * Executes the use case to restore a soft-deleted exam.
    *
-   * @param input The data containing the exam ID and auditor info.
+   * @param input The data containing the exam ID.
    * @return A promise that resolves to the restored exam.
    * @throws {NotFoundError} If the exam is not found.
    */
   async execute(input: RestoreExamInput): Promise<RestoreExamOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { id } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Check if the exam exists (including deleted).
     const exam = await this.examRepository.findById(id, true);

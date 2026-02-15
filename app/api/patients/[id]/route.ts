@@ -11,7 +11,7 @@ import { withAuthentication } from '@/lib/api.utils';
  * [GET] /api/patients/[id]
  * Retrieves a single patient record by its unique identifier.
  * @param request The incoming Next.js request.
- * @param context The request context containing route parameters.
+ * @param context The request context containing the route parameters.
  * @return A promise resolving to the patient data.
  */
 export const GET = withAuthentication(
@@ -29,21 +29,18 @@ export const GET = withAuthentication(
  * [PATCH] /api/patients/[id]
  * Updates an existing patient record.
  * @param request The incoming Next.js request.
- * @param context The request context containing route parameters and auth metadata.
+ * @param context The request context containing the route parameters.
  * @return A promise resolving to the updated patient record.
  */
 export const PATCH = withAuthentication(
   ['update:patient'],
-  async (request, { params, auth }) => {
+  async (request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const body = await request.json();
     const updateUseCase = makeUpdatePatientUseCase();
     const updated = await updateUseCase.execute({
       id,
       ...body,
-      userId: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
     });
 
     return NextResponse.json(updated);
@@ -54,19 +51,16 @@ export const PATCH = withAuthentication(
  * [DELETE] /api/patients/[id]
  * Performs a soft delete on a patient record.
  * @param request The incoming Next.js request.
- * @param context The request context containing route parameters and auth metadata.
+ * @param context The request context containing the route parameters.
  * @return A response confirming deletion (204 No Content).
  */
 export const DELETE = withAuthentication(
   ['delete:patient'],
-  async (request, { params, auth }) => {
+  async (request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const deleteUseCase = makeDeletePatientUseCase();
     await deleteUseCase.execute({
       id,
-      userId: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
     });
 
     return new NextResponse(null, { status: 204 });

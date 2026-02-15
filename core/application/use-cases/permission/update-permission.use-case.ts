@@ -8,6 +8,7 @@ import {
 } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   UpdatePermissionInput,
   UpdatePermissionOutput,
@@ -42,7 +43,8 @@ export class UpdatePermissionUseCase implements UseCase<
    * @throws {ConflictError} If the new permission code is already in use.
    */
   async execute(input: UpdatePermissionInput): Promise<UpdatePermissionOutput> {
-    const { id, userId, ipAddress, userAgent, ...data } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
+    const { id, ...data } = input;
 
     // 1. Validate partial input.
     const validation = permissionSchema.partial().safeParse(data);

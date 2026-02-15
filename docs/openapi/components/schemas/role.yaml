@@ -15,7 +15,6 @@ Role:
 
 RoleCreateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       required:
         - code
@@ -36,7 +35,6 @@ RoleCreateRequest:
 
 RoleUpdateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       properties:
         code:

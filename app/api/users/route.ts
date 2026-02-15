@@ -24,7 +24,7 @@ export const GET = withAuthentication(['read:user'], async (request) => {
  * [POST] /api/users
  * Registers a new user record in the system.
  * @param request The incoming Next.js request.
- * @param context The request context containing auth metadata.
+ * @param context The request context.
  * @return A promise resolving to the created user record.
  */
 export const POST = withAuthentication(['create:user'], async (request) => {

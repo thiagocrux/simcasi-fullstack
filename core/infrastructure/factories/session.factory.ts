@@ -22,7 +22,7 @@ const hashProvider = makeHashProvider();
 /**
  * Factory function to create an instance of LoginUseCase.
  * Injects repositories for users, sessions, roles, permissions, and security providers.
- * @returns A fully initialized LoginUseCase.
+ * @return A fully initialized LoginUseCase.
  */
 export function makeLoginUseCase() {
   return new LoginUseCase(
@@ -37,7 +37,7 @@ export function makeLoginUseCase() {
 
 /**
  * Factory function to create an instance of FindSessionsUseCase.
- * @returns A fully initialized FindSessionsUseCase.
+ * @return A fully initialized FindSessionsUseCase.
  */
 export function makeFindSessionsUseCase() {
   return new FindSessionsUseCase(sessionRepository, userRepository);
@@ -45,7 +45,7 @@ export function makeFindSessionsUseCase() {
 
 /**
  * Factory function to create an instance of RevokeSessionUseCase.
- * @returns A fully initialized RevokeSessionUseCase.
+ * @return A fully initialized RevokeSessionUseCase.
  */
 export function makeRevokeSessionUseCase() {
   return new RevokeSessionUseCase(sessionRepository, auditLogRepository);
@@ -53,7 +53,7 @@ export function makeRevokeSessionUseCase() {
 
 /**
  * Factory function to create an instance of LogoutUseCase.
- * @returns A fully initialized LogoutUseCase.
+ * @return A fully initialized LogoutUseCase.
  */
 export function makeLogoutUseCase() {
   return new LogoutUseCase(sessionRepository);
@@ -61,7 +61,7 @@ export function makeLogoutUseCase() {
 
 /**
  * Factory function to create an instance of RefreshTokenUseCase.
- * @returns A fully initialized RefreshTokenUseCase.
+ * @return A fully initialized RefreshTokenUseCase.
  */
 export function makeRefreshTokenUseCase() {
   return new RefreshTokenUseCase(
@@ -75,7 +75,7 @@ export function makeRefreshTokenUseCase() {
 
 /**
  * Factory function to create an instance of ValidateSessionUseCase.
- * @returns A fully initialized ValidateSessionUseCase.
+ * @return A fully initialized ValidateSessionUseCase.
  */
 export function makeValidateSessionUseCase() {
   return new ValidateSessionUseCase(

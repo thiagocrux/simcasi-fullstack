@@ -5,6 +5,7 @@ import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RegisterTreatmentInput,
   RegisterTreatmentOutput,
@@ -32,7 +33,7 @@ export class RegisterTreatmentUseCase implements UseCase<
 
   /**
    * Executes the use case to register a new treatment.
-   * @param input The treatment data and audit info.
+   * @param input The treatment registration data.
    * @return A promise that resolves to the registered treatment.
    * @throws {ValidationError} If the treatment data is invalid.
    * @throws {NotFoundError} If the patient is not found.
@@ -40,10 +41,10 @@ export class RegisterTreatmentUseCase implements UseCase<
   async execute(
     input: RegisterTreatmentInput
   ): Promise<RegisterTreatmentOutput> {
-    const { userId, ipAddress, userAgent, ...treatmentData } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Validate input.
-    const validation = treatmentSchema.safeParse(treatmentData);
+    const validation = treatmentSchema.safeParse(input);
     if (!validation.success) {
       throw new ValidationError(
         'Dados de criação de tratamento inválidos.',
@@ -52,9 +53,7 @@ export class RegisterTreatmentUseCase implements UseCase<
     }
 
     // 2. Verify that the patient exists.
-    const patient = await this.patientRepository.findById(
-      treatmentData.patientId
-    );
+    const patient = await this.patientRepository.findById(input.patientId);
     if (!patient) {
       throw new NotFoundError('Paciente');
     }

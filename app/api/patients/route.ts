@@ -24,21 +24,15 @@ export const GET = withAuthentication(['read:patient'], async (request) => {
  * [POST] /api/patients
  * Registers a new patient record in the system.
  * @param request The incoming Next.js request.
- * @param context The request context containing auth metadata.
+ * @param context The request context.
  * @return A promise resolving to the created patient record.
  */
-export const POST = withAuthentication(
-  ['create:patient'],
-  async (request, { auth }) => {
-    const body = await request.json();
-    const registerUseCase = makeRegisterPatientUseCase();
-    const patient = await registerUseCase.execute({
-      ...body,
-      userId: auth.userId,
-      ipAddress: auth.ipAddress,
-      userAgent: auth.userAgent,
-    });
+export const POST = withAuthentication(['create:patient'], async (request) => {
+  const body = await request.json();
+  const registerUseCase = makeRegisterPatientUseCase();
+  const patient = await registerUseCase.execute({
+    ...body,
+  });
 
-    return NextResponse.json(patient, { status: 201 });
-  }
-);
+  return NextResponse.json(patient, { status: 201 });
+});

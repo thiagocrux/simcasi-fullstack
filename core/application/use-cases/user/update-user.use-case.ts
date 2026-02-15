@@ -43,15 +43,15 @@ export class UpdateUserUseCase implements UseCase<
 
   /**
    * Executes the use case to update a user.
-   * @param input The user update data and audit info.
+   * @param input The user update data.
    * @return A promise that resolves to the updated user.
    * @throws {ValidationError} If the update data is invalid.
    * @throws {NotFoundError} If the user or role is not found.
    * @throws {ConflictError} If the new email is already in use.
    */
   async execute(input: UpdateUserInput): Promise<UpdateUserOutput> {
-    const { id, data } = input;
     const { userId: executorId, ipAddress, userAgent } = getRequestContext();
+    const { id, ...data } = input;
 
     // 1. Validate input.
     const validation = userSchema.partial().safeParse(data);

@@ -2,6 +2,10 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { FindObservationsOutput } from '@/core/application/contracts/observation/find-observations.contract';
+import { GetObservationByIdOutput } from '@/core/application/contracts/observation/get-observation-by-id.contract';
+import { RegisterObservationOutput } from '@/core/application/contracts/observation/register-observation.contract';
+import { UpdateObservationOutput } from '@/core/application/contracts/observation/update-observation.contract';
 import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreateObservationInput,
@@ -19,18 +23,23 @@ import {
   makeRegisterObservationUseCase,
   makeUpdateObservationUseCase,
 } from '@/core/infrastructure/factories/observation.factory';
-import { withSecuredActionAndAutomaticRetry } from '@/lib/actions.utils';
+import {
+  ActionResponse,
+  withSecuredActionAndAutomaticRetry,
+} from '@/lib/actions.utils';
 
 /**
  * Retrieves a paginated list of observation records with optional filtering.
  * @param query Criteria for filtering and pagination.
  * @return A promise resolving to the observations and metadata.
  */
-export async function findObservations(query?: ObservationQueryInput) {
+export async function findObservations(
+  query?: ObservationQueryInput
+): Promise<ActionResponse<FindObservationsOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:observation'], async () => {
     const parsed = observationQuerySchema.safeParse(query);
-    const findObservationsUseCase = makeFindObservationsUseCase();
-    return await findObservationsUseCase.execute(parsed.data || {});
+    const useCase = makeFindObservationsUseCase();
+    return await useCase.execute(parsed.data || {});
   });
 }
 
@@ -40,15 +49,17 @@ export async function findObservations(query?: ObservationQueryInput) {
  * @return A promise resolving to the observation data.
  * @throws ValidationError If the ID is invalid.
  */
-export async function getObservation(id: string) {
+export async function getObservation(
+  id: string
+): Promise<ActionResponse<GetObservationByIdOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:observation'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {
       throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
 
-    const getObservationByIdUseCase = makeGetObservationByIdUseCase();
-    return await getObservationByIdUseCase.execute({
+    const useCase = makeGetObservationByIdUseCase();
+    return await useCase.execute({
       id: parsed.data,
     });
   });
@@ -61,10 +72,12 @@ export async function getObservation(id: string) {
  * @return A promise resolving to the created observation.
  * @throws ValidationError If the input data is malformed.
  */
-export async function createObservation(input: CreateObservationInput) {
+export async function createObservation(
+  input: CreateObservationInput
+): Promise<ActionResponse<RegisterObservationOutput>> {
   return withSecuredActionAndAutomaticRetry(
     ['create:observation'],
-    async ({ userId, ipAddress, userAgent }) => {
+    async () => {
       const parsed = observationSchema.safeParse(input);
       if (!parsed.success) {
         throw new ValidationError(
@@ -73,17 +86,13 @@ export async function createObservation(input: CreateObservationInput) {
         );
       }
 
-      const registerObservationUseCase = makeRegisterObservationUseCase();
-      const observation = await registerObservationUseCase.execute({
+      const useCase = makeRegisterObservationUseCase();
+      const observation = await useCase.execute({
         ...parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
       });
 
       revalidatePath(`/patients/${input.patientId}/observations`);
       revalidatePath('/observations');
-
       return observation;
     }
   );
@@ -99,10 +108,10 @@ export async function createObservation(input: CreateObservationInput) {
 export async function updateObservation(
   id: string,
   input: UpdateObservationInput
-) {
+): Promise<ActionResponse<UpdateObservationOutput>> {
   return withSecuredActionAndAutomaticRetry(
     ['update:observation'],
-    async ({ userId, ipAddress, userAgent }) => {
+    async () => {
       const parsedId = IdSchema.safeParse(id);
       const parsedData = observationSchema.partial().safeParse(input);
       if (!parsedId.success) {
@@ -119,17 +128,13 @@ export async function updateObservation(
         );
       }
 
-      const updateObservationUseCase = makeUpdateObservationUseCase();
-      const observation = await updateObservationUseCase.execute({
+      const useCase = makeUpdateObservationUseCase();
+      const observation = await useCase.execute({
         ...parsedData.data,
         id: parsedId.data,
-        userId,
-        ipAddress,
-        userAgent,
       });
 
       revalidatePath('/observations');
-
       return observation;
     }
   );
@@ -141,25 +146,23 @@ export async function updateObservation(
  * @return A success object upon completion.
  * @throws ValidationError If the ID is invalid.
  */
-export async function deleteObservation(id: string) {
+export async function deleteObservation(
+  id: string
+): Promise<ActionResponse<{ success: boolean }>> {
   return withSecuredActionAndAutomaticRetry(
     ['delete:observation'],
-    async ({ userId, ipAddress, userAgent }) => {
+    async () => {
       const parsed = IdSchema.safeParse(id);
       if (!parsed.success) {
         throw new ValidationError('ID inválido.', formatZodError(parsed.error));
       }
 
-      const deleteObservationUseCase = makeDeleteObservationUseCase();
-      await deleteObservationUseCase.execute({
+      const useCase = makeDeleteObservationUseCase();
+      await useCase.execute({
         id: parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
       });
 
       revalidatePath('/observations');
-
       return { success: true };
     }
   );

@@ -29,7 +29,6 @@ User:
 
 UserCreateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       required:
         - name
@@ -55,7 +54,6 @@ UserCreateRequest:
 
 UserUpdateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       properties:
         name:

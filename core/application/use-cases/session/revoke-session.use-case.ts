@@ -6,6 +6,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RevokeSessionInput,
   RevokeSessionOutput,
@@ -33,12 +34,13 @@ export class RevokeSessionUseCase implements UseCase<
   /**
    * Executes the use case to revoke a session.
    *
-   * @param input The data containing the session ID and auditor info.
+   * @param input The data containing the session ID.
    * @return A promise that resolves when the session is revoked.
    * @throws {NotFoundError} If the session is not found.
    */
   async execute(input: RevokeSessionInput): Promise<RevokeSessionOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { id } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
     const session = await this.sessionRepository.findById(id);
 
     if (!session) {

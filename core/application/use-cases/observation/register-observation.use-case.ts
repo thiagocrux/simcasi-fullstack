@@ -5,6 +5,7 @@ import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RegisterObservationInput,
   RegisterObservationOutput,
@@ -42,10 +43,10 @@ export class RegisterObservationUseCase implements UseCase<
   async execute(
     input: RegisterObservationInput
   ): Promise<RegisterObservationOutput> {
-    const { userId, ipAddress, userAgent, ...observationData } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Validate input.
-    const validation = observationSchema.safeParse(observationData);
+    const validation = observationSchema.safeParse(input);
     if (!validation.success) {
       throw new ValidationError(
         'Dados de criação de observação inválidos.',
@@ -54,9 +55,7 @@ export class RegisterObservationUseCase implements UseCase<
     }
 
     // 2. Verify that the patient exists.
-    const patient = await this.patientRepository.findById(
-      observationData.patientId
-    );
+    const patient = await this.patientRepository.findById(input.patientId);
     if (!patient) {
       throw new NotFoundError('Paciente');
     }

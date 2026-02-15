@@ -16,7 +16,7 @@ export const messages = {
   INVALID_PHONE:
     'Por favor, insira um telefone em um dos seguintes formatos: (XX) 9XXXX-XXXX ou (XX) XXXX-XXXX.',
   INVALID_UUID:
-    'Por favor, insira um UUID válido no formato: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.',
+    'Formato incorreto. Este campo requer um UUID válido (exemplo: 550e8400-e29b-41d4-a716-446655440000).',
   INVALID_CREDENTIALS: 'Credenciais inválidas. Por favor, tente novamente.',
   INVALID_SINAN: `O campo **SINAN** deve ter exatamente ${SINAN_LENGTH} dígitos. Caso o número possua menos de ${SINAN_LENGTH}, complete com zeros à esquerda.`,
 } as const;

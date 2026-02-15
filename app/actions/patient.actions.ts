@@ -6,6 +6,7 @@ import { DeletePatientOutput } from '@/core/application/contracts/patient/delete
 import { FindPatientsOutput } from '@/core/application/contracts/patient/find-patients.contract';
 import { GetPatientOutput } from '@/core/application/contracts/patient/get-patient-by-id.contract';
 import { RegisterPatientOutput } from '@/core/application/contracts/patient/register-patient.contract';
+import { RestorePatientOutput } from '@/core/application/contracts/patient/restore-patient.contract';
 import { UpdatePatientOutput } from '@/core/application/contracts/patient/update-patient.contract';
 import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
@@ -16,7 +17,7 @@ import {
   patientSchema,
 } from '@/core/application/validation/schemas/patient.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
-import { ValidationError } from '@/core/domain/errors/app.error';
+import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import {
   makeDeletePatientUseCase,
   makeFindPatientsUseCase,
@@ -75,29 +76,23 @@ export async function getPatient(
 export async function createPatient(
   input: CreatePatientInput
 ): Promise<ActionResponse<RegisterPatientOutput>> {
-  return withSecuredActionAndAutomaticRetry(
-    ['create:patient'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsed = patientSchema.safeParse(input);
-      if (!parsed.success) {
-        throw new ValidationError(
-          'Dados do paciente inválidos',
-          formatZodError(parsed.error)
-        );
-      }
-
-      const useCase = makeRegisterPatientUseCase();
-      const patient = await useCase.execute({
-        ...parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/patients');
-      return patient;
+  return withSecuredActionAndAutomaticRetry(['create:patient'], async () => {
+    const parsed = patientSchema.safeParse(input);
+    if (!parsed.success) {
+      throw new ValidationError(
+        'Dados do paciente inválidos',
+        formatZodError(parsed.error)
+      );
     }
-  );
+
+    const useCase = makeRegisterPatientUseCase();
+    const patient = await useCase.execute({
+      ...parsed.data,
+    });
+
+    revalidatePath('/patients');
+    return patient;
+  });
 }
 
 /**
@@ -110,37 +105,28 @@ export async function updatePatient(
   id: string,
   input: UpdatePatientInput
 ): Promise<ActionResponse<UpdatePatientOutput>> {
-  return withSecuredActionAndAutomaticRetry(
-    ['update:patient'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsedId = IdSchema.safeParse(id);
-      const parsedData = patientSchema.partial().safeParse(input);
-      if (!parsedId.success) {
-        throw new ValidationError(
-          'ID inválido.',
-          formatZodError(parsedId.error)
-        );
-      }
-      if (!parsedData.success) {
-        throw new ValidationError(
-          'Dados de atualização inválidos',
-          formatZodError(parsedData.error)
-        );
-      }
-
-      const useCase = makeUpdatePatientUseCase();
-      const patient = await useCase.execute({
-        id: parsedId.data,
-        ...parsedData.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/patients');
-      return patient;
+  return withSecuredActionAndAutomaticRetry(['update:patient'], async () => {
+    const parsedId = IdSchema.safeParse(id);
+    const parsedData = patientSchema.partial().safeParse(input);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
-  );
+    if (!parsedData.success) {
+      throw new ValidationError(
+        'Dados de atualização inválidos',
+        formatZodError(parsedData.error)
+      );
+    }
+
+    const useCase = makeUpdatePatientUseCase();
+    const patient = await useCase.execute({
+      id: parsedId.data,
+      ...parsedData.data,
+    });
+
+    revalidatePath('/patients');
+    return patient;
+  });
 }
 
 /**
@@ -151,25 +137,19 @@ export async function updatePatient(
 export async function deletePatient(
   id: string
 ): Promise<ActionResponse<DeletePatientOutput>> {
-  return withSecuredActionAndAutomaticRetry(
-    ['delete:patient'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsed = IdSchema.safeParse(id);
-      if (!parsed.success) {
-        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
-      }
-
-      const useCase = makeDeletePatientUseCase();
-      await useCase.execute({
-        id: parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/patients');
+  return withSecuredActionAndAutomaticRetry(['delete:patient'], async () => {
+    const parsed = IdSchema.safeParse(id);
+    if (!parsed.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
-  );
+
+    const useCase = makeDeletePatientUseCase();
+    await useCase.execute({
+      id: parsed.data,
+    });
+
+    revalidatePath('/patients');
+  });
 }
 
 /**
@@ -177,24 +157,25 @@ export async function deletePatient(
  * @param id The UUID of the patient to restore.
  * @return A promise that resolves when the restoration is complete.
  */
-export async function restorePatient(id: string) {
-  return withSecuredActionAndAutomaticRetry(
-    ['update:patient'],
-    async ({ userId, ipAddress, userAgent }) => {
-      const parsed = IdSchema.safeParse(id);
-      if (!parsed.success) {
-        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
-      }
-
-      const useCase = makeRestorePatientUseCase();
-      await useCase.execute({
-        id: parsed.data,
-        userId,
-        ipAddress,
-        userAgent,
-      });
-
-      revalidatePath('/patients');
+export async function restorePatient(
+  id: string
+): Promise<ActionResponse<RestorePatientOutput>> {
+  return withSecuredActionAndAutomaticRetry(['update:patient'], async () => {
+    const parsed = IdSchema.safeParse(id);
+    if (!parsed.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
     }
-  );
+
+    const useCase = makeRestorePatientUseCase();
+    const patient = await useCase.execute({
+      id: parsed.data,
+    });
+
+    if (!patient) {
+      throw new NotFoundError('Paciente');
+    }
+
+    revalidatePath('/patients');
+    return patient;
+  });
 }

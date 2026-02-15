@@ -8,7 +8,7 @@ import { Role } from '@/core/domain/entities/role.entity';
 /**
  * Hook to manage role-related operations and state.
  * Fetches roles from the server and provides utility functions for display.
- * @returns An object containing the roles list, display utilities, and loading state.
+ * @return An object containing the roles list, display utilities, and loading state.
  */
 export function useRole() {
   /**
@@ -37,7 +37,7 @@ export function useRole() {
   /**
    * Translates a role ID into its human-readable label.
    * @param roleId The unique identifier of the role.
-   * @returns The label of the role, 'Carregando...', or 'Desconhecido'.
+   * @return The label of the role, 'Carregando...', or 'Desconhecido'.
    */
   const getRoleLabel = useCallback(
     function getLabel(roleId: string | null): string | null {

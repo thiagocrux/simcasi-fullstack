@@ -7,7 +7,7 @@ import { withAuthentication } from '@/lib/api.utils';
  * [PATCH] /api/users/[id]/restore
  * Restores a previously soft-deleted user record.
  * @param request The incoming Next.js request.
- * @param context The request context containing route parameters and auth metadata.
+ * @param context The request context containing the route parameters.
  * @return A response confirming restoration (204 No Content).
  */
 export const PATCH = withAuthentication(

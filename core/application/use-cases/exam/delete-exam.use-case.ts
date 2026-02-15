@@ -6,6 +6,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   DeleteExamInput,
   DeleteExamOutput,
@@ -33,12 +34,13 @@ export class DeleteExamUseCase implements UseCase<
   /**
    * Executes the use case to soft delete an exam.
    *
-   * @param input The data containing the exam ID and auditor info.
+   * @param input The data containing the exam ID.
    * @return A promise that resolves when the deletion is complete.
    * @throws {NotFoundError} If the exam is not found.
    */
   async execute(input: DeleteExamInput): Promise<DeleteExamOutput> {
-    const { id, userId, ipAddress, userAgent } = input;
+    const { id } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Check if the exam exists.
     const exam = await this.examRepository.findById(id);

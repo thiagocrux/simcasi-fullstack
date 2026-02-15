@@ -28,7 +28,7 @@ const DYNAMIC_VARIANTS: MaskType[] = ['phone'];
  *
  * @param {MaskedInputProps} props The props for the MaskedInput component.
  * @param {React.Ref<HTMLInputElement>} ref The forwarded ref for the input element.
- * @returns {JSX.Element} The masked input element.
+ * @return {JSX.Element} The masked input element.
  */
 export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
   (
@@ -76,7 +76,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
      * Removes all special characters and spaces from the input value.
      *
      * @param {string} value The input value to be sanitized.
-     * @returns {string} The sanitized string without special characters and spaces.
+     * @return {string} The sanitized string without special characters and spaces.
      */
     function removeSpecialCharsAndSpaces(value: string): string {
       return value.replace(/[^a-zA-Z0-9]/g, '');

@@ -50,7 +50,6 @@ Exam:
 
 ExamCreateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       required:
         - patientId
@@ -94,7 +93,6 @@ ExamCreateRequest:
 
 ExamUpdateRequest:
   allOf:
-    - $ref: './commons.yaml#/AuditMetadata'
     - type: object
       properties:
         treponemalTestType:

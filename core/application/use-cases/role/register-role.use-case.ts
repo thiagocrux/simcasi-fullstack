@@ -9,6 +9,7 @@ import {
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   RegisterRoleInput,
   RegisterRoleOutput,
@@ -45,10 +46,10 @@ export class RegisterRoleUseCase implements UseCase<
    * @throws {NotFoundError} If one or more provided permissions are not found.
    */
   async execute(input: RegisterRoleInput): Promise<RegisterRoleOutput> {
-    const { ipAddress, userAgent, userId, ...roleData } = input;
+    const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Validate input data using Zod schema.
-    const validation = roleSchema.safeParse(roleData);
+    const validation = roleSchema.safeParse(input);
     if (!validation.success) {
       throw new ValidationError(
         'Dados de criação de cargo inválidos.',
@@ -57,11 +58,11 @@ export class RegisterRoleUseCase implements UseCase<
     }
 
     // 2. Validate if permissions exist.
-    if (roleData.permissionIds && roleData.permissionIds.length > 0) {
+    if (input.permissionIds && input.permissionIds.length > 0) {
       const foundPermissions = await this.permissionRepository.findByIds(
-        roleData.permissionIds
+        input.permissionIds
       );
-      if (foundPermissions.length !== roleData.permissionIds.length) {
+      if (foundPermissions.length !== input.permissionIds.length) {
         throw new NotFoundError(
           'Uma ou mais permissões não foram encontradas',
           true
@@ -70,10 +71,7 @@ export class RegisterRoleUseCase implements UseCase<
     }
 
     // 3. Check if the role code already exists, including soft-deleted records.
-    const roleExists = await this.roleRepository.findByCode(
-      roleData.code,
-      true
-    );
+    const roleExists = await this.roleRepository.findByCode(input.code, true);
 
     if (roleExists) {
       // If the role exists and is NOT deleted, we throw a conflict error.
@@ -86,8 +84,8 @@ export class RegisterRoleUseCase implements UseCase<
       const restoredRole = await this.roleRepository.update(
         roleExists.id,
         {
-          code: roleData.code,
-          permissionIds: roleData.permissionIds,
+          code: input.code,
+          permissionIds: input.permissionIds,
           deletedAt: null,
         },
         userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
@@ -109,9 +107,9 @@ export class RegisterRoleUseCase implements UseCase<
 
     // 5. If no record was found with that code, create a completely new one.
     const role = await this.roleRepository.create({
-      code: roleData.code,
-      label: roleData.label,
-      permissionIds: roleData.permissionIds,
+      code: input.code,
+      label: input.label,
+      permissionIds: input.permissionIds,
       createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       updatedBy: null,
     });

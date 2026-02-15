@@ -1,6 +1,4 @@
-import { AuditMetadata } from '../common/audit-metadata.contract';
-
-export interface DeleteTreatmentInput extends AuditMetadata {
+export interface DeleteTreatmentInput {
   id: string;
 }
 

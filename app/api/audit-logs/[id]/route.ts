@@ -7,7 +7,7 @@ import { withAuthentication } from '@/lib/api.utils';
  * [GET] /api/audit-logs/[id]
  * Retrieves a specific audit log record by its unique identifier.
  * @param request The incoming Next.js request.
- * @param context The request context containing route parameters.
+ * @param context The request context containing the route parameters.
  * @return A promise resolving to the audit log record.
  */
 export const GET = withAuthentication(

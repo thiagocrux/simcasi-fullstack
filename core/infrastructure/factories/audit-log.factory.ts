@@ -10,7 +10,7 @@ const userRepository = new PrismaUserRepository();
 /**
  * Factory function to create an instance of FindAuditLogsUseCase.
  * Injects the required repositories for audit logs and user data.
- * @returns A fully initialized FindAuditLogsUseCase.
+ * @return A fully initialized FindAuditLogsUseCase.
  */
 export function makeFindAuditLogsUseCase() {
   return new FindAuditLogsUseCase(auditLogRepository, userRepository);
@@ -18,7 +18,7 @@ export function makeFindAuditLogsUseCase() {
 
 /**
  * Factory function to create an instance of GetAuditLogByIdUseCase.
- * @returns A fully initialized GetAuditLogByIdUseCase.
+ * @return A fully initialized GetAuditLogByIdUseCase.
  */
 export function makeGetAuditLogByIdUseCase() {
   return new GetAuditLogByIdUseCase(auditLogRepository);
@@ -26,7 +26,7 @@ export function makeGetAuditLogByIdUseCase() {
 
 /**
  * Factory function to create an instance of RegisterAuditLogUseCase.
- * @returns A fully initialized RegisterAuditLogUseCase.
+ * @return A fully initialized RegisterAuditLogUseCase.
  */
 export function makeRegisterAuditLogUseCase() {
   return new RegisterAuditLogUseCase(auditLogRepository);

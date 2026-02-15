@@ -30,7 +30,7 @@ export class DeleteUserUseCase implements UseCase<
 
   /**
    * Executes the use case to soft delete a user.
-   * @param input The ID of the user to delete and audit info.
+   * @param input The ID of the user to delete.
    * @return A promise that resolves to the deleted user info.
    * @throws {NotFoundError} If the user is not found.
    */
