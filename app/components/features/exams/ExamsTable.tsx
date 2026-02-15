@@ -143,7 +143,7 @@ export function ExamsTable({
     pageSize,
   });
 
-  // Avoid hydration mismatch by only rendering after mount
+  // Avoid hydration mismatch by only rendering after mount.
   useEffect(() => {
     const frame = requestAnimationFrame(() => setMounted(true));
     return () => cancelAnimationFrame(frame);

@@ -125,7 +125,7 @@ export function ObservationsTable({
     pageSize,
   });
 
-  // Avoid hydration mismatch by only rendering after mount
+  // Avoid hydration mismatch by only rendering after mount.
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const frame = requestAnimationFrame(() => setMounted(true));

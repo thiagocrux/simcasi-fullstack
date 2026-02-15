@@ -169,7 +169,7 @@ function Sidebar({
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
-  // Avoid hydration mismatch by only rendering after mount
+  // Avoid hydration mismatch by only rendering after mount.
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
     const frame = requestAnimationFrame(() => setMounted(true));

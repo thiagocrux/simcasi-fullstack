@@ -67,7 +67,7 @@ export function ThemeSwitcher({
 }: ThemeSwitcherProps) {
   const { theme, setTheme, resolvedTheme } = useTheme();
 
-  // Avoid hydration mismatch by only rendering after mount
+  // Avoid hydration mismatch by only rendering after mount.
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const animationFrame = requestAnimationFrame(() => setMounted(true));
