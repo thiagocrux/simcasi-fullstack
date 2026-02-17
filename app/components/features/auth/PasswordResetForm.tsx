@@ -9,6 +9,9 @@ import {
   ResetPasswordInput,
   resetPasswordSchema,
 } from '@/core/application/validation/schemas/session.schema';
+import { logger } from '@/lib/logger.utils';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { FieldError } from '../../common/FieldError';
 import { PasswordInput } from '../../common/PasswordInput';
 import { Button } from '../../ui/button';
@@ -19,30 +22,43 @@ interface ResetPasswordProps {
   className?: string;
 }
 
-export function ResetPasswordForm({ className }: ResetPasswordProps) {
+export function PasswordResetForm({ className }: ResetPasswordProps) {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors: formErrors, isSubmitting },
   } = useForm<ResetPasswordInput>({
     resolver: zodResolver(resetPasswordSchema),
-    defaultValues: { newPassword: '', newPasswordConfirmation: '' },
+    defaultValues: {
+      newPassword: '',
+      newPasswordConfirmation: '',
+    },
   });
 
-  const resetPasswordMutation = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (input: ResetPasswordInput) => resetPassword(input),
-    onSuccess: () => {
-      // TODO: Implement success case.
-    },
-    onError: (error: unknown) => {
-      // TODO: Implement error case.
-      console.error('Submit error:', error);
+    onSuccess: (data) => {
+      if (data.success) {
+        logger.success(`The password reset was successful!`);
+        toast.success(`A senha foi redefinida com sucesso!`);
+      } else {
+        // FIXME: Fix after use case implementation.
+        logger.error('[PASSWORD_RESET_FORM_ERROR]', data.message);
+        toast.error('A tentativa de redefinição de senha falhou.');
+      }
+      reset();
+      router.push('/users');
     },
   });
 
   async function onSubmit(input: ResetPasswordInput) {
-    resetPasswordMutation.mutate(input);
+    mutate(input);
   }
+
+  const isFormBusy = isPending || isSubmitting;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={className}>
@@ -78,7 +94,7 @@ export function ResetPasswordForm({ className }: ResetPasswordProps) {
         type="submit"
         size="lg"
         className="w-full cursor-pointer select-none"
-        disabled={isSubmitting}
+        disabled={isFormBusy}
       >
         {isSubmitting && <Spinner />}
         Redefinir senha

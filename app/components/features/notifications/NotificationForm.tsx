@@ -21,6 +21,7 @@ import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
 import { logger } from '@/lib/logger.utils';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
 import { MaskedInput } from '../../common/MaskedInput';
@@ -80,28 +81,24 @@ export function NotificationForm({
   }, [notification, reset]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: ({
-      input,
-      authorId,
-    }: {
-      input: NotificationFormInput;
-      authorId: string;
-    }) => {
-      const payload = isEditMode
-        ? { ...input, updatedBy: authorId }
-        : { ...input, createdBy: authorId };
-
+    mutationFn: (input: NotificationFormInput) => {
       return isEditMode && notificationId
-        ? updateNotification(notificationId, payload as UpdateNotificationInput)
-        : createNotification(payload as CreateNotificationInput);
+        ? updateNotification(notificationId, input as UpdateNotificationInput)
+        : createNotification(input as CreateNotificationInput);
     },
     onSuccess: (data) => {
       if (data.success) {
         logger.success(
-          `The notification ${isEditMode ? 'update' : 'creation'} was successfull!`
+          `The notification ${isEditMode ? 'update' : 'creation'} was successful!`
+        );
+        toast.success(
+          `A notificação foi ${isEditMode ? 'atualizada' : 'criada'} com sucesso!`
         );
       } else {
-        logger.error('[FORM_ERROR]', data.errors);
+        logger.error(`[NOTIFICATION_FORM_ERROR] ${data.message}`, data.errors);
+        toast.error(
+          `A tentativa de ${isEditMode ? 'atualizar' : 'criar'} a notificação falhou.`
+        );
       }
       reset();
       router.push('/notifications');
@@ -113,15 +110,15 @@ export function NotificationForm({
 
   async function onSubmit(input: NotificationFormInput) {
     if (!loggedUser?.id) {
-      logger.error('[FORM_ERROR] Expired session or invalid user.');
+      logger.error(
+        '[NOTIFICATION_FORM_ERROR] Expired session or invalid user.'
+      );
+      toast.error(`Sessão expirada ou usuário inválido.`);
       handleLogout();
       return;
     }
 
-    mutate({
-      input,
-      authorId: loggedUser?.id,
-    });
+    mutate(input);
   }
 
   return (

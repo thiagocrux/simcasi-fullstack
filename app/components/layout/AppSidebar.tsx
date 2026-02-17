@@ -36,100 +36,6 @@ import {
   SidebarRail,
 } from '../ui/sidebar';
 
-const data = {
-  dashboard: [
-    {
-      title: 'Dashboard',
-      url: '/dashboard',
-      icon: LayoutDashboard,
-    },
-  ],
-  medicalRecords: [
-    {
-      title: 'Pacientes',
-      url: '/patients',
-      icon: User,
-      isActive: false,
-      items: [
-        {
-          title: 'Criar novo paciente',
-          url: '/patients/new',
-          icon: UserPlus,
-        },
-      ],
-    },
-    {
-      title: 'Exames',
-      url: '/exams',
-      icon: Hospital,
-    },
-    {
-      title: 'Notificações',
-      url: '/notifications',
-      icon: ClipboardPlus,
-    },
-    {
-      title: 'Observações',
-      url: '/observations',
-      icon: SquareActivity,
-    },
-    {
-      title: 'Tratamentos',
-      url: '/treatments',
-      icon: Syringe,
-    },
-  ],
-  userManagement: [
-    {
-      title: 'Usuários',
-      url: '/users',
-      icon: Contact,
-      isActive: false,
-      items: [
-        {
-          title: 'Criar novo usuário',
-          url: '/users/new',
-          icon: UserPlus,
-        },
-      ],
-    },
-    {
-      title: 'Sessões',
-      url: '/sessions',
-      icon: DoorOpen,
-    },
-  ],
-  audit: [
-    {
-      title: 'Registros de auditoria',
-      url: '/audit-logs',
-      icon: FileLock,
-    },
-  ],
-  settings: [
-    {
-      title: 'Perfil',
-      url: '#',
-      icon: BadgeCheck,
-    },
-    {
-      title: 'Configurações',
-      url: '#',
-      icon: Settings2,
-    },
-    {
-      title: 'Suporte',
-      url: '#',
-      icon: Mail,
-    },
-    {
-      title: 'Sobre',
-      url: '#',
-      icon: Info,
-    },
-  ],
-};
-
 /**
  * Main sidebar component for the application.
  */
@@ -141,6 +47,100 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     name: user?.name || 'Carregando...',
     email: user?.email || '',
     avatar: '', // TODO: Implement avatar URL in user entity.
+  };
+
+  const data = {
+    dashboard: [
+      {
+        title: 'Dashboard',
+        url: '/dashboard',
+        icon: LayoutDashboard,
+      },
+    ],
+    medicalRecords: [
+      {
+        title: 'Pacientes',
+        url: '/patients',
+        icon: User,
+        isActive: false,
+        items: [
+          {
+            title: 'Criar novo paciente',
+            url: '/patients/new',
+            icon: UserPlus,
+          },
+        ],
+      },
+      {
+        title: 'Exames',
+        url: '/exams',
+        icon: Hospital,
+      },
+      {
+        title: 'Notificações',
+        url: '/notifications',
+        icon: ClipboardPlus,
+      },
+      {
+        title: 'Observações',
+        url: '/observations',
+        icon: SquareActivity,
+      },
+      {
+        title: 'Tratamentos',
+        url: '/treatments',
+        icon: Syringe,
+      },
+    ],
+    userManagement: [
+      {
+        title: 'Usuários',
+        url: '/users',
+        icon: Contact,
+        isActive: false,
+        items: [
+          {
+            title: 'Criar novo usuário',
+            url: '/users/new',
+            icon: UserPlus,
+          },
+        ],
+      },
+      {
+        title: 'Sessões',
+        url: '/sessions',
+        icon: DoorOpen,
+      },
+    ],
+    audit: [
+      {
+        title: 'Registros de auditoria',
+        url: '/audit-logs',
+        icon: FileLock,
+      },
+    ],
+    settings: [
+      {
+        title: 'Perfil',
+        url: `/users/${user?.id}/details`,
+        icon: BadgeCheck,
+      },
+      {
+        title: 'Configurações',
+        url: '/settings',
+        icon: Settings2,
+      },
+      {
+        title: 'Suporte',
+        url: '/support',
+        icon: Mail,
+      },
+      {
+        title: 'Sobre',
+        url: '/about',
+        icon: Info,
+      },
+    ],
   };
 
   return (

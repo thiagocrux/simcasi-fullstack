@@ -50,11 +50,11 @@ export function getUserFormSchema(isEditMode: boolean) {
     .superRefine((data, ctx) => {
       if (!isEditMode) {
         // Creation: password required
-        if (!data.password || data.password.length < 6) {
+        if (!data.password || data.password.length < 8) {
           ctx.addIssue({
             path: ['password'],
             code: 'custom',
-            message: messages.REQUIRED_MIN_LENGTH('Senha', 6),
+            message: messages.REQUIRED_MIN_LENGTH('Senha', 8),
           });
         }
         if (!data.passwordConfirmation) {
@@ -74,11 +74,11 @@ export function getUserFormSchema(isEditMode: boolean) {
       } else {
         // Edit: if password is filled, confirmation is required and must match
         if (data.password || data.passwordConfirmation) {
-          if (!data.password || data.password.length < 6) {
+          if (!data.password || data.password.length < 8) {
             ctx.addIssue({
               path: ['password'],
               code: 'custom',
-              message: messages.REQUIRED_MIN_LENGTH('Senha', 6),
+              message: messages.REQUIRED_MIN_LENGTH('Senha', 8),
             });
           }
           if (!data.passwordConfirmation) {
@@ -151,3 +151,38 @@ export const userQuerySchema = createQuerySchema(
  * Used to type filters, pagination and search parameters.
  */
 export type UserQueryInput = Partial<z.infer<typeof userQuerySchema>>;
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z
+      .string()
+      .nonempty(messages.REQUIRED_FIELD('Senha atual')),
+    newPassword: z
+      .string()
+      .nonempty(messages.REQUIRED_FIELD('Nova senha'))
+      .regex(regex.PASSWORD, messages.INVALID_PASSWORD),
+    newPasswordConfirmation: z
+      .string()
+      .nonempty(messages.REQUIRED_FIELD('Confirmação de senha')),
+  })
+  .superRefine((data, ctx) => {
+    if (data.newPassword === data.currentPassword) {
+      ctx.addIssue({
+        path: ['newPassword'],
+        code: 'custom',
+        message: messages.SAME_PASSWORD,
+      });
+    }
+
+    if (data.newPassword !== data.newPasswordConfirmation) {
+      ctx.addIssue({
+        path: ['newPasswordConfirmation'],
+        code: 'custom',
+        message: messages.UNMATCHED_PASSWORDS,
+      });
+    }
+  });
+
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+
+/* resetPasswordSchema removed from user.schema.ts (duplicated with session.schema.ts) */

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { ChangePasswordOutput } from '@/core/application/contracts/user/change-password.contract';
 import { FindUsersOutput } from '@/core/application/contracts/user/find-users.contract';
 import { GetUserOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
 import { RegisterUserOutput } from '@/core/application/contracts/user/register-user.contract';
@@ -9,6 +10,8 @@ import { RestoreUserOutput } from '@/core/application/contracts/user/restore-use
 import { UpdateUserOutput } from '@/core/application/contracts/user/update-user.contract';
 import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
+  ChangePasswordInput,
+  changePasswordSchema,
   CreateUserInput,
   UpdateUserInput,
   UserQueryInput,
@@ -18,6 +21,7 @@ import {
 import { formatZodError } from '@/core/application/validation/zod.utils';
 import { NotFoundError, ValidationError } from '@/core/domain/errors/app.error';
 import {
+  makeChangePasswordUseCase,
   makeDeleteUserUseCase,
   makeFindUsersUseCase,
   makeGetUserByIdUseCase,
@@ -179,4 +183,34 @@ export async function restoreUser(
     revalidatePath('/users');
     return user;
   });
+}
+
+/**
+ * Changes the authenticated user's password.
+ * @param input Current and new password data.
+ * @return A promise resolving to the updated user record.
+ * @throws ValidationError If validation fails.
+ */
+export async function changePassword(
+  input: ChangePasswordInput
+): Promise<ActionResponse<ChangePasswordOutput>> {
+  return withSecuredActionAndAutomaticRetry(
+    ['update:user'],
+    async (context) => {
+      const parsed = changePasswordSchema.safeParse(input);
+      if (!parsed.success) {
+        throw new ValidationError(
+          'Dados de mudança de senha inválidos.',
+          formatZodError(parsed.error)
+        );
+      }
+
+      const useCase = makeChangePasswordUseCase();
+      return await useCase.execute({
+        userId: context.userId,
+        currentPassword: parsed.data.currentPassword,
+        newPassword: parsed.data.newPassword,
+      });
+    }
+  );
 }

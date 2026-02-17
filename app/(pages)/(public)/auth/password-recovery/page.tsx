@@ -7,8 +7,8 @@ import {
   resetPassword,
 } from '@/app/actions/session.actions';
 import { LockSection } from '@/app/components/features/auth/LockSection';
+import { PasswordResetForm } from '@/app/components/features/auth/PasswordResetForm';
 import { RequestNewPasswordForm } from '@/app/components/features/auth/RequestNewPasswordForm';
-import { ResetPasswordForm } from '@/app/components/features/auth/ResetPasswordForm';
 import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
 import { Separator } from '@/app/components/ui/separator';
@@ -89,7 +89,7 @@ export default function SignInPage({
                 anteriormente.
               </p>
             </div>
-            <ResetPasswordForm />
+            <PasswordResetForm />
             <Button
               variant="link"
               className="p-0 w-min cursor-pointer select-none"

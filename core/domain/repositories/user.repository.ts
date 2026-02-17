@@ -70,6 +70,20 @@ export interface UserRepository {
   ): Promise<User>;
 
   /**
+   * Updates the password of an existing user.
+   *
+   * @param id The user ID.
+   * @param newPassword The new hashed password.
+   * @param updatedBy The user performing the update.
+   * @return The updated user.
+   */
+  updatePassword(
+    id: string,
+    newPassword: string,
+    updatedBy: string
+  ): Promise<User>;
+
+  /**
    * Finds multiple users by an array of IDs.
    *
    * @param ids List of user IDs.

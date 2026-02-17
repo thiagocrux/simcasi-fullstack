@@ -1,3 +1,4 @@
+import { ChangePasswordUseCase } from '@/core/application/use-cases/user/change-password.use-case';
 import { DeleteUserUseCase } from '@/core/application/use-cases/user/delete-user.use-case';
 import { FindUsersUseCase } from '@/core/application/use-cases/user/find-users.use-case';
 import { GetUserByIdUseCase } from '@/core/application/use-cases/user/get-user-by-id.use-case';
@@ -77,4 +78,16 @@ export function makeDeleteUserUseCase() {
  */
 export function makeRestoreUserUseCase() {
   return new RestoreUserUseCase(repository, auditLogRepository);
+}
+
+/**
+ * Factory function to create an instance of ChangePasswordUseCase.
+ * @returns A fully initialized ChangePasswordUseCase.
+ */
+export function makeChangePasswordUseCase() {
+  return new ChangePasswordUseCase(
+    repository,
+    hashProvider,
+    auditLogRepository
+  );
 }

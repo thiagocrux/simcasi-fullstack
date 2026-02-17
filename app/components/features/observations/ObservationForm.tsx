@@ -21,6 +21,7 @@ import { useLogout } from '@/hooks/useLogout';
 import { useUser } from '@/hooks/useUser';
 import { logger } from '@/lib/logger.utils';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
 import { Button } from '../../ui/button';
@@ -80,28 +81,24 @@ export function ObservationForm({
   }, [observation, reset]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: ({
-      input,
-      authorId,
-    }: {
-      input: ObservationFormInput;
-      authorId: string;
-    }) => {
-      const payload = isEditMode
-        ? { ...input, updatedBy: authorId }
-        : { ...input, createdBy: authorId };
-
+    mutationFn: (input: ObservationFormInput) => {
       return isEditMode && observationId
-        ? updateObservation(observationId, payload as UpdateObservationInput)
-        : createObservation(payload as CreateObservationInput);
+        ? updateObservation(observationId, input as UpdateObservationInput)
+        : createObservation(input as CreateObservationInput);
     },
     onSuccess: (data) => {
       if (data.success) {
         logger.success(
-          `The observation ${isEditMode ? 'update' : 'creation'} was successfull!`
+          `The observation ${isEditMode ? 'update' : 'creation'} was successful!`
+        );
+        toast.success(
+          `A observação foi ${isEditMode ? 'atualizada' : 'criada'} com sucesso!`
         );
       } else {
-        logger.error('[FORM_ERROR]', data.errors);
+        logger.error(`[OBSERVATION_FORM_ERROR] ${data.message}`, data.errors);
+        toast.error(
+          `A tentativa de ${isEditMode ? 'atualizar' : 'criar'} a observação falhou.`
+        );
       }
       reset();
       router.push('/observations');
@@ -113,15 +110,13 @@ export function ObservationForm({
 
   async function onSubmit(input: ObservationFormInput) {
     if (!loggedUser?.id) {
-      logger.error('[FORM_ERROR] Expired session or invalid user.');
+      logger.error('[OBSERVATION_FORM_ERROR] Expired session or invalid user.');
+      toast.error(`Sessão expirada ou usuário inválido.`);
       handleLogout();
       return;
     }
 
-    mutate({
-      input,
-      authorId: loggedUser?.id,
-    });
+    mutate(input);
   }
 
   return (

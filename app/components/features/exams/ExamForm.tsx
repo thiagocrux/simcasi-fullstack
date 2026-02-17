@@ -28,6 +28,7 @@ import { useUser } from '@/hooks/useUser';
 import { toCalendarISOString } from '@/lib/formatters.utils';
 import { logger } from '@/lib/logger.utils';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { Separator } from '../../ui/separator';
 
 interface ExamFormProps {
@@ -101,28 +102,24 @@ export function ExamForm({
   }, [exam, reset]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: ({
-      input,
-      authorId,
-    }: {
-      input: ExamFormInput;
-      authorId: string;
-    }) => {
-      const payload = isEditMode
-        ? { ...input, updatedBy: authorId }
-        : { ...input, createdBy: authorId };
-
+    mutationFn: (input: ExamFormInput) => {
       return isEditMode && examId
-        ? updateExam(examId, payload as UpdateExamInput)
-        : createExam(payload as CreateExamInput);
+        ? updateExam(examId, input as UpdateExamInput)
+        : createExam(input as CreateExamInput);
     },
     onSuccess: (data) => {
       if (data.success) {
         logger.success(
-          `The exam ${isEditMode ? 'update' : 'creation'} was successfull!`
+          `The exam ${isEditMode ? 'update' : 'creation'} was successful!`
+        );
+        toast.success(
+          `O exame foi ${isEditMode ? 'atualizado' : 'criado'} com sucesso!`
         );
       } else {
-        logger.error('[FORM_ERROR]', data.errors);
+        logger.error('[EXAM_FORM_ERROR]', data.errors);
+        toast.error(
+          `A tentativa de ${isEditMode ? 'atualizar' : 'criar'} o exame falhou.`
+        );
       }
       reset();
       router.push('/exams');
@@ -134,15 +131,13 @@ export function ExamForm({
 
   async function onSubmit(input: ExamFormInput) {
     if (!loggedUser?.id) {
-      logger.error('[FORM_ERROR] Expired session or invalid user.');
+      logger.error('[EXAM_FORM_ERROR] Expired session or invalid user.');
+      toast.error(`Sessão expirada ou usuário inválido.`);
       handleLogout();
       return;
     }
 
-    mutate({
-      input,
-      authorId: loggedUser?.id,
-    });
+    mutate(input);
   }
 
   return (

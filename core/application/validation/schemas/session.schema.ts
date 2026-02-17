@@ -68,25 +68,20 @@ export type RequestNewPasswordInput = z.infer<typeof requestNewPasswordSchema>;
 
 export const resetPasswordSchema = z
   .object({
-    newPassword: z.string().nonempty(messages.REQUIRED_FIELD('nova senha')),
+    newPassword: z
+      .string()
+      .nonempty(messages.REQUIRED_FIELD('Nova senha'))
+      .regex(regex.PASSWORD, messages.INVALID_PASSWORD),
     newPasswordConfirmation: z
       .string()
-      .nonempty(messages.REQUIRED_FIELD('confirmação de nova senha')),
+      .nonempty(messages.REQUIRED_FIELD('Confirmação de nova senha')),
   })
   .superRefine((data, ctx) => {
-    if (!regex.PASSWORD.test(data.newPassword)) {
-      ctx.addIssue({
-        code: 'custom',
-        message: messages.INVALID_PASSWORD,
-        path: ['password'],
-      });
-    }
-
     if (data.newPassword !== data.newPasswordConfirmation) {
       ctx.addIssue({
         code: 'custom',
         message: messages.UNMATCHED_PASSWORDS,
-        path: ['passwordConfirmation'],
+        path: ['newPasswordConfirmation'],
       });
     }
   });

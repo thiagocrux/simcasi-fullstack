@@ -30,6 +30,7 @@ import { useUser } from '@/hooks/useUser';
 import { toCalendarISOString } from '@/lib/formatters.utils';
 import { logger } from '@/lib/logger.utils';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { Combobox } from '../../common/Combobox';
 import { Datepicker } from '../../common/Datepicker';
 import { FieldError } from '../../common/FieldError';
@@ -133,28 +134,24 @@ export function PatientForm({
   }, [patient, reset]);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: ({
-      input,
-      authorId,
-    }: {
-      input: PatientFormInput;
-      authorId: string;
-    }) => {
-      const payload = isEditMode
-        ? { ...input, updatedBy: authorId }
-        : { ...input, createdBy: authorId };
-
+    mutationFn: (input: PatientFormInput) => {
       return isEditMode && patientId
-        ? updatePatient(patientId, payload as UpdatePatientInput)
-        : createPatient(payload as CreatePatientInput);
+        ? updatePatient(patientId, input as UpdatePatientInput)
+        : createPatient(input as CreatePatientInput);
     },
     onSuccess: (data) => {
       if (data.success) {
         logger.success(
-          `The patient ${isEditMode ? 'update' : 'creation'} was successfull!`
+          `The patient ${isEditMode ? 'update' : 'creation'} was successful!`
+        );
+        toast.success(
+          `The patient ${isEditMode ? 'update' : 'creation'} was successful!`
         );
       } else {
-        logger.error('[FORM_ERROR]', data.errors);
+        logger.error(`[PATIENT_FORM_ERROR] ${data.message}`, data.errors);
+        toast.error(
+          `A tentativa de ${isEditMode ? 'atualizar' : 'criar'} o paciente falhou.`
+        );
       }
       reset();
       router.push('/patients');
@@ -166,15 +163,13 @@ export function PatientForm({
 
   async function onSubmit(input: PatientFormInput) {
     if (!loggedUser?.id) {
-      logger.error('[FORM_ERROR] Expired session or invalid user.');
+      logger.error('[PATIENT_FORM_ERROR] Expired session or invalid user.');
+      toast.error(`Sessão expirada ou usuário inválido.`);
       handleLogout();
       return;
     }
 
-    mutate({
-      input,
-      authorId: loggedUser?.id,
-    });
+    mutate(input);
   }
 
   /**

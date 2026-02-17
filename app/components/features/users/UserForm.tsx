@@ -19,6 +19,7 @@ import { useRole } from '@/hooks/useRole';
 import { useUser } from '@/hooks/useUser';
 import { logger } from '@/lib/logger.utils';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { Combobox } from '../../common/Combobox';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
@@ -67,35 +68,30 @@ export function UserForm({
   });
 
   const { data: user, isPending: isFetchingUser } = useQuery({
-    queryKey: ['find-users'],
+    queryKey: ['find-users', userId],
     queryFn: async () => await getUser(userId as string),
     enabled: isEditMode,
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: ({
-      input,
-      authorId,
-    }: {
-      input: UserFormInput;
-      authorId: string;
-    }) => {
-      const payload = isEditMode
-        ? { ...input, updatedBy: authorId }
-        : { ...input, createdBy: authorId };
-
+    mutationFn: (input: UserFormInput) => {
       return isEditMode && userId
-        ? updateUser(userId, payload as UpdateUserInput)
-        : createUser(payload as CreateUserInput);
+        ? updateUser(userId, input as UpdateUserInput)
+        : createUser(input as CreateUserInput);
     },
     onSuccess: (data) => {
-      console.log(data);
       if (data.success) {
         logger.success(
-          `The user ${isEditMode ? 'update' : 'creation'} was successfull!`
+          `The user ${isEditMode ? 'update' : 'creation'} was successful!`
+        );
+        toast.success(
+          `O usuário foi ${isEditMode ? 'atualizado' : 'criado'} com sucesso!`
         );
       } else {
-        logger.error('[FORM_ERROR]', data.message);
+        logger.error(`[USER_FORM_ERROR] ${data.message}`, data.errors);
+        toast.error(
+          `A tentativa de ${isEditMode ? 'atualizar' : 'criar'} o usuário falhou.`
+        );
       }
       reset();
       router.push('/users');
@@ -110,7 +106,8 @@ export function UserForm({
 
   async function onSubmit(input: UserFormInput) {
     if (!loggedUser?.id) {
-      logger.error('[FORM_ERROR] Expired session or invalid user.');
+      logger.error('[USER_FORM_ERROR] Expired session or invalid user.');
+      toast.error(`Sessão expirada ou usuário inválido.`);
       handleLogout();
       return;
     }
@@ -118,17 +115,14 @@ export function UserForm({
     const selectedRole = ROLE_OPTIONS.find((role) => role.id === input.roleId);
     if (!selectedRole) {
       logger.error(
-        '[FORM_ERROR] The selected role is either invalid or not found.'
+        '[USER_FORM_ERROR] The selected role is either invalid or not found.'
       );
+      toast.error('O cargo selecionado é inválido ou não foi encontrado.');
       return;
     }
 
     const { name, email, roleId } = input;
-
-    mutate({
-      input: isEditMode ? { name, email, roleId } : input,
-      authorId: loggedUser?.id,
-    });
+    mutate(isEditMode ? { name, email, roleId } : input);
   }
 
   useEffect(() => {
