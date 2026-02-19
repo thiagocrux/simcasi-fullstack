@@ -79,10 +79,7 @@ export default async function PasswordRecoveryPage({
                 className="p-0 w-min cursor-pointer select-none"
                 tabIndex={-1}
               >
-                <Link
-                  href="/auth/sign-in"
-                  className="flex items-center gap-x-1"
-                >
+                <Link href="/auth/login" className="flex items-center gap-x-1">
                   <ArrowLeft />
                   <span>Voltar para o login</span>
                 </Link>
@@ -106,10 +103,7 @@ export default async function PasswordRecoveryPage({
                 variant="link"
                 className="p-0 w-min cursor-pointer select-none"
               >
-                <Link
-                  href="/auth/sign-in"
-                  className="flex items-center gap-x-1"
-                >
+                <Link href="/auth/login" className="flex items-center gap-x-1">
                   <ArrowLeft />
                   <span>Voltar para o login</span>
                 </Link>
@@ -134,7 +128,7 @@ export default async function PasswordRecoveryPage({
               </p>
             </div>
             <Button className="w-full cursor-pointer select-none">
-              <Link href="/auth/sign-in">Voltar para o login</Link>
+              <Link href="/auth/login">Voltar para o login</Link>
             </Button>
           </>
         )}
@@ -170,10 +164,7 @@ export default async function PasswordRecoveryPage({
                 variant="link"
                 className="p-0 w-min cursor-pointer select-none"
               >
-                <Link
-                  href="/auth/sign-in"
-                  className="flex items-center gap-x-1"
-                >
+                <Link href="/auth/login" className="flex items-center gap-x-1">
                   <ArrowLeft />
                   <span>Voltar para o login</span>
                 </Link>

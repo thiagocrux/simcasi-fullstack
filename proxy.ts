@@ -49,8 +49,8 @@ export async function proxy(request: NextRequest) {
         { status: 401 }
       );
     }
-    // For UI requests, redirect to sign-in page.
-    return NextResponse.redirect(new URL('/auth/sign-in', request.url));
+    // For UI requests, redirect to login page.
+    return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
   // 4. Authenticated or refreshable session: allow request to proceed.

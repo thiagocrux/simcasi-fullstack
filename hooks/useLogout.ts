@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
 
-import { signOutUser } from '@/app/actions/session.actions';
+import { logOutUser } from '@/app/actions/session.actions';
 import { useAppDispatch } from '@/hooks/redux.hooks';
 import { logger } from '@/lib/logger.utils';
 import { clearCredentials } from '@/stores/slices/auth.slice';
@@ -28,24 +28,24 @@ export function useLogout() {
     dispatch(clearCredentials());
 
     // 2. Clear cookies and server-side session.
-    logger.info('[CLIENT_LOGOUT] Calling Server Action signOutUser...');
+    logger.info('[CLIENT_LOGOUT] Calling Server Action logOutUser...');
     try {
-      const response = await signOutUser();
+      const response = await logOutUser();
       if (response.success) {
-        logger.success('[CLIENT_LOGOUT] signOutUser success.');
+        logger.success('[CLIENT_LOGOUT] logOutUser success.');
       } else {
         logger.error(
-          '[CLIENT_LOGOUT] signOutUser logic failed:',
+          '[CLIENT_LOGOUT] logOutUser logic failed:',
           response.error
         );
       }
     } catch (error) {
-      logger.error('[CLIENT_LOGOUT] signOutUser unexpected failure:', error);
+      logger.error('[CLIENT_LOGOUT] logOutUser unexpected failure:', error);
     }
 
     // 3. Redirect to login page.
-    logger.info('[CLIENT_LOGOUT] Redirecting to /auth/sign-in...');
-    router.push('/auth/sign-in');
+    logger.info('[CLIENT_LOGOUT] Redirecting to /auth/login...');
+    router.push('/auth/login');
   }
 
   return { handleLogout };

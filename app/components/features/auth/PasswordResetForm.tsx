@@ -48,7 +48,7 @@ export function PasswordResetForm({ className }: ResetPasswordProps) {
         logger.success(`The password reset was successful!`);
         toast.success(`A senha foi redefinida com sucesso!`);
         reset();
-        router.push('/auth/sign-in');
+        router.push('/auth/login');
       } else {
         toast.error(
           data.message || 'A tentativa de redefinição de senha falhou.'

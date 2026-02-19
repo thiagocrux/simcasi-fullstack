@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 import { LockSection } from '@/app/components/features/auth/LockSection';
-import { SignInForm } from '@/app/components/features/auth/SignInForm';
+import { LoginForm } from '@/app/components/features/auth/LoginForm';
 import { Card } from '@/app/components/ui/card';
 import { Separator } from '@/app/components/ui/separator';
 
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: '',
 };
 
-export default function SignInPage() {
+export default function LoginPage() {
   return (
     <Card className="flex md:flex-row flex-col items-stretch gap-0 my-auto p-0 w-full max-w-md md:max-w-4xl">
       <div className="flex flex-col gap-y-6 p-6 md:p-12 w-full">
@@ -20,7 +20,7 @@ export default function SignInPage() {
             Insira suas credenciais para acessar.
           </p>
         </div>
-        <SignInForm />
+        <LoginForm />
       </div>
       <Separator orientation="vertical" className="hidden md:flex gap-0" />
       <LockSection className="p-6 md:p-12" />

@@ -7,7 +7,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { findRoles } from '@/app/actions/role.actions';
-import { signInUser } from '@/app/actions/session.actions';
+import { logInUser } from '@/app/actions/session.actions';
 import { messages } from '@/core/application/validation/messages';
 import {
   CreateSessionInput,
@@ -25,11 +25,11 @@ import { Field, FieldGroup, FieldLabel } from '../../ui/field';
 import { Input } from '../../ui/input';
 import { Spinner } from '../../ui/spinner';
 
-interface SignInFormProps {
+interface LoginFormProps {
   className?: string;
 }
 
-export function SignInForm({ className }: SignInFormProps) {
+export function LoginForm({ className }: LoginFormProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -44,7 +44,7 @@ export function SignInForm({ className }: SignInFormProps) {
   });
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (input: CreateSessionInput) => signInUser(input),
+    mutationFn: (input: CreateSessionInput) => logInUser(input),
     onSuccess: async (response) => {
       if (response.success && response.data) {
         const roleList = await findRoles({});
@@ -79,7 +79,7 @@ export function SignInForm({ className }: SignInFormProps) {
       }
     },
     onError: (error: unknown) => {
-      logger.error('[SIGNIN ERROR]', error);
+      logger.error('[LOGIN ERROR]', error);
       toast.error('Erro de comunicação com o servidor.');
     },
   });
@@ -124,12 +124,15 @@ export function SignInForm({ className }: SignInFormProps) {
               control={control}
               render={({ field }) => (
                 <>
-                  <Checkbox
-                    id="rememberMe"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <FieldLabel htmlFor="rememberMe" className="font-normal">
+                  <FieldLabel
+                    htmlFor="rememberMe"
+                    className="font-normal cursor-pointer"
+                  >
+                    <Checkbox
+                      id="rememberMe"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                     Mantenha-me logado
                   </FieldLabel>
                   {formErrors.rememberMe && (

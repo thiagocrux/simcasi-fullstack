@@ -32,7 +32,7 @@ import { logger } from '@/lib/logger.utils';
  * @param input The user's login credentials and session preferences.
  * @return A success object with user and permission data, or an error response.
  */
-export async function signInUser(input: CreateSessionInput) {
+export async function logInUser(input: CreateSessionInput) {
   try {
     const parsed = sessionSchema.safeParse(input);
     if (!parsed.success) {
@@ -108,7 +108,7 @@ export async function signInUser(input: CreateSessionInput) {
  * Clears authentication cookies and attempts to invalidate the session record in the database.
  * @return A promise that resolves to a success indicator.
  */
-export async function signOutUser() {
+export async function logOutUser() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('access_token')?.value;
