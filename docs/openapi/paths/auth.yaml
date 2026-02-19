@@ -110,3 +110,80 @@ logout:
         description: Session successfully terminated and tokens invalidated (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
+
+requestPasswordReset:
+  post:
+    operationId: requestPasswordReset
+    summary: Request password reset
+    description: Initiates the recovery flow by sending a tokenized email to a registered user.
+    tags:
+      - Authentication
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/auth.yaml#/RequestPasswordResetRequest'
+    responses:
+      '200':
+        description: Request processed (OK).
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: 'Success'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
+
+resetPassword:
+  post:
+    operationId: resetPassword
+    summary: Reset password
+    description: Finalizes the recovery process by updating the user credentials with a new password and valid token.
+    tags:
+      - Authentication
+    security: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/auth.yaml#/ResetPasswordRequest'
+    responses:
+      '200':
+        description: Password updated successfully (OK).
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/auth.yaml#/UserBase'
+      '400':
+        $ref: '../components/responses.yaml#/ValidationError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+validateResetToken:
+  get:
+    operationId: validateResetToken
+    summary: Validate recovery token
+    description: Verifies before rendering the UI if the provided token is still authorized for a reset operation.
+    tags:
+      - Authentication
+    parameters:
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Token validation result (OK).
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/auth.yaml#/ValidateResetTokenResponse'
+      '400':
+        $ref: '../components/responses.yaml#/ValidationError'

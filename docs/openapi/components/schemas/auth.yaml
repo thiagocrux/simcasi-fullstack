@@ -76,3 +76,43 @@ UserBase:
       type: string
       format: uuid
       description: Unique identifier for the assigned RBAC role.
+
+RequestPasswordResetRequest:
+  type: object
+  required:
+    - email
+  properties:
+    email:
+      type: string
+      format: email
+      description: Registered email address of the user who requested a reset.
+      example: 'dr.thiago@simcasi.gov.br'
+
+ResetPasswordRequest:
+  type: object
+  required:
+    - token
+    - newPassword
+  properties:
+    token:
+      type: string
+      description: Unique recovery token sent to the user email.
+      example: '550e8400-e29b-41d4-a716-446655440000'
+    newPassword:
+      type: string
+      format: password
+      description: The new password to be updated in the user account.
+      example: 'NewSecurePass#2026'
+
+ValidateResetTokenResponse:
+  type: object
+  properties:
+    isValid:
+      type: boolean
+      description: Indicates if the token exists, is not used, and hasn't expired.
+      example: true
+    email:
+      type: string
+      format: email
+      description: The user email associated with the token (returned if valid).
+      example: 'dr.thiago@simcasi.gov.br'

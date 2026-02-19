@@ -69,6 +69,12 @@ paths:
     $ref: './paths/auth.yaml#/refresh'
   /auth/logout:
     $ref: './paths/auth.yaml#/logout'
+  /auth/request-password-reset:
+    $ref: './paths/auth.yaml#/requestPasswordReset'
+  /auth/reset-password:
+    $ref: './paths/auth.yaml#/resetPassword'
+  /auth/validate-reset-token:
+    $ref: './paths/auth.yaml#/validateResetToken'
   /users:
     $ref: './paths/users.yaml#/collection'
   /users/{id}:
