@@ -23,4 +23,4 @@ We have decided to use **`jose`** as the primary library for JWT operations (sig
 
 - **Performance**: Improved cold start times in serverless environments due to the lightweight nature of the library.
 - **Learning Curve**: The API differs slightly from the legacy `jsonwebtoken` (e.g., usage of `Uint8Array` for keys), which may require a small adjustment for developers accustomed to the older library.
-- **Portability**: The authentication logic in `core/infrastructure/providers/jose-token.provider.ts` can be reused in any JavaScript environment without modification.
+- **Portability**: The authentication logic in `core/infrastructure/providers/token.jose.provider.ts` can be reused in any JavaScript environment without modification.

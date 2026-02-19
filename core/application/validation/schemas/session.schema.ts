@@ -58,16 +58,19 @@ export type SessionFormInput = z.infer<typeof sessionSchema>;
 
 export type CreateSessionInput = z.infer<typeof sessionSchema>;
 
-export const requestNewPasswordSchema = z.object({
+export const RequestPasswordResetSchema = z.object({
   registeredEmail: z
     .email(messages.REQUIRED_FIELD('E-mail'))
     .nonempty(messages.REQUIRED_FIELD('E-mail')),
 });
 
-export type RequestNewPasswordInput = z.infer<typeof requestNewPasswordSchema>;
+export type RequestPasswordResetInput = z.infer<
+  typeof RequestPasswordResetSchema
+>;
 
 export const resetPasswordSchema = z
   .object({
+    token: z.string().nonempty(messages.REQUIRED_FIELD('Token')),
     newPassword: z
       .string()
       .nonempty(messages.REQUIRED_FIELD('Nova senha'))

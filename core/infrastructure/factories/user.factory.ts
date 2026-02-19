@@ -3,19 +3,25 @@ import { DeleteUserUseCase } from '@/core/application/use-cases/user/delete-user
 import { FindUsersUseCase } from '@/core/application/use-cases/user/find-users.use-case';
 import { GetUserByIdUseCase } from '@/core/application/use-cases/user/get-user-by-id.use-case';
 import { RegisterUserUseCase } from '@/core/application/use-cases/user/register-user.use-case';
+import { RequestPasswordResetUseCase } from '@/core/application/use-cases/user/request-password-reset.use-case';
+import { ResetPasswordUseCase } from '@/core/application/use-cases/user/reset-password.use-case';
 import { RestoreUserUseCase } from '@/core/application/use-cases/user/restore-user.use-case';
 import { UpdateUserUseCase } from '@/core/application/use-cases/user/update-user.use-case';
+import { ValidatePasswordResetTokenUseCase } from '@/core/application/use-cases/user/validate-password-reset-token.use-case';
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
+import { PrismaPasswordResetTokenRepository } from '../repositories/prisma/password-reset-token.prisma.repository';
 import { PrismaRoleRepository } from '../repositories/prisma/role.prisma.repository';
 import { PrismaSessionRepository } from '../repositories/prisma/session.prisma.repository';
 import { PrismaUserRepository } from '../repositories/prisma/user.prisma.repository';
+import { makeMailProvider } from './mail.factory';
 import { makeHashProvider } from './security.factory';
 
-const repository = new PrismaUserRepository();
+const userRepository = new PrismaUserRepository();
 const roleRepository = new PrismaRoleRepository();
 const hashProvider = makeHashProvider();
 const auditLogRepository = new PrismaAuditLogRepository();
 const sessionRepository = new PrismaSessionRepository();
+const resetTokenRepository = new PrismaPasswordResetTokenRepository();
 
 /**
  * Factory function to create an instance of RegisterUserUseCase.
@@ -24,7 +30,7 @@ const sessionRepository = new PrismaSessionRepository();
  */
 export function makeRegisterUserUseCase() {
   return new RegisterUserUseCase(
-    repository,
+    userRepository,
     roleRepository,
     hashProvider,
     auditLogRepository
@@ -36,7 +42,7 @@ export function makeRegisterUserUseCase() {
  * @return A fully initialized FindUsersUseCase.
  */
 export function makeFindUsersUseCase() {
-  return new FindUsersUseCase(repository);
+  return new FindUsersUseCase(userRepository);
 }
 
 /**
@@ -44,7 +50,7 @@ export function makeFindUsersUseCase() {
  * @return A fully initialized GetUserByIdUseCase.
  */
 export function makeGetUserByIdUseCase() {
-  return new GetUserByIdUseCase(repository);
+  return new GetUserByIdUseCase(userRepository);
 }
 
 /**
@@ -53,7 +59,7 @@ export function makeGetUserByIdUseCase() {
  */
 export function makeUpdateUserUseCase() {
   return new UpdateUserUseCase(
-    repository,
+    userRepository,
     roleRepository,
     hashProvider,
     auditLogRepository
@@ -66,7 +72,7 @@ export function makeUpdateUserUseCase() {
  */
 export function makeDeleteUserUseCase() {
   return new DeleteUserUseCase(
-    repository,
+    userRepository,
     sessionRepository,
     auditLogRepository
   );
@@ -77,7 +83,44 @@ export function makeDeleteUserUseCase() {
  * @return A fully initialized RestoreUserUseCase.
  */
 export function makeRestoreUserUseCase() {
-  return new RestoreUserUseCase(repository, auditLogRepository);
+  return new RestoreUserUseCase(userRepository, auditLogRepository);
+}
+
+/**
+ * Factory function to create an instance of RequestPasswordResetUseCase.
+ * @returns A fully initialized RequestPasswordResetUseCase.
+ */
+export function makeRequestPasswordResetUseCase() {
+  return new RequestPasswordResetUseCase(
+    userRepository,
+    resetTokenRepository,
+    auditLogRepository,
+    makeMailProvider()
+  );
+}
+
+/**
+ * Factory function to create an instance of ResetPasswordUseCase.
+ * @returns A fully initialized ResetPasswordUseCase.
+ */
+export function makeResetPasswordUseCase() {
+  return new ResetPasswordUseCase(
+    userRepository,
+    resetTokenRepository,
+    hashProvider,
+    auditLogRepository
+  );
+}
+
+/**
+ * Factory function to create an instance of ValidatePasswordResetTokenUseCase.
+ * @returns A fully initialized ValidatePasswordResetTokenUseCase.
+ */
+export function makeValidatePasswordResetTokenUseCase() {
+  return new ValidatePasswordResetTokenUseCase(
+    resetTokenRepository,
+    userRepository
+  );
 }
 
 /**
@@ -86,7 +129,7 @@ export function makeRestoreUserUseCase() {
  */
 export function makeChangePasswordUseCase() {
   return new ChangePasswordUseCase(
-    repository,
+    userRepository,
     hashProvider,
     auditLogRepository
   );

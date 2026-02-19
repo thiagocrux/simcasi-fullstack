@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 
-import { requestNewPassword } from '@/app/actions/session.actions';
+import { requestPasswordReset } from '@/app/actions/session.actions';
 import { FieldError } from '../../common/FieldError';
 import { Button } from '../../ui/button';
 import { Field, FieldLabel } from '../../ui/field';
@@ -12,39 +12,47 @@ import { Input } from '../../ui/input';
 import { Spinner } from '../../ui/spinner';
 
 import {
-  RequestNewPasswordInput,
-  requestNewPasswordSchema,
+  RequestPasswordResetInput,
+  RequestPasswordResetSchema,
 } from '@/core/application/validation/schemas/session.schema';
 
-interface RequestNewPasswordFormProps {
+interface RequestPasswordResetFormProps {
   className?: string;
 }
 
-export function RequestNewPasswordForm({
+export function RequestPasswordResetForm({
   className,
-}: RequestNewPasswordFormProps) {
+}: RequestPasswordResetFormProps) {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors: formErrors, isSubmitting },
-  } = useForm<RequestNewPasswordInput>({
-    resolver: zodResolver(requestNewPasswordSchema),
+  } = useForm<RequestPasswordResetInput>({
+    resolver: zodResolver(RequestPasswordResetSchema),
     defaultValues: { registeredEmail: '' },
   });
 
-  const requestNewPasswordMutation = useMutation({
-    mutationFn: (input: RequestNewPasswordInput) => requestNewPassword(input),
-    onSuccess: () => {
-      // TODO: Implement success case.
+  const RequestPasswordResetMutation = useMutation({
+    mutationFn: (input: RequestPasswordResetInput) =>
+      requestPasswordReset(input),
+    onSuccess: (data) => {
+      if (data.success) {
+        const email = getValues('registeredEmail');
+        window.location.href = `/auth/password-recovery?variant=success&email=${encodeURIComponent(
+          email
+        )}`;
+      } else {
+        console.error('Submit error:', data.message);
+      }
     },
     onError: (error: unknown) => {
-      // TODO: Implement error case.
       console.error('Submit error:', error);
     },
   });
 
-  async function onSubmit(input: RequestNewPasswordInput) {
-    requestNewPasswordMutation.mutate(input);
+  async function onSubmit(input: RequestPasswordResetInput) {
+    RequestPasswordResetMutation.mutate(input);
   }
 
   return (

@@ -10,7 +10,7 @@ import {
   resetPasswordSchema,
 } from '@/core/application/validation/schemas/session.schema';
 import { logger } from '@/lib/logger.utils';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { FieldError } from '../../common/FieldError';
 import { PasswordInput } from '../../common/PasswordInput';
@@ -24,6 +24,8 @@ interface ResetPasswordProps {
 
 export function PasswordResetForm({ className }: ResetPasswordProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token') || '';
 
   const {
     register,
@@ -33,6 +35,7 @@ export function PasswordResetForm({ className }: ResetPasswordProps) {
   } = useForm<ResetPasswordInput>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
+      token,
       newPassword: '',
       newPasswordConfirmation: '',
     },
@@ -44,13 +47,21 @@ export function PasswordResetForm({ className }: ResetPasswordProps) {
       if (data.success) {
         logger.success(`The password reset was successful!`);
         toast.success(`A senha foi redefinida com sucesso!`);
+        reset();
+        router.push('/auth/sign-in');
       } else {
-        // FIXME: Fix after use case implementation.
-        logger.error('[PASSWORD_RESET_FORM_ERROR]', data.message);
-        toast.error('A tentativa de redefinição de senha falhou.');
+        toast.error(
+          data.message || 'A tentativa de redefinição de senha falhou.'
+        );
+
+        // If the error indicates token issues, we could redirect to the expired page.
+        if (
+          data.message?.toLowerCase().includes('token') ||
+          data.message?.toLowerCase().includes('expirado')
+        ) {
+          router.push('/auth/password-recovery?variant=expired');
+        }
       }
-      reset();
-      router.push('/users');
     },
   });
 
@@ -61,8 +72,12 @@ export function PasswordResetForm({ className }: ResetPasswordProps) {
   const isFormBusy = isPending || isSubmitting;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={className}>
-      <FieldGroup>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className={className ?? 'flex flex-col gap-6'}
+    >
+      <input type="hidden" {...register('token')} />
+      <FieldGroup className="flex flex-col gap-4">
         <Field>
           <FieldLabel>Nova senha</FieldLabel>
           <PasswordInput

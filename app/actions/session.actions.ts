@@ -5,9 +5,9 @@ import { cookies } from 'next/headers';
 
 import {
   CreateSessionInput,
-  RequestNewPasswordInput,
+  RequestPasswordResetInput,
+  RequestPasswordResetSchema,
   ResetPasswordInput,
-  requestNewPasswordSchema,
   resetPasswordSchema,
   sessionSchema,
 } from '@/core/application/validation/schemas/session.schema';
@@ -18,6 +18,10 @@ import {
   makeLogoutUseCase,
   makeValidateSessionUseCase,
 } from '@/core/infrastructure/factories/session.factory';
+import {
+  makeRequestPasswordResetUseCase,
+  makeResetPasswordUseCase,
+} from '@/core/infrastructure/factories/user.factory';
 import { requestContextStore } from '@/core/infrastructure/lib/request-context';
 import { getAuditMetadata, handleActionError } from '@/lib/actions.utils';
 import { logger } from '@/lib/logger.utils';
@@ -142,14 +146,32 @@ export async function signOutUser() {
  * @param input The user's identification (e.g., email or username) to request a reset.
  * @return A success indicator or detailed error messages.
  */
-export async function requestNewPassword(input: RequestNewPasswordInput) {
+export async function requestPasswordReset(input: RequestPasswordResetInput) {
   try {
-    const parsed = requestNewPasswordSchema.safeParse(input);
+    const parsed = RequestPasswordResetSchema.safeParse(input);
     if (!parsed.success) {
-      return { success: false, errors: formatZodError(parsed.error) };
+      return {
+        success: false,
+        message: 'E-mail inválido',
+        errors: formatZodError(parsed.error),
+      };
     }
 
-    return { success: true };
+    const { ipAddress, userAgent } = await getAuditMetadata();
+    const useCase = makeRequestPasswordResetUseCase();
+
+    const response = await requestContextStore.run(
+      {
+        userId: '',
+        roleId: '',
+        roleCode: '',
+        ipAddress,
+        userAgent,
+      },
+      () => useCase.execute({ email: parsed.data.registeredEmail })
+    );
+
+    return { success: true, message: response.message };
   } catch (error: any) {
     return handleActionError(error);
   }
@@ -164,10 +186,35 @@ export async function resetPassword(input: ResetPasswordInput) {
   try {
     const parsed = resetPasswordSchema.safeParse(input);
     if (!parsed.success) {
-      return { success: false, errors: formatZodError(parsed.error) };
+      return {
+        success: false,
+        message: 'A redefinição de senha falhou',
+        errors: formatZodError(parsed.error),
+      };
     }
 
-    return { success: true };
+    const { ipAddress, userAgent } = await getAuditMetadata();
+    const useCase = makeResetPasswordUseCase();
+
+    await requestContextStore.run(
+      {
+        userId: '',
+        roleId: '',
+        roleCode: '',
+        ipAddress,
+        userAgent,
+      },
+      () =>
+        useCase.execute({
+          token: parsed.data.token,
+          newPassword: parsed.data.newPassword,
+        })
+    );
+
+    return {
+      success: true,
+      message: 'Sua senha foi redefinida com sucesso!',
+    };
   } catch (error: any) {
     return handleActionError(error);
   }

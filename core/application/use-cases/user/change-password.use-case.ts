@@ -91,7 +91,7 @@ export class ChangePasswordUseCase implements UseCase<
 
     // 7. Register audit log.
     await this.auditLogRepository.create({
-      action: 'UPDATE',
+      action: 'PASSWORD_CHANGE',
       entityName: 'USER',
       entityId: userId,
       userId: executorId,

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { makeLogoutUseCase } from '@/core/infrastructure/factories/session.factory';
-import { JoseTokenProvider } from '@/core/infrastructure/providers/jose-token.provider';
+import { JoseTokenProvider } from '@/core/infrastructure/providers/token.jose.provider';
 
 /**
  * [POST] /api/auth/logout

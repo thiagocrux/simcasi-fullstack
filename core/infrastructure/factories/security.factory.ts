@@ -1,5 +1,5 @@
-import { BcryptHashProvider } from '../providers/bcrypt-hash.provider';
-import { JoseTokenProvider } from '../providers/jose-token.provider';
+import { BcryptHashProvider } from '../providers/hash.bcrypt.provider';
+import { JoseTokenProvider } from '../providers/token.jose.provider';
 
 /**
  * Singletons for security providers to preserve state and reduce overhead.

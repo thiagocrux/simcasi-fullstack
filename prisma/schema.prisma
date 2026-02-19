@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider   = "prisma-client-js"
   engineType = "client"
@@ -13,16 +7,9 @@ datasource db {
   provider = "postgresql"
 }
 
-// ARCHITECTURE NOTE:
-// Purpose: Role domain record describing an application role with permissions.
-// Behavior:
-// - Soft deletes: `deleted_at` used for logical deletion.
-// - Uniqueness invariants: `code` is unique across ALL records (active and deleted).
-// LOGIC:
-// - If a role with a deleted `code` is re-created, the backend should RESTORE the old record instead of inserting a new one.
-// - A direct INSERT for an existing unique `code` (even soft-deleted) will fail with a UNIQUE constraint violation.
-// Impact / Considerations:
-// - When changing role codes, plan for migration and data-backfill for relations.
+/// @description Role domain record representing application roles.
+/// @note Soft-deleted `code` must be restored instead of re-inserted.
+/// @invariant `code` is unique across active and deleted records.
 model Role {
   id        String    @id @default(uuid()) @db.Uuid
   code      String    @unique
@@ -42,16 +29,9 @@ model Role {
   @@map("roles")
 }
 
-// ARCHITECTURE NOTE:
-// Purpose: Permission domain record representing system capabilities that can be assigned to Roles.
-// Behavior:
-// - Soft deletes: `deleted_at` used for logical deletion.
-// - Uniqueness invariants: `code` is unique across ALL records (active and deleted).
-// LOGIC:
-// - If a permission with a deleted `code` is re-created, the backend should RESTORE the old record instead of inserting a new one.
-// - A direct INSERT for an existing unique `code` (even soft-deleted) will fail with a UNIQUE constraint violation.
-// Impact / Considerations:
-// - Changing or retiring permission codes requires careful migration and audit logging.
+/// @description Permissions assigned to roles to define system capabilities.
+/// @note Soft-deleted `code` must be restored instead of re-inserted.
+/// @invariant `code` is unique across active and deleted records.
 model Permission {
   id        String    @id @default(uuid()) @db.Uuid
   code      String    @unique
@@ -70,15 +50,8 @@ model Permission {
   @@map("permissions")
 }
 
-// ARCHITECTURE NOTE:
-// Purpose: Join table linking Roles and Permissions for many-to-many relationships.
-// Behavior:
-// - Lifecycle: This table is a normalized join table that does not contain `deleted_at`; changes are represented by row add/remove operations.
-// LOGIC:
-// - There is no soft-delete behavior here; relations can be removed or re-created directly.
-// - Referential integrity should be enforced via foreign key constraints and cascade behavior in migrations.
-// Impact / Considerations:
-// - Consider audit logs for role/permission changes and the potential need for soft-deletes elsewhere if needed.
+/// @description Join table for many-to-many relationship between Role and Permission.
+/// @note No soft-delete; rows are added/removed directly.
 model RolePermission {
   roleId       String @map("role_id") @db.Uuid
   permissionId String @map("permission_id") @db.Uuid
@@ -92,16 +65,9 @@ model RolePermission {
   @@map("roles_permissions")
 }
 
-// ARCHITECTURE NOTE:
-// Purpose: User domain record representing application users and their credentials.
-// Behavior:
-// - Soft deletes: `deleted_at` used for logical deletion.
-// - Uniqueness invariants: `email` is unique across ALL records (active and deleted).
-// LOGIC:
-// - If a user attempts to register with an email that exists on a deleted account, the backend should RESTORE the old account instead of inserting a new one.
-// - Insert of duplicate `email` (even on soft-deleted records) will fail with a UNIQUE constraint error.
-// Impact / Considerations:
-// - Audit/restore flows MUST enforce password resets and session invalidation when restoring accounts.
+/// @description User domain record representing application users and credentials.
+/// @note Soft-deleted accounts must be restored on re-registration.
+/// @invariant `email` is unique across active and deleted records.
 model User {
   id        String    @id @default(uuid()) @db.Uuid
   name      String
@@ -121,7 +87,7 @@ model User {
 
   sessions Session[]
 
-  // Authorship relations
+  // Authorship relations.
   rolesCreated         Role[]         @relation("RolesCreated")
   rolesUpdated         Role[]         @relation("RolesUpdated")
   permissionsCreated   Permission[]   @relation("PermissionsCreated")
@@ -139,22 +105,15 @@ model User {
   treatmentsCreated    Treatment[]    @relation("TreatmentsCreated")
   treatmentsUpdated    Treatment[]    @relation("TreatmentsUpdated")
 
-  auditLogs AuditLog[]
+  auditLogs           AuditLog[]
+  passwordResetTokens PasswordResetToken[]
 
   @@index([roleId], name: "idx_users_role_id")
   @@map("users")
 }
 
-// ARCHITECTURE NOTE:
-// Purpose: Session domain record for user sessions (login tokens and metadata).
-// Behavior:
-// - Soft deletes: `deleted_at` used for logical deletion.
-// - Transient: Sessions are transient but stored for audit, revocation and security policies.
-// LOGIC:
-// - Sessions MUST be invalidated when the related User is deleted or restored where security demands it.
-// - Independent soft-deletes of a Session should not be restored when the related User is restored.
-// Impact / Considerations:
-// - Consider expiring sessions and revocation lists for security; index `expires_at` for efficient cleanup.
+/// @description User sessions for authentication and security tracking.
+/// @note Sessions are transient; must be invalidated on user deletion/restore.
 model Session {
   id        String    @id @default(uuid()) @db.Uuid
   userId    String    @map("user_id") @db.Uuid
@@ -172,24 +131,27 @@ model Session {
   @@map("sessions")
 }
 
-// ARCHITECTURE NOTE:
-// Purpose: Patient domain record storing personal and contact info. This is the canonical patient entity.
-// Behavior:
-// - Soft deletes: `deleted_at` is used for logical deletion.
-// - Uniqueness invariants: `cpf` and `sus_card_number` are unique across ALL records (active and deleted).
-// LOGIC:
-// - If a patient is re-registered, the backend should RESTORE the old record instead of inserting a new one.
-// - Insert of a patient with duplicate `cpf` or `sus_card_number` will fail with a UNIQUE constraint violation.
-// CASCADING SOFT DELETES:
-// - When a Patient is soft-deleted (deleted_at set), backend MUST cascade or set `deleted_at` on related records:
-//   1. exams
-//   2. notifications
-//   3. observations
-//   4. treatments
-// RESTORE LOGIC:
-// - When restoring a Patient, only restore related records deleted as part of that same cascade operation (or within a small time window). Records that were deleted before should remain deleted.
-// Impact / Considerations:
-// - Indexes should be evaluated for queries using `deleted_at` and patient relations for performance.
+/// @description Transient tokens for password recovery flows.
+/// @note Single-use tokens with short expiration.
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  token     String    @unique
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index(userId, name: "idx_password_reset_tokens_user_id")
+  @@map("password_reset_tokens")
+}
+
+/// @description Canonical Patient entity storing personal and clinical identifiers.
+/// @note Soft-delete cascades to exams, notifications, observations, and treatments.
+/// @invariant `cpf` and `sus_card_number` are unique across all records.
 model Patient {
   id             String    @id @default(uuid()) @db.Uuid
   susCardNumber  String    @unique @map("sus_card_number")
@@ -235,18 +197,8 @@ model Patient {
   @@map("patients")
 }
 
-// ARCHITECTURE NOTE:
-// Purpose: Exam domain record representing tests performed for Patients.
-// Behavior:
-// - Soft deletes: `deleted_at` used for logical deletion.
-// - Cascade: Typically cascade-soft-deleted when the related `Patient` is soft-deleted.
-// LOGIC:
-// - If an Exam is soft-deleted independently (not via a Patient cascade), it MUST remain deleted when the related Patient is later restored.
-// - When a Patient is soft-deleted, the backend MUST update `deleted_at` for related Exams.
-// RESTORE LOGIC:
-// - When restoring a Patient, only restore Exams that were deleted in the same cascade operation (or within a small time window) as the Patient. Exams deleted earlier or independently stay deleted.
-// Impact / Considerations:
-// - `treponemalTestDate` and `nontreponemalTestDate` are stored as `Date`; consider timezone handling and query requirements for date-based filtering.
+/// @description Clinical examinations and test results for Patients.
+/// @note Cascade-soft-deleted with Patient; independent deletions persist on restore.
 model Exam {
   id                         String    @id @default(uuid()) @db.Uuid
   patientId                  String    @map("patient_id") @db.Uuid
@@ -276,18 +228,8 @@ model Exam {
   @@map("exams")
 }
 
-// ARCHITECTURE NOTE:
-// Purpose: Notification domain record containing patient-related notification items.
-// Behavior:
-// - Soft deletes: `deleted_at` used for logical deletion.
-// - Cascade: Typically cascade-soft-deleted when the related `Patient` is soft-deleted.
-// LOGIC:
-// - If a Notification is soft-deleted independently (not via a Patient cascade), it MUST remain deleted when the related Patient is later restored.
-// - When a Patient is soft-deleted, the backend MUST update `deleted_at` for related Notifications.
-// RESTORE LOGIC:
-// - When restoring a Patient, only restore Notifications that were deleted in the same cascade operation (or within a small time window) as the Patient. Notifications deleted earlier or independently stay deleted.
-// Impact / Considerations:
-// - Consider privacy and retention policies for notification content; index `patientId` for cleanup and lookup.
+/// @description SIMCASI notification records for epidemiologic monitoring.
+/// @note Cascade-soft-deleted with Patient; independent deletions persist on restore.
 model Notification {
   id           String    @id @default(uuid()) @db.Uuid
   patientId    String    @map("patient_id") @db.Uuid
@@ -309,18 +251,8 @@ model Notification {
   @@map("notifications")
 }
 
-// ARCHITECTURE NOTE:
-// Purpose: Observation domain record for ad-hoc patient notes, observations, and flags.
-// Behavior:
-// - Soft deletes: `deleted_at` used for logical deletion.
-// - Cascade: Typically cascade-soft-deleted when the related `Patient` is soft-deleted.
-// LOGIC:
-// - If an Observation is soft-deleted independently (not via a Patient cascade), it MUST remain deleted when the related Patient is later restored.
-// - When a Patient is soft-deleted, the backend MUST update `deleted_at` for related Observations.
-// RESTORE LOGIC:
-// - When restoring a Patient, only restore Observations that were deleted in the same cascade operation (or within a small time window) as the Patient. Observations deleted earlier or independently stay deleted.
-// Impact / Considerations:
-// - Observations can be large text fields. Consider indexing patterns and full-text search needs separately from the `deleted_at` behavior.
+/// @description Clinical observations and ad-hoc notes for patient monitoring.
+/// @note Cascade-soft-deleted with Patient; independent deletions persist on restore.
 model Observation {
   id                     String    @id @default(uuid()) @db.Uuid
   patientId              String    @map("patient_id") @db.Uuid
@@ -342,18 +274,8 @@ model Observation {
   @@map("observations")
 }
 
-// ARCHITECTURE NOTE:
-// Purpose: Treatment domain record tracking medication information and treatment metadata for Patients.
-// Behavior:
-// - Soft deletes: `deleted_at` used for logical deletion.
-// - Cascade: Typically cascade-soft-deleted when the related `Patient` is soft-deleted.
-// LOGIC:
-// - If a Treatment is soft-deleted independently (not via a Patient cascade), it MUST remain deleted when the related Patient is later restored.
-// - When a Patient is soft-deleted, the backend MUST update `deleted_at` for related Treatments.
-// RESTORE LOGIC:
-// - When restoring a Patient, only restore Treatments that were deleted in the same cascade operation (or within a small time window) as the Patient. Treatments deleted earlier or independently stay deleted.
-// Impact / Considerations:
-// - Consider indexing `startDate` for date-range queries and retention policies for old treatments.
+/// @description Medication and treatment lifecycle details for Patients.
+/// @note Cascade-soft-deleted with Patient; independent deletions persist on restore.
 model Treatment {
   id                 String    @id @default(uuid()) @db.Uuid
   patientId          String    @map("patient_id") @db.Uuid
@@ -379,14 +301,8 @@ model Treatment {
   @@map("treatments")
 }
 
-// ARCHITECTURE NOTE:
-// Purpose: AuditLog stores immutable audit entries for entity changes.
-// Behavior:
-// - Immutability: Audit logs are append-only and MUST NOT be updated or deleted.
-// LOGIC:
-// - Only READ and CREATE (POST) operations are allowed for AuditLog records. Do NOT support updates/deletes.
-// Impact / Considerations:
-// - Use indexes on `createdAt`, `userId`, and `entityId/entityName` for fast lookup. Consider retention/archival strategy for very large datasets.
+/// @description Immutable audit trail for all system entity changes.
+/// @note Read-only and creation-only; updates and deletions are strictly forbidden.
 model AuditLog {
   id         String   @id @default(uuid()) @db.Uuid
   userId     String   @map("user_id") @db.Uuid

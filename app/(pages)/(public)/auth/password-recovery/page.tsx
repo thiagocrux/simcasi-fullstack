@@ -2,28 +2,26 @@ import { ArrowLeft, CircleAlert, CircleCheckBig } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
-import {
-  requestNewPassword,
-  resetPassword,
-} from '@/app/actions/session.actions';
 import { LockSection } from '@/app/components/features/auth/LockSection';
 import { PasswordResetForm } from '@/app/components/features/auth/PasswordResetForm';
-import { RequestNewPasswordForm } from '@/app/components/features/auth/RequestNewPasswordForm';
+import { RequestPasswordResetForm } from '@/app/components/features/auth/RequestPasswordResetForm';
 import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
 import { Separator } from '@/app/components/ui/separator';
+import { makeValidatePasswordResetTokenUseCase } from '@/core/infrastructure/factories/user.factory';
 
-import {
-  RequestNewPasswordInput,
-  ResetPasswordInput,
-} from '@/core/application/validation/schemas/session.schema';
+type RecoveryVariant =
+  | 'new-password-request'
+  | 'generated-link'
+  | 'expired-link'
+  | 'password-reset';
 
-interface PasswordRecoverySectionProps {
-  variant?:
-    | 'new-password-request'
-    | 'generated-link'
-    | 'expired-link'
-    | 'password-reset';
+interface PasswordRecoveryPageProps {
+  searchParams: Promise<{
+    token?: string;
+    variant?: string;
+    email?: string;
+  }>;
 }
 
 export const metadata: Metadata = {
@@ -31,32 +29,40 @@ export const metadata: Metadata = {
   description: '',
 };
 
-export default function SignInPage({
-  variant = 'new-password-request',
-}: PasswordRecoverySectionProps) {
-  async function submitAction(
-    input: RequestNewPasswordInput | ResetPasswordInput
-  ) {
-    'use server';
+export default async function PasswordRecoveryPage({
+  searchParams,
+}: PasswordRecoveryPageProps) {
+  const {
+    token,
+    variant: queryVariant,
+    email: queryEmail,
+  } = await searchParams;
 
-    switch (variant) {
-      case 'new-password-request':
-        await requestNewPassword(input as RequestNewPasswordInput);
-        break;
-      case 'generated-link':
-        // TODO: Implement "generated-link" variant logic here.
-        break;
-      case 'expired-link':
-        // TODO: Implement "expired-link" variant logic here.
-        break;
-      default:
-        await resetPassword(input as ResetPasswordInput);
+  let variant: RecoveryVariant = 'new-password-request';
+  let email = queryEmail;
+
+  if (queryVariant === 'success') {
+    variant = 'generated-link';
+  } else if (queryVariant === 'expired') {
+    variant = 'expired-link';
+  } else if (token) {
+    // If a token is provided, validate it before rendering the reset form.
+    const resetTokenValidator = makeValidatePasswordResetTokenUseCase();
+    const { isValid, email: tokenEmail } = await resetTokenValidator.execute({
+      token,
+    });
+
+    if (isValid) {
+      variant = 'password-reset';
+      email = tokenEmail;
+    } else {
+      variant = 'expired-link';
     }
   }
 
   return (
     <Card className="flex md:flex-row flex-col items-stretch gap-0 my-auto p-0 w-full max-w-md md:max-w-4xl">
-      <div className="flex flex-col gap-y-6 p-6 sm:p-12 w-full">
+      <div className="flex flex-col gap-y-4 p-6 sm:p-12 w-full">
         {variant === 'new-password-request' && (
           <>
             <div className="flex flex-col gap-y-2">
@@ -66,17 +72,22 @@ export default function SignInPage({
                 as instruções de recuperação.
               </p>
             </div>
-            <RequestNewPasswordForm className="flex flex-col gap-y-6" />
-            <Button
-              variant="link"
-              className="p-0 w-min cursor-pointer select-none"
-              tabIndex={-1}
-            >
-              <Link href="/auth/sign-in" className="flex items-center gap-x-1">
-                <ArrowLeft />
-                <span>Voltar para o login</span>
-              </Link>
-            </Button>
+            <div className="flex flex-col gap-2">
+              <RequestPasswordResetForm className="flex flex-col gap-y-6" />
+              <Button
+                variant="link"
+                className="p-0 w-min cursor-pointer select-none"
+                tabIndex={-1}
+              >
+                <Link
+                  href="/auth/sign-in"
+                  className="flex items-center gap-x-1"
+                >
+                  <ArrowLeft />
+                  <span>Voltar para o login</span>
+                </Link>
+              </Button>
+            </div>
           </>
         )}
 
@@ -89,16 +100,21 @@ export default function SignInPage({
                 anteriormente.
               </p>
             </div>
-            <PasswordResetForm />
-            <Button
-              variant="link"
-              className="p-0 w-min cursor-pointer select-none"
-            >
-              <Link href="/auth/sign-in" className="flex items-center gap-x-1">
-                <ArrowLeft />
-                <span>Voltar para o login</span>
-              </Link>
-            </Button>
+            <div className="flex flex-col gap-2">
+              <PasswordResetForm />
+              <Button
+                variant="link"
+                className="p-0 w-min cursor-pointer select-none"
+              >
+                <Link
+                  href="/auth/sign-in"
+                  className="flex items-center gap-x-1"
+                >
+                  <ArrowLeft />
+                  <span>Voltar para o login</span>
+                </Link>
+              </Button>
+            </div>
           </>
         )}
 
@@ -111,12 +127,12 @@ export default function SignInPage({
               <p className="font-bold text-2xl">Verifique o seu e-mail</p>
               <p className="text-sm">
                 Enviamos um link de recuperação para{' '}
-                <strong>seu@email.com</strong>.
+                <strong>{email || 'seu e-mail'}</strong>.
+              </p>
+              <p className="text-sm">
+                Não recebeu? Verifique sua caixa de spam ou tente novamente.
               </p>
             </div>
-            <p className="text-sm">
-              Não recebeu? Verifique sua caixa de spam ou tente novamente.
-            </p>
             <Button className="w-full cursor-pointer select-none">
               <Link href="/auth/sign-in">Voltar para o login</Link>
             </Button>
@@ -135,12 +151,20 @@ export default function SignInPage({
                 favor, solicite uma nova troca de senha.
               </p>
             </div>
-            <div className="flex flex-col gap-y-4">
-              {/* NOTE: Will this redirect to the solicitation page or extract the registered e-mail from the expired link and retry the request?  */}
+            <div className="flex flex-col gap-y-2">
               <form>
-                <Button size="lg" className="w-full">
-                  Solicitar novamente
-                </Button>
+                <Link
+                  href="/auth/password-recovery?variant=new-password-request"
+                  className="rounded-md"
+                >
+                  <Button
+                    size="lg"
+                    className="w-full cursor-pointer select-none"
+                    tabIndex={-1}
+                  >
+                    Solicitar novamente
+                  </Button>
+                </Link>
               </form>
               <Button
                 variant="link"
