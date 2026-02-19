@@ -90,7 +90,7 @@ export function SignInForm({ className }: SignInFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={className}>
-      <FieldGroup>
+      <FieldGroup className="flex flex-col gap-4 mb-4">
         <Field>
           <FieldLabel htmlFor="email">E-mail</FieldLabel>
           <Input
@@ -142,23 +142,25 @@ export function SignInForm({ className }: SignInFormProps) {
         </Field>
       </FieldGroup>
 
-      <Button
-        type="submit"
-        size="lg"
-        className="w-full cursor-pointer"
-        disabled={isPending}
-      >
-        {isPending && <Spinner />}
-        Entrar
-      </Button>
-      <Button
-        type="button"
-        variant="link"
-        className="self-end p-0 w-min cursor-pointer"
-        onClick={() => router.push('/auth/password-recovery')}
-      >
-        Esqueceu a senha?
-      </Button>
+      <div className="flex flex-col gap-2">
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full cursor-pointer"
+          disabled={isPending}
+        >
+          {isPending && <Spinner />}
+          Entrar
+        </Button>
+        <Button
+          type="button"
+          variant="link"
+          className="self-end p-0 w-min cursor-pointer"
+          onClick={() => router.push('/auth/password-recovery')}
+        >
+          Esqueceu a senha?
+        </Button>
+      </div>
     </form>
   );
 }
