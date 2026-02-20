@@ -133,7 +133,7 @@ export function LoginForm({ className }: LoginFormProps) {
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
-                    Mantenha-me logado
+                    <span>Mantenha-me logado</span>
                   </FieldLabel>
                   {formErrors.rememberMe && (
                     <FieldError message={formErrors.rememberMe.message} />

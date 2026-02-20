@@ -491,7 +491,7 @@ export function PatientForm({
               )}
             </Field>
             <Field>
-              <div className="flex items-center gap-3">
+              <FieldLabel htmlFor="isDeceased" className="flex gap-3">
                 <Controller
                   control={control}
                   name="isDeceased"
@@ -504,16 +504,14 @@ export function PatientForm({
                     />
                   )}
                 />
-                <div className="flex flex-col justify-center gap-2">
-                  <FieldLabel htmlFor="isDeceased">
-                    Paciente falecido?
-                  </FieldLabel>
+                <div className="flex flex-col gap-2 cursor-pointer">
+                  <span>Paciente falecido?</span>
                   <FieldDescription>
                     Marque esta opção caso o paciente tenha falecido. Isso
                     encerrará o acompanhamento ativo.
                   </FieldDescription>
                 </div>
-              </div>
+              </FieldLabel>
               {formErrors.isDeceased && (
                 <FieldError message={formErrors.isDeceased.message} />
               )}

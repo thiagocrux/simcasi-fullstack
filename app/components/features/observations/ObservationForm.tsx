@@ -122,11 +122,11 @@ export function ObservationForm({
   return (
     <Card className="flex flex-col px-4 sm:px-8 py-8 sm:py-12">
       <form onSubmit={handleSubmit(onSubmit)} className={className}>
-        <FieldGroup className="gap-8 grid grid-cols-1">
+        <FieldGroup className="flex flex-col gap-8">
           <FieldGroupHeading text="Observações gerais" />
 
-          <FieldGroup className="gap-4 grid grid-cols-1 lg:grid-cols-2">
-            <Field className="col-span-full">
+          <FieldGroup className="flex flex-col gap-4">
+            <Field>
               <FieldLabel htmlFor="observations">
                 Observações (opcional)
               </FieldLabel>
@@ -143,7 +143,10 @@ export function ObservationForm({
             </Field>
 
             <Field>
-              <div className="flex items-center gap-3">
+              <FieldLabel
+                htmlFor="hasPartnerBeingTreated"
+                className="flex gap-3 w-fit! cursor-pointer"
+              >
                 <Controller
                   control={control}
                   name="hasPartnerBeingTreated"
@@ -156,10 +159,8 @@ export function ObservationForm({
                     />
                   )}
                 />
-                <FieldLabel htmlFor="hasPartnerBeingTreated">
-                  Parceiro em tratamento
-                </FieldLabel>
-              </div>
+                <span>Parceiro em tratamento</span>
+              </FieldLabel>
               {formErrors.hasPartnerBeingTreated && (
                 <FieldError
                   message={formErrors.hasPartnerBeingTreated.message}
