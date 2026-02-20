@@ -1,8 +1,8 @@
 import { NotFoundError } from '@/core/domain/errors/app.error';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import {
-  GetUserInput,
-  GetUserOutput,
+  GetUserByIdInput,
+  GetUserByIdOutput,
 } from '../../contracts/user/get-user-by-id.contract';
 import { UseCase } from '../use-case.interface';
 
@@ -10,8 +10,8 @@ import { UseCase } from '../use-case.interface';
  * Use case to retrieve an user by ID.
  */
 export class GetUserByIdUseCase implements UseCase<
-  GetUserInput,
-  GetUserOutput
+  GetUserByIdInput,
+  GetUserByIdOutput
 > {
   /**
    * Creates an instance of GetUserByIdUseCase.
@@ -25,7 +25,7 @@ export class GetUserByIdUseCase implements UseCase<
    * @return A promise that resolves to the user details.
    * @throws {NotFoundError} If the user is not found.
    */
-  async execute(input: GetUserInput): Promise<GetUserOutput> {
+  async execute(input: GetUserByIdInput): Promise<GetUserByIdOutput> {
     const user = await this.userRepository.findById(
       input.id,
       input.includeDeleted

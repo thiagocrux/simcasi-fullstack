@@ -1,7 +1,6 @@
 import { User } from '@/core/domain/entities/user.entity';
-
 /**
- * Input data for resetting the user's password using a valid token.
+ * Input parameters for resetting the user's password using a valid token.
  */
 export interface ResetPasswordInput {
   /** The unique recovery token string. */
@@ -11,7 +10,6 @@ export interface ResetPasswordInput {
 }
 
 /**
- * Output of the password reset process.
- * Often return the user without sensitive data.
+ * Output of the password reset operation.
  */
 export interface ResetPasswordOutput extends Omit<User, 'password'> {}

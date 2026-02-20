@@ -1,8 +1,17 @@
 import { User } from '@/core/domain/entities/user.entity';
 
-export interface GetUserInput {
+/**
+ * Input parameters for retrieving a user by ID.
+ */
+export interface GetUserByIdInput {
+  /** Unique identifier of the user to retrieve. */
   id: string;
+  /** Whether to include deleted users. */
   includeDeleted?: boolean;
 }
 
-export interface GetUserOutput extends Omit<User, 'password'> {}
+/**
+ * Output of the get user by ID operation.
+ * Returns the user entity without the password field.
+ */
+export interface GetUserByIdOutput extends Omit<User, 'password'> {}

@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 
 import { ChangePasswordOutput } from '@/core/application/contracts/user/change-password.contract';
 import { FindUsersOutput } from '@/core/application/contracts/user/find-users.contract';
-import { GetUserOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
+import { GetUserByIdOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
 import { RegisterUserOutput } from '@/core/application/contracts/user/register-user.contract';
 import { RestoreUserOutput } from '@/core/application/contracts/user/restore-user.contract';
 import { UpdateUserOutput } from '@/core/application/contracts/user/update-user.contract';
@@ -57,7 +57,7 @@ export async function findUsers(
  */
 export async function getUser(
   id: string
-): Promise<ActionResponse<GetUserOutput>> {
+): Promise<ActionResponse<GetUserByIdOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
     const parsed = IdSchema.safeParse(id);
     if (!parsed.success) {

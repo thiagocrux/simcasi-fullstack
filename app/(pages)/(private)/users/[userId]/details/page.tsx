@@ -6,7 +6,7 @@ import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
-import { GetUserOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
+import { GetUserByIdOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
 import { ActionResponse } from '@/lib/actions.utils';
 import { formatDate } from '@/lib/formatters.utils';
 import { notFound } from 'next/navigation';
@@ -25,7 +25,7 @@ export default async function UserDetailsPage({
 }: UserDetailsPageProps) {
   const { userId } = await params;
 
-  const response: ActionResponse<GetUserOutput> = await getUser(userId);
+  const response: ActionResponse<GetUserByIdOutput> = await getUser(userId);
   if (!response.success || !response.data) {
     notFound();
   }
