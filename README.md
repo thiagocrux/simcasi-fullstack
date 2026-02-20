@@ -8,19 +8,26 @@ The project uses a modern toolchain focused on developer experience and performa
 
 - `@apidevtools/swagger-cli` — OpenAPI specification bundler and validator.
 - `@radix-ui/*` — Unstyled, accessible component primitives.
+- `@reduxjs/toolkit` & `react-redux` — Official toolsets for efficient Redux state management.
 - `@scalar/nextjs-api-reference` — Interactive API documentation UI.
 - `@tanstack/react-query` — Powerful asynchronous state management.
 - `@tanstack/react-table` — Headless UI table library for data tables.
 - `bcryptjs` — Password hashing library.
+- `date-fns` — Modern JavaScript date utility library.
 - `docker` — Platform for developing, shipping, and running applications.
 - `jose` — JSON Web Token (JWT) handling.
+- `lucide-react` — Beautiful & consistent icons.
 - `next` — The React Framework for the Web with App Router.
+- `next-themes` — Perfect Next.js dark mode management.
 - `postgresql` — The World's Most Advanced Open Source Relational Database.
 - `prisma` — Next-generation ORM for Node.js and TypeScript.
 - `react` — The library for web and native user interfaces.
 - `react-hook-form` — Performant, flexible form library with easy validation.
+- `resend` — Email API for developers (used for messaging and notifications).
+- `sonner` — An opinionated toast component for React.
 - `tailwindcss` — Utility-first CSS framework for styling.
 - `typescript` — Typed superset of JavaScript.
+- `use-mask-input` — Lightweight hook for input masking.
 - `zod` — TypeScript-first schema validation.
 
 _For more information about other dependencies, see the `package.json` file._
@@ -32,6 +39,7 @@ Before installing and running this app, make sure you have the following install
 - Node.js (recommended v18+; verify with `node -v`)
 - pnpm (package manager; install via `corepack enable` or `npm i -g pnpm`)
 - Docker & Docker Compose (for running the database)
+- **Resend Account:** A valid account and API Key from [Resend](https://resend.com) for password recovery and messaging.
 
 ## Installation
 
@@ -106,6 +114,16 @@ JWT_ACCESS_TOKEN_EXPIRATION="15m"
 # JWT_REFRESH_TOKEN_EXPIRATION: Expiration time for refresh tokens (longer-lived).
 # Use duration strings like '7d' for 7 days; refresh tokens are used to obtain new access tokens.
 JWT_REFRESH_TOKEN_EXPIRATION="7d"
+
+# -- MESSAGING (RESEND) --
+
+# RESEND_API_KEY: The API key provided by Resend for sending emails.
+# Obtain this from your Resend dashboard settings.
+RESEND_API_KEY="re_123..."
+
+# MAIL_FROM: The default sender address for system notifications.
+# This should be a verified email address or domain in your Resend account.
+MAIL_FROM="SIMCASI <onboarding@resend.dev>"
 ```
 
 ### 4. Start the Database
@@ -382,7 +400,9 @@ The project follows **Clean Architecture** principles with clear separation of c
 │   ├── api/                           # API routes and middleware
 │   ├── actions/                       # Server Actions
 │   ├── components/                    # React components
-│   └── layout.tsx, providers.tsx      # Global setup
+│   ├── layout.tsx, providers.tsx      # Global setup
+│   ├── loading.tsx                    # Global loading state
+│   └── not-found.tsx                  # Global 404 (Not Found) page
 │
 ├── core/                              # Business logic layer
 │   ├── domain/                        # Domain entities and interfaces
@@ -441,6 +461,8 @@ The project documents its major architectural decisions using the ADR pattern. R
 - **ADR 002**: Adoption of Clean Architecture.
 - **ADR 003**: Adoption of Prisma ORM.
 - **ADR 004**: Choice of `jose` for Token Handling.
+- **ADR 005**: Adoption of Async Local Storage.
+- **ADR 006**: Schema Documentation Strategy.
 
 ### Key Patterns
 
@@ -468,6 +490,7 @@ erDiagram
     Role ||--o{ RolePermission : "contains"
     Permission ||--o{ RolePermission : "assigned to"
     User ||--o{ Session : "owns"
+    User ||--o{ PasswordResetToken : "requests"
     User ||--o{ Patient : "creates"
     User ||--o{ Exam : "creates"
     User ||--o{ Notification : "creates"
@@ -482,6 +505,7 @@ erDiagram
     Role {
         uuid id PK
         string code UK
+        string label
         uuid createdBy FK
         uuid updatedBy FK
         timestamptz createdAt
@@ -492,6 +516,7 @@ erDiagram
     Permission {
         uuid id PK
         string code UK
+        string label
         uuid createdBy FK
         uuid updatedBy FK
         timestamptz createdAt
@@ -618,6 +643,17 @@ erDiagram
         timestamptz expiresAt
         inet ipAddress
         string userAgent
+        timestamptz createdAt
+        timestamptz updatedAt
+        timestamptz deletedAt
+    }
+
+    PasswordResetToken {
+        uuid id PK
+        uuid userId FK
+        string token UK
+        timestamptz expiresAt
+        timestamptz usedAt
         timestamptz createdAt
         timestamptz updatedAt
         timestamptz deletedAt
