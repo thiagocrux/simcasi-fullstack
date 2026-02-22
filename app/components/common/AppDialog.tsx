@@ -1,3 +1,8 @@
+'use client';
+
+import { LucideIcon } from 'lucide-react';
+import { ReactNode } from 'react';
+
 import { Button } from '@/app/components/ui/button';
 import {
   Dialog,
@@ -10,11 +15,11 @@ import {
   DialogTrigger,
 } from '@/app/components/ui/dialog';
 import { cn } from '@/lib/shared.utils';
-import { ReactNode } from 'react';
 
 type Action = {
   action: () => void;
   label?: string;
+  icon?: LucideIcon;
   disabled?: boolean;
   hidden?: boolean;
 };
@@ -68,6 +73,7 @@ export function AppDialog({
                   className="cursor-pointer"
                   onClick={cancelAction?.action}
                 >
+                  {cancelAction.icon ? <cancelAction.icon /> : null}
                   {cancelAction?.label ?? 'Cancelar'}
                 </Button>
               </DialogClose>
@@ -80,6 +86,7 @@ export function AppDialog({
                 className="cursor-pointer"
                 onClick={continueAction.action}
               >
+                {continueAction.icon ? <continueAction.icon /> : null}
                 {continueAction.label ?? 'Prosseguir'}
               </Button>
             ) : null}

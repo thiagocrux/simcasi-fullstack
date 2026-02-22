@@ -1,9 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
-import Link from 'next/link';
 import { AppDialog } from '../common/AppDialog';
 import { GitHubIcon, LinkedInIcon } from '../common/BrandIcons';
 import { Button } from '../ui/button';

@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 
 import { cn } from '@/lib/shared.utils';
+import { LucideIcon } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,12 +19,12 @@ import {
 type Action = {
   action: () => void;
   label?: string;
+  icon?: LucideIcon;
   disabled?: boolean;
   hidden?: boolean;
 };
 
 interface AlertDialogProps {
-  open?: boolean;
   title?: string;
   description?: string;
   cancelAction?: Action;
@@ -34,7 +35,6 @@ interface AlertDialogProps {
 }
 
 export function AppAlertDialog({
-  open,
   title,
   description,
   cancelAction,
@@ -68,6 +68,7 @@ export function AppAlertDialog({
                 className="cursor-pointer"
                 disabled={cancelAction?.disabled}
               >
+                {cancelAction.icon ? <cancelAction.icon /> : null}
                 {cancelAction.label ?? 'Cancelar'}
               </AlertDialogCancel>
             ) : null}
@@ -78,6 +79,7 @@ export function AppAlertDialog({
                 className="cursor-pointer"
                 disabled={continueAction?.disabled}
               >
+                {continueAction.icon ? <continueAction.icon /> : null}
                 {continueAction.label ?? 'Prosseguir'}
               </AlertDialogAction>
             ) : null}
