@@ -37,9 +37,9 @@ export async function findTreatments(
   query?: TreatmentQueryInput
 ): Promise<ActionResponse<FindTreatmentsOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:treatment'], async () => {
-    const parsed = treatmentQuerySchema.safeParse(query);
+    const parsedData = treatmentQuerySchema.safeParse(query);
     const useCase = makeFindTreatmentsUseCase();
-    return await useCase.execute(parsed.data || {});
+    return await useCase.execute(parsedData.data || {});
   });
 }
 
@@ -53,14 +53,14 @@ export async function getTreatment(
   id: string
 ): Promise<ActionResponse<GetTreatmentByIdOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:treatment'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeGetTreatmentByIdUseCase();
     return await useCase.execute({
-      id: parsed.data,
+      id: parsedId.data,
     });
   });
 }
@@ -76,17 +76,17 @@ export async function createTreatment(
   input: CreateTreatmentInput
 ): Promise<ActionResponse<RegisterTreatmentOutput>> {
   return withSecuredActionAndAutomaticRetry(['create:treatment'], async () => {
-    const parsed = treatmentSchema.safeParse(input);
-    if (!parsed.success) {
+    const parsedData = treatmentSchema.safeParse(input);
+    if (!parsedData.success) {
       throw new ValidationError(
         'Dados do tratamento inválidos',
-        formatZodError(parsed.error)
+        formatZodError(parsedData.error)
       );
     }
 
     const useCase = makeRegisterTreatmentUseCase();
     const treatment = await useCase.execute({
-      ...parsed.data,
+      ...parsedData.data,
     });
 
     revalidatePath(`/patients/${input.patientId}/treatments`);
@@ -141,14 +141,14 @@ export async function deleteTreatment(
   id: string
 ): Promise<ActionResponse<{ success: boolean }>> {
   return withSecuredActionAndAutomaticRetry(['delete:treatment'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeDeleteTreatmentUseCase();
     await useCase.execute({
-      id: parsed.data,
+      id: parsedId.data,
     });
 
     revalidatePath('/treatments');

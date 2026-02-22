@@ -43,9 +43,9 @@ export async function findUsers(
   query?: UserQueryInput
 ): Promise<ActionResponse<FindUsersOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
-    const parsed = userQuerySchema.safeParse(query);
+    const parsedData = userQuerySchema.safeParse(query);
     const useCase = makeFindUsersUseCase();
-    return await useCase.execute(parsed.data || {});
+    return await useCase.execute(parsedData.data || {});
   });
 }
 
@@ -59,13 +59,13 @@ export async function getUser(
   id: string
 ): Promise<ActionResponse<GetUserByIdOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:user'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeGetUserByIdUseCase();
-    return await useCase.execute({ id: parsed.data });
+    return await useCase.execute({ id: parsedId.data });
   });
 }
 
@@ -79,16 +79,16 @@ export async function createUser(
   input: CreateUserInput
 ): Promise<ActionResponse<RegisterUserOutput>> {
   return withSecuredActionAndAutomaticRetry(['create:user'], async () => {
-    const parsed = userSchema.safeParse(input);
-    if (!parsed.success) {
+    const parsedData = userSchema.safeParse(input);
+    if (!parsedData.success) {
       throw new ValidationError(
         'Dados do usuário são inválidos',
-        formatZodError(parsed.error)
+        formatZodError(parsedData.error)
       );
     }
 
     const useCase = makeRegisterUserUseCase();
-    const user = await useCase.execute(parsed.data);
+    const user = await useCase.execute(parsedData.data);
 
     revalidatePath('/users');
     return user;
@@ -166,14 +166,14 @@ export async function restoreUser(
   id: string
 ): Promise<ActionResponse<RestoreUserOutput>> {
   return withSecuredActionAndAutomaticRetry(['update:user'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeRestoreUserUseCase();
     const user = await useCase.execute({
-      id: parsed.data,
+      id: parsedId.data,
     });
 
     if (!user) {
@@ -197,19 +197,19 @@ export async function changePassword(
   return withSecuredActionAndAutomaticRetry(
     ['update:user'],
     async (context) => {
-      const parsed = changePasswordSchema.safeParse(input);
-      if (!parsed.success) {
+      const parsedData = changePasswordSchema.safeParse(input);
+      if (!parsedData.success) {
         throw new ValidationError(
           'Dados de mudança de senha inválidos.',
-          formatZodError(parsed.error)
+          formatZodError(parsedData.error)
         );
       }
 
       const useCase = makeChangePasswordUseCase();
       return await useCase.execute({
         userId: context.userId,
-        currentPassword: parsed.data.currentPassword,
-        newPassword: parsed.data.newPassword,
+        currentPassword: parsedData.data.currentPassword,
+        newPassword: parsedData.data.newPassword,
       });
     }
   );

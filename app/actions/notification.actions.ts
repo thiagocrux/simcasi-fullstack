@@ -37,9 +37,9 @@ export async function findNotifications(
   query?: NotificationQueryInput
 ): Promise<ActionResponse<FindNotificationsOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:notification'], async () => {
-    const parsed = notificationQuerySchema.safeParse(query);
+    const parsedData = notificationQuerySchema.safeParse(query);
     const useCase = makeFindNotificationsUseCase();
-    return await useCase.execute(parsed.data || {});
+    return await useCase.execute(parsedData.data || {});
   });
 }
 
@@ -53,14 +53,14 @@ export async function getNotification(
   id: string
 ): Promise<ActionResponse<GetNotificationByIdOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:notification'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeGetNotificationByIdUseCase();
     return await useCase.execute({
-      id: parsed.data,
+      id: parsedId.data,
     });
   });
 }
@@ -78,17 +78,17 @@ export async function createNotification(
   return withSecuredActionAndAutomaticRetry(
     ['create:notification'],
     async () => {
-      const parsed = notificationSchema.safeParse(input);
-      if (!parsed.success) {
+      const parsedData = notificationSchema.safeParse(input);
+      if (!parsedData.success) {
         throw new ValidationError(
           'Dados da notificação inválidos',
-          formatZodError(parsed.error)
+          formatZodError(parsedData.error)
         );
       }
 
       const useCase = makeRegisterNotificationUseCase();
       const notification = await useCase.execute({
-        ...parsed.data,
+        ...parsedData.data,
       });
 
       revalidatePath(`/patients/${input.patientId}/notifications`);
@@ -153,14 +153,17 @@ export async function deleteNotification(
   return withSecuredActionAndAutomaticRetry(
     ['delete:notification'],
     async () => {
-      const parsed = IdSchema.safeParse(id);
-      if (!parsed.success) {
-        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+      const parsedId = IdSchema.safeParse(id);
+      if (!parsedId.success) {
+        throw new ValidationError(
+          'ID inválido.',
+          formatZodError(parsedId.error)
+        );
       }
 
       const useCase = makeDeleteNotificationUseCase();
       await useCase.execute({
-        id: parsed.data,
+        id: parsedId.data,
       });
 
       revalidatePath('/notifications');

@@ -34,12 +34,12 @@ import { logger } from '@/lib/logger.utils';
  */
 export async function logInUser(input: CreateSessionInput) {
   try {
-    const parsed = sessionSchema.safeParse(input);
-    if (!parsed.success) {
+    const parsedData = sessionSchema.safeParse(input);
+    if (!parsedData.success) {
       return {
         success: false,
         message: 'Credenciais inválidas',
-        errors: formatZodError(parsed.error),
+        errors: formatZodError(parsedData.error),
       };
     }
 
@@ -58,7 +58,7 @@ export async function logInUser(input: CreateSessionInput) {
         ipAddress,
         userAgent,
       },
-      () => useCase.execute(parsed.data)
+      () => useCase.execute(parsedData.data)
     );
 
     const { accessToken, refreshToken, user, permissions } = result;
@@ -148,12 +148,12 @@ export async function logOutUser() {
  */
 export async function requestPasswordReset(input: RequestPasswordResetInput) {
   try {
-    const parsed = RequestPasswordResetSchema.safeParse(input);
-    if (!parsed.success) {
+    const parsedData = RequestPasswordResetSchema.safeParse(input);
+    if (!parsedData.success) {
       return {
         success: false,
         message: 'E-mail inválido',
-        errors: formatZodError(parsed.error),
+        errors: formatZodError(parsedData.error),
       };
     }
 
@@ -168,7 +168,7 @@ export async function requestPasswordReset(input: RequestPasswordResetInput) {
         ipAddress,
         userAgent,
       },
-      () => useCase.execute({ email: parsed.data.registeredEmail })
+      () => useCase.execute({ email: parsedData.data.registeredEmail })
     );
 
     return { success: true, message: response.message };
@@ -184,12 +184,12 @@ export async function requestPasswordReset(input: RequestPasswordResetInput) {
  */
 export async function resetPassword(input: ResetPasswordInput) {
   try {
-    const parsed = resetPasswordSchema.safeParse(input);
-    if (!parsed.success) {
+    const parsedData = resetPasswordSchema.safeParse(input);
+    if (!parsedData.success) {
       return {
         success: false,
         message: 'A redefinição de senha falhou',
-        errors: formatZodError(parsed.error),
+        errors: formatZodError(parsedData.error),
       };
     }
 
@@ -206,8 +206,8 @@ export async function resetPassword(input: ResetPasswordInput) {
       },
       () =>
         useCase.execute({
-          token: parsed.data.token,
-          newPassword: parsed.data.newPassword,
+          token: parsedData.data.token,
+          newPassword: parsedData.data.newPassword,
         })
     );
 

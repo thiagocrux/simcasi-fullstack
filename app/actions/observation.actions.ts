@@ -37,9 +37,9 @@ export async function findObservations(
   query?: ObservationQueryInput
 ): Promise<ActionResponse<FindObservationsOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:observation'], async () => {
-    const parsed = observationQuerySchema.safeParse(query);
+    const parsedData = observationQuerySchema.safeParse(query);
     const useCase = makeFindObservationsUseCase();
-    return await useCase.execute(parsed.data || {});
+    return await useCase.execute(parsedData.data || {});
   });
 }
 
@@ -53,14 +53,14 @@ export async function getObservation(
   id: string
 ): Promise<ActionResponse<GetObservationByIdOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:observation'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeGetObservationByIdUseCase();
     return await useCase.execute({
-      id: parsed.data,
+      id: parsedId.data,
     });
   });
 }
@@ -78,17 +78,17 @@ export async function createObservation(
   return withSecuredActionAndAutomaticRetry(
     ['create:observation'],
     async () => {
-      const parsed = observationSchema.safeParse(input);
-      if (!parsed.success) {
+      const parsedData = observationSchema.safeParse(input);
+      if (!parsedData.success) {
         throw new ValidationError(
           'Dados da observação inválidos',
-          formatZodError(parsed.error)
+          formatZodError(parsedData.error)
         );
       }
 
       const useCase = makeRegisterObservationUseCase();
       const observation = await useCase.execute({
-        ...parsed.data,
+        ...parsedData.data,
       });
 
       revalidatePath(`/patients/${input.patientId}/observations`);
@@ -152,14 +152,17 @@ export async function deleteObservation(
   return withSecuredActionAndAutomaticRetry(
     ['delete:observation'],
     async () => {
-      const parsed = IdSchema.safeParse(id);
-      if (!parsed.success) {
-        throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+      const parsedId = IdSchema.safeParse(id);
+      if (!parsedId.success) {
+        throw new ValidationError(
+          'ID inválido.',
+          formatZodError(parsedId.error)
+        );
       }
 
       const useCase = makeDeleteObservationUseCase();
       await useCase.execute({
-        id: parsed.data,
+        id: parsedId.data,
       });
 
       revalidatePath('/observations');

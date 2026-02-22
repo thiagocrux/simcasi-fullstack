@@ -37,9 +37,9 @@ export async function findExams(
   query?: ExamQueryInput
 ): Promise<ActionResponse<FindExamsOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:exam'], async () => {
-    const parsed = examQuerySchema.safeParse(query);
+    const parsedData = examQuerySchema.safeParse(query);
     const useCase = makeFindExamsUseCase();
-    return await useCase.execute(parsed.data || {});
+    return await useCase.execute(parsedData.data || {});
   });
 }
 
@@ -53,13 +53,13 @@ export async function getExam(
   id: string
 ): Promise<ActionResponse<GetExamByIdOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:exam'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeGetExamByIdUseCase();
-    return await useCase.execute({ id: parsed.data });
+    return await useCase.execute({ id: parsedId.data });
   });
 }
 
@@ -74,18 +74,16 @@ export async function createExam(
   input: CreateExamInput
 ): Promise<ActionResponse<RegisterExamOutput>> {
   return withSecuredActionAndAutomaticRetry(['create:exam'], async () => {
-    const parsed = examSchema.safeParse(input);
-    if (!parsed.success) {
+    const parsedData = examSchema.safeParse(input);
+    if (!parsedData.success) {
       throw new ValidationError(
         'Dados do exame inválidos',
-        formatZodError(parsed.error)
+        formatZodError(parsedData.error)
       );
     }
 
     const registerExamUseCase = makeRegisterExamUseCase();
-    const exam = await registerExamUseCase.execute({
-      ...parsed.data,
-    });
+    const exam = await registerExamUseCase.execute(parsedData.data);
 
     revalidatePath(`/patients/${input.patientId}/exams`);
     revalidatePath('/exams');
@@ -137,14 +135,17 @@ export async function deleteExam(
   id: string
 ): Promise<ActionResponse<{ success: boolean }>> {
   return withSecuredActionAndAutomaticRetry(['delete:exam'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedData = IdSchema.safeParse(id);
+    if (!parsedData.success) {
+      throw new ValidationError(
+        'ID inválido.',
+        formatZodError(parsedData.error)
+      );
     }
 
     const useCase = makeDeleteExamUseCase();
     await useCase.execute({
-      id: parsed.data,
+      id: parsedData.data,
     });
 
     revalidatePath('/exams');

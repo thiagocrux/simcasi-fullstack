@@ -41,9 +41,9 @@ export async function findPermissions(
   query?: PermissionQueryInput
 ): Promise<ActionResponse<FindPermissionsOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:permission'], async () => {
-    const parsed = permissionQuerySchema.safeParse(query);
+    const parsedData = permissionQuerySchema.safeParse(query);
     const useCase = makeFindPermissionsUseCase();
-    return await useCase.execute(parsed.data || {});
+    return await useCase.execute(parsedData.data || {});
   });
 }
 
@@ -57,13 +57,13 @@ export async function getPermission(
   id: string
 ): Promise<ActionResponse<GetPermissionByIdOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:permission'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeGetPermissionByIdUseCase();
-    return await useCase.execute({ id: parsed.data });
+    return await useCase.execute({ id: parsedId.data });
   });
 }
 
@@ -78,18 +78,16 @@ export async function createPermission(
   input: CreatePermissionInput
 ): Promise<ActionResponse<RegisterPermissionOutput>> {
   return withSecuredActionAndAutomaticRetry(['create:permission'], async () => {
-    const parsed = permissionSchema.safeParse(input);
-    if (!parsed.success) {
+    const parsedData = permissionSchema.safeParse(input);
+    if (!parsedData.success) {
       throw new ValidationError(
         'Dados da permissão inválidos',
-        formatZodError(parsed.error)
+        formatZodError(parsedData.error)
       );
     }
 
     const useCase = makeRegisterPermissionUseCase();
-    const permission = await useCase.execute({
-      ...parsed.data,
-    });
+    const permission = await useCase.execute(parsedData.data);
 
     revalidatePath('/permissions');
     return permission;
@@ -142,14 +140,14 @@ export async function deletePermission(
   id: string
 ): Promise<ActionResponse<DeletePermissionOutput>> {
   return withSecuredActionAndAutomaticRetry(['delete:permission'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeDeletePermissionUseCase();
     await useCase.execute({
-      id: parsed.data,
+      id: parsedId.data,
     });
 
     revalidatePath('/permissions');
@@ -166,14 +164,14 @@ export async function restorePermission(
   id: string
 ): Promise<ActionResponse<RestorePermissionOutput>> {
   return withSecuredActionAndAutomaticRetry(['update:permission'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeRestorePermissionUseCase();
     const permission = await useCase.execute({
-      id: parsed.data,
+      id: parsedId.data,
     });
 
     if (!permission) {

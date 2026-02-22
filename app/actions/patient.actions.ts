@@ -40,9 +40,9 @@ export async function findPatients(
   query?: PatientQueryInput
 ): Promise<ActionResponse<FindPatientsOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:patient'], async () => {
-    const parsed = patientQuerySchema.safeParse(query);
+    const parsedData = patientQuerySchema.safeParse(query);
     const useCase = makeFindPatientsUseCase();
-    return await useCase.execute(parsed.data || {});
+    return await useCase.execute(parsedData.data || {});
   });
 }
 
@@ -56,13 +56,13 @@ export async function getPatient(
   id: string
 ): Promise<ActionResponse<GetPatientOutput>> {
   return withSecuredActionAndAutomaticRetry(['read:patient'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeGetPatientByIdUseCase();
-    return await useCase.execute({ id: parsed.data });
+    return await useCase.execute({ id: parsedId.data });
   });
 }
 
@@ -77,18 +77,16 @@ export async function createPatient(
   input: CreatePatientInput
 ): Promise<ActionResponse<RegisterPatientOutput>> {
   return withSecuredActionAndAutomaticRetry(['create:patient'], async () => {
-    const parsed = patientSchema.safeParse(input);
-    if (!parsed.success) {
+    const parsedData = patientSchema.safeParse(input);
+    if (!parsedData.success) {
       throw new ValidationError(
         'Dados do paciente inválidos',
-        formatZodError(parsed.error)
+        formatZodError(parsedData.error)
       );
     }
 
     const useCase = makeRegisterPatientUseCase();
-    const patient = await useCase.execute({
-      ...parsed.data,
-    });
+    const patient = await useCase.execute(parsedData.data);
 
     revalidatePath('/patients');
     return patient;
@@ -138,14 +136,14 @@ export async function deletePatient(
   id: string
 ): Promise<ActionResponse<DeletePatientOutput>> {
   return withSecuredActionAndAutomaticRetry(['delete:patient'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeDeletePatientUseCase();
     await useCase.execute({
-      id: parsed.data,
+      id: parsedId.data,
     });
 
     revalidatePath('/patients');
@@ -161,14 +159,14 @@ export async function restorePatient(
   id: string
 ): Promise<ActionResponse<RestorePatientOutput>> {
   return withSecuredActionAndAutomaticRetry(['update:patient'], async () => {
-    const parsed = IdSchema.safeParse(id);
-    if (!parsed.success) {
-      throw new ValidationError('ID inválido.', formatZodError(parsed.error));
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
 
     const useCase = makeRestorePatientUseCase();
     const patient = await useCase.execute({
-      id: parsed.data,
+      id: parsedId.data,
     });
 
     if (!patient) {
