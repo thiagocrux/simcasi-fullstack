@@ -20,7 +20,7 @@ type MedicalRecordVariant =
   | 'observations'
   | 'treatments';
 
-type Variant = 'users' | 'patients' | MedicalRecordVariant;
+type Variant = 'users' | 'patients' | 'audit-logs' | MedicalRecordVariant;
 
 interface EmptyTableProps {
   variant: Variant;
@@ -95,6 +95,13 @@ export function EmptyTableFeedback({ variant, patientId }: EmptyTableProps) {
       buttonLabel: 'Cadastrar tratamento',
       permission: 'create:treatment',
     },
+    'audit-logs': {
+      title: 'Ops! Nenhum log de auditoria foi encontrado.',
+      description:
+        'Não há registros de auditoria que correspondam aos seus critérios de busca.',
+      buttonLabel: '',
+      permission: 'read:audit-log',
+    },
   };
 
   return (
@@ -122,7 +129,8 @@ export function EmptyTableFeedback({ variant, patientId }: EmptyTableProps) {
         </div>
       )}
 
-      {can(variantMapper[variant].permission) ? (
+      {can(variantMapper[variant].permission) &&
+      variantMapper[variant].buttonLabel ? (
         MEDICAL_RECORD_VARIANTS.includes(variant) ? (
           patientId ? (
             <Button
@@ -150,7 +158,7 @@ export function EmptyTableFeedback({ variant, patientId }: EmptyTableProps) {
           <Button
             size="lg"
             className="flex items-center gap-2 cursor-pointer select-none"
-            onClick={() => router.push(`${variant}/new`)}
+            onClick={() => router.push(`/${variant}/new`)}
           >
             <Plus className="w-4 h-4" />
             {variantMapper[variant].buttonLabel}
