@@ -218,6 +218,7 @@ export function AppTableToolbar<TData>({
       <div
         className={cn(
           'flex sm:flex-row justify-between items-center gap-2 mb-4',
+          children ? 'justify-between' : 'justify-end',
           className
         )}
       >
