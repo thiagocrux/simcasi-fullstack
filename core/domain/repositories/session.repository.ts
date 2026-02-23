@@ -29,6 +29,7 @@ export interface SessionRepository {
     endDate?: string;
     timezoneOffset?: string;
     search?: string;
+    searchBy?: string;
     userId?: string;
     includeDeleted?: boolean;
   }): Promise<{ items: Session[]; total: number }>;

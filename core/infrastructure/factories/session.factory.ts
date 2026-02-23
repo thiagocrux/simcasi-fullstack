@@ -1,4 +1,5 @@
 import { FindSessionsUseCase } from '@/core/application/use-cases/session/find-sessions.use-case';
+import { GetSessionByIdUseCase } from '@/core/application/use-cases/session/get-session-by-id.use-case';
 import { LoginUseCase } from '@/core/application/use-cases/session/login.use-case';
 import { LogoutUseCase } from '@/core/application/use-cases/session/logout.use-case';
 import { RefreshTokenUseCase } from '@/core/application/use-cases/session/refresh-token.use-case';
@@ -83,4 +84,12 @@ export function makeValidateSessionUseCase() {
     roleRepository,
     tokenProvider
   );
+}
+
+/**
+ * Factory function to create an instance of GetSessionByIdUseCase.
+ * @return A fully initialized GetSessionByIdUseCase.
+ */
+export function makeGetSessionByIdUseCase() {
+  return new GetSessionByIdUseCase(sessionRepository);
 }

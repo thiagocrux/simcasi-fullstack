@@ -34,6 +34,7 @@ export class PrismaSessionRepository implements SessionRepository {
     orderBy?: string;
     orderDir?: 'asc' | 'desc';
     search?: string;
+    searchBy?: string;
     startDate?: string;
     endDate?: string;
     timezoneOffset?: string;

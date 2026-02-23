@@ -3,6 +3,8 @@
 
 import { cookies } from 'next/headers';
 
+import { GetSessionByIdOutput } from '@/core/application/contracts/session/get-session-by-id.contract';
+import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreateSessionInput,
   RequestPasswordResetInput,
@@ -12,8 +14,10 @@ import {
   sessionSchema,
 } from '@/core/application/validation/schemas/session.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { ValidationError } from '@/core/domain/errors/app.error';
 import { makeTokenProvider } from '@/core/infrastructure/factories/security.factory';
 import {
+  makeGetSessionByIdUseCase,
   makeLoginUseCase,
   makeLogoutUseCase,
   makeValidateSessionUseCase,
@@ -23,7 +27,12 @@ import {
   makeResetPasswordUseCase,
 } from '@/core/infrastructure/factories/user.factory';
 import { requestContextStore } from '@/core/infrastructure/lib/request-context';
-import { getAuditMetadata, handleActionError } from '@/lib/actions.utils';
+import {
+  ActionResponse,
+  getAuditMetadata,
+  handleActionError,
+  withSecuredActionAndAutomaticRetry,
+} from '@/lib/actions.utils';
 import { logger } from '@/lib/logger.utils';
 
 /**
@@ -218,4 +227,24 @@ export async function resetPassword(input: ResetPasswordInput) {
   } catch (error: any) {
     return handleActionError(error);
   }
+}
+
+/**
+ * Retrieves a single session record by its unique identifier.
+ * @param id The UUID of the session to retrieve.
+ * @return A promise resolving to the session data.
+ * @throws ValidationError If the provided ID is invalid.
+ */
+export async function getSession(
+  id: string
+): Promise<ActionResponse<GetSessionByIdOutput>> {
+  return withSecuredActionAndAutomaticRetry(['read:session'], async () => {
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
+    }
+
+    const useCase = makeGetSessionByIdUseCase();
+    return await useCase.execute({ id: parsedId.data });
+  });
 }
