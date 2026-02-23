@@ -3,38 +3,46 @@
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 
-import { Patient } from '@/core/domain/entities/patient.entity';
+import { Exam } from '@/core/domain/entities/exam.entity';
 import { AppDialog } from '../../common/AppDialog';
 import { NotFoundPreviewContent } from '../audit-logs/NotFoundPreviewContent';
 import { PreviewDialogContent } from '../audit-logs/PreviewDialogContent';
 
-interface PatientPreviewDialogProps {
+interface ExamPreviewDialogProps {
   title: string;
   description: string;
-  patient: Patient;
+  exam: Exam;
   children: ReactNode;
 }
 
-export function PatientPreviewDialog({
+export function ExamPreviewDialog({
   title,
   description,
-  patient,
+  exam,
   children,
-}: PatientPreviewDialogProps) {
+}: ExamPreviewDialogProps) {
   const router = useRouter();
 
   const fields = [
     {
-      label: 'Nome',
-      value: patient?.name || '-',
+      label: 'ID do Paciente',
+      value: exam?.patientId || '-',
     },
     {
-      label: 'CPF',
-      value: patient?.cpf || '-',
+      label: 'Tipo do Teste (Treponêmico)',
+      value: exam?.treponemalTestType || '-',
     },
     {
-      label: 'Número do cartão do SUS',
-      value: patient?.susCardNumber || '-',
+      label: 'Resultado (Treponêmico)',
+      value: exam?.treponemalTestResult || '-',
+    },
+    {
+      label: 'Resultado VDRL',
+      value: exam?.nontreponemalVdrlTest || '-',
+    },
+    {
+      label: 'Titulação',
+      value: exam?.nontreponemalTestTitration || '-',
     },
   ];
 
@@ -43,19 +51,19 @@ export function PatientPreviewDialog({
       title={title}
       description={description}
       cancelAction={{
-        label: !patient ? 'Fechar' : 'Cancelar',
+        label: !exam ? 'Fechar' : 'Cancelar',
         action: () => {},
       }}
       continueAction={
-        !patient
+        !exam
           ? undefined
           : {
               label: 'Acessar o perfil completo',
-              action: () => router.push(`/patients/${patient.id}/details`),
+              action: () => router.push(`/exams/${exam.id}/details`),
             }
       }
       content={
-        !patient ? (
+        !exam ? (
           <NotFoundPreviewContent />
         ) : (
           <PreviewDialogContent fields={fields} />

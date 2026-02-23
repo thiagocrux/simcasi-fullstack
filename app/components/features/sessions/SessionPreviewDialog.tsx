@@ -3,38 +3,43 @@
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 
-import { Patient } from '@/core/domain/entities/patient.entity';
+import { Session } from '@/core/domain/entities/session.entity';
+import { formatDate } from '@/lib/formatters.utils';
 import { AppDialog } from '../../common/AppDialog';
 import { NotFoundPreviewContent } from '../audit-logs/NotFoundPreviewContent';
 import { PreviewDialogContent } from '../audit-logs/PreviewDialogContent';
 
-interface PatientPreviewDialogProps {
+interface SessionPreviewDialogProps {
   title: string;
   description: string;
-  patient: Patient;
+  session: Session;
   children: ReactNode;
 }
 
-export function PatientPreviewDialog({
+export function SessionPreviewDialog({
   title,
   description,
-  patient,
+  session,
   children,
-}: PatientPreviewDialogProps) {
+}: SessionPreviewDialogProps) {
   const router = useRouter();
 
   const fields = [
     {
-      label: 'Nome',
-      value: patient?.name || '-',
+      label: 'ID do Usuário',
+      value: session?.userId || '-',
     },
     {
-      label: 'CPF',
-      value: patient?.cpf || '-',
+      label: 'Data de Emissão',
+      value: session?.issuedAt ? formatDate(session.issuedAt) : '-',
     },
     {
-      label: 'Número do cartão do SUS',
-      value: patient?.susCardNumber || '-',
+      label: 'Data de Expiração',
+      value: session?.expiresAt ? formatDate(session.expiresAt) : '-',
+    },
+    {
+      label: 'Endereço IP',
+      value: session?.ipAddress || '-',
     },
   ];
 
@@ -43,19 +48,19 @@ export function PatientPreviewDialog({
       title={title}
       description={description}
       cancelAction={{
-        label: !patient ? 'Fechar' : 'Cancelar',
+        label: !session ? 'Fechar' : 'Cancelar',
         action: () => {},
       }}
       continueAction={
-        !patient
+        !session
           ? undefined
           : {
               label: 'Acessar o perfil completo',
-              action: () => router.push(`/patients/${patient.id}/details`),
+              action: () => router.push(`/sessions/${session.id}/details`),
             }
       }
       content={
-        !patient ? (
+        !session ? (
           <NotFoundPreviewContent />
         ) : (
           <PreviewDialogContent fields={fields} />

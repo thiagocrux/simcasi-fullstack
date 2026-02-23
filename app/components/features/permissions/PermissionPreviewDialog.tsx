@@ -3,38 +3,34 @@
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 
-import { Patient } from '@/core/domain/entities/patient.entity';
+import { Permission } from '@/core/domain/entities/permission.entity';
 import { AppDialog } from '../../common/AppDialog';
 import { NotFoundPreviewContent } from '../audit-logs/NotFoundPreviewContent';
 import { PreviewDialogContent } from '../audit-logs/PreviewDialogContent';
 
-interface PatientPreviewDialogProps {
+interface PermissionPreviewDialogProps {
   title: string;
   description: string;
-  patient: Patient;
+  permission: Permission;
   children: ReactNode;
 }
 
-export function PatientPreviewDialog({
+export function PermissionPreviewDialog({
   title,
   description,
-  patient,
+  permission,
   children,
-}: PatientPreviewDialogProps) {
+}: PermissionPreviewDialogProps) {
   const router = useRouter();
 
   const fields = [
     {
       label: 'Nome',
-      value: patient?.name || '-',
+      value: permission?.label || '-',
     },
     {
-      label: 'CPF',
-      value: patient?.cpf || '-',
-    },
-    {
-      label: 'Número do cartão do SUS',
-      value: patient?.susCardNumber || '-',
+      label: 'Código identificador',
+      value: permission?.code || '-',
     },
   ];
 
@@ -43,19 +39,20 @@ export function PatientPreviewDialog({
       title={title}
       description={description}
       cancelAction={{
-        label: !patient ? 'Fechar' : 'Cancelar',
+        label: !permission ? 'Fechar' : 'Cancelar',
         action: () => {},
       }}
       continueAction={
-        !patient
+        !permission
           ? undefined
           : {
               label: 'Acessar o perfil completo',
-              action: () => router.push(`/patients/${patient.id}/details`),
+              action: () =>
+                router.push(`/permissions/${permission.id}/details`),
             }
       }
       content={
-        !patient ? (
+        !permission ? (
           <NotFoundPreviewContent />
         ) : (
           <PreviewDialogContent fields={fields} />

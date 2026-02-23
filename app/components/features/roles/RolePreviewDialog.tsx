@@ -3,38 +3,34 @@
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 
-import { Patient } from '@/core/domain/entities/patient.entity';
+import { Role } from '@/core/domain/entities/role.entity';
 import { AppDialog } from '../../common/AppDialog';
 import { NotFoundPreviewContent } from '../audit-logs/NotFoundPreviewContent';
 import { PreviewDialogContent } from '../audit-logs/PreviewDialogContent';
 
-interface PatientPreviewDialogProps {
+interface RolePreviewDialogProps {
   title: string;
   description: string;
-  patient: Patient;
+  role: Role;
   children: ReactNode;
 }
 
-export function PatientPreviewDialog({
+export function RolePreviewDialog({
   title,
   description,
-  patient,
+  role,
   children,
-}: PatientPreviewDialogProps) {
+}: RolePreviewDialogProps) {
   const router = useRouter();
 
   const fields = [
     {
       label: 'Nome',
-      value: patient?.name || '-',
+      value: role?.label || '-',
     },
     {
-      label: 'CPF',
-      value: patient?.cpf || '-',
-    },
-    {
-      label: 'Número do cartão do SUS',
-      value: patient?.susCardNumber || '-',
+      label: 'Código identificador',
+      value: role?.code || '-',
     },
   ];
 
@@ -43,19 +39,19 @@ export function PatientPreviewDialog({
       title={title}
       description={description}
       cancelAction={{
-        label: !patient ? 'Fechar' : 'Cancelar',
+        label: !role ? 'Fechar' : 'Cancelar',
         action: () => {},
       }}
       continueAction={
-        !patient
+        !role
           ? undefined
           : {
               label: 'Acessar o perfil completo',
-              action: () => router.push(`/patients/${patient.id}/details`),
+              action: () => router.push(`/roles/${role.id}/details`),
             }
       }
       content={
-        !patient ? (
+        !role ? (
           <NotFoundPreviewContent />
         ) : (
           <PreviewDialogContent fields={fields} />

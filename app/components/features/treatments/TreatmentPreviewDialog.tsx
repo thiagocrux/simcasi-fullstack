@@ -3,38 +3,42 @@
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 
-import { Patient } from '@/core/domain/entities/patient.entity';
+import { Treatment } from '@/core/domain/entities/treatment.entity';
 import { AppDialog } from '../../common/AppDialog';
 import { NotFoundPreviewContent } from '../audit-logs/NotFoundPreviewContent';
 import { PreviewDialogContent } from '../audit-logs/PreviewDialogContent';
 
-interface PatientPreviewDialogProps {
+interface TreatmentPreviewDialogProps {
   title: string;
   description: string;
-  patient: Patient;
+  treatment: Treatment;
   children: ReactNode;
 }
 
-export function PatientPreviewDialog({
+export function TreatmentPreviewDialog({
   title,
   description,
-  patient,
+  treatment,
   children,
-}: PatientPreviewDialogProps) {
+}: TreatmentPreviewDialogProps) {
   const router = useRouter();
 
   const fields = [
     {
-      label: 'Nome',
-      value: patient?.name || '-',
+      label: 'ID do Paciente',
+      value: treatment?.patientId || '-',
     },
     {
-      label: 'CPF',
-      value: patient?.cpf || '-',
+      label: 'Medicamento',
+      value: treatment?.medication || '-',
     },
     {
-      label: 'Número do cartão do SUS',
-      value: patient?.susCardNumber || '-',
+      label: 'Unidade de Saúde',
+      value: treatment?.healthCenter || '-',
+    },
+    {
+      label: 'Dosagem',
+      value: treatment?.dosage || '-',
     },
   ];
 
@@ -43,19 +47,19 @@ export function PatientPreviewDialog({
       title={title}
       description={description}
       cancelAction={{
-        label: !patient ? 'Fechar' : 'Cancelar',
+        label: !treatment ? 'Fechar' : 'Cancelar',
         action: () => {},
       }}
       continueAction={
-        !patient
+        !treatment
           ? undefined
           : {
               label: 'Acessar o perfil completo',
-              action: () => router.push(`/patients/${patient.id}/details`),
+              action: () => router.push(`/treatments/${treatment.id}/details`),
             }
       }
       content={
-        !patient ? (
+        !treatment ? (
           <NotFoundPreviewContent />
         ) : (
           <PreviewDialogContent fields={fields} />

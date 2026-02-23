@@ -3,38 +3,34 @@
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 
-import { Patient } from '@/core/domain/entities/patient.entity';
+import { Notification } from '@/core/domain/entities/notification.entity';
 import { AppDialog } from '../../common/AppDialog';
 import { NotFoundPreviewContent } from '../audit-logs/NotFoundPreviewContent';
 import { PreviewDialogContent } from '../audit-logs/PreviewDialogContent';
 
-interface PatientPreviewDialogProps {
+interface NotificationPreviewDialogProps {
   title: string;
   description: string;
-  patient: Patient;
+  notification: Notification;
   children: ReactNode;
 }
 
-export function PatientPreviewDialog({
+export function NotificationPreviewDialog({
   title,
   description,
-  patient,
+  notification,
   children,
-}: PatientPreviewDialogProps) {
+}: NotificationPreviewDialogProps) {
   const router = useRouter();
 
   const fields = [
     {
-      label: 'Nome',
-      value: patient?.name || '-',
+      label: 'ID do Paciente',
+      value: notification?.patientId || '-',
     },
     {
-      label: 'CPF',
-      value: patient?.cpf || '-',
-    },
-    {
-      label: 'Número do cartão do SUS',
-      value: patient?.susCardNumber || '-',
+      label: 'Número do SINAN',
+      value: notification?.sinan || '-',
     },
   ];
 
@@ -43,19 +39,20 @@ export function PatientPreviewDialog({
       title={title}
       description={description}
       cancelAction={{
-        label: !patient ? 'Fechar' : 'Cancelar',
+        label: !notification ? 'Fechar' : 'Cancelar',
         action: () => {},
       }}
       continueAction={
-        !patient
+        !notification
           ? undefined
           : {
               label: 'Acessar o perfil completo',
-              action: () => router.push(`/patients/${patient.id}/details`),
+              action: () =>
+                router.push(`/notifications/${notification.id}/details`),
             }
       }
       content={
-        !patient ? (
+        !notification ? (
           <NotFoundPreviewContent />
         ) : (
           <PreviewDialogContent fields={fields} />

@@ -124,7 +124,7 @@ export function EmptyTableFeedback({ variant, patientId }: EmptyTableProps) {
           <p className="font-bold text-xl">Nenhum registro cadastrado</p>
           <p className="text-muted-foreground">
             Nenhum dado está disponível para visualização no momento. Caso
-            precise de acesso, procure o administrador do sistema..
+            precise de acesso, procure o administrador do sistema.
           </p>
         </div>
       )}
