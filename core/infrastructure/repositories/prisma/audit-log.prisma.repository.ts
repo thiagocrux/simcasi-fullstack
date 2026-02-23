@@ -73,16 +73,38 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     }
 
     if (search) {
-      const allowedFields = ['action', 'entityName', 'ipAddress', 'userAgent'];
+      const allowedFields = [
+        'action',
+        'entityName',
+        'entityId',
+        'userId',
+        'ipAddress',
+        'userAgent',
+      ];
       if (searchBy && allowedFields.includes(searchBy)) {
-        // Field-specific search (case-insensitive for string fields).
-        const isInsensitive = ['action', 'entityName'].includes(searchBy);
-        where[searchBy as keyof Prisma.AuditLogWhereInput] = {
-          contains: search,
-          ...(isInsensitive ? { mode: 'insensitive' } : {}),
-        } as any;
+        // Handle UUID fields separately to avoid Prisma errors with partial string matches.
+        const isUuidField = ['entityId', 'userId'].includes(searchBy);
+        const uuidRegex =
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+        if (isUuidField) {
+          if (uuidRegex.test(search)) {
+            where[searchBy as keyof Prisma.AuditLogWhereInput] = search as any;
+          } else {
+            // If the search string is not a valid UUID, search should return no results.
+            where[searchBy as keyof Prisma.AuditLogWhereInput] =
+              '00000000-0000-0000-0000-000000000000' as any;
+          }
+        } else {
+          // Field-specific search (case-insensitive for tracked names and actions).
+          const isInsensitive = ['action', 'entityName'].includes(searchBy);
+          where[searchBy as keyof Prisma.AuditLogWhereInput] = {
+            contains: search,
+            ...(isInsensitive ? { mode: 'insensitive' } : {}),
+          } as any;
+        }
       } else {
-        // Default behavior: Generic OR search across common fields.
+        // Default behavior: Generic OR search across common string fields.
         where.OR = [
           { action: { contains: search, mode: 'insensitive' } },
           { entityName: { contains: search, mode: 'insensitive' } },
@@ -98,7 +120,9 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
         take,
         // Uses 'createdAt' as the default ordering field because audit logs are immutable.
         // Ordering by 'updatedAt' or similar fields is not applicable for immutable records.
-        orderBy: orderBy ? { [orderBy]: orderDir } : { createdAt: 'desc' },
+        orderBy: orderBy
+          ? [{ [orderBy]: orderDir }, { createdAt: 'desc' }]
+          : { createdAt: 'desc' },
       }),
       prisma.auditLog.count({ where }),
     ]);

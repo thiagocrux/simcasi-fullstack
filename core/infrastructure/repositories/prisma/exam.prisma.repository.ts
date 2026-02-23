@@ -99,7 +99,9 @@ export class PrismaExamRepository implements ExamRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
+        orderBy: orderBy
+          ? [{ [orderBy]: orderDir }, { createdAt: 'desc' }]
+          : [{ createdAt: 'desc' }],
       }),
       prisma.exam.count({ where }),
     ]);

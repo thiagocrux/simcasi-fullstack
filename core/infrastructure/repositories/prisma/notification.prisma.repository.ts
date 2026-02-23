@@ -94,7 +94,9 @@ export class PrismaNotificationRepository implements NotificationRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
+        orderBy: orderBy
+          ? [{ [orderBy]: orderDir }, { createdAt: 'desc' }]
+          : [{ createdAt: 'desc' }],
       }),
       prisma.notification.count({ where }),
     ]);

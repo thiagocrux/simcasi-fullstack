@@ -100,7 +100,9 @@ export class PrismaRoleRepository implements RoleRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
+        orderBy: orderBy
+          ? [{ [orderBy]: orderDir }, { createdAt: 'desc' }]
+          : [{ createdAt: 'desc' }],
       }),
       prisma.role.count({ where }),
     ]);

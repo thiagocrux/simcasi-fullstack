@@ -97,7 +97,9 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
+        orderBy: orderBy
+          ? [{ [orderBy]: orderDir }, { createdAt: 'desc' }]
+          : [{ createdAt: 'desc' }],
       }),
       prisma.treatment.count({ where }),
     ]);

@@ -162,7 +162,9 @@ export class PrismaPatientRepository implements PatientRepository {
         where,
         skip,
         take,
-        orderBy: orderBy ? { [orderBy]: orderDir } : { updatedAt: 'desc' },
+        orderBy: orderBy
+          ? [{ [orderBy]: orderDir }, { createdAt: 'desc' }]
+          : [{ createdAt: 'desc' }],
       }),
       prisma.patient.count({ where }),
     ]);
