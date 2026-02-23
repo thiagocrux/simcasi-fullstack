@@ -68,17 +68,7 @@ interface UsersTableProps {
   showIdColumn?: boolean;
 }
 
-type Column =
-  | 'id'
-  | 'name'
-  | 'email'
-  | 'roleId'
-  | 'createdBy'
-  | 'createdAt'
-  | 'updatedBy'
-  | 'updatedAt';
-
-const COLUMN_LABELS: Record<Column, string> = {
+const COLUMN_LABELS: Record<string, string> = {
   id: 'ID',
   name: 'Nome',
   email: 'E-mail',
@@ -89,9 +79,9 @@ const COLUMN_LABELS: Record<Column, string> = {
   updatedAt: 'Atualizado em',
 };
 
-const FILTERABLE_COLUMNS: Column[] = ['name', 'email'];
+const FILTERABLE_COLUMNS = ['name', 'email'];
 const DEFAULT_PAGE_SIZE = 10;
-const DEFAULT_FILTER_COLUMN: Column = 'name';
+const DEFAULT_FILTER_COLUMN = 'name';
 const COLUMN_MAX_WIDTH = 'max-w-md';
 
 export function UsersTable({
@@ -111,7 +101,7 @@ export function UsersTable({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [selectedFilterOption, setSelectedFilterOption] = useState<Column>(
+  const [selectedFilterOption, setSelectedFilterOption] = useState<string>(
     DEFAULT_FILTER_COLUMN
   );
   const [pagination, setPagination] = useState<PaginationState>({
@@ -245,22 +235,22 @@ export function UsersTable({
                       column.toggleSorting(next === 'desc');
                     }
                   }}
-                  className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+                  className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
                 >
-                  ID
+                  {COLUMN_LABELS[column.id]}
                   {column.getSortIndex() === 0 &&
                     column.getIsSorted() === 'asc' && <ArrowDownAZ />}
                   {column.getSortIndex() === 0 &&
                     column.getIsSorted() === 'desc' && <ArrowUpZA />}
                 </Button>
               ),
-              cell: ({ row }) => (
+              cell: ({ row, column }) => (
                 <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-                  {renderOrFallback(row.getValue('id'), (value) => (
+                  {renderOrFallback(row.getValue(column.id), (value) => (
                     <HighlightedText
                       text={value}
                       highlight={
-                        selectedFilterOption === 'id' ? searchValue : ''
+                        selectedFilterOption === column.id ? searchValue : ''
                       }
                     />
                   ))}
@@ -282,9 +272,9 @@ export function UsersTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Nome
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -293,12 +283,14 @@ export function UsersTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('name'), (value) => (
+            {renderOrFallback(row.getValue(column.id), (value) => (
               <HighlightedText
                 text={value}
-                highlight={selectedFilterOption === 'name' ? searchValue : ''}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -317,9 +309,9 @@ export function UsersTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            E-mail
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -328,12 +320,14 @@ export function UsersTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('email'), (value) => (
+            {renderOrFallback(row.getValue(column.id), (value) => (
               <HighlightedText
                 text={value}
-                highlight={selectedFilterOption === 'email' ? searchValue : ''}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -352,9 +346,9 @@ export function UsersTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Nível de permissão
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -363,12 +357,14 @@ export function UsersTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('roleId'), (value) => (
+            {renderOrFallback(row.getValue(column.id), (value) => (
               <HighlightedText
                 text={getRoleLabel(value) ?? value}
-                highlight={selectedFilterOption === 'roleId' ? searchValue : ''}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -387,9 +383,9 @@ export function UsersTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Criado por
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -398,10 +394,10 @@ export function UsersTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row, column }) => {
           const user = findRecordById(
             relatedUsers || [],
-            row.getValue('createdBy')
+            row.getValue(column.id)
           );
 
           return (
@@ -435,9 +431,9 @@ export function UsersTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Criado em
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -446,15 +442,15 @@ export function UsersTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatDate(row.getValue('createdAt') as Date),
+              formatDate(row.getValue(column.id) as Date),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'createdAt' ? searchValue : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -475,9 +471,9 @@ export function UsersTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Atualizado por
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -486,10 +482,10 @@ export function UsersTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row, column }) => {
           const user = findRecordById(
             relatedUsers || [],
-            row.getValue('updatedBy')
+            row.getValue(column.id)
           );
 
           return (
@@ -523,9 +519,9 @@ export function UsersTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Atualizado em
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -534,15 +530,15 @@ export function UsersTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatDate(row.getValue('updatedAt') as Date),
+              formatDate(row.getValue(column.id) as Date),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'updatedAt' ? searchValue : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -672,7 +668,7 @@ export function UsersTable({
           table={table}
           selectedFilterOption={selectedFilterOption}
           setSelectedFilterOption={(value: string) =>
-            setSelectedFilterOption(value as Column)
+            setSelectedFilterOption(value)
           }
           availableFilterOptions={FILTERABLE_COLUMNS}
           showColumnToggleButton={showColumnToggleButton}

@@ -75,17 +75,7 @@ interface ObservationsTableProps {
   patientId?: string;
 }
 
-type Column =
-  | 'id'
-  | 'patientId'
-  | 'observations'
-  | 'hasPartnerBeingTreated'
-  | 'createdBy'
-  | 'createdAt'
-  | 'updatedBy'
-  | 'updatedAt';
-
-const COLUMN_LABELS: Record<Column, string> = {
+const COLUMN_LABELS: Record<string, string> = {
   id: 'ID',
   patientId: 'Paciente',
   observations: 'Observações',
@@ -96,9 +86,9 @@ const COLUMN_LABELS: Record<Column, string> = {
   updatedAt: 'Atualizado em',
 };
 
-const FILTERABLE_COLUMNS: Column[] = ['observations'];
+const FILTERABLE_COLUMNS = ['observations'];
 const DEFAULT_PAGE_SIZE = 10;
-const DEFAULT_FILTER_COLUMN: Column = 'observations';
+const DEFAULT_FILTER_COLUMN = 'observations';
 const COLUMN_MAX_WIDTH = 'max-w-md';
 
 export function ObservationsTable({
@@ -117,7 +107,7 @@ export function ObservationsTable({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [selectedFilterOption, setSelectedFilterOption] = useState<Column>(
+  const [selectedFilterOption, setSelectedFilterOption] = useState<string>(
     DEFAULT_FILTER_COLUMN
   );
   const [pagination, setPagination] = useState<PaginationState>({
@@ -232,7 +222,7 @@ export function ObservationsTable({
       ...(showIdColumn
         ? ([
             {
-              accessorKey: 'id' as Column,
+              accessorKey: 'id',
               header: ({ column }) => (
                 <Button
                   variant="ghost"
@@ -244,22 +234,22 @@ export function ObservationsTable({
                       column.toggleSorting(next === 'desc');
                     }
                   }}
-                  className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+                  className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
                 >
-                  ID
+                  {COLUMN_LABELS[column.id]}
                   {column.getSortIndex() === 0 &&
                     column.getIsSorted() === 'asc' && <ArrowDownAZ />}
                   {column.getSortIndex() === 0 &&
                     column.getIsSorted() === 'desc' && <ArrowUpZA />}
                 </Button>
               ),
-              cell: ({ row }) => (
+              cell: ({ row, column }) => (
                 <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
                   {renderOrFallback(row.original.id, (value) => (
                     <HighlightedText
                       text={String(value)}
                       highlight={
-                        selectedFilterOption === 'id' ? searchValue : ''
+                        selectedFilterOption === column.id ? searchValue : ''
                       }
                     />
                   ))}
@@ -281,9 +271,9 @@ export function ObservationsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Observações
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -292,13 +282,13 @@ export function ObservationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('observations'), (value) => (
+            {renderOrFallback(row.getValue(column.id), (value) => (
               <HighlightedText
                 text={value}
                 highlight={
-                  selectedFilterOption === 'observations' ? searchValue : ''
+                  selectedFilterOption === column.id ? searchValue : ''
                 }
               />
             ))}
@@ -318,9 +308,9 @@ export function ObservationsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Parceiro sendo tratado?
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -329,15 +319,11 @@ export function ObservationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             <HighlightedText
-              text={row.getValue('hasPartnerBeingTreated') ? 'Sim' : 'Não'}
-              highlight={
-                selectedFilterOption === 'hasPartnerBeingTreated'
-                  ? searchValue
-                  : ''
-              }
+              text={row.getValue(column.id) ? 'Sim' : 'Não'}
+              highlight={selectedFilterOption === column.id ? searchValue : ''}
             />
           </div>
         ),
@@ -355,9 +341,9 @@ export function ObservationsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Paciente
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -366,10 +352,10 @@ export function ObservationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row, column }) => {
           const patient = findRecordById(
             relatedPatients || [],
-            row.getValue('patientId')
+            row.getValue(column.id)
           );
 
           return (
@@ -402,9 +388,9 @@ export function ObservationsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Criado por
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -413,10 +399,10 @@ export function ObservationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row, column }) => {
           const user = findRecordById(
             relatedUsers || [],
-            row.getValue('createdBy')
+            row.getValue(column.id)
           );
 
           return (
@@ -450,9 +436,9 @@ export function ObservationsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Criado em
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -461,15 +447,15 @@ export function ObservationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatDate(row.getValue('createdAt') as Date),
+              formatDate(row.getValue(column.id) as Date),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'createdAt' ? searchValue : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -490,9 +476,9 @@ export function ObservationsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Atualizado por
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -501,10 +487,10 @@ export function ObservationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row, column }) => {
           const user = findRecordById(
             relatedUsers || [],
-            row.getValue('updatedBy')
+            row.getValue(column.id)
           );
 
           return (
@@ -538,9 +524,9 @@ export function ObservationsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Atualizado em
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -549,15 +535,15 @@ export function ObservationsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatDate(row.getValue('updatedAt') as Date),
+              formatDate(row.getValue(column.id) as Date),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'updatedAt' ? searchValue : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -683,7 +669,7 @@ export function ObservationsTable({
           table={table}
           selectedFilterOption={selectedFilterOption}
           setSelectedFilterOption={(value: string) =>
-            setSelectedFilterOption(value as Column)
+            setSelectedFilterOption(value)
           }
           availableFilterOptions={FILTERABLE_COLUMNS}
           showColumnToggleButton={showColumnToggleButton}

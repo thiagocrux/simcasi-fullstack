@@ -84,7 +84,7 @@ export default async function UserDetailsPage({
         <ReturnLink />
         <PageHeader
           title="Detalhes do usuário"
-          description="Aqui você pode visualizar todas as informações completas deste usuário."
+          description="Aqui você pode visualizar todas as informações deste usuário."
         />
         <DetailsPageActions
           entity="user"

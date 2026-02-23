@@ -154,7 +154,7 @@ export default async function PatientDetailsPage({
         <ReturnLink />
         <PageHeader
           title="Detalhes do paciente"
-          description="Aqui você pode visualizar todas as informações completas deste
+          description="Aqui você pode visualizar todas as informações deste
             paciente, incluindo dados pessoais, clínicos e de contato."
         />
         <Tabs defaultValue="details">

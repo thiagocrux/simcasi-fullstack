@@ -76,21 +76,7 @@ interface TreatmentsTableProps {
   patientId?: string;
 }
 
-type Column =
-  | 'id'
-  | 'patientId'
-  | 'medication'
-  | 'healthCenter'
-  | 'startDate'
-  | 'dosage'
-  | 'observations'
-  | 'partnerInformation'
-  | 'createdBy'
-  | 'createdAt'
-  | 'updatedBy'
-  | 'updatedAt';
-
-const COLUMN_LABELS: Record<Column, string> = {
+const COLUMN_LABELS: Record<string, string> = {
   id: 'ID',
   patientId: 'Paciente',
   medication: 'Medicamento',
@@ -105,7 +91,7 @@ const COLUMN_LABELS: Record<Column, string> = {
   updatedAt: 'Atualizado em',
 };
 
-const FILTERABLE_COLUMNS: Column[] = [
+const FILTERABLE_COLUMNS = [
   'medication',
   'dosage',
   'healthCenter',
@@ -113,7 +99,7 @@ const FILTERABLE_COLUMNS: Column[] = [
   'partnerInformation',
 ];
 const DEFAULT_PAGE_SIZE = 10;
-const DEFAULT_FILTER_COLUMN: Column = 'medication';
+const DEFAULT_FILTER_COLUMN = 'medication';
 const COLUMN_MAX_WIDTH = 'max-w-md';
 
 export function TreatmentsTable({
@@ -132,7 +118,7 @@ export function TreatmentsTable({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [selectedFilterOption, setSelectedFilterOption] = useState<Column>(
+  const [selectedFilterOption, setSelectedFilterOption] = useState<string>(
     DEFAULT_FILTER_COLUMN
   );
   const [pagination, setPagination] = useState<PaginationState>({
@@ -259,22 +245,22 @@ export function TreatmentsTable({
                       column.toggleSorting(next === 'desc');
                     }
                   }}
-                  className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+                  className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
                 >
-                  ID
+                  {COLUMN_LABELS[column.id]}
                   {column.getSortIndex() === 0 &&
                     column.getIsSorted() === 'asc' && <ArrowDownAZ />}
                   {column.getSortIndex() === 0 &&
                     column.getIsSorted() === 'desc' && <ArrowUpZA />}
                 </Button>
               ),
-              cell: ({ row }) => (
+              cell: ({ row, column }) => (
                 <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
                   {renderOrFallback(row.original.id, (value) => (
                     <HighlightedText
                       text={String(value)}
                       highlight={
-                        selectedFilterOption === 'id' ? searchValue : ''
+                        selectedFilterOption === column.id ? searchValue : ''
                       }
                     />
                   ))}
@@ -296,9 +282,9 @@ export function TreatmentsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Medicamento
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -307,13 +293,13 @@ export function TreatmentsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('medication'), (value) => (
+            {renderOrFallback(row.getValue(column.id), (value) => (
               <HighlightedText
                 text={value}
                 highlight={
-                  selectedFilterOption === 'medication' ? searchValue : ''
+                  selectedFilterOption === column.id ? searchValue : ''
                 }
               />
             ))}
@@ -333,9 +319,9 @@ export function TreatmentsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Unidade de saúde
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -344,13 +330,13 @@ export function TreatmentsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('healthCenter'), (value) => (
+            {renderOrFallback(row.getValue(column.id), (value) => (
               <HighlightedText
                 text={value}
                 highlight={
-                  selectedFilterOption === 'healthCenter' ? searchValue : ''
+                  selectedFilterOption === column.id ? searchValue : ''
                 }
               />
             ))}
@@ -371,9 +357,9 @@ export function TreatmentsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Início
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -382,15 +368,15 @@ export function TreatmentsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatCalendarDate(row.getValue('startDate')),
+              formatCalendarDate(row.getValue(column.id)),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'startDate' ? searchValue : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -411,9 +397,9 @@ export function TreatmentsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Dosagem
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -422,12 +408,14 @@ export function TreatmentsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('dosage'), (value) => (
+            {renderOrFallback(row.getValue(column.id), (value) => (
               <HighlightedText
                 text={value}
-                highlight={selectedFilterOption === 'dosage' ? searchValue : ''}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
               />
             ))}
           </div>
@@ -446,9 +434,9 @@ export function TreatmentsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Observações
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -457,13 +445,13 @@ export function TreatmentsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('observations'), (value) => (
+            {renderOrFallback(row.getValue(column.id), (value) => (
               <HighlightedText
                 text={value}
                 highlight={
-                  selectedFilterOption === 'observations' ? searchValue : ''
+                  selectedFilterOption === column.id ? searchValue : ''
                 }
               />
             ))}
@@ -483,9 +471,9 @@ export function TreatmentsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Informações do parceiro
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -494,15 +482,13 @@ export function TreatmentsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('partnerInformation'), (value) => (
+            {renderOrFallback(row.getValue(column.id), (value) => (
               <HighlightedText
                 text={value}
                 highlight={
-                  selectedFilterOption === 'partnerInformation'
-                    ? searchValue
-                    : ''
+                  selectedFilterOption === column.id ? searchValue : ''
                 }
               />
             ))}
@@ -522,9 +508,9 @@ export function TreatmentsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Paciente
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -533,10 +519,10 @@ export function TreatmentsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row, column }) => {
           const patient = findRecordById(
             relatedPatients || [],
-            row.getValue('patientId')
+            row.getValue(column.id)
           );
 
           return (
@@ -569,9 +555,9 @@ export function TreatmentsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Criado por
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -580,10 +566,10 @@ export function TreatmentsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row, column }) => {
           const user = findRecordById(
             relatedUsers || [],
-            row.getValue('createdBy')
+            row.getValue(column.id)
           );
 
           return (
@@ -617,9 +603,9 @@ export function TreatmentsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Criado em
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -628,15 +614,15 @@ export function TreatmentsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatDate(row.getValue('createdAt') as Date),
+              formatDate(row.getValue(column.id) as Date),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'createdAt' ? searchValue : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -657,9 +643,9 @@ export function TreatmentsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Atualizado por
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -668,10 +654,10 @@ export function TreatmentsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row, column }) => {
           const user = findRecordById(
             relatedUsers || [],
-            row.getValue('updatedBy')
+            row.getValue(column.id)
           );
 
           return (
@@ -705,9 +691,9 @@ export function TreatmentsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Atualizado em
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -716,15 +702,15 @@ export function TreatmentsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatDate(row.getValue('updatedAt') as Date),
+              formatDate(row.getValue(column.id) as Date),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'updatedAt' ? searchValue : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -795,6 +781,7 @@ export function TreatmentsTable({
     showIdColumn,
     selectedFilterOption,
     searchValue,
+    relatedPatients,
     relatedUsers,
     can,
     router,
@@ -844,7 +831,7 @@ export function TreatmentsTable({
           table={table}
           selectedFilterOption={selectedFilterOption}
           setSelectedFilterOption={(value: string) =>
-            setSelectedFilterOption(value as Column)
+            setSelectedFilterOption(value)
           }
           availableFilterOptions={FILTERABLE_COLUMNS}
           showColumnToggleButton={showColumnToggleButton}

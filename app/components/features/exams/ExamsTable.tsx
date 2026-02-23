@@ -71,25 +71,7 @@ interface ExamsTableProps {
   patientId?: string;
 }
 
-type Column =
-  | 'id'
-  | 'patientId'
-  | 'treponemalTestType'
-  | 'treponemalTestResult'
-  | 'treponemalTestDate'
-  | 'treponemalTestLocation'
-  | 'nontreponemalVdrlTest'
-  | 'nontreponemalTestTitration'
-  | 'nontreponemalTestDate'
-  | 'otherNontreponemalTest'
-  | 'otherNontreponemalTestDate'
-  | 'referenceObservations'
-  | 'createdBy'
-  | 'createdAt'
-  | 'updatedBy'
-  | 'updatedAt';
-
-const COLUMN_LABELS: Record<Column, string> = {
+const COLUMN_LABELS: Record<string, string> = {
   id: 'ID',
   patientId: 'Paciente',
   treponemalTestType: 'Tipo de teste treponêmico ',
@@ -108,14 +90,14 @@ const COLUMN_LABELS: Record<Column, string> = {
   updatedAt: 'Atualizado em',
 };
 
-const FILTERABLE_COLUMNS: Column[] = [
+const FILTERABLE_COLUMNS = [
   'treponemalTestType',
   'treponemalTestLocation',
   'nontreponemalTestTitration',
   'referenceObservations',
 ];
 const DEFAULT_PAGE_SIZE = 10;
-const DEFAULT_FILTER_COLUMN: Column = 'treponemalTestType';
+const DEFAULT_FILTER_COLUMN = 'treponemalTestType';
 const COLUMN_MAX_WIDTH = 'max-w-md';
 
 export function ExamsTable({
@@ -135,7 +117,7 @@ export function ExamsTable({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const [selectedFilterOption, setSelectedFilterOption] = useState<Column>(
+  const [selectedFilterOption, setSelectedFilterOption] = useState<string>(
     DEFAULT_FILTER_COLUMN
   );
   const [pagination, setPagination] = useState<PaginationState>({
@@ -247,7 +229,7 @@ export function ExamsTable({
       ...(showIdColumn
         ? ([
             {
-              accessorKey: 'id' as Column,
+              accessorKey: 'id',
               header: ({ column }) => (
                 <Button
                   variant="ghost"
@@ -259,22 +241,22 @@ export function ExamsTable({
                       column.toggleSorting(next === 'desc');
                     }
                   }}
-                  className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+                  className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
                 >
-                  ID
+                  {COLUMN_LABELS[column.id]}
                   {column.getSortIndex() === 0 &&
                     column.getIsSorted() === 'asc' && <ArrowDownAZ />}
                   {column.getSortIndex() === 0 &&
                     column.getIsSorted() === 'desc' && <ArrowUpZA />}
                 </Button>
               ),
-              cell: ({ row }) => (
+              cell: ({ row, column }) => (
                 <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
                   {renderOrFallback(row.original.id, (value) => (
                     <HighlightedText
                       text={String(value)}
                       highlight={
-                        selectedFilterOption === 'id' ? searchValue : ''
+                        selectedFilterOption === column.id ? searchValue : ''
                       }
                     />
                   ))}
@@ -296,9 +278,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Tipo de teste treponêmico
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -307,15 +289,13 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('treponemalTestType'), (value) => (
+            {renderOrFallback(row.getValue(column.id), (value) => (
               <HighlightedText
                 text={value}
                 highlight={
-                  selectedFilterOption === 'treponemalTestType'
-                    ? searchValue
-                    : ''
+                  selectedFilterOption === column.id ? searchValue : ''
                 }
               />
             ))}
@@ -335,9 +315,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Resultado do teste treponêmico
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -346,15 +326,13 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(row.getValue('treponemalTestResult'), (value) => (
+            {renderOrFallback(row.getValue(column.id), (value) => (
               <HighlightedText
                 text={value}
                 highlight={
-                  selectedFilterOption === 'treponemalTestResult'
-                    ? searchValue
-                    : ''
+                  selectedFilterOption === column.id ? searchValue : ''
                 }
               />
             ))}
@@ -375,9 +353,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Data do teste treponêmico
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -386,17 +364,15 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatCalendarDate(row.getValue('treponemalTestDate')),
+              formatCalendarDate(row.getValue(column.id)),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'treponemalTestDate'
-                      ? searchValue
-                      : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -417,9 +393,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Local do teste treponêmico
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -428,21 +404,16 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(
-              row.getValue('treponemalTestLocation'),
-              (value) => (
-                <HighlightedText
-                  text={value}
-                  highlight={
-                    selectedFilterOption === 'treponemalTestLocation'
-                      ? searchValue
-                      : ''
-                  }
-                />
-              )
-            )}
+            {renderOrFallback(row.getValue(column.id), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
+              />
+            ))}
           </div>
         ),
       },
@@ -459,9 +430,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Teste VDRL não treponêmico
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -470,21 +441,16 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(
-              row.getValue('nontreponemalVdrlTest'),
-              (value) => (
-                <HighlightedText
-                  text={value}
-                  highlight={
-                    selectedFilterOption === 'nontreponemalVdrlTest'
-                      ? searchValue
-                      : ''
-                  }
-                />
-              )
-            )}
+            {renderOrFallback(row.getValue(column.id), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
+              />
+            ))}
           </div>
         ),
       },
@@ -501,9 +467,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Titulação do teste não treponêmico
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -512,21 +478,16 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(
-              row.getValue('nontreponemalTestTitration'),
-              (value) => (
-                <HighlightedText
-                  text={value}
-                  highlight={
-                    selectedFilterOption === 'nontreponemalTestTitration'
-                      ? searchValue
-                      : ''
-                  }
-                />
-              )
-            )}
+            {renderOrFallback(row.getValue(column.id), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
+              />
+            ))}
           </div>
         ),
       },
@@ -544,9 +505,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Data do teste não treponêmico
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -555,17 +516,15 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatCalendarDate(row.getValue('nontreponemalTestDate')),
+              formatCalendarDate(row.getValue(column.id)),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'nontreponemalTestDate'
-                      ? searchValue
-                      : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -586,9 +545,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Outro teste não treponêmico
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -597,21 +556,16 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(
-              row.getValue('otherNontreponemalTest'),
-              (value) => (
-                <HighlightedText
-                  text={value}
-                  highlight={
-                    selectedFilterOption === 'otherNontreponemalTest'
-                      ? searchValue
-                      : ''
-                  }
-                />
-              )
-            )}
+            {renderOrFallback(row.getValue(column.id), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
+              />
+            ))}
           </div>
         ),
       },
@@ -629,9 +583,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Data do outro teste não treponêmico
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -640,17 +594,15 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatCalendarDate(row.getValue('otherNontreponemalTestDate')),
+              formatCalendarDate(row.getValue(column.id)),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'otherNontreponemalTestDate'
-                      ? searchValue
-                      : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -671,9 +623,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Observações de referência
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -682,21 +634,16 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
-            {renderOrFallback(
-              row.getValue('referenceObservations'),
-              (value) => (
-                <HighlightedText
-                  text={value}
-                  highlight={
-                    selectedFilterOption === 'referenceObservations'
-                      ? searchValue
-                      : ''
-                  }
-                />
-              )
-            )}
+            {renderOrFallback(row.getValue(column.id), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
+              />
+            ))}
           </div>
         ),
       },
@@ -713,9 +660,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Paciente
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -724,10 +671,10 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row, column }) => {
           const patient = findRecordById(
             relatedPatients || [],
-            row.getValue('patientId')
+            row.getValue(column.id)
           );
 
           return (
@@ -760,9 +707,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Criado por
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -771,10 +718,10 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row, column }) => {
           const user = findRecordById(
             relatedUsers || [],
-            row.getValue('createdBy')
+            row.getValue(column.id)
           );
 
           return (
@@ -808,9 +755,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Criado em
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -819,15 +766,15 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatDate(row.getValue('createdAt') as Date),
+              formatDate(row.getValue(column.id) as Date),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'createdAt' ? searchValue : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -848,9 +795,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Atualizado por
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ArrowDownAZ />
             )}
@@ -859,10 +806,10 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row, column }) => {
           const user = findRecordById(
             relatedUsers || [],
-            row.getValue('updatedBy')
+            row.getValue(column.id)
           );
 
           return (
@@ -896,9 +843,9 @@ export function ExamsTable({
                 column.toggleSorting(next === 'desc');
               }
             }}
-            className={`px-1! cursor-pointer ${COLUMN_MAX_WIDTH}`}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
           >
-            Atualizado em
+            {COLUMN_LABELS[column.id]}
             {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
               <ClockArrowDown />
             )}
@@ -907,15 +854,15 @@ export function ExamsTable({
             )}
           </Button>
         ),
-        cell: ({ row }) => (
+        cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
             {renderOrFallback(
-              formatDate(row.getValue('updatedAt') as Date),
+              formatDate(row.getValue(column.id) as Date),
               (value) => (
                 <HighlightedText
                   text={value}
                   highlight={
-                    selectedFilterOption === 'updatedAt' ? searchValue : ''
+                    selectedFilterOption === column.id ? searchValue : ''
                   }
                 />
               )
@@ -945,7 +892,7 @@ export function ExamsTable({
                   <Eye /> Ver detalhes
                 </DropdownMenuItem>
 
-                {can('delete:exam') && (
+                {can('update:exam') && (
                   <DropdownMenuItem
                     className="cursor-pointer"
                     onClick={() =>
@@ -1036,7 +983,7 @@ export function ExamsTable({
           table={table}
           selectedFilterOption={selectedFilterOption}
           setSelectedFilterOption={(value: string) =>
-            setSelectedFilterOption(value as Column)
+            setSelectedFilterOption(value)
           }
           availableFilterOptions={FILTERABLE_COLUMNS}
           showColumnToggleButton={showColumnToggleButton}
