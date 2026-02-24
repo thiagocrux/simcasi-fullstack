@@ -44,7 +44,7 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     const take = params?.take || 20;
     const orderBy = params?.orderBy;
     const orderDir = params?.orderDir || 'asc';
-    const search = params?.search;
+    const search = params?.search?.trim();
     const searchBy = params?.searchBy;
     const startDate = params?.startDate;
     const endDate = params?.endDate;
@@ -76,28 +76,25 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
       const allowedFields = [
         'action',
         'entityName',
-        'entityId',
         'userId',
         'ipAddress',
         'userAgent',
       ];
       if (searchBy && allowedFields.includes(searchBy)) {
-        // Handle UUID fields separately to avoid Prisma errors with partial string matches.
-        const isUuidField = ['entityId', 'userId'].includes(searchBy);
-        const uuidRegex =
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-        if (isUuidField) {
-          if (uuidRegex.test(search)) {
-            where[searchBy as keyof Prisma.AuditLogWhereInput] = search as any;
-          } else {
-            // If the search string is not a valid UUID, search should return no results.
-            where[searchBy as keyof Prisma.AuditLogWhereInput] =
-              '00000000-0000-0000-0000-000000000000' as any;
-          }
+        if (searchBy === 'userId') {
+          // Search by user name or email (UUID field doesn't support contains operator).
+          where.OR = [
+            { user: { name: { contains: search, mode: 'insensitive' } } },
+            { user: { email: { contains: search, mode: 'insensitive' } } },
+          ];
         } else {
           // Field-specific search (case-insensitive for tracked names and actions).
-          const isInsensitive = ['action', 'entityName'].includes(searchBy);
+          const isInsensitive = [
+            'action',
+            'entityName',
+            'ipAddress',
+            'userAgent',
+          ].includes(searchBy);
           where[searchBy as keyof Prisma.AuditLogWhereInput] = {
             contains: search,
             ...(isInsensitive ? { mode: 'insensitive' } : {}),
@@ -108,8 +105,10 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
         where.OR = [
           { action: { contains: search, mode: 'insensitive' } },
           { entityName: { contains: search, mode: 'insensitive' } },
-          { ipAddress: { contains: search } },
-          { userAgent: { contains: search } },
+          { user: { name: { contains: search, mode: 'insensitive' } } },
+          { user: { email: { contains: search, mode: 'insensitive' } } },
+          { ipAddress: { contains: search, mode: 'insensitive' } },
+          { userAgent: { contains: search, mode: 'insensitive' } },
         ];
       }
     }

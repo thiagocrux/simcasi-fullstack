@@ -9,6 +9,8 @@ export interface FindAuditLogsInput {
   take?: number;
   /** Search term to filter results. */
   search?: string;
+  /** Field to perform the search on. */
+  searchBy?: string;
   /** Field to order the results by. */
   orderBy?: string;
   /** Order direction (ascending or descending). */

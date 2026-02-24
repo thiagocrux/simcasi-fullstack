@@ -6,7 +6,6 @@ import {
   AUDIT_LOG_SEARCHABLE_FIELDS,
   AUDIT_LOG_SORTABLE_FIELDS,
 } from '@/core/domain/constants/audit-log.constants';
-
 import { messages } from '../messages';
 import {
   createQuerySchema,
@@ -32,6 +31,25 @@ export const auditLogQuerySchema = createQuerySchema(
   entityName: z.enum(AUDIT_LOG_ENTITY_NAMES).optional(),
   entityId: z.uuid(messages.INVALID_UUID).optional(),
 });
+
+/**
+ * Main schema for audit log entity validation.
+ */
+export const auditLogSchema = z.object({
+  userId: z.uuid(messages.INVALID_UUID),
+  action: z.enum(AUDIT_LOG_ACTIONS),
+  entityName: z.enum(AUDIT_LOG_ENTITY_NAMES),
+  entityId: z.uuid(messages.INVALID_UUID),
+  oldValues: z.unknown().optional(),
+  newValues: z.unknown().optional(),
+  ipAddress: z.string().optional().nullable(),
+  userAgent: z.string().optional().nullable(),
+});
+
+/**
+ * Type for audit log creation.
+ */
+export type CreateAuditLogInput = z.infer<typeof auditLogSchema>;
 
 /**
  * Type for audit log query input.

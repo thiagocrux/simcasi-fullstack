@@ -2,6 +2,7 @@ import {
   AUDIT_LOG_ACTIONS,
   AUDIT_LOG_ENTITY_NAMES,
 } from '../constants/audit-log.constants';
+import { JsonValue } from '../types/common.types';
 
 /**
  * Represents the type for actions recorded in the audit log.
@@ -30,9 +31,9 @@ export interface AuditLog {
   /** Unique identifier of the record that was affected. */
   entityId: string;
   /** State of the record before the action was performed. */
-  oldValues?: unknown;
+  oldValues?: JsonValue;
   /** State of the record after the action was performed. */
-  newValues?: unknown;
+  newValues?: JsonValue;
   /** IPv4 or IPv6 address from which the request originated. */
   ipAddress?: string | null;
   /** Client browser or application string that performed the action. */

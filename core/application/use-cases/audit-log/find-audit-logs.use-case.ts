@@ -1,7 +1,15 @@
-import { auditLogQuerySchema } from '@/core/application/validation/schemas/audit-log.schema';
+import {
+  AuditLogQueryInput,
+  auditLogQuerySchema,
+} from '@/core/application/validation/schemas/audit-log.schema';
+import {
+  ACTION_LABELS,
+  ENTITY_LABELS,
+} from '@/core/domain/constants/audit-log.constants';
 import { User } from '@/core/domain/entities/user.entity';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
+import { normalizeString } from '@/lib/shared.utils';
 import {
   FindAuditLogsInput,
   FindAuditLogsOutput,
@@ -35,10 +43,37 @@ export class FindAuditLogsUseCase implements UseCase<
   async execute(input: FindAuditLogsInput): Promise<FindAuditLogsOutput> {
     const validatedInput = auditLogQuerySchema.parse(
       input
-    ) as FindAuditLogsInput;
+    ) as AuditLogQueryInput;
 
-    const { items, total } =
-      await this.auditLogRepository.findAll(validatedInput);
+    const { search, searchBy } = validatedInput;
+
+    // Perform mapping of localized labels to backend Enums at the application layer.
+    // This decouples Infrastructure (Repository) from UI-level localized constants.
+    let mappedSearch = search;
+    if (search) {
+      const normalizedSearch = normalizeString(search);
+
+      // Map action label to action Enum (e.g., "Criação" -> "CREATE")
+      if (!searchBy || searchBy === 'action') {
+        const actionMatch = Object.entries(ACTION_LABELS).find(([_, label]) =>
+          normalizeString(label).includes(normalizedSearch)
+        )?.[0];
+        if (actionMatch) mappedSearch = actionMatch;
+      }
+
+      // Map entity label to entity Enum (e.g., "Exame" -> "EXAM")
+      if (!searchBy || searchBy === 'entityName') {
+        const entityMatch = Object.entries(ENTITY_LABELS).find(([_, label]) =>
+          normalizeString(label).includes(normalizedSearch)
+        )?.[0];
+        if (entityMatch) mappedSearch = entityMatch;
+      }
+    }
+
+    const { items, total } = await this.auditLogRepository.findAll({
+      ...validatedInput,
+      search: mappedSearch,
+    });
 
     const userIds = new Set<string>();
     if (validatedInput.includeRelatedUsers) {

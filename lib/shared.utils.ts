@@ -150,3 +150,20 @@ export function findRecordById(
 ) {
   return relatedRecords?.find((record) => record.id === id);
 }
+
+/**
+ * Normalizes a string by converting it to lowercase and removing accents (diacritics).
+ *
+ * Essential for performing consistent, accent-insensitive searches and comparisons.
+ *
+ * @param {string} str The string to normalize.
+ * @return {string} The normalized string.
+ * @example
+ * normalizeString("Criação") // "criacao"
+ */
+export function normalizeString(string: string): string {
+  return string
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}

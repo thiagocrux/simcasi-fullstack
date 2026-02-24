@@ -17,6 +17,7 @@ export const AUDIT_LOG_SEARCHABLE_FIELDS = [
   'action',
   'entityName',
   'entityId',
+  'userId',
   'ipAddress',
   'userAgent',
 ] as const;
@@ -48,6 +49,37 @@ export const AUDIT_LOG_ACTION = {
   PASSWORD_RESET: 'PASSWORD_RESET',
   PASSWORD_RESET_REQUEST: 'PASSWORD_RESET_REQUEST',
 } as const;
+
+/**
+ * Labels in Portuguese for audit actions.
+ */
+export const ACTION_LABELS: Record<(typeof AUDIT_LOG_ACTIONS)[number], string> =
+  {
+    CREATE: 'Criação',
+    UPDATE: 'Atualização',
+    DELETE: 'Exclusão',
+    RESTORE: 'Restauração',
+    REVOKE_SESSION: 'Revogação de sessão',
+    PASSWORD_CHANGE: 'Atualização de senha',
+    PASSWORD_RESET: 'Redefinição de Senha',
+    PASSWORD_RESET_REQUEST: 'Solicitação de redefinição de senha',
+  };
+
+/**
+ * Labels in Portuguese for audit entities.
+ */
+export const ENTITY_LABELS: Record<string, string> = {
+  EXAM: 'Exame',
+  NOTIFICATION: 'Notificação',
+  SESSION: 'Sessão',
+  TREATMENT: 'Tratamento',
+  PERMISSION: 'Permissão',
+  PATIENT: 'Paciente',
+  USER: 'Usuário',
+  OBSERVATION: 'Observação',
+  ROLE: 'Cargo',
+  AUDIT_LOG: 'Log de auditoria',
+};
 
 /**
  * Valid entity names that can be targets of Audit Log actions.
