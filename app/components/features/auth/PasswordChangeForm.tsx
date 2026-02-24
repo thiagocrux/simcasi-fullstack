@@ -50,10 +50,14 @@ export function PasswordChangeForm({ className }: PasswordChangeFormProps) {
     mutationFn: (input: ChangePasswordInput) => changePassword(input),
     onSuccess: (data) => {
       if (data.success) {
-        logger.success(`The password change was successful!`);
-        toast.success(`O senha foi atualizada com sucesso!`);
+        logger.success('Password changed successfully.');
+        toast.success('A senha foi atualizada com sucesso!');
       } else {
-        logger.error('[CHANGE_PASSWORD_FORM_ERROR]', data.message);
+        logger.error('Password change attempt failed', {
+          cause: 'Server returned an error response during password change.',
+          details: data.message,
+          action: 'password_change_submit',
+        });
         toast.error('A tentativa de atualizar a senha falhou.');
       }
       reset();
@@ -63,8 +67,11 @@ export function PasswordChangeForm({ className }: PasswordChangeFormProps) {
 
   async function onSubmit(input: ChangePasswordInput) {
     if (!loggedUser?.id) {
-      logger.error('[EXAM_FORM_ERROR] Expired session or invalid user.');
-      toast.error(`Sessão expirada ou usuário inválido.`);
+      logger.error('Password change blocked', {
+        cause: 'Missing user context. Session may have expired.',
+        action: 'password_change_submit',
+      });
+      toast.error('Sessão expirada ou usuário inválido.');
       handleLogout();
       return;
     }

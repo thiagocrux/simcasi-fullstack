@@ -210,17 +210,18 @@ export async function withSecuredActionAndAutomaticRetry<T>(
 
     if (isTokenExpired) {
       logger.warn(
-        '[AUTH] Expired or invalid access token detected. Attempting retry...',
-        caughtError.message
+        'Expired or invalid access token detected. Attempting retry.',
+        {
+          error: caughtError.message,
+          action: 'secured_action_retry',
+        }
       );
 
       const cookieStore = await cookies();
       const refreshToken = cookieStore.get('refresh_token')?.value;
 
       if (refreshToken) {
-        logger.info(
-          '[RETRY] Refresh token found. Initiating silent renovation...'
-        );
+        logger.info('Refresh token found. Initiating silent renovation.');
         try {
           const refreshTokenUseCase = makeRefreshTokenUseCase();
           const { ipAddress, userAgent } = await getAuditMetadata();
@@ -244,7 +245,7 @@ export async function withSecuredActionAndAutomaticRetry<T>(
                 })
             );
 
-          logger.success('[REFRESH] Token successfully renewed.');
+          logger.success('Token successfully renewed.');
 
           // Persist new tokens. Note: This may throw if called from inside a RSC.
           try {
@@ -265,26 +266,27 @@ export async function withSecuredActionAndAutomaticRetry<T>(
               maxAge: tokenProvider.getRefreshExpirationInSeconds(),
             });
           } catch (cookieError: any) {
-            logger.warn(
-              '[COOKIE] Token persistence failed (likely due to Server Component context):',
-              cookieError.message
-            );
+            logger.warn('Token persistence failed during silent retry', {
+              cause: 'Likely due to Server Component context restrictions.',
+              error: cookieError.message,
+              action: 'secured_action_retry',
+            });
           }
 
           // Retry the original action with the newly obtained token.
-          logger.info('[RETRY] Re-executing original action...');
+          logger.info('Re-executing original action.');
           const retryResult = await execute(newAccessToken);
-          logger.success('[RETRY] Action re-executed successfully.');
+          logger.success('Action re-executed successfully.');
 
           return {
             success: true,
             data: retryResult,
           };
         } catch (refreshError: any) {
-          logger.error(
-            '[REFRESH_TOKEN] Session renovation failed:',
-            refreshError.message
-          );
+          logger.error('Session renovation failed during action retry', {
+            error: refreshError.message,
+            action: 'secured_action_retry',
+          });
 
           // Full session failure: clear invalid cookies if possible.
           try {

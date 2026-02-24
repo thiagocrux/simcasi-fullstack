@@ -201,7 +201,11 @@ export function AuditLogsTable({
       return auditLogList.data.items;
     }
     if (auditLogList && !auditLogList.success) {
-      logger.error('Error fetching audit logs:', auditLogListError);
+      logger.error('Failed to fetch audit logs', {
+        cause: 'An error occurred while fetching audit logs from the API.',
+        error: auditLogListError,
+        action: 'fetch_audit_logs',
+      });
     }
     return [];
   }, [auditLogList, auditLogListError]);

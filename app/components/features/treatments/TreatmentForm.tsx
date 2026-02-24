@@ -69,7 +69,6 @@ export function TreatmentForm({
     },
   });
 
-  // ...existing code...
   const { data: treatment, isPending: isFetchingTreatment } = useQuery({
     queryKey: ['get-treatment', treatmentId],
     queryFn: async () => await getTreatment(treatmentId as string),
@@ -99,13 +98,19 @@ export function TreatmentForm({
     onSuccess: (data) => {
       if (data.success) {
         logger.success(
-          `The treatment ${isEditMode ? 'update' : 'creation'} was successful!`
+          `Treatment ${isEditMode ? 'updated' : 'created'} successfully`
         );
         toast.success(
           `O tratamento foi ${isEditMode ? 'atualizado' : 'criado'} com sucesso!`
         );
       } else {
-        logger.error('[TREATMENT_FORM_ERROR]', data.errors);
+        logger.error('Treatment submission failed', {
+          cause:
+            'Server returned an error response during treatment submission.',
+          details: data.message,
+          errors: data.errors,
+          action: 'treatment_form_submit',
+        });
         toast.error(
           `A tentativa de ${isEditMode ? 'atualizar' : 'criar'} o tratamento falhou.`
         );
@@ -120,7 +125,10 @@ export function TreatmentForm({
 
   async function onSubmit(input: TreatmentFormInput) {
     if (!loggedUser?.id) {
-      logger.error('[TREATMENT_FORM_ERROR] Expired session or invalid user.');
+      logger.error('Treatment submission blocked', {
+        cause: 'Missing user context. Session may have expired.',
+        action: 'treatment_form_submit',
+      });
       toast.error('Sessão expirada ou usuário inválido.');
       handleLogout();
       return;

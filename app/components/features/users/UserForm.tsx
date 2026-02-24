@@ -82,13 +82,18 @@ export function UserForm({
     onSuccess: (data) => {
       if (data.success) {
         logger.success(
-          `The user ${isEditMode ? 'update' : 'creation'} was successful!`
+          `User ${isEditMode ? 'updated' : 'created'} successfully`
         );
         toast.success(
           `O usuário foi ${isEditMode ? 'atualizado' : 'criado'} com sucesso!`
         );
       } else {
-        logger.error(`[USER_FORM_ERROR] ${data.message}`, data.errors);
+        logger.error('User submission failed', {
+          cause: 'Server returned an error response during user submission.',
+          details: data.message,
+          errors: data.errors,
+          action: 'user_form_submit',
+        });
         toast.error(
           `A tentativa de ${isEditMode ? 'atualizar' : 'criar'} o usuário falhou.`
         );
@@ -106,17 +111,21 @@ export function UserForm({
 
   async function onSubmit(input: UserFormInput) {
     if (!loggedUser?.id) {
-      logger.error('[USER_FORM_ERROR] Expired session or invalid user.');
-      toast.error(`Sessão expirada ou usuário inválido.`);
+      logger.error('User submission blocked', {
+        cause: 'Missing user context. Session may have expired.',
+        action: 'user_form_submit',
+      });
+      toast.error('Sessão expirada ou usuário inválido.');
       handleLogout();
       return;
     }
 
     const selectedRole = ROLE_OPTIONS.find((role) => role.id === input.roleId);
     if (!selectedRole) {
-      logger.error(
-        '[USER_FORM_ERROR] The selected role is either invalid or not found.'
-      );
+      logger.error('Invalid role selected', {
+        cause: 'The role ID provided does not match any available roles.',
+        action: 'user_form_submit',
+      });
       toast.error('O cargo selecionado é inválido ou não foi encontrado.');
       return;
     }

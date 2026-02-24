@@ -59,7 +59,10 @@ async function main() {
   // 3. Ensure admin role exists and retrieve it to attach to the system user.
   const adminRole = await prisma.role.findUnique({ where: { code: 'admin' } });
   if (!adminRole) {
-    logger.error('Admin role was not created as expected.');
+    logger.error('Admin role creation failed during seeding', {
+      cause: 'The admin role was not found after the creation step.',
+      action: 'database_seed',
+    });
     process.exit(1);
   }
 
@@ -105,14 +108,12 @@ async function main() {
     });
   } else {
     logger.info(
-      'PRISMA_SEED_EMAIL/PRISMA_SEED_PASSWORD not set — skipping default admin user creation.'
+      'PRISMA_SEED_EMAIL and PRISMA_SEED_PASSWORD not set. Skipping default admin user creation.'
     );
   }
 
   // 6. After system user exists, set createdBy on roles and permissions and associate permissions to roles atomically.
-  logger.info(
-    '🚀 Starting seed for setting authorship and role-permissions...'
-  );
+  logger.info('Starting seed for authorship and role-permissions.');
 
   // Build permission map
   const permissionRecords = await prisma.permission.findMany();
@@ -144,7 +145,9 @@ async function main() {
       });
 
       if (!roleRecord) {
-        logger.warn(`Role not found when assigning permissions: ${role.code}`);
+        logger.warn(
+          `Role not found while assigning permissions: ${role.code}.`
+        );
         continue;
       }
 
@@ -153,13 +156,13 @@ async function main() {
 
       for (const permission of rolePermissions) {
         if (!isPermission(permission)) {
-          logger.warn(`Skipping unknown permission code: ${permission}`);
+          logger.warn(`Skipping unknown permission code: ${permission}.`);
           continue;
         }
 
         const permissionId = permissionIdMap.get(permission);
         if (!permissionId) {
-          logger.warn(`Permission not found in database: ${permission}`);
+          logger.warn(`Permission not found in database: ${permission}.`);
           continue;
         }
 
@@ -177,7 +180,7 @@ async function main() {
     }
   });
 
-  logger.info('✅ Seeding completed successfully!');
+  logger.info('Database seeding completed successfully.');
 }
 
 main()
@@ -185,10 +188,10 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (error) => {
-    logger.error(
-      '\n❌ Error during seeding. Transaction rollback ensured.',
-      error
-    );
+    logger.error('Database seeding failed unexpectedly', {
+      error,
+      action: 'database_seed',
+    });
     await prisma.$disconnect();
     process.exit(1);
   });

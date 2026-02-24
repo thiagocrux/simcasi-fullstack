@@ -201,7 +201,11 @@ export function TreatmentsTable({
       return treatmentList.data.items;
     }
     if (treatmentList && !treatmentList.success) {
-      logger.error('Error fetching patients:', treatmentListError);
+      logger.error('Failed to fetch treatments', {
+        cause: 'An error occurred while fetching treatments from the API.',
+        error: treatmentListError,
+        action: 'fetch_treatments',
+      });
     }
     return [];
   }, [treatmentList, treatmentListError]);

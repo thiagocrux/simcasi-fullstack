@@ -142,13 +142,18 @@ export function PatientForm({
     onSuccess: (data) => {
       if (data.success) {
         logger.success(
-          `The patient ${isEditMode ? 'update' : 'creation'} was successful!`
+          `Patient ${isEditMode ? 'updated' : 'created'} successfully`
         );
         toast.success(
-          `The patient ${isEditMode ? 'update' : 'creation'} was successful!`
+          `O paciente foi ${isEditMode ? 'atualizado' : 'criado'} com sucesso!`
         );
       } else {
-        logger.error(`[PATIENT_FORM_ERROR] ${data.message}`, data.errors);
+        logger.error('Patient submission failed', {
+          cause: 'Server returned an error response during patient submission.',
+          details: data.message,
+          errors: data.errors,
+          action: 'patient_form_submit',
+        });
         toast.error(
           `A tentativa de ${isEditMode ? 'atualizar' : 'criar'} o paciente falhou.`
         );
@@ -163,8 +168,11 @@ export function PatientForm({
 
   async function onSubmit(input: PatientFormInput) {
     if (!loggedUser?.id) {
-      logger.error('[PATIENT_FORM_ERROR] Expired session or invalid user.');
-      toast.error(`Sessão expirada ou usuário inválido.`);
+      logger.error('Patient submission blocked', {
+        cause: 'Missing user context. Session may have expired.',
+        action: 'patient_form_submit',
+      });
+      toast.error('Sessão expirada ou usuário inválido.');
       handleLogout();
       return;
     }

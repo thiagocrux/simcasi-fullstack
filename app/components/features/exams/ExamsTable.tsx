@@ -197,7 +197,11 @@ export function ExamsTable({
       return examList.data.items;
     }
     if (examList && !examList.success) {
-      logger.error('Error fetching patients:', examListError);
+      logger.error('Failed to fetch exams', {
+        cause: 'An error occurred while fetching exams from the API.',
+        error: examListError,
+        action: 'fetch_exams',
+      });
     }
     return [];
   }, [examList, examListError]);

@@ -77,9 +77,9 @@ export function EntityPreviewWrapper({
   entityName,
   children,
 }: EntityPreviewWrapperProps) {
-  logger.info('[ENTITY_PREVIEW_WRAPPER] Rendering with:', {
-    entityName,
-    entityId,
+  logger.info('Rendering previews.', {
+    action: 'audit_entity_preview',
+    details: { entityName, entityId },
   });
 
   const {
@@ -103,10 +103,10 @@ export function EntityPreviewWrapper({
             break;
           case 'NOTIFICATION':
             result = await getNotification(entityId);
-            logger.info(
-              `[ENTITY_PREVIEW_WRAPPER] Notification response:`,
-              result
-            );
+            logger.info('Notification response received.', {
+              action: 'audit_entity_preview',
+              result,
+            });
             break;
           case 'OBSERVATION':
             result = await getObservation(entityId);
@@ -124,12 +124,20 @@ export function EntityPreviewWrapper({
             result = await getSession(entityId);
             break;
           default:
-            logger.warn(`Unknown entity type: ${entityName}`);
+            logger.warn({
+              action: 'audit_entity_preview',
+              cause: 'Unknown entity type.',
+              entityName,
+            });
             return null;
         }
         return result;
       } catch (err) {
-        logger.error(`Error fetching entity preview for ${entityName}:`, err);
+        logger.error({
+          action: 'audit_entity_preview',
+          cause: `Error fetching ${entityName} preview catalog.`,
+          error: err,
+        });
         throw err;
       }
     },
@@ -137,25 +145,31 @@ export function EntityPreviewWrapper({
     retry: 1,
   });
 
-  logger.info('[ENTITY_PREVIEW_WRAPPER] Query state:', {
-    isLoading,
-    hasError: !!error,
-    hasResponse: !!response,
-    success: (response as Record<string, unknown>)?.success,
+  logger.info('Query state updated.', {
+    action: 'audit_entity_preview',
+    details: {
+      isLoading,
+      hasError: !!error,
+      hasResponse: !!response,
+      success: (response as Record<string, unknown>)?.success,
+    },
   });
 
   if (isLoading) {
-    logger.info(
-      `[ENTITY_PREVIEW_WRAPPER] Loading ${entityName} (${entityId})...`
-    );
+    logger.info(`Loading ${entityName} data...`, {
+      action: 'audit_entity_preview',
+      entityId,
+    });
     return children;
   }
 
   if (error) {
-    logger.error(
-      `[ENTITY_PREVIEW_WRAPPER] Error loading ${entityName} (${entityId}):`,
-      error
-    );
+    logger.error({
+      action: 'audit_entity_preview',
+      cause: `Error loading ${entityName} data.`,
+      error,
+      entityId,
+    });
     // Not found error - render with undefined data to show "not found" message
     if ((response as Record<string, unknown>)?.code === 'NotFoundError') {
       const config = PREVIEW_CONFIG[entityName];
@@ -171,10 +185,12 @@ export function EntityPreviewWrapper({
   }
 
   if (!(response as Record<string, unknown>)?.success) {
-    logger.warn(
-      `[ENTITY_PREVIEW_WRAPPER] Query failed for ${entityName} (${entityId}):`,
-      response
-    );
+    logger.warn({
+      action: 'audit_entity_preview',
+      cause: `Query failed for ${entityName}.`,
+      response,
+      entityId,
+    });
     // Render dialog with undefined to show error message
     const config = PREVIEW_CONFIG[entityName];
     return renderPreviewDialog(
@@ -187,9 +203,11 @@ export function EntityPreviewWrapper({
   }
 
   if (!(response as Record<string, unknown>)?.data) {
-    logger.warn(
-      `[ENTITY_PREVIEW_WRAPPER] No data returned for ${entityName} (${entityId})`
-    );
+    logger.warn({
+      action: 'audit_entity_preview',
+      cause: `No data returned for ${entityName}.`,
+      entityId,
+    });
     // Render dialog with undefined to show error message
     const config = PREVIEW_CONFIG[entityName];
     return renderPreviewDialog(
@@ -203,9 +221,9 @@ export function EntityPreviewWrapper({
 
   const entityData = (response as Record<string, unknown>).data;
 
-  logger.info(
-    `[ENTITY_PREVIEW_WRAPPER] Rendering ${entityName} preview dialog`
-  );
+  logger.info(`Rendering ${entityName} preview dialog.`, {
+    action: 'audit_entity_preview',
+  });
 
   const config = PREVIEW_CONFIG[entityName];
   return renderPreviewDialog(

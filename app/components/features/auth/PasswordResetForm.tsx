@@ -45,14 +45,17 @@ export function PasswordResetForm({ className }: ResetPasswordProps) {
     mutationFn: (input: ResetPasswordInput) => resetPassword(input),
     onSuccess: (data) => {
       if (data.success) {
-        logger.success(`The password reset was successful!`);
-        toast.success(`A senha foi redefinida com sucesso!`);
+        logger.success('Password reset successfully.');
+        toast.success('A senha foi redefinida com sucesso!');
         reset();
         router.push('/auth/login');
       } else {
-        toast.error(
-          data.message || 'A tentativa de redefinição de senha falhou.'
-        );
+        logger.error('Password reset attempt failed', {
+          cause: 'Server rejected the password reset request.',
+          details: data.message,
+          action: 'password_reset_submit',
+        });
+        toast.error('A tentativa de redefinição de senha falhou.');
 
         // If the error indicates token issues, we could redirect to the expired page.
         if (

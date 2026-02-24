@@ -79,7 +79,12 @@ export function LoginForm({ className }: LoginFormProps) {
       }
     },
     onError: (error: unknown) => {
-      logger.error('[LOGIN ERROR]', error);
+      logger.error('Login attempt failed', {
+        cause:
+          'An error occurred during the communication with the authentication server.',
+        error,
+        action: 'login_submit',
+      });
       toast.error('Erro de comunicação com o servidor.');
     },
   });

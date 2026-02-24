@@ -110,13 +110,18 @@ export function ExamForm({
     onSuccess: (data) => {
       if (data.success) {
         logger.success(
-          `The exam ${isEditMode ? 'update' : 'creation'} was successful!`
+          `The exam ${isEditMode ? 'update' : 'creation'} was successful!`,
+          { action: 'exam_form_submit' }
         );
         toast.success(
           `O exame foi ${isEditMode ? 'atualizado' : 'criado'} com sucesso!`
         );
       } else {
-        logger.error('[EXAM_FORM_ERROR]', data.errors);
+        logger.error({
+          action: 'exam_form_submit',
+          cause: 'Exam submission returned server errors.',
+          error: data.errors,
+        });
         toast.error(
           `A tentativa de ${isEditMode ? 'atualizar' : 'criar'} o exame falhou.`
         );
@@ -131,7 +136,10 @@ export function ExamForm({
 
   async function onSubmit(input: ExamFormInput) {
     if (!loggedUser?.id) {
-      logger.error('[EXAM_FORM_ERROR] Expired session or invalid user.');
+      logger.error({
+        action: 'exam_form_submit',
+        cause: 'Missing user context. Session may have expired.',
+      });
       toast.error(`Sessão expirada ou usuário inválido.`);
       handleLogout();
       return;

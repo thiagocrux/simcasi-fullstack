@@ -17,7 +17,11 @@ export default function PrivateErrorPage({
   reset: () => void;
 }) {
   useEffect(() => {
-    logger.error('[PRIVATE_ERROR_BOUNDARY]', error);
+    logger.error({
+      action: 'private_error_boundary_catch',
+      cause: 'Unhandled private page error caught by boundary.',
+      error,
+    });
   }, [error]);
 
   return (

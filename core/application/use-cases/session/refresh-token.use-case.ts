@@ -84,9 +84,13 @@ export class RefreshTokenUseCase implements UseCase<
         SECURITY_CONSTANTS.REFRESH_TOKEN_GRACE_PERIOD_MS
       ) {
         // Only if it was deleted longer ago than the grace period, we treat it as a breach.
-        logger.error(
-          `[SECURITY] Token reuse detected for session ${decoded.sid}. Revoking all sessions for user ${decoded.sub}. Deleted at: ${existingSession.deletedAt.toISOString()}, Now: ${new Date().toISOString()}`
-        );
+        logger.error('Security breach: Token reuse detected', {
+          sessionId: decoded.sid,
+          userId: decoded.sub,
+          deletedAt: existingSession.deletedAt.toISOString(),
+          now: new Date().toISOString(),
+          action: 'refresh_token',
+        });
 
         await this.sessionRepository.revokeAllByUserId(decoded.sub);
         throw new SecurityBreachError(
@@ -94,11 +98,11 @@ export class RefreshTokenUseCase implements UseCase<
         );
       }
 
-      logger.warn(
-        `[AUTH] Concurrent refresh detected for session ${decoded.sid} within ${
-          SECURITY_CONSTANTS.REFRESH_TOKEN_GRACE_PERIOD_MS / 1000
-        }s grace period. Allowing rotation to continue.`
-      );
+      logger.warn('Concurrent token refresh detected within grace period', {
+        sessionId: decoded.sid,
+        gracePeriod: `${SECURITY_CONSTANTS.REFRESH_TOKEN_GRACE_PERIOD_MS / 1000}s`,
+        action: 'refresh_token',
+      });
     }
 
     // 4. Load the user and verify their status.

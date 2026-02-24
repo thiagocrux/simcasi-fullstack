@@ -91,7 +91,10 @@ export function ThemeSwitcher({
       localStorage.setItem('theme', theme);
     } catch (error: any) {
       // Failing to persist preference should not break the app
-      logger.error(error);
+      logger.error('Failed to persist theme preference', {
+        error: error.message,
+        action: 'theme_persistence',
+      });
     }
   }
 

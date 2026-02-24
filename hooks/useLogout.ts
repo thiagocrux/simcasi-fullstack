@@ -21,30 +21,45 @@ export function useLogout() {
    * 3. Redirects the user to the login page.
    */
   async function handleLogout(): Promise<void> {
-    logger.start('[CLIENT_LOGOUT] Initiating forced logout sequence...');
+    logger.start('Initiating logout sequence.', {
+      action: 'user_logout_sequence',
+    });
 
     // 1. Clear Redux state (client-side).
-    logger.info('[CLIENT_LOGOUT] Clearing Redux state...');
+    logger.info('Clearing Redux credentials state.', {
+      action: 'user_logout_sequence',
+    });
     dispatch(clearCredentials());
 
     // 2. Clear cookies and server-side session.
-    logger.info('[CLIENT_LOGOUT] Calling Server Action logOutUser...');
+    logger.info('Calling logOutUser server action.', {
+      action: 'user_logout_sequence',
+    });
     try {
       const response = await logOutUser();
       if (response.success) {
-        logger.success('[CLIENT_LOGOUT] logOutUser success.');
+        logger.success('User session and cookies cleared successfully.', {
+          action: 'user_logout_sequence',
+        });
       } else {
-        logger.error(
-          '[CLIENT_LOGOUT] logOutUser logic failed:',
-          response.error
-        );
+        logger.error({
+          action: 'user_logout_sequence',
+          cause: 'logOutUser application error',
+          error: response.error,
+        });
       }
     } catch (error) {
-      logger.error('[CLIENT_LOGOUT] logOutUser unexpected failure:', error);
+      logger.error({
+        action: 'user_logout_sequence',
+        cause: 'logOutUser unexpected failure',
+        error,
+      });
     }
 
     // 3. Redirect to login page.
-    logger.info('[CLIENT_LOGOUT] Redirecting to /auth/login...');
+    logger.info('Redirecting to login page.', {
+      action: 'user_logout_sequence',
+    });
     router.push('/auth/login');
   }
 

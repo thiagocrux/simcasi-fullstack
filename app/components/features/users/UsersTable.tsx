@@ -182,7 +182,11 @@ export function UsersTable({
       return userList.data.items;
     }
     if (userList && !userList.success) {
-      logger.error('Error fetching patients:', userListError);
+      logger.error('Failed to fetch users', {
+        cause: 'An error occurred while fetching users from the API.',
+        error: userListError,
+        action: 'fetch_users',
+      });
     }
     return [];
   }, [userList, userListError]);

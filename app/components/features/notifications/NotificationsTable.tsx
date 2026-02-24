@@ -190,7 +190,11 @@ export function NotificationsTable({
       return notificationList.data.items;
     }
     if (notificationList && !notificationList.success) {
-      logger.error('Error fetching patients:', notificationListError);
+      logger.error('Failed to fetch notifications', {
+        cause: 'An error occurred while fetching notifications from the API.',
+        error: notificationListError,
+        action: 'fetch_notifications',
+      });
     }
     return [];
   }, [notificationList, notificationListError]);

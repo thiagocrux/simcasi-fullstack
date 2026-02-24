@@ -89,13 +89,19 @@ export function ObservationForm({
     onSuccess: (data) => {
       if (data.success) {
         logger.success(
-          `The observation ${isEditMode ? 'update' : 'creation'} was successful!`
+          `Observation ${isEditMode ? 'updated' : 'created'} successfully`
         );
         toast.success(
           `A observação foi ${isEditMode ? 'atualizada' : 'criada'} com sucesso!`
         );
       } else {
-        logger.error(`[OBSERVATION_FORM_ERROR] ${data.message}`, data.errors);
+        logger.error('Observation submission failed', {
+          cause:
+            'Server returned an error response during observation submission.',
+          details: data.message,
+          errors: data.errors,
+          action: 'observation_form_submit',
+        });
         toast.error(
           `A tentativa de ${isEditMode ? 'atualizar' : 'criar'} a observação falhou.`
         );
@@ -110,8 +116,11 @@ export function ObservationForm({
 
   async function onSubmit(input: ObservationFormInput) {
     if (!loggedUser?.id) {
-      logger.error('[OBSERVATION_FORM_ERROR] Expired session or invalid user.');
-      toast.error(`Sessão expirada ou usuário inválido.`);
+      logger.error('Observation submission blocked', {
+        cause: 'Missing user context. Session may have expired.',
+        action: 'observation_form_submit',
+      });
+      toast.error('Sessão expirada ou usuário inválido.');
       handleLogout();
       return;
     }

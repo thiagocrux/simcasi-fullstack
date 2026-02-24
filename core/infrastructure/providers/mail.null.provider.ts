@@ -18,12 +18,13 @@ export class NullMailProvider implements MailProvider {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params?: Record<string, any>;
   }): Promise<void> {
-    logger.info(`[MAIL_MOCK] Sending email to ${data.to}`);
-    logger.info(`[MAIL_MOCK] Subject: ${data.subject}`);
-    logger.info(`[MAIL_MOCK] Body: ${data.body}`);
-    if (data.template) {
-      logger.info(`[MAIL_MOCK] Template: ${data.template}`);
-      logger.info(`[MAIL_MOCK] Params: ${JSON.stringify(data.params)}`);
-    }
+    logger.info('Mock email sent', {
+      to: data.to,
+      subject: data.subject,
+      body: data.body,
+      template: data.template,
+      params: data.params,
+      action: 'send_email_mock',
+    });
   }
 }

@@ -74,7 +74,9 @@ export async function logInUser(input: CreateSessionInput) {
     const cookieStore = await cookies();
     const tokenProvider = makeTokenProvider();
 
-    logger.info('[AUTH] Login successful. Setting cookies...');
+    logger.info('User logged in successfully.', {
+      action: 'login_action',
+    });
 
     cookieStore.set('access_token', accessToken, {
       httpOnly: true,
@@ -94,11 +96,9 @@ export async function logInUser(input: CreateSessionInput) {
         : undefined,
     });
 
-    logger.success(
-      `[AUTH] Cookies set. access_token lifetime: ${
-        tokenProvider.getAccessExpirationInSeconds() / 60
-      }min`
-    );
+    logger.success('Tokens issued and session cookies established.', {
+      action: 'login_action',
+    });
 
     return {
       success: true,
@@ -135,17 +135,24 @@ export async function logOutUser() {
         const useCase = makeLogoutUseCase();
         await useCase.execute({ sessionId });
 
-        logger.info(`[AUTH] Session ${sessionId} revoked during logout.`);
+        logger.info('User session revoked from database during logout.', {
+          sessionId,
+          action: 'logout_action',
+        });
       } catch (error: any) {
-        logger.warn(
-          '[AUTH] Could not revoke session in DB, but cookies were cleared.',
-          error
-        );
+        logger.warn('Session revocation failed during logout.', {
+          cause: 'Could not revoke session in DB, but cookies were cleared.',
+          error,
+          action: 'logout_action',
+        });
       }
     }
     return { success: true };
   } catch (error: any) {
-    logger.error('[SIGNOUT_ERROR]', error);
+    logger.error('Unexpected error during logout process.', {
+      error,
+      action: 'logout_action',
+    });
     return { success: false, error };
   }
 }

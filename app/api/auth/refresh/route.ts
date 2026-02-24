@@ -12,7 +12,7 @@ import { logger } from '@/lib/logger.utils';
  * @return A promise resolving to the new authentication tokens.
  */
 export async function POST(request: NextRequest) {
-  logger.info('[API] POST /api/auth/refresh - Iniciando renovação de token');
+  logger.info('POST /api/auth/refresh - Initiating token renewal.');
 
   try {
     let refreshToken = '';
@@ -79,7 +79,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    logger.error('[REFRESH_API_ERROR]', error);
+    logger.error({
+      action: 'token_renewal_request',
+      cause: 'Token renewal via API failed unexpectedly.',
+      error,
+    });
 
     return NextResponse.json(
       { message: 'Internal server error', code: 'INTERNAL_ERROR' },

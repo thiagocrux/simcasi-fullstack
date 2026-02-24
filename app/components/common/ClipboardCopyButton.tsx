@@ -1,6 +1,6 @@
 'use client';
 
-import { CircleCheck, Copy } from 'lucide-react';
+import { Copy } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { cn } from '@/lib/shared.utils';
@@ -19,9 +19,7 @@ export function ClipboardCopyButton({
 }: ClipboardCopyButtonProps) {
   function handleCopy() {
     navigator.clipboard.writeText(text);
-    toast.success('Copiado para a área de transferência', {
-      icon: <CircleCheck size={14} />,
-    });
+    toast.success('Copiado para a área de transferência.');
   }
 
   return (

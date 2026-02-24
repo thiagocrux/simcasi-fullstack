@@ -56,7 +56,10 @@ export function handleApiError(error: any) {
     const statusCode = error.statusCode || 400;
 
     if (statusCode === 500) {
-      logger.error('[API_ERROR_500]', error);
+      logger.error('Internal API error (500)', {
+        error,
+        action: 'api_response_handler',
+      });
     }
 
     return NextResponse.json(
@@ -82,7 +85,10 @@ export function handleApiError(error: any) {
     );
   }
 
-  logger.error('[API_INTERNAL_ERROR]', error);
+  logger.error('Unexpected internal server error', {
+    error,
+    action: 'api_response_handler',
+  });
 
   return NextResponse.json(
     {
@@ -153,13 +159,13 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
         const refreshToken = cookieStore.get('refresh_token')?.value;
 
         if (refreshToken) {
-          logger.info('[RETRY] Refresh token found. Attempting renewal......');
+          logger.info('Refresh token found. Attempting renewal.');
           try {
             const refreshTokenUseCase = makeRefreshTokenUseCase();
             const tokenProvider = makeTokenProvider();
             const { ipAddress, userAgent } = await getAuditMetadata();
 
-            logger.info('[REFRESH] Executing RefreshTokenUseCase via API...');
+            logger.info('Executing RefreshTokenUseCase via API.');
 
             // Identity fields are intentionally set to empty strings because the authentication
             // is currently in progress. This ensures the Audit System (via AsyncLocalStorage)
@@ -182,7 +188,7 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
                 })
             );
 
-            logger.success('[REFRESH] Token successfully renewed..');
+            logger.success('Token successfully renewed via API.');
 
             // Set new cookies.
             cookieStore.set('access_token', newAccessToken, {
@@ -202,13 +208,13 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
             });
 
             // Retry original handler with the new access token.
-            logger.info('[RETRY] Re-executing original request...');
+            logger.info('Re-executing original request with new token.');
             return await execute(newAccessToken);
           } catch (refreshError: any) {
-            logger.error(
-              '[REFRESH] Failed to renew token in API:',
-              refreshError.message
-            );
+            logger.error('Failed to renew token via API', {
+              error: refreshError.message,
+              action: 'api_token_refresh',
+            });
             cookieStore.delete('access_token');
             cookieStore.delete('refresh_token');
             return handleApiError(refreshError);

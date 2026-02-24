@@ -210,7 +210,11 @@ export function AppTableToolbar<TData>({
       });
     }
 
-    logger.info('[HANDLE_DATA_CHANGE]', { start: startDate, end: endDate });
+    logger.info('Handling date range change in table toolbar', {
+      start: startDate,
+      end: endDate,
+      action: 'table_date_range_change',
+    });
   };
 
   return (
@@ -262,7 +266,6 @@ export function AppTableToolbar<TData>({
               value={startDate}
               hidden={endDate ? { after: new Date(endDate) } : undefined}
               onValueChange={(dateStr) => {
-                logger.info(dateStr);
                 if (endDate && dateStr && dateStr > endDate) {
                   toast.error(
                     'A data inicial não pode ser maior que a data final.'
@@ -284,7 +287,6 @@ export function AppTableToolbar<TData>({
               value={endDate}
               hidden={startDate ? { before: new Date(startDate) } : undefined}
               onValueChange={(dateStr) => {
-                logger.info(dateStr);
                 if (startDate && dateStr && dateStr < startDate) {
                   toast.error(
                     'A data final não pode ser menor que a data inicial.'

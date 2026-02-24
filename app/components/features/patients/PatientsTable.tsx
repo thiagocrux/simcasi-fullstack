@@ -211,7 +211,11 @@ export function PatientsTable({
       return patientList.data.items;
     }
     if (patientList && !patientList.success) {
-      logger.error('Error fetching patients:', patientListError);
+      logger.error('Failed to fetch patients', {
+        cause: 'An error occurred while fetching patients from the API.',
+        error: patientListError,
+        action: 'fetch_patients',
+      });
     }
     return [];
   }, [patientList, patientListError]);

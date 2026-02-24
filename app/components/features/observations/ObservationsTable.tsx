@@ -190,7 +190,11 @@ export function ObservationsTable({
       return observationList.data.items;
     }
     if (observationList && !observationList.success) {
-      logger.error('Error fetching patients:', observationListError);
+      logger.error('Failed to fetch observations', {
+        cause: 'An error occurred while fetching observations from the API.',
+        error: observationListError,
+        action: 'fetch_observations',
+      });
     }
     return [];
   }, [observationList, observationListError]);

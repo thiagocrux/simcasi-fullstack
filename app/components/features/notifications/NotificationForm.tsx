@@ -89,13 +89,19 @@ export function NotificationForm({
     onSuccess: (data) => {
       if (data.success) {
         logger.success(
-          `The notification ${isEditMode ? 'update' : 'creation'} was successful!`
+          `Notification ${isEditMode ? 'updated' : 'created'} successfully`
         );
         toast.success(
           `A notificação foi ${isEditMode ? 'atualizada' : 'criada'} com sucesso!`
         );
       } else {
-        logger.error(`[NOTIFICATION_FORM_ERROR] ${data.message}`, data.errors);
+        logger.error('Notification submission failed', {
+          cause:
+            'Server returned an error response during notification submission.',
+          details: data.message,
+          errors: data.errors,
+          action: 'notification_form_submit',
+        });
         toast.error(
           `A tentativa de ${isEditMode ? 'atualizar' : 'criar'} a notificação falhou.`
         );
@@ -110,10 +116,11 @@ export function NotificationForm({
 
   async function onSubmit(input: NotificationFormInput) {
     if (!loggedUser?.id) {
-      logger.error(
-        '[NOTIFICATION_FORM_ERROR] Expired session or invalid user.'
-      );
-      toast.error(`Sessão expirada ou usuário inválido.`);
+      logger.error('Notification submission blocked', {
+        cause: 'Missing user context. Session may have expired.',
+        action: 'notification_form_submit',
+      });
+      toast.error('Sessão expirada ou usuário inválido.');
       handleLogout();
       return;
     }

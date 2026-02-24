@@ -45,15 +45,18 @@ export class ResendMailProvider implements MailProvider {
         throw new Error(error.message);
       }
 
-      logger.info(
-        `[RESEND] Email sent successfully to ${data.to}. ID: ${response?.id}`
-      );
+      logger.info('Email sent successfully via Resend', {
+        to: data.to,
+        id: response?.id,
+        action: 'send_email_resend',
+      });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      logger.error(
-        `[RESEND_ERROR] Failed to send email to ${data.to}:`,
-        error.message
-      );
+      logger.error('Failed to send email via Resend', {
+        to: data.to,
+        error: error.message,
+        action: 'send_email_resend',
+      });
 
       //NOTE: We don't throw here to prevent the whole use case from failing due to an email notification error.
     }

@@ -99,7 +99,13 @@ export const authSlice = createSlice({
             state.roleCode = parsed.roleCode;
             state.isAuthenticated = true;
           } catch (error) {
-            logger.error('[AUTH_SLICE] Hydration failure:', error);
+            logger.error(
+              'Failed to hydrate authentication state from persistence',
+              {
+                error,
+                action: 'auth_state_hydration',
+              }
+            );
           }
         }
       }
