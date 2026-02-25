@@ -78,8 +78,8 @@ export class RequestPasswordResetUseCase implements UseCase<
       entityName: 'USER',
       entityId: user.id,
       userId: user.id, // User is requesting for themselves.
-      oldValues: { RequestPasswordResetRequested: false },
-      newValues: { RequestPasswordResetRequested: true },
+      oldValues: { isPasswordResetRequested: false },
+      newValues: { isPasswordResetRequested: true },
       ipAddress,
       userAgent,
     });
