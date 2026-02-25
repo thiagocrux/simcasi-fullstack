@@ -72,18 +72,18 @@ export class UpdateRoleUseCase implements UseCase<
     }
 
     // 3. Check if the role exists.
-    const existing = await this.roleRepository.findById(id);
-    if (!existing) {
+    const existingRole = await this.roleRepository.findById(id);
+    if (!existingRole) {
       throw new NotFoundError('Cargo');
     }
 
     // 4. Check for duplicate code if it is being changed.
     if (data.code) {
-      const roleWithCode = await this.roleRepository.findByCode(
+      const existingRoleWithCode = await this.roleRepository.findByCode(
         data.code,
         true
       );
-      if (roleWithCode && roleWithCode.id !== id) {
+      if (existingRoleWithCode && existingRoleWithCode.id !== id) {
         throw new ConflictError('Este cargo já existe.');
       }
     }
@@ -103,8 +103,8 @@ export class UpdateRoleUseCase implements UseCase<
       action: 'UPDATE',
       entityName: 'ROLE',
       entityId: id,
-      oldValues: existing,
-      newValues: updatedRole,
+      oldValues: JSON.parse(JSON.stringify(existingRole)),
+      newValues: JSON.parse(JSON.stringify(updatedRole)),
       ipAddress,
       userAgent,
     });

@@ -55,8 +55,8 @@ export class UpdateExamUseCase implements UseCase<
     }
 
     // 2. Check if the exam exists.
-    const existing = await this.examRepository.findById(id);
-    if (!existing) {
+    const existingExam = await this.examRepository.findById(id);
+    if (!existingExam) {
       throw new NotFoundError('Exame');
     }
 
@@ -84,8 +84,8 @@ export class UpdateExamUseCase implements UseCase<
       action: AUDIT_LOG_ACTION.UPDATE,
       entityName: AUDIT_LOG_ENTITY.EXAM,
       entityId: id,
-      oldValues: existing,
-      newValues: updatedExam,
+      oldValues: JSON.parse(JSON.stringify(existingExam)),
+      newValues: JSON.parse(JSON.stringify(updatedExam)),
       ipAddress,
       userAgent,
     });

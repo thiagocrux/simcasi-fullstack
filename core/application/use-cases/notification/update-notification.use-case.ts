@@ -53,8 +53,8 @@ export class UpdateNotificationUseCase implements UseCase<
     }
 
     // 2. Check if the notification exists.
-    const existing = await this.notificationRepository.findById(id);
-    if (!existing) {
+    const existingNotification = await this.notificationRepository.findById(id);
+    if (!existingNotification) {
       throw new NotFoundError('Notificação');
     }
 
@@ -73,8 +73,8 @@ export class UpdateNotificationUseCase implements UseCase<
       action: 'UPDATE',
       entityName: 'NOTIFICATION',
       entityId: id,
-      oldValues: existing,
-      newValues: updatedNotification,
+      oldValues: JSON.parse(JSON.stringify(existingNotification)),
+      newValues: JSON.parse(JSON.stringify(updatedNotification)),
       ipAddress,
       userAgent,
     });

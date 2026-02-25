@@ -55,13 +55,15 @@ export class RegisterNotificationUseCase implements UseCase<
     }
 
     // 2. Verify that the patient exists.
-    const patient = await this.patientRepository.findById(input.patientId);
-    if (!patient) {
+    const existingPatient = await this.patientRepository.findById(
+      input.patientId
+    );
+    if (!existingPatient) {
       throw new NotFoundError('Paciente');
     }
 
     // 3. Delegate to the repository.
-    const notification = await this.notificationRepository.create({
+    const createdNotification = await this.notificationRepository.create({
       ...input,
       createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       updatedBy: null,
@@ -72,12 +74,12 @@ export class RegisterNotificationUseCase implements UseCase<
       userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'NOTIFICATION',
-      entityId: notification.id,
-      newValues: notification,
+      entityId: createdNotification.id,
+      newValues: JSON.parse(JSON.stringify(createdNotification)),
       ipAddress,
       userAgent,
     });
 
-    return notification;
+    return createdNotification;
   }
 }

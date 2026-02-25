@@ -41,13 +41,16 @@ export class RestorePermissionUseCase implements UseCase<
     const { id } = input;
 
     // 1. Check if the permission exists (including deleted).
-    const permission = await this.permissionRepository.findById(id, true);
-    if (!permission) {
+    const existingPermission = await this.permissionRepository.findById(
+      id,
+      true
+    );
+    if (!existingPermission) {
       throw new NotFoundError('Permissão');
     }
 
     // 2. Perform the restoration if it was deleted.
-    if (permission.deletedAt) {
+    if (existingPermission.deletedAt) {
       await this.permissionRepository.restore(
         id,
         userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
@@ -64,7 +67,7 @@ export class RestorePermissionUseCase implements UseCase<
       action: 'RESTORE',
       entityName: 'PERMISSION',
       entityId: id,
-      newValues: restoredPermission,
+      newValues: JSON.parse(JSON.stringify(restoredPermission)),
       ipAddress,
       userAgent,
     });

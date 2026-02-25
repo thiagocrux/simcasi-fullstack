@@ -57,13 +57,15 @@ export class RegisterExamUseCase implements UseCase<
     }
 
     // 2. Verify that the patient exists.
-    const patient = await this.patientRepository.findById(input.patientId);
-    if (!patient) {
+    const existingPatient = await this.patientRepository.findById(
+      input.patientId
+    );
+    if (!existingPatient) {
       throw new NotFoundError('Paciente');
     }
 
     // 3. Delegate to the repository.
-    const exam = await this.examRepository.create({
+    const createdExam = await this.examRepository.create({
       ...validation.data,
       treponemalTestDate: new Date(validation.data.treponemalTestDate),
       nontreponemalTestDate: new Date(validation.data.nontreponemalTestDate),
@@ -79,12 +81,12 @@ export class RegisterExamUseCase implements UseCase<
       userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: AUDIT_LOG_ACTION.CREATE,
       entityName: AUDIT_LOG_ENTITY.EXAM,
-      entityId: exam.id,
-      newValues: exam,
+      entityId: createdExam.id,
+      newValues: JSON.parse(JSON.stringify(createdExam)),
       ipAddress,
       userAgent,
     });
 
-    return exam;
+    return createdExam;
   }
 }

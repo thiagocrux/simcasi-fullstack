@@ -41,9 +41,9 @@ export class RevokeSessionUseCase implements UseCase<
   async execute(input: RevokeSessionInput): Promise<RevokeSessionOutput> {
     const { id } = input;
     const { userId, ipAddress, userAgent } = getRequestContext();
-    const session = await this.sessionRepository.findById(id);
+    const existingSession = await this.sessionRepository.findById(id);
 
-    if (!session) {
+    if (!existingSession) {
       throw new NotFoundError('Sessão');
     }
 
@@ -55,7 +55,7 @@ export class RevokeSessionUseCase implements UseCase<
       action: AUDIT_LOG_ACTION.REVOKE_SESSION,
       entityName: AUDIT_LOG_ENTITY.SESSION,
       entityId: id,
-      oldValues: session,
+      oldValues: JSON.parse(JSON.stringify(existingSession)),
       ipAddress,
       userAgent,
     });

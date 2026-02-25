@@ -37,19 +37,20 @@ export class RestoreTreatmentUseCase implements UseCase<
     const { id } = input;
 
     // 1. Check if the treatment exists (including deleted).
-    const treatment = await this.treatmentRepository.findById(id, true);
-    if (!treatment) {
+    const existingTreatment = await this.treatmentRepository.findById(id, true);
+    if (!existingTreatment) {
       throw new NotFoundError('Tratamento');
     }
 
     // 2. Perform the restoration if it was deleted.
-    if (treatment.deletedAt) {
+    if (existingTreatment.deletedAt) {
       await this.treatmentRepository.restore(
         id,
         userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
       );
-      treatment.deletedAt = null;
-      treatment.updatedBy = userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
+      existingTreatment.deletedAt = null;
+      existingTreatment.updatedBy =
+        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
 
       // 3. Create audit log.
       await this.auditLogRepository.create({
@@ -57,12 +58,12 @@ export class RestoreTreatmentUseCase implements UseCase<
         action: 'RESTORE',
         entityName: 'TREATMENT',
         entityId: id,
-        newValues: treatment,
+        newValues: JSON.parse(JSON.stringify(existingTreatment)),
         ipAddress,
         userAgent,
       });
     }
 
-    return treatment as RestoreTreatmentOutput;
+    return existingTreatment as RestoreTreatmentOutput;
   }
 }

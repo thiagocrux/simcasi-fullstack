@@ -43,8 +43,8 @@ export class DeleteExamUseCase implements UseCase<
     const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Check if the exam exists.
-    const exam = await this.examRepository.findById(id);
-    if (!exam) {
+    const existingExam = await this.examRepository.findById(id);
+    if (!existingExam) {
       throw new NotFoundError('Exame');
     }
 
@@ -60,7 +60,7 @@ export class DeleteExamUseCase implements UseCase<
       action: AUDIT_LOG_ACTION.DELETE,
       entityName: AUDIT_LOG_ENTITY.EXAM,
       entityId: id,
-      oldValues: exam,
+      oldValues: JSON.parse(JSON.stringify(existingExam)),
       ipAddress,
       userAgent,
     });

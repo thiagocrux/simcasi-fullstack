@@ -56,13 +56,13 @@ export class UpdatePatientUseCase implements UseCase<
     }
 
     // 2. Check if patient exists.
-    const targetPatient = await this.patientRepository.findById(id);
-    if (!targetPatient) {
+    const existingPatient = await this.patientRepository.findById(id);
+    if (!existingPatient) {
       throw new NotFoundError('Paciente');
     }
 
     // 3. If CPF is being updated, check if the new CPF is already in use.
-    if (validation.data.cpf && validation.data.cpf !== targetPatient.cpf) {
+    if (validation.data.cpf && validation.data.cpf !== existingPatient.cpf) {
       const duplicateCpf = await this.patientRepository.findByCpf(
         validation.data.cpf
       );
@@ -76,7 +76,7 @@ export class UpdatePatientUseCase implements UseCase<
     // 4. If SUS card is being updated, check if the new SUS card is already in use.
     if (
       validation.data.susCardNumber &&
-      validation.data.susCardNumber !== targetPatient.susCardNumber
+      validation.data.susCardNumber !== existingPatient.susCardNumber
     ) {
       const duplicateSus = await this.patientRepository.findBySusCardNumber(
         validation.data.susCardNumber
@@ -89,7 +89,7 @@ export class UpdatePatientUseCase implements UseCase<
     }
 
     // 5. Delegate update to repository.
-    const updated = await this.patientRepository.update(
+    const updatedPatient = await this.patientRepository.update(
       id,
       {
         ...validation.data,
@@ -106,12 +106,12 @@ export class UpdatePatientUseCase implements UseCase<
       action: 'UPDATE',
       entityName: 'PATIENT',
       entityId: id,
-      oldValues: targetPatient,
-      newValues: validation.data,
+      oldValues: JSON.parse(JSON.stringify(existingPatient)),
+      newValues: JSON.parse(JSON.stringify(validation.data)),
       ipAddress,
       userAgent,
     });
 
-    return updated;
+    return updatedPatient;
   }
 }

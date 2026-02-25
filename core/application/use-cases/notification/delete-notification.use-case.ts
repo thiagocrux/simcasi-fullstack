@@ -41,8 +41,8 @@ export class DeleteNotificationUseCase implements UseCase<
     const { id } = input;
 
     // 1. Check if the notification exists.
-    const existing = await this.notificationRepository.findById(id);
-    if (!existing) {
+    const existingNotification = await this.notificationRepository.findById(id);
+    if (!existingNotification) {
       throw new NotFoundError('Notificação');
     }
 
@@ -58,7 +58,7 @@ export class DeleteNotificationUseCase implements UseCase<
       action: 'DELETE',
       entityName: 'NOTIFICATION',
       entityId: id,
-      oldValues: existing,
+      oldValues: JSON.parse(JSON.stringify(existingNotification)),
       ipAddress,
       userAgent,
     });

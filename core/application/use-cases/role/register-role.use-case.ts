@@ -71,18 +71,18 @@ export class RegisterRoleUseCase implements UseCase<
     }
 
     // 3. Check if the role code already exists, including soft-deleted records.
-    const roleExists = await this.roleRepository.findByCode(input.code, true);
+    const existingRole = await this.roleRepository.findByCode(input.code, true);
 
-    if (roleExists) {
+    if (existingRole) {
       // If the role exists and is NOT deleted, we throw a conflict error.
-      if (!roleExists.deletedAt) {
+      if (!existingRole.deletedAt) {
         throw new ConflictError('Este cargo já existe.');
       }
 
       // If the role was previously soft-deleted, we restore it by clearing 'deletedAt'
       // and updating it with the new provided data (like permissions).
       const restoredRole = await this.roleRepository.update(
-        roleExists.id,
+        existingRole.id,
         {
           code: input.code,
           permissionIds: input.permissionIds,
@@ -97,7 +97,7 @@ export class RegisterRoleUseCase implements UseCase<
         action: 'RESTORE',
         entityName: 'ROLE',
         entityId: restoredRole.id,
-        newValues: restoredRole,
+        newValues: JSON.parse(JSON.stringify(restoredRole)),
         ipAddress,
         userAgent,
       });
@@ -106,7 +106,7 @@ export class RegisterRoleUseCase implements UseCase<
     }
 
     // 5. If no record was found with that code, create a completely new one.
-    const role = await this.roleRepository.create({
+    const createdRole = await this.roleRepository.create({
       code: input.code,
       label: input.label,
       permissionIds: input.permissionIds,
@@ -119,12 +119,12 @@ export class RegisterRoleUseCase implements UseCase<
       userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'ROLE',
-      entityId: role.id,
-      newValues: role,
+      entityId: createdRole.id,
+      newValues: JSON.parse(JSON.stringify(createdRole)),
       ipAddress,
       userAgent,
     });
 
-    return role;
+    return createdRole;
   }
 }

@@ -12,6 +12,7 @@ import {
 import { ROLES } from '@/core/domain/constants/role.constants';
 import { SECURITY_CONSTANTS } from '@/core/domain/constants/security.constants';
 import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
+import { USER_CONSTANTS } from '@/core/domain/constants/user.constants';
 import { logger } from '@/lib/logger.utils';
 import { PrismaClient } from '@prisma/client';
 
@@ -81,7 +82,9 @@ async function main() {
   });
 
   // 5. Create default non-system admin user from env (SIMCASI Admin)
-  const seedEmail = process.env.PRISMA_SEED_EMAIL?.trim();
+  const seedEmail = (
+    process.env.PRISMA_SEED_EMAIL || USER_CONSTANTS.SYSTEM_ADMIN_EMAIL
+  ).trim();
   const seedPassword = process.env.PRISMA_SEED_PASSWORD;
   if (seedEmail && seedPassword) {
     const seedPasswordHash = hashSync(

@@ -55,13 +55,15 @@ export class RegisterObservationUseCase implements UseCase<
     }
 
     // 2. Verify that the patient exists.
-    const patient = await this.patientRepository.findById(input.patientId);
-    if (!patient) {
+    const existingPatient = await this.patientRepository.findById(
+      input.patientId
+    );
+    if (!existingPatient) {
       throw new NotFoundError('Paciente');
     }
 
     // 3. Delegate to the repository.
-    const observation = await this.observationRepository.create({
+    const createdObservation = await this.observationRepository.create({
       ...validation.data,
       createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       updatedBy: null,
@@ -72,12 +74,12 @@ export class RegisterObservationUseCase implements UseCase<
       userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'OBSERVATION',
-      entityId: observation.id,
-      newValues: observation,
+      entityId: createdObservation.id,
+      newValues: JSON.parse(JSON.stringify(createdObservation)),
       ipAddress,
       userAgent,
     });
 
-    return observation;
+    return createdObservation;
   }
 }

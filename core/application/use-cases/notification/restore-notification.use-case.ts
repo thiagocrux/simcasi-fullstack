@@ -41,13 +41,16 @@ export class RestoreNotificationUseCase implements UseCase<
     const { id } = input;
 
     // 1. Check if the notification exists (including deleted).
-    const notification = await this.notificationRepository.findById(id, true);
-    if (!notification) {
+    const existingNotification = await this.notificationRepository.findById(
+      id,
+      true
+    );
+    if (!existingNotification) {
       throw new NotFoundError('Notificação');
     }
 
     // 2. Perform the restoration if it was deleted.
-    if (notification.deletedAt) {
+    if (existingNotification.deletedAt) {
       await this.notificationRepository.restore(
         id,
         userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
@@ -64,7 +67,7 @@ export class RestoreNotificationUseCase implements UseCase<
       action: 'RESTORE',
       entityName: 'NOTIFICATION',
       entityId: id,
-      newValues: restoredNotification,
+      newValues: JSON.parse(JSON.stringify(restoredNotification)),
       ipAddress,
       userAgent,
     });

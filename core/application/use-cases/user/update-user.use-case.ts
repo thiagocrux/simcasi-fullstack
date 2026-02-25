@@ -1,5 +1,6 @@
 import { userSchema } from '@/core/application/validation/schemas/user.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
+import { USER_CONSTANTS } from '@/core/domain/constants/user.constants';
 import {
   ConflictError,
   ForbiddenError,
@@ -63,15 +64,15 @@ export class UpdateUserUseCase implements UseCase<
     }
 
     // 2. Check if the user exists.
-    const targetUser = await this.userRepository.findById(id);
-    if (!targetUser) {
+    const existingUser = await this.userRepository.findById(id);
+    if (!existingUser) {
       throw new NotFoundError('Usuário');
     }
 
     // 3. Authorization check.
     const isAdmin = isUserAdmin();
     const isEditingSelf = id === executorId;
-    const isChangingRole = data.roleId && data.roleId !== targetUser.roleId;
+    const isChangingRole = data.roleId && data.roleId !== existingUser.roleId;
 
     if (!isAdmin) {
       // Non-admins can only edit themselves.
@@ -91,16 +92,27 @@ export class UpdateUserUseCase implements UseCase<
 
     // 4. Check if the role exists (if provided and allowed).
     if (data.roleId) {
-      const role = await this.roleRepository.findById(data.roleId);
-      if (!role) {
+      const existingRole = await this.roleRepository.findById(data.roleId);
+      if (!existingRole) {
         throw new NotFoundError('Cargo');
       }
     }
 
     // 5. Check for duplicates if the email is being changed.
-    if (data.email && data.email !== targetUser.email) {
-      const duplicate = await this.userRepository.findByEmail(data.email);
-      if (duplicate) {
+    if (data.email && data.email !== existingUser.email) {
+      // Prevent identity change for protected system users to guarantee integration stability.
+      if (
+        existingUser.isSystem ||
+        existingUser.email === USER_CONSTANTS.SYSTEM_ADMIN_EMAIL ||
+        existingUser.email === process.env.PRISMA_SEED_EMAIL
+      ) {
+        throw new ForbiddenError(
+          'O e-mail de um usuário protegido pelo sistema não pode ser alterado.'
+        );
+      }
+
+      const duplicateUser = await this.userRepository.findByEmail(data.email);
+      if (duplicateUser) {
         throw new ConflictError(
           `O e-mail ${data.email} já se encontra em uso por outro usuário do sistema.`
         );
@@ -122,7 +134,7 @@ export class UpdateUserUseCase implements UseCase<
 
     // 8. Audit logging.
     const { password: _oldValuesPassword, ...oldValuesWithoutPassword } =
-      targetUser;
+      existingUser;
     const { password: _newValuesPassword, ...newValuesWithoutPassword } =
       updatedUser;
 
@@ -131,8 +143,8 @@ export class UpdateUserUseCase implements UseCase<
       action: 'UPDATE',
       entityName: 'USER',
       entityId: id,
-      oldValues: oldValuesWithoutPassword,
-      newValues: newValuesWithoutPassword,
+      oldValues: JSON.parse(JSON.stringify(oldValuesWithoutPassword)),
+      newValues: JSON.parse(JSON.stringify(newValuesWithoutPassword)),
       ipAddress,
       userAgent,
     });

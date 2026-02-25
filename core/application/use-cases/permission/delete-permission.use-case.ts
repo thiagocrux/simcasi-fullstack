@@ -39,8 +39,8 @@ export class DeletePermissionUseCase implements UseCase<
     const { id } = input;
 
     // 1. Check if the permission exists.
-    const existing = await this.permissionRepository.findById(id);
-    if (!existing) {
+    const existingPermission = await this.permissionRepository.findById(id);
+    if (!existingPermission) {
       throw new NotFoundError('Permissão');
     }
 
@@ -56,7 +56,7 @@ export class DeletePermissionUseCase implements UseCase<
       action: 'DELETE',
       entityName: 'PERMISSION',
       entityId: id,
-      oldValues: existing,
+      oldValues: JSON.parse(JSON.stringify(existingPermission)),
       ipAddress,
       userAgent,
     });

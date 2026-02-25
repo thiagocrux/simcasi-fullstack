@@ -53,13 +53,15 @@ export class RegisterTreatmentUseCase implements UseCase<
     }
 
     // 2. Verify that the patient exists.
-    const patient = await this.patientRepository.findById(input.patientId);
-    if (!patient) {
+    const existingPatient = await this.patientRepository.findById(
+      input.patientId
+    );
+    if (!existingPatient) {
       throw new NotFoundError('Paciente');
     }
 
     // 3. Delegate to the repository.
-    const treatment = await this.treatmentRepository.create({
+    const createdTreatment = await this.treatmentRepository.create({
       ...validation.data,
       startDate: new Date(validation.data.startDate),
       createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
@@ -71,12 +73,12 @@ export class RegisterTreatmentUseCase implements UseCase<
       userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'TREATMENT',
-      entityId: treatment.id,
-      newValues: treatment,
+      entityId: createdTreatment.id,
+      newValues: JSON.parse(JSON.stringify(createdTreatment)),
       ipAddress,
       userAgent,
     });
 
-    return treatment;
+    return createdTreatment;
   }
 }

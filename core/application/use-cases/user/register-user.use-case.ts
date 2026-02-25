@@ -58,14 +58,14 @@ export class RegisterUserUseCase implements UseCase<
     }
 
     // 2. Check if the role exists.
-    const role = await this.roleRepository.findById(input.roleId);
-    if (!role) {
+    const existingRole = await this.roleRepository.findById(input.roleId);
+    if (!existingRole) {
       throw new NotFoundError('Cargo');
     }
 
     // 3. Check if the email is already in use (by an active user).
-    const existing = await this.userRepository.findByEmail(input.email);
-    if (existing) {
+    const existingUser = await this.userRepository.findByEmail(input.email);
+    if (existingUser) {
       throw new ConflictError(
         `O e-mail ${input.email} já se encontra em uso por outro usuário do sistema.`
       );
@@ -75,7 +75,7 @@ export class RegisterUserUseCase implements UseCase<
     const hashedPassword = await this.hashProvider.hash(input.password);
 
     // 5. Delegate to the repository (handles restoration if the email was soft-deleted).
-    const user = await this.userRepository.create({
+    const createdUser = await this.userRepository.create({
       ...input,
       password: hashedPassword,
       createdBy: executorId,
@@ -83,13 +83,13 @@ export class RegisterUserUseCase implements UseCase<
     });
 
     // 6. Create audit log.
-    const { password: _, ...userWithoutPassword } = user;
+    const { password: _, ...userWithoutPassword } = createdUser;
     await this.auditLogRepository.create({
       userId: executorId,
       action: 'CREATE',
       entityName: 'USER',
-      entityId: user.id,
-      newValues: userWithoutPassword,
+      entityId: createdUser.id,
+      newValues: JSON.parse(JSON.stringify(userWithoutPassword)),
       ipAddress,
       userAgent,
     });

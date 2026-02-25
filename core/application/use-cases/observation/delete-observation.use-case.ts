@@ -41,8 +41,8 @@ export class DeleteObservationUseCase implements UseCase<
     const { id } = input;
 
     // 1. Check if the observation exists.
-    const observation = await this.observationRepository.findById(id);
-    if (!observation) {
+    const existingObservation = await this.observationRepository.findById(id);
+    if (!existingObservation) {
       throw new NotFoundError('Observação');
     }
 
@@ -58,7 +58,7 @@ export class DeleteObservationUseCase implements UseCase<
       action: 'DELETE',
       entityName: 'OBSERVATION',
       entityId: id,
-      oldValues: observation,
+      oldValues: JSON.parse(JSON.stringify(existingObservation)),
       ipAddress,
       userAgent,
     });

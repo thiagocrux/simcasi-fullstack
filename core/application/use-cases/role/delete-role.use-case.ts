@@ -39,8 +39,8 @@ export class DeleteRoleUseCase implements UseCase<
     const { id } = input;
 
     // 1. Check if the role exists.
-    const existing = await this.roleRepository.findById(id);
-    if (!existing) {
+    const existingRole = await this.roleRepository.findById(id);
+    if (!existingRole) {
       throw new NotFoundError('Cargo');
     }
 
@@ -56,7 +56,7 @@ export class DeleteRoleUseCase implements UseCase<
       action: 'DELETE',
       entityName: 'ROLE',
       entityId: id,
-      oldValues: existing,
+      oldValues: JSON.parse(JSON.stringify(existingRole)),
       ipAddress,
       userAgent,
     });

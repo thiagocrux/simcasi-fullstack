@@ -56,18 +56,16 @@ export class UpdatePermissionUseCase implements UseCase<
     }
 
     // 2. Check if the permission exists.
-    const existing = await this.permissionRepository.findById(id);
-    if (!existing) {
+    const existingPermission = await this.permissionRepository.findById(id);
+    if (!existingPermission) {
       throw new NotFoundError('Permissão');
     }
 
     // 3. Check for duplicate code if it is being changed.
     if (data.code) {
-      const permissionWithCode = await this.permissionRepository.findByCode(
-        data.code,
-        true
-      );
-      if (permissionWithCode && permissionWithCode.id !== id) {
+      const existingPermissionByCode =
+        await this.permissionRepository.findByCode(data.code, true);
+      if (existingPermissionByCode && existingPermissionByCode.id !== id) {
         throw new ConflictError('Esta permissão já existe.');
       }
     }
@@ -87,8 +85,8 @@ export class UpdatePermissionUseCase implements UseCase<
       action: 'UPDATE',
       entityName: 'PERMISSION',
       entityId: id,
-      oldValues: existing,
-      newValues: updatedPermission,
+      oldValues: JSON.parse(JSON.stringify(existingPermission)),
+      newValues: JSON.parse(JSON.stringify(updatedPermission)),
       ipAddress,
       userAgent,
     });

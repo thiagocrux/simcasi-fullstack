@@ -41,8 +41,8 @@ export class UpdateObservationUseCase implements UseCase<
     const { id, ...data } = input;
 
     // 1. Check if the observation exists.
-    const existing = await this.observationRepository.findById(id);
-    if (!existing) {
+    const existingObservation = await this.observationRepository.findById(id);
+    if (!existingObservation) {
       throw new NotFoundError('Observação');
     }
 
@@ -61,8 +61,8 @@ export class UpdateObservationUseCase implements UseCase<
       action: 'UPDATE',
       entityName: 'OBSERVATION',
       entityId: id,
-      oldValues: existing,
-      newValues: updatedObservation,
+      oldValues: JSON.parse(JSON.stringify(existingObservation)),
+      newValues: JSON.parse(JSON.stringify(updatedObservation)),
       ipAddress,
       userAgent,
     });

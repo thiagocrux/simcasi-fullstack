@@ -37,8 +37,8 @@ export class DeleteTreatmentUseCase implements UseCase<
     const { id } = input;
 
     // 1. Check if the treatment exists.
-    const treatment = await this.treatmentRepository.findById(id);
-    if (!treatment) {
+    const existingTreatment = await this.treatmentRepository.findById(id);
+    if (!existingTreatment) {
       throw new NotFoundError('Tratamento');
     }
 
@@ -54,7 +54,7 @@ export class DeleteTreatmentUseCase implements UseCase<
       action: 'DELETE',
       entityName: 'TREATMENT',
       entityId: id,
-      oldValues: treatment,
+      oldValues: JSON.parse(JSON.stringify(existingTreatment)),
       ipAddress,
       userAgent,
     });

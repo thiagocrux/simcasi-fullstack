@@ -41,19 +41,23 @@ export class RestoreObservationUseCase implements UseCase<
     const { id } = input;
 
     // 1. Check if the observation exists (including deleted).
-    const observation = await this.observationRepository.findById(id, true);
-    if (!observation) {
+    const existingObservation = await this.observationRepository.findById(
+      id,
+      true
+    );
+    if (!existingObservation) {
       throw new NotFoundError('Observação');
     }
 
     // 2. Perform the restoration if it was deleted.
-    if (observation.deletedAt) {
+    if (existingObservation.deletedAt) {
       await this.observationRepository.restore(
         id,
         userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
       );
-      observation.deletedAt = null;
-      observation.updatedBy = userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
+      existingObservation.deletedAt = null;
+      existingObservation.updatedBy =
+        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
 
       // 3. Create audit log.
       await this.auditLogRepository.create({
@@ -61,12 +65,12 @@ export class RestoreObservationUseCase implements UseCase<
         action: 'RESTORE',
         entityName: 'OBSERVATION',
         entityId: id,
-        newValues: observation,
+        newValues: JSON.parse(JSON.stringify(existingObservation)),
         ipAddress,
         userAgent,
       });
     }
 
-    return observation as RestoreObservationOutput;
+    return existingObservation as RestoreObservationOutput;
   }
 }

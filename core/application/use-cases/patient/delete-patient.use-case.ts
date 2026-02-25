@@ -51,9 +51,9 @@ export class DeletePatientUseCase implements UseCase<
     const { id } = input;
 
     // 1. Check if patient exists.
-    const patient = await this.patientRepository.findById(id);
+    const existingPatient = await this.patientRepository.findById(id);
 
-    if (!patient) {
+    if (!existingPatient) {
       throw new NotFoundError('Paciente');
     }
 
@@ -76,7 +76,7 @@ export class DeletePatientUseCase implements UseCase<
       action: 'DELETE',
       entityName: 'PATIENT',
       entityId: id,
-      oldValues: patient,
+      oldValues: JSON.parse(JSON.stringify(existingPatient)),
       ipAddress,
       userAgent,
     });

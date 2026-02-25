@@ -52,20 +52,20 @@ export class RegisterPermissionUseCase implements UseCase<
     }
 
     // 2. Check if the permission code already exists, including soft-deleted ones.
-    const permissionExists = await this.permissionRepository.findByCode(
+    const existingPermission = await this.permissionRepository.findByCode(
       input.code,
       true
     );
 
-    if (permissionExists) {
+    if (existingPermission) {
       // If the permission exists and is NOT deleted, we throw a conflict error.
-      if (!permissionExists.deletedAt) {
+      if (!existingPermission.deletedAt) {
         throw new ConflictError('Esta permissão já existe.');
       }
 
       // If it exists but was previously soft-deleted, we restore and update it.
       const restoredPermission = await this.permissionRepository.update(
-        permissionExists.id,
+        existingPermission.id,
         {
           ...validation.data,
           deletedAt: null,
@@ -79,7 +79,7 @@ export class RegisterPermissionUseCase implements UseCase<
         action: 'RESTORE',
         entityName: 'PERMISSION',
         entityId: restoredPermission.id,
-        newValues: restoredPermission,
+        newValues: JSON.parse(JSON.stringify(restoredPermission)),
         ipAddress,
         userAgent,
       });
@@ -88,7 +88,7 @@ export class RegisterPermissionUseCase implements UseCase<
     }
 
     // 4. If no record was found, create a brand new permission.
-    const permission = await this.permissionRepository.create({
+    const createdPermission = await this.permissionRepository.create({
       code: validation.data.code,
       label: validation.data.label,
       roleIds: validation.data.roleIds,
@@ -101,12 +101,12 @@ export class RegisterPermissionUseCase implements UseCase<
       userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'PERMISSION',
-      entityId: permission.id,
-      newValues: permission,
+      entityId: createdPermission.id,
+      newValues: JSON.parse(JSON.stringify(createdPermission)),
       ipAddress,
       userAgent,
     });
 
-    return permission;
+    return createdPermission;
   }
 }

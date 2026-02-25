@@ -39,19 +39,20 @@ export class RestoreExamUseCase implements UseCase<
     const { userId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Check if the exam exists (including deleted).
-    const exam = await this.examRepository.findById(id, true);
-    if (!exam) {
+    const existingExam = await this.examRepository.findById(id, true);
+    if (!existingExam) {
       throw new NotFoundError('Exame');
     }
 
     // 2. Perform the restoration if it was deleted.
-    if (exam.deletedAt) {
+    if (existingExam.deletedAt) {
       await this.examRepository.restore(
         id,
         userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID
       );
-      exam.deletedAt = null;
-      exam.updatedBy = userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
+      existingExam.deletedAt = null;
+      existingExam.updatedBy =
+        userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
 
       // 3. Create audit log.
       await this.auditLogRepository.create({
@@ -59,12 +60,12 @@ export class RestoreExamUseCase implements UseCase<
         action: 'RESTORE',
         entityName: 'EXAM',
         entityId: id,
-        newValues: exam,
+        newValues: JSON.parse(JSON.stringify(existingExam)),
         ipAddress,
         userAgent,
       });
     }
 
-    return exam as RestoreExamOutput;
+    return existingExam as RestoreExamOutput;
   }
 }

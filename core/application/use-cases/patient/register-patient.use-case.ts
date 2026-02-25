@@ -81,13 +81,13 @@ export class RegisterPatientUseCase implements UseCase<
 
     // 4. Determine if we should restore an existing record or create a new one.
     // We prioritize the record found by CPF if both exist and are deleted (unlikely but possible).
-    const deletedPatient = existingByCpf || existingBySus;
+    const existingPatient = existingByCpf || existingBySus;
 
-    if (deletedPatient) {
+    if (existingPatient) {
       const updaterId = userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
       // Perform restoration by updating the record and clearing deletedAt.
-      const patient = await this.patientRepository.update(
-        deletedPatient.id,
+      const restoredPatient = await this.patientRepository.update(
+        existingPatient.id,
         {
           ...validation.data,
           birthDate: new Date(validation.data.birthDate),
@@ -101,17 +101,17 @@ export class RegisterPatientUseCase implements UseCase<
         userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
         action: 'RESTORE',
         entityName: 'PATIENT',
-        entityId: patient.id,
-        newValues: input,
+        entityId: restoredPatient.id,
+        newValues: JSON.parse(JSON.stringify(input)),
         ipAddress,
         userAgent,
       });
 
-      return patient;
+      return restoredPatient;
     }
 
     // 6. Create a new patient record if no existing record (active or deleted) was found.
-    const patient = await this.patientRepository.create({
+    const createdPatient = await this.patientRepository.create({
       ...validation.data,
       birthDate: new Date(validation.data.birthDate),
       createdBy: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
@@ -122,12 +122,12 @@ export class RegisterPatientUseCase implements UseCase<
       userId: userId ?? SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
       action: 'CREATE',
       entityName: 'PATIENT',
-      entityId: patient.id,
-      newValues: input,
+      entityId: createdPatient.id,
+      newValues: JSON.parse(JSON.stringify(input)),
       ipAddress,
       userAgent,
     });
 
-    return patient;
+    return createdPatient;
   }
 }

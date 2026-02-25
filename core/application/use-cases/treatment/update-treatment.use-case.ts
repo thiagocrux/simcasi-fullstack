@@ -49,8 +49,8 @@ export class UpdateTreatmentUseCase implements UseCase<
     }
 
     // 2. Check if the treatment exists.
-    const existing = await this.treatmentRepository.findById(id);
-    if (!existing) {
+    const existingTreatment = await this.treatmentRepository.findById(id);
+    if (!existingTreatment) {
       throw new NotFoundError('Tratamento');
     }
 
@@ -72,8 +72,8 @@ export class UpdateTreatmentUseCase implements UseCase<
       action: 'UPDATE',
       entityName: 'TREATMENT',
       entityId: id,
-      oldValues: existing,
-      newValues: updatedTreatment,
+      oldValues: JSON.parse(JSON.stringify(existingTreatment)),
+      newValues: JSON.parse(JSON.stringify(updatedTreatment)),
       ipAddress,
       userAgent,
     });

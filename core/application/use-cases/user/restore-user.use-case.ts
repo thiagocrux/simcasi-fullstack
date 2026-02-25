@@ -37,34 +37,34 @@ export class RestoreUserUseCase implements UseCase<
     const { userId: executorId, ipAddress, userAgent } = getRequestContext();
 
     // 1. Check if the user exists (including deleted).
-    const user = await this.userRepository.findById(id, true);
+    const existingUser = await this.userRepository.findById(id, true);
 
-    if (!user) {
+    if (!existingUser) {
       throw new NotFoundError('Usuário');
     }
 
     // 2. Perform the restoration if it was deleted.
-    if (user.deletedAt) {
+    if (existingUser.deletedAt) {
       await this.userRepository.restore(id, executorId);
-      user.deletedAt = null;
-      user.updatedBy = executorId;
+      existingUser.deletedAt = null;
+      existingUser.updatedBy = executorId;
 
       // 3. Create audit log.
-      const { password: _, ...newValuesWithoutPassword } = user;
+      const { password: _, ...newValuesWithoutPassword } = existingUser;
 
       await this.auditLogRepository.create({
         userId: executorId,
         action: 'RESTORE',
         entityName: 'USER',
         entityId: id,
-        newValues: newValuesWithoutPassword,
+        newValues: JSON.parse(JSON.stringify(newValuesWithoutPassword)),
         ipAddress,
         userAgent,
       });
     }
 
-    delete (user as User).password;
+    delete (existingUser as User).password;
 
-    return user as RestoreUserOutput;
+    return existingUser as RestoreUserOutput;
   }
 }

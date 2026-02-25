@@ -51,14 +51,14 @@ export class RestorePatientUseCase implements UseCase<
     const { id } = input;
 
     // 1. Check if patient exists (including deleted).
-    const patient = await this.patientRepository.findById(id, true);
-    if (!patient) {
+    const existingPatient = await this.patientRepository.findById(id, true);
+    if (!existingPatient) {
       throw new NotFoundError('Paciente');
     }
 
     // 2. Perform restore if it was deleted.
-    if (patient.deletedAt) {
-      const deletionDate = patient.deletedAt;
+    if (existingPatient.deletedAt) {
+      const deletionDate = existingPatient.deletedAt;
 
       await this.patientRepository.restore(
         id,
@@ -88,7 +88,7 @@ export class RestorePatientUseCase implements UseCase<
           deletionDate
         ),
       ]);
-      patient.deletedAt = null;
+      existingPatient.deletedAt = null;
 
       // 4. Audit the restoration.
       await this.auditLogRepository.create({
@@ -96,12 +96,12 @@ export class RestorePatientUseCase implements UseCase<
         action: 'RESTORE',
         entityName: 'PATIENT',
         entityId: id,
-        newValues: { restoredAt: new Date() },
+        newValues: JSON.parse(JSON.stringify({ restoredAt: new Date() })),
         ipAddress,
         userAgent,
       });
     }
 
-    return patient;
+    return existingPatient;
   }
 }
