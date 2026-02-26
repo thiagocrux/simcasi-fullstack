@@ -58,82 +58,15 @@ pnpm install
 
 ### 3. Setup Environment Variables
 
-Create a `.env` file in the root directory. Ensure you have the necessary variables for Docker and Prisma. Example:
+To configure your local environment, copy the template provided in `.env.example` to a new `.env` file in the root directory. **After copying, edit and update the property values according to your needs and environment** (e.g., passwords, API keys, URLs, etc). This ensures you have all the required variables for the application services to work properly.
 
-```env
-# -- APPLICATION --
-
-# NEXT_PUBLIC_APP_URL: The canonical base URL of the application for the current environment.
-# Used to generate absolute links (e.g., in recovery emails) and for SEO/Social sharing.
-# Examples: http://localhost:3000 (local), https://simcasi.com (production).
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-
-# NEXT_PUBLIC_DEFAULT_USER_EMAIL: The email address for the default system administrator.
-# Used by Prisma seed scripts to create the initial admin and exposed to the frontend
-# to identify and handle protected/immutable users in the UI.
-NEXT_PUBLIC_DEFAULT_USER_EMAIL="your_email@email.com"
-
-# DEFAULT_USER_PASSWORD: The initial password for the default seeded administrator.
-# Used exclusively by the Prisma seed script during database initialization.
-# Warning: Do not prefix this with NEXT_PUBLIC to prevent security leaks in the frontend.
-DEFAULT_USER_PASSWORD="your_password_here"
-
-# -- DOCKER --
-
-# POSTGRES_DATABASE: The name of your PostgreSQL database.
-# The value you set here will be used by Docker Compose to create the database when the container starts, and it will also be used by the application to connect to the database.
-POSTGRES_DATABASE="simcasi"
-
-# POSTGRES_USER: The username for your PostgreSQL database.
-# Update as needed to match your database user.
-POSTGRES_USER="root"
-
-# POSTGRES_PASSWORD: The password for your PostgreSQL database.
-# Update as needed to match your database password.
-POSTGRES_PASSWORD="your_password_here"
-
-# POSTGRES_HOST: The host address for your PostgreSQL database.
-# Default is 'localhost', change if your database is hosted elsewhere.
-POSTGRES_HOST="localhost"
-
-# POSTGRES_HOST_PORT: The port on your host machine mapped to the PostgreSQL container.
-# Default PostgreSQL port is 5432, update if you use a different port.
-POSTGRES_HOST_PORT=5432
-
-# POSTGRES_CONTAINER_PORT: The port inside the PostgreSQL container.
-# Default PostgreSQL port is 5432, update if you use a different port.
-POSTGRES_CONTAINER_PORT=5432
-
-# -- PRISMA --
-
-# DATABASE_URL: The connection string for your PostgreSQL database.
-# This URL is used by Prisma and your application to connect to the database. It includes the username, password, host, port, database name, and schema.
-DATABASE_URL="postgresql://root:your_password_here@localhost:5432/simcasi"
-
-# -- SECURITY --
-
-# JWT_SECRET: The secret key used to sign and verify JSON Web Tokens (JWT).
-# Keep this value secure and never commit it to a public repo. Use different secrets per environment.
-JWT_SECRET="your_jwt_secret_here"
-
-# JWT_ACCESS_TOKEN_EXPIRATION: Expiration time for access tokens (short-lived).
-# Use duration strings like '15m' for 15 minutes or '1h' for 1 hour to limit exposure if leaked.
-JWT_ACCESS_TOKEN_EXPIRATION="15m"
-
-# JWT_REFRESH_TOKEN_EXPIRATION: Expiration time for refresh tokens (longer-lived).
-# Use duration strings like '7d' for 7 days; refresh tokens are used to obtain new access tokens.
-JWT_REFRESH_TOKEN_EXPIRATION="7d"
-
-# -- MESSAGING (RESEND) --
-
-# RESEND_API_KEY: Transactional email provider API Key.
-# Obtain yours at https://resend.com. If not provided, the system falls back to NullMailProvider (logging emails to console).
-RESEND_API_KEY="your_resend_api_key"
-
-# MAIL_FROM: The default sender address for system notifications.
-# Note: For Resend, you must verify your domain or use 'onboarding@resend.dev' for testing purposes.
-MAIL_FROM="SIMCASI <your@domain.com>"
+```bash
+cp .env.example .env
 ```
+
+> 💡 **Tip:** Always use `.env.example` as the primary source of truth for configuration options and decision-making regarding environment variables.
+
+> 📝 **Note:** Never commit real credentials to the repository. Use `.env.example` as a reference for required keys.
 
 ### 4. Start the Database
 
@@ -732,14 +665,37 @@ When working with the API:
 
 ### Common Issues
 
-#### Database: `Can't reach database server at 127.0.0.1:5432`
+#### `Can't reach database server at 127.0.0.1:5432`
 
+- **Location**: Database
 - **Reason**: The application cannot connect to the PostgreSQL instance. This usually happens because the Docker container is stopped or the database hasn't finished its initialization.
 - **Solution**:
   1.  Check if the Docker container is running: `docker compose ps`.
   2.  If it's stopped, start it: `docker-compose up -d`.
   3.  Verify the `DATABASE_URL` in your `.env` file matches the Docker settings (port 5432 is the default).
   4.  Wait a few seconds after starting Docker for the database to be ready before running commands like `prisma:migrate` or starting the dev server.
+
+#### `Hydration Mismatch` or `Text content did not match server-rendered HTML`
+
+- **Location**: Frontend
+- **Reason**: This happens in Next.js when the server-rendered HTML doesn't match the first client-side render. It's common when using client-only APIs (like `localStorage` or `window`) or theme preferences immediately on render.
+- **Solution**: Use a `mounted` state to ensure client-specific code only renders after hydration.
+
+  ```tsx
+  // 1. Initialize state as false
+  const [mounted, setMounted] = useState(false);
+
+  // 2. Set to true only after mount
+  useEffect(() => {
+    const animationFrame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(animationFrame);
+  }, []);
+
+  // 3. Conditional rendering
+  if (!mounted) return <Placeholder />;
+
+  return <YourClientOnlyComponent />;
+  ```
 
 ## License
 
