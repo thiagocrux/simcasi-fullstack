@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { makeLoginUseCase } from '@/core/infrastructure/factories/session.factory';
+import { env } from '@/core/infrastructure/lib/env.config';
 import { requestContextStore } from '@/core/infrastructure/lib/request-context';
 import { handleApiError } from '@/lib/api.utils';
 
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
       Parameters<NextResponse['cookies']['set']>[2]
     > = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
     };

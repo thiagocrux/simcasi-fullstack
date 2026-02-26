@@ -1,8 +1,9 @@
-import { USER_CONSTANTS } from '@/core/domain/constants/user.constants';
 import { ForbiddenError, NotFoundError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
+import { isImmutableEmail } from '@/core/domain/utils/user.utils';
+import { env } from '@/core/infrastructure/lib/env.config';
 import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import {
   DeleteUserInput,
@@ -47,11 +48,11 @@ export class DeleteUserUseCase implements UseCase<
     }
 
     // 2. Prevent deletion of protected system users.
-    if (
+    const isProtected =
       existingUser.isSystem ||
-      existingUser.email === USER_CONSTANTS.SYSTEM_ADMIN_EMAIL ||
-      existingUser.email === process.env.PRISMA_SEED_EMAIL
-    ) {
+      isImmutableEmail(existingUser.email, env.NEXT_PUBLIC_DEFAULT_USER_EMAIL);
+
+    if (isProtected) {
       throw new ForbiddenError(
         'Este usuário é protegido pelo sistema e não pode ser excluído.'
       );

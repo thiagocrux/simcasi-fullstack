@@ -61,6 +61,23 @@ pnpm install
 Create a `.env` file in the root directory. Ensure you have the necessary variables for Docker and Prisma. Example:
 
 ```env
+# -- APPLICATION --
+
+# NEXT_PUBLIC_APP_URL: The canonical base URL of the application for the current environment.
+# Used to generate absolute links (e.g., in recovery emails) and for SEO/Social sharing.
+# Examples: http://localhost:3000 (local), https://simcasi.com (production).
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+# NEXT_PUBLIC_DEFAULT_USER_EMAIL: The email address for the default system administrator.
+# Used by Prisma seed scripts to create the initial admin and exposed to the frontend
+# to identify and handle protected/immutable users in the UI.
+NEXT_PUBLIC_DEFAULT_USER_EMAIL="your_email@email.com"
+
+# DEFAULT_USER_PASSWORD: The initial password for the default seeded administrator.
+# Used exclusively by the Prisma seed script during database initialization.
+# Warning: Do not prefix this with NEXT_PUBLIC to prevent security leaks in the frontend.
+DEFAULT_USER_PASSWORD="your_password_here"
+
 # -- DOCKER --
 
 # POSTGRES_DATABASE: The name of your PostgreSQL database.
@@ -73,7 +90,7 @@ POSTGRES_USER="root"
 
 # POSTGRES_PASSWORD: The password for your PostgreSQL database.
 # Update as needed to match your database password.
-POSTGRES_PASSWORD="root"
+POSTGRES_PASSWORD="your_password_here"
 
 # POSTGRES_HOST: The host address for your PostgreSQL database.
 # Default is 'localhost', change if your database is hosted elsewhere.
@@ -91,21 +108,13 @@ POSTGRES_CONTAINER_PORT=5432
 
 # DATABASE_URL: The connection string for your PostgreSQL database.
 # This URL is used by Prisma and your application to connect to the database. It includes the username, password, host, port, database name, and schema.
-DATABASE_URL="postgresql://root:root@localhost:5432/simcasi"
-
-# PRISMA_SEED_EMAIL: The email address used by Prisma seed scripts when creating the default seeded user.
-# Update this to change the email for the seeded user created during development or deployment seeding.
-PRISMA_SEED_EMAIL="simcasi.team@gmail.com"
-
-# PRISMA_SEED_PASSWORD: The password for the seeded user created by Prisma seed scripts.
-# Use a secure password for production; this is commonly used only during development/testing.
-PRISMA_SEED_PASSWORD="Teste@12"
+DATABASE_URL="postgresql://root:your_password_here@localhost:5432/simcasi"
 
 # -- SECURITY --
 
 # JWT_SECRET: The secret key used to sign and verify JSON Web Tokens (JWT).
 # Keep this value secure and never commit it to a public repo. Use different secrets per environment.
-JWT_SECRET="R0hPtlxlGK7k3XC8Kdjn/bYYsHH5J1T4PoYaNAAmi2g="
+JWT_SECRET="your_jwt_secret_here"
 
 # JWT_ACCESS_TOKEN_EXPIRATION: Expiration time for access tokens (short-lived).
 # Use duration strings like '15m' for 15 minutes or '1h' for 1 hour to limit exposure if leaked.
@@ -117,13 +126,13 @@ JWT_REFRESH_TOKEN_EXPIRATION="7d"
 
 # -- MESSAGING (RESEND) --
 
-# RESEND_API_KEY: The API key provided by Resend for sending emails.
-# Obtain this from your Resend dashboard settings.
-RESEND_API_KEY="re_123..."
+# RESEND_API_KEY: Transactional email provider API Key.
+# Obtain yours at https://resend.com. If not provided, the system falls back to NullMailProvider (logging emails to console).
+RESEND_API_KEY="your_resend_api_key"
 
 # MAIL_FROM: The default sender address for system notifications.
-# This should be a verified email address or domain in your Resend account.
-MAIL_FROM="SIMCASI <onboarding@resend.dev>"
+# Note: For Resend, you must verify your domain or use 'onboarding@resend.dev' for testing purposes.
+MAIL_FROM="SIMCASI <your@domain.com>"
 ```
 
 ### 4. Start the Database

@@ -28,6 +28,8 @@ import { useRouter } from 'next/navigation';
 
 import { deleteUser, findUsers } from '@/app/actions/user.actions';
 import { FindUsersOutput } from '@/core/application/contracts/user/find-users.contract';
+import { isImmutableEmail } from '@/core/domain/utils/user.utils';
+import { publicEnv } from '@/core/infrastructure/lib/env.public';
 import { usePermission } from '@/hooks/usePermission';
 import { useRole } from '@/hooks/useRole';
 import { useUser } from '@/hooks/useUser';
@@ -503,7 +505,14 @@ export function UsersTable({
                 size="sm"
                 className={`px-0! ml-1 truncate cursor-pointer ${COLUMN_MAX_WIDTH}`}
               >
-                {user?.name}
+                {renderOrFallback(user?.name, (value) => (
+                  <HighlightedText
+                    text={value}
+                    highlight={
+                      selectedFilterOption === column.id ? searchValue : ''
+                    }
+                  />
+                ))}
               </Button>
             </UserPreviewDialog>
           );
@@ -582,24 +591,29 @@ export function UsersTable({
                   </DropdownMenuItem>
                 )}
 
-                {can('delete:user') && (
-                  <AppAlertDialog
-                    title="Você tem certeza absoluta?"
-                    description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
-                    cancelAction={{ action: () => {} }}
-                    continueAction={{
-                      action: () => handleDelete(String(row.original.id)),
-                    }}
-                  >
-                    <DropdownMenuItem
-                      className="text-destructive cursor-pointer"
-                      onSelect={(event) => event.preventDefault()}
+                {can('delete:user') &&
+                  row.original.email &&
+                  !isImmutableEmail(
+                    row.original.email,
+                    publicEnv.NEXT_PUBLIC_DEFAULT_USER_EMAIL
+                  ) && (
+                    <AppAlertDialog
+                      title="Você tem certeza absoluta?"
+                      description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
+                      cancelAction={{ action: () => {} }}
+                      continueAction={{
+                        action: () => handleDelete(row.original.id as string),
+                      }}
                     >
-                      <Trash2 />
-                      Deletar usuário
-                    </DropdownMenuItem>
-                  </AppAlertDialog>
-                )}
+                      <DropdownMenuItem
+                        className="text-destructive cursor-pointer"
+                        onSelect={(event) => event.preventDefault()}
+                      >
+                        <Trash2 />
+                        Deletar usuário
+                      </DropdownMenuItem>
+                    </AppAlertDialog>
+                  )}
               </DropdownMenuContent>
             </DropdownMenu>
           );
@@ -721,27 +735,32 @@ export function UsersTable({
                   </ContextMenuItem>
                 )}
 
-                {can('delete:user') && (
-                  <>
-                    <ContextMenuSeparator />
-                    <AppAlertDialog
-                      title="Você tem certeza absoluta?"
-                      description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o usuário."
-                      cancelAction={{ action: () => {} }}
-                      continueAction={{
-                        action: () => handleDelete(String(row.original.id)),
-                      }}
-                    >
-                      <ContextMenuItem
-                        className="text-destructive cursor-pointer"
-                        onSelect={(event) => event.preventDefault()}
+                {can('delete:user') &&
+                  row.original.email &&
+                  !isImmutableEmail(
+                    row.original.email,
+                    publicEnv.NEXT_PUBLIC_DEFAULT_USER_EMAIL
+                  ) && (
+                    <>
+                      <ContextMenuSeparator />
+                      <AppAlertDialog
+                        title="Você tem certeza absoluta?"
+                        description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o usuário."
+                        cancelAction={{ action: () => {} }}
+                        continueAction={{
+                          action: () => handleDelete(String(row.original.id)),
+                        }}
                       >
-                        <Trash2 className="mr-2 w-4 h-4" />
-                        Deletar usuário
-                      </ContextMenuItem>
-                    </AppAlertDialog>
-                  </>
-                )}
+                        <ContextMenuItem
+                          className="text-destructive cursor-pointer"
+                          onSelect={(event) => event.preventDefault()}
+                        >
+                          <Trash2 className="mr-2 w-4 h-4" />
+                          Deletar usuário
+                        </ContextMenuItem>
+                      </AppAlertDialog>
+                    </>
+                  )}
               </>
             )}
           />

@@ -6,6 +6,7 @@ import { ZodError } from 'zod';
 import { AppError } from '@/core/domain/errors/app.error';
 import { makeTokenProvider } from '@/core/infrastructure/factories/security.factory';
 import { makeRefreshTokenUseCase } from '@/core/infrastructure/factories/session.factory';
+import { env } from '@/core/infrastructure/lib/env.config';
 import { requestContextStore } from '@/core/infrastructure/lib/request-context';
 import {
   AuthenticationContext,
@@ -193,7 +194,7 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
             // Set new cookies.
             cookieStore.set('access_token', newAccessToken, {
               httpOnly: true,
-              secure: process.env.NODE_ENV === 'production',
+              secure: env.NODE_ENV === 'production',
               sameSite: 'lax',
               path: '/',
               maxAge: tokenProvider.getAccessExpirationInSeconds(),
@@ -201,7 +202,7 @@ export function withAuthentication(permissions: string[], handler: ApiHandler) {
 
             cookieStore.set('refresh_token', newRefreshToken, {
               httpOnly: true,
-              secure: process.env.NODE_ENV === 'production',
+              secure: env.NODE_ENV === 'production',
               sameSite: 'lax',
               path: '/',
               maxAge: tokenProvider.getRefreshExpirationInSeconds(),

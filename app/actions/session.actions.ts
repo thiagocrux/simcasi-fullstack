@@ -26,6 +26,7 @@ import {
   makeRequestPasswordResetUseCase,
   makeResetPasswordUseCase,
 } from '@/core/infrastructure/factories/user.factory';
+import { env } from '@/core/infrastructure/lib/env.config';
 import { requestContextStore } from '@/core/infrastructure/lib/request-context';
 import {
   ActionResponse,
@@ -80,7 +81,7 @@ export async function logInUser(input: CreateSessionInput) {
 
     cookieStore.set('access_token', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
       maxAge: tokenProvider.getAccessExpirationInSeconds(),
@@ -88,7 +89,7 @@ export async function logInUser(input: CreateSessionInput) {
 
     cookieStore.set('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
       maxAge: input.rememberMe

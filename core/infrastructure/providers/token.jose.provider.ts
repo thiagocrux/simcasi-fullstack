@@ -3,6 +3,8 @@ import { SECURITY_CONSTANTS } from '@/core/domain/constants/security.constants';
 import { TokenProvider } from '@/core/domain/providers/token.provider';
 import { SignJWT, jwtVerify } from 'jose';
 
+import { env } from '../lib/env.config';
+
 /**
  * Concrete implementation of TokenProvider using the 'jose' library.
  * It provides a modern, edge-compatible approach to JWT handling using the Web Crypto API.
@@ -17,23 +19,14 @@ export class JoseTokenProvider implements TokenProvider {
 
   /**
    * Initializes the provider by encoding the JWT_SECRET from environment variables.
-   * @throws Error If JWT_SECRET is not defined.
    */
   constructor() {
-    const secretKey = process.env.JWT_SECRET;
-
-    if (!secretKey) {
-      throw new Error(
-        '[TOKEN_PROVIDER_ERROR] JWT_SECRET não está definido nas variáveis de ambiente. O sistema não pode iniciar sem uma chave de segurança.'
-      );
-    }
-
-    this.secret = new TextEncoder().encode(secretKey);
+    this.secret = new TextEncoder().encode(env.JWT_SECRET);
     this.accessExpiration =
-      process.env.JWT_ACCESS_TOKEN_EXPIRATION ||
+      env.JWT_ACCESS_TOKEN_EXPIRATION ||
       SECURITY_CONSTANTS.DEFAULT_ACCESS_TOKEN_EXPIRATION;
     this.refreshExpiration =
-      process.env.JWT_REFRESH_TOKEN_EXPIRATION ||
+      env.JWT_REFRESH_TOKEN_EXPIRATION ||
       SECURITY_CONSTANTS.DEFAULT_REFRESH_TOKEN_EXPIRATION;
   }
 
@@ -93,9 +86,7 @@ export class JoseTokenProvider implements TokenProvider {
    * @return The Date object representing the absolute expiration time.
    */
   getRefreshExpiryDate(): Date {
-    const expiration =
-      process.env.JWT_REFRESH_TOKEN_EXPIRATION ||
-      SECURITY_CONSTANTS.DEFAULT_REFRESH_TOKEN_EXPIRATION;
+    const expiration = this.refreshExpiration;
     const amount = parseInt(expiration);
     const unit = expiration.slice(-1);
 
@@ -121,9 +112,7 @@ export class JoseTokenProvider implements TokenProvider {
    * @return The expiration duration in seconds.
    */
   getRefreshExpirationInSeconds(): number {
-    const expiration =
-      process.env.JWT_REFRESH_TOKEN_EXPIRATION ||
-      SECURITY_CONSTANTS.DEFAULT_REFRESH_TOKEN_EXPIRATION;
+    const expiration = this.refreshExpiration;
     const amount = parseInt(expiration);
     const unit = expiration.slice(-1);
 
@@ -149,9 +138,7 @@ export class JoseTokenProvider implements TokenProvider {
    * @return The expiration duration in seconds.
    */
   getAccessExpirationInSeconds(): number {
-    const expiration =
-      process.env.JWT_ACCESS_TOKEN_EXPIRATION ||
-      SECURITY_CONSTANTS.DEFAULT_ACCESS_TOKEN_EXPIRATION;
+    const expiration = this.accessExpiration;
     const amount = parseInt(expiration);
     const unit = expiration.slice(-1);
 

@@ -7,6 +7,8 @@ import { DetailsPageProperties } from '@/app/components/common/DetailsPageProper
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
 import { GetUserByIdOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
+import { isImmutableEmail } from '@/core/domain/utils/user.utils';
+import { publicEnv } from '@/core/infrastructure/lib/env.public';
 import { ActionResponse } from '@/lib/actions.utils';
 import { formatDate } from '@/lib/formatters.utils';
 import { notFound } from 'next/navigation';
@@ -91,7 +93,14 @@ export default async function UserDetailsPage({
           dialogTitle="Você tem certeza absoluta?"
           dialogDescription="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o usuário."
           updateAction={{ label: 'Editar usuário', action: handleUpdate }}
-          deleteAction={{ label: 'Deletar usuário', action: handleDelete }}
+          deleteAction={{
+            label: 'Deletar usuário',
+            action: handleDelete,
+            hidden: isImmutableEmail(
+              user.email,
+              publicEnv.NEXT_PUBLIC_DEFAULT_USER_EMAIL
+            ),
+          }}
         />
         <DetailsPageProperties data={data} />
       </div>

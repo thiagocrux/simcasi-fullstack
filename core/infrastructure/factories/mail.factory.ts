@@ -1,4 +1,5 @@
 import { MailProvider } from '@/core/domain/providers/mail.provider';
+import { env } from '../lib/env.config';
 import { NullMailProvider } from '../providers/mail.null.provider';
 import { ResendMailProvider } from '../providers/mail.resend.provider';
 
@@ -15,8 +16,8 @@ let mailProvider: MailProvider;
 export function makeMailProvider(): MailProvider {
   if (mailProvider) return mailProvider;
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.MAIL_FROM || 'no-reply@onboarding.resend.dev';
+  const apiKey = env.RESEND_API_KEY;
+  const from = env.MAIL_FROM || 'no-reply@onboarding.resend.dev';
 
   if (apiKey && apiKey !== '' && !apiKey.includes('your_')) {
     mailProvider = new ResendMailProvider(apiKey, from);

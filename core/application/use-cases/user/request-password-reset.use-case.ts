@@ -2,6 +2,7 @@ import { MailProvider } from '@/core/domain/providers/mail.provider';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { PasswordResetTokenRepository } from '@/core/domain/repositories/password-reset-token.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
+import { env } from '@/core/infrastructure/lib/env.config';
 import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import { randomUUID } from 'node:crypto';
 import {
@@ -85,7 +86,7 @@ export class RequestPasswordResetUseCase implements UseCase<
     });
 
     // 8. Send recovery email.
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const baseUrl = env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const resetLink = `${baseUrl}/auth/password-recovery?token=${token}`;
 
     await this.mailProvider.send({

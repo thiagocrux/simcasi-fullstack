@@ -1,7 +1,6 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { hashSync } from 'bcryptjs';
 import crypto from 'crypto';
-import 'dotenv/config';
 import { Pool } from 'pg';
 
 import {
@@ -12,11 +11,11 @@ import {
 import { ROLES } from '@/core/domain/constants/role.constants';
 import { SECURITY_CONSTANTS } from '@/core/domain/constants/security.constants';
 import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
-import { USER_CONSTANTS } from '@/core/domain/constants/user.constants';
+import { env } from '@/core/infrastructure/lib/env.config';
 import { logger } from '@/lib/logger.utils';
 import { PrismaClient } from '@prisma/client';
 
-const connectionString = `${process.env.DATABASE_URL}`;
+const connectionString = `${env.DATABASE_URL}`;
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
@@ -24,9 +23,7 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   // Ensure a canonical system user exists for FK integrity (idempotent, must be first!)
   const systemUserId = SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID;
-  const systemEmail = (
-    process.env.PRISMA_SYSTEM_EMAIL || 'system@simcasi.local'
-  ).trim();
+  const systemEmail = SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_EMAIL;
   const systemPassword = crypto.randomBytes(12).toString('base64url');
   const systemPasswordHash = hashSync(
     systemPassword,
@@ -82,10 +79,17 @@ async function main() {
   });
 
   // 5. Create default non-system admin user from env (SIMCASI Admin)
-  const seedEmail = (
-    process.env.PRISMA_SEED_EMAIL || USER_CONSTANTS.SYSTEM_ADMIN_EMAIL
-  ).trim();
-  const seedPassword = process.env.PRISMA_SEED_PASSWORD;
+  if (!env.NEXT_PUBLIC_DEFAULT_USER_EMAIL) {
+    logger.error('Seed user configuration missing', {
+      cause:
+        'The NEXT_PUBLIC_DEFAULT_USER_EMAIL environment variable is not defined.',
+      action: 'database_seed',
+    });
+    process.exit(1);
+  }
+
+  const seedEmail = env.NEXT_PUBLIC_DEFAULT_USER_EMAIL.trim();
+  const seedPassword = env.DEFAULT_USER_PASSWORD;
   if (seedEmail && seedPassword) {
     const seedPasswordHash = hashSync(
       seedPassword,
@@ -111,7 +115,7 @@ async function main() {
     });
   } else {
     logger.info(
-      'PRISMA_SEED_EMAIL and PRISMA_SEED_PASSWORD not set. Skipping default admin user creation.'
+      'NEXT_PUBLIC_DEFAULT_USER_EMAIL and DEFAULT_USER_PASSWORD not set. Skipping default admin user creation.'
     );
   }
 

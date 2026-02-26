@@ -18,4 +18,6 @@ export const SYSTEM_CONSTANTS = {
   COPYRIGHT: `© ${new Date().getFullYear()} Thiago Luiz da Cruz Souza. Todos os direitos reservados.`,
   /** Canonical UUID used for system-generated operations. */
   DEFAULT_SYSTEM_USER_ID: '00000000-0000-0000-0000-000000000000',
+  /** Canonical email used for the system user. */
+  DEFAULT_SYSTEM_USER_EMAIL: 'system@simcasi.com.br',
 };

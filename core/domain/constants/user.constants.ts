@@ -21,7 +21,4 @@ export const USER_SEARCHABLE_FIELDS = ['name', 'email'] as const;
 /**
  * General constants for user-related logic and business rules.
  */
-export const USER_CONSTANTS = {
-  /** The official system manager email address. Protected from deletion and modification. */
-  SYSTEM_ADMIN_EMAIL: 'admin@simcasi.com.br',
-} as const;
+export const USER_CONSTANTS = {} as const;

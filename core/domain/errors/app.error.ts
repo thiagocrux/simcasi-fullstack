@@ -69,3 +69,12 @@ export class ValidationError extends AppError {
     this.errors = errors;
   }
 }
+
+/**
+ * Thrown when there is a business rule conflict (e.g., duplicate email). (HTTP 409)
+ */
+export class ConfigurationError extends AppError {
+  constructor(message: string) {
+    super(message, 500);
+  }
+}

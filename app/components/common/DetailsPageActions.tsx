@@ -26,10 +26,12 @@ interface DetailsPageActions {
   updateAction: {
     label?: string;
     action: () => void;
+    hidden?: boolean;
   };
   deleteAction: {
     label?: string;
     action: () => void;
+    hidden?: boolean;
   };
   className?: string;
 }
@@ -55,7 +57,7 @@ export function DetailsPageActions({
         className
       )}
     >
-      {can(`update:${entity}`) ? (
+      {can(`update:${entity}`) && !updateAction.hidden ? (
         <Button
           size="sm"
           variant="outline"
@@ -67,7 +69,7 @@ export function DetailsPageActions({
         </Button>
       ) : null}
 
-      {can(`delete:${entity}`) ? (
+      {can(`delete:${entity}`) && !deleteAction.hidden ? (
         <AppAlertDialog
           title={dialogTitle}
           description={dialogDescription}

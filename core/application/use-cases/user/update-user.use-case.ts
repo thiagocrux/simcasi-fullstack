@@ -1,6 +1,5 @@
 import { userSchema } from '@/core/application/validation/schemas/user.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
-import { USER_CONSTANTS } from '@/core/domain/constants/user.constants';
 import {
   ConflictError,
   ForbiddenError,
@@ -11,6 +10,8 @@ import { HashProvider } from '@/core/domain/providers/hash.provider';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
+import { isImmutableEmail } from '@/core/domain/utils/user.utils';
+import { env } from '@/core/infrastructure/lib/env.config';
 import {
   getRequestContext,
   isUserAdmin,
@@ -101,11 +102,14 @@ export class UpdateUserUseCase implements UseCase<
     // 5. Check for duplicates if the email is being changed.
     if (data.email && data.email !== existingUser.email) {
       // Prevent identity change for protected system users to guarantee integration stability.
-      if (
+      const isProtected =
         existingUser.isSystem ||
-        existingUser.email === USER_CONSTANTS.SYSTEM_ADMIN_EMAIL ||
-        existingUser.email === process.env.PRISMA_SEED_EMAIL
-      ) {
+        isImmutableEmail(
+          existingUser.email,
+          env.NEXT_PUBLIC_DEFAULT_USER_EMAIL
+        );
+
+      if (isProtected) {
         throw new ForbiddenError(
           'O e-mail de um usuário protegido pelo sistema não pode ser alterado.'
         );
