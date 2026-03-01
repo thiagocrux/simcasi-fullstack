@@ -61,7 +61,7 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
       entityId,
     };
 
-    // Add date range filter only if dates are provided
+    // Add date range filter only if dates are provided.
     const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
     const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
 
