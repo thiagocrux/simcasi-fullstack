@@ -12,9 +12,12 @@ The project uses a modern toolchain focused on developer experience and performa
 - `@scalar/nextjs-api-reference` — Interactive API documentation UI.
 - `@tanstack/react-query` — Powerful asynchronous state management.
 - `@tanstack/react-table` — Headless UI table library for data tables.
+- `@testing-library/jest-dom` — Custom Jest matchers for DOM assertions.
+- `@testing-library/react` — React component testing utilities.
 - `bcryptjs` — Password hashing library.
 - `date-fns` — Modern JavaScript date utility library.
 - `docker` — Platform for developing, shipping, and running applications.
+- `jest` — JavaScript testing framework with multi-project support.
 - `jose` — JSON Web Token (JWT) handling.
 - `lucide-react` — Beautiful & consistent icons.
 - `next` — The React Framework for the Web with App Router.
@@ -26,6 +29,7 @@ The project uses a modern toolchain focused on developer experience and performa
 - `resend` — Email API for developers (used for messaging and notifications).
 - `sonner` — An opinionated toast component for React.
 - `tailwindcss` — Utility-first CSS framework for styling.
+- `ts-jest` — TypeScript preprocessor for Jest.
 - `typescript` — Typed superset of JavaScript.
 - `use-mask-input` — Lightweight hook for input masking.
 - `zod` — TypeScript-first schema validation.
@@ -250,6 +254,32 @@ This section documents the main scripts available in `package.json` and what the
 
   ```bash
   pnpm prisma:seed
+  ```
+
+### Testing
+
+- #### `test`
+
+  Runs the test suite across all projects (client, server, api-actions).
+
+  ```bash
+  pnpm test
+  ```
+
+- #### `test:watch`
+
+  Runs tests in watch mode for continuous testing during development.
+
+  ```bash
+  pnpm test:watch
+  ```
+
+- #### `test:coverage`
+
+  Runs tests with coverage report to track code coverage across the codebase.
+
+  ```bash
+  pnpm test:coverage
   ```
 
 ### Documentation
