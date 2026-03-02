@@ -1,0 +1,133 @@
+import { useUser } from '@/hooks/useUser';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { useRouter } from 'next/navigation';
+import { SettingsDetails } from './SettingsDetails';
+
+describe('SettingsDetails', () => {
+  let mockPush: jest.Mock;
+  let mockUseUser: jest.Mock;
+
+  beforeEach(() => {
+    mockPush = jest.fn();
+    const mockRouter = useRouter as jest.Mock;
+    mockRouter.mockReturnValue({ push: mockPush });
+
+    mockUseUser = useUser as jest.Mock;
+    mockUseUser.mockReturnValue({
+      user: { id: 'user-123', name: 'John Doe', email: 'john@example.com' },
+    });
+  });
+
+  it('should render card container', () => {
+    const { container } = render(<SettingsDetails />);
+    expect(container.querySelector('[data-slot="card"]')).toBeInTheDocument();
+  });
+
+  it('should render "Conta" title', () => {
+    render(<SettingsDetails />);
+    expect(screen.getByText('Conta')).toBeInTheDocument();
+  });
+
+  it('should render separator line', () => {
+    const { container } = render(<SettingsDetails />);
+    const separator = container.querySelector('[data-slot="separator"]');
+    expect(separator).toBeInTheDocument();
+  });
+
+  it('should render "Atualizar senha" link button', () => {
+    render(<SettingsDetails />);
+    const button = screen.getByText('Atualizar senha');
+    expect(button).toBeInTheDocument();
+  });
+
+  it('should render link button with link variant', () => {
+    render(<SettingsDetails />);
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('data-variant', 'link');
+  });
+
+  it('should have cursor-pointer class', () => {
+    render(<SettingsDetails />);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass('cursor-pointer');
+  });
+
+  it('should navigate to change password page when clicked', () => {
+    mockUseUser.mockReturnValue({
+      user: { id: 'user-456', name: 'Jane Doe', email: 'jane@example.com' },
+    });
+
+    render(<SettingsDetails />);
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
+
+    expect(mockPush).toHaveBeenCalledWith('/users/user-456/change-password');
+  });
+
+  it('should use correct user ID in navigation route', () => {
+    const userId = 'test-user-id-789';
+    mockUseUser.mockReturnValue({
+      user: { id: userId, name: 'Test User', email: 'test@example.com' },
+    });
+
+    render(<SettingsDetails />);
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
+
+    expect(mockPush).toHaveBeenCalledWith(`/users/${userId}/change-password`);
+  });
+
+  it('should render with consistent layout', () => {
+    const { container } = render(<SettingsDetails />);
+    const card = container.querySelector('[class*="gap-8"]');
+    expect(card).toBeInTheDocument();
+  });
+
+  it('should have proper text styling for title', () => {
+    render(<SettingsDetails />);
+    const title = screen.getByText('Conta');
+    expect(title).toHaveClass('font-medium', 'text-lg');
+  });
+
+  it('should render single section', () => {
+    const { container } = render(<SettingsDetails />);
+    const sections = container.querySelectorAll(
+      '[class*="flex"][class*="flex-col"]'
+    );
+    expect(sections.length).toBeGreaterThan(0);
+  });
+
+  it('should render button with no padding', () => {
+    render(<SettingsDetails />);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass('px-0');
+  });
+
+  it('should render button with minimum width', () => {
+    render(<SettingsDetails />);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass('w-min');
+  });
+
+  it('should handle different user IDs correctly', () => {
+    mockUseUser.mockReturnValue({
+      user: { id: 'special-unique-id', name: 'Special User' },
+    });
+
+    render(<SettingsDetails />);
+    fireEvent.click(screen.getByRole('button'));
+
+    expect(mockPush).toHaveBeenCalledWith(
+      '/users/special-unique-id/change-password'
+    );
+  });
+
+  it('should render with card styling', () => {
+    const { container } = render(<SettingsDetails />);
+    expect(container.querySelector('[data-slot="card"]')).toHaveClass(
+      'px-8',
+      'py-6',
+      'text-sm'
+    );
+  });
+});

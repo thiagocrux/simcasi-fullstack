@@ -14,6 +14,7 @@ const config = {
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/$1',
         '^__mock__/(.*)$': '<rootDir>/__mock__/$1',
+        '^react-markdown$': '<rootDir>/__mock__/react-markdown.js',
       },
       transform: {
         '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.json' }],
