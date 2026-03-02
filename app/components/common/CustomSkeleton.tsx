@@ -36,4 +36,6 @@ export function CustomSkeleton({ variant }: CustomSkeleton) {
       </div>
     );
   }
+
+  return null;
 }
