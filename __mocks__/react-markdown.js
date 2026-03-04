@@ -2,6 +2,7 @@
  * Mock implementation of react-markdown for tests.
  * Strips markdown syntax and renders plain text for test assertions.
  */
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const React = require('react');
 
 module.exports = function ReactMarkdown({ children }) {
@@ -17,7 +18,7 @@ module.exports = function ReactMarkdown({ children }) {
     .replace(/\[(.+?)\]\(.+?\)/g, '$1') // Links: [text](url) -> text
     .replace(/`(.+?)`/g, '$1'); // Code: `text` -> text
 
-  // Return a React fragment with the plain text
-  // This allows getByText to find text even if wrapped in tags
+  // Return a React fragment with the plain text.
+  // This allows getByText to find text even if wrapped in tags.
   return React.createElement(React.Fragment, null, plainText);
 };

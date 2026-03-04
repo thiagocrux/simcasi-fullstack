@@ -13,6 +13,7 @@ const config = {
       setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/$1',
+        '^react-markdown$': '<rootDir>/__mocks__/react-markdown.js',
       },
       transform: {
         '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.json' }],
@@ -24,6 +25,7 @@ const config = {
       testMatch: ['<rootDir>/core/**/*.test.ts'],
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/$1',
+        '^react-markdown$': '<rootDir>/__mocks__/react-markdown.js',
       },
       transform: {
         '^.+\\.ts$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.json' }],
@@ -36,6 +38,7 @@ const config = {
       setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/$1',
+        '^react-markdown$': '<rootDir>/__mocks__/react-markdown.js',
       },
       transformIgnorePatterns: ['node_modules/'],
       transform: {
