@@ -1,9 +1,10 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { fireEvent, screen } from '@testing-library/react';
 import { AppAlertDialog } from './AppAlertDialog';
 
 describe('AppAlertDialog', () => {
   it('should render alert dialog when trigger is clicked', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Confirm Action"
         description="Are you sure?"
@@ -19,7 +20,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should render dialog title', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Alert Title"
         description="Description"
@@ -35,7 +36,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should render dialog description', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Title"
         description="Alert description text"
@@ -51,7 +52,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should render cancel button with label', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Title"
         description="Desc"
@@ -67,7 +68,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should render continue button with label', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Title"
         description="Desc"
@@ -84,7 +85,7 @@ describe('AppAlertDialog', () => {
 
   it('should call cancel action when cancel button is clicked', () => {
     const mockCancel = jest.fn();
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Title"
         description="Desc"
@@ -103,7 +104,7 @@ describe('AppAlertDialog', () => {
 
   it('should call continue action when continue button is clicked', () => {
     const mockContinue = jest.fn();
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Title"
         description="Desc"
@@ -121,7 +122,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should render children as trigger element', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Title"
         description="Desc"
@@ -135,7 +136,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should render content slot when provided', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Title"
         description="Desc"
@@ -152,7 +153,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should accept custom className', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Title"
         description="Desc"
@@ -168,7 +169,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should hide cancel button when hidden is true', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Title"
         description="Desc"
@@ -185,7 +186,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should hide continue button when hidden is true', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Title"
         description="Desc"
@@ -202,7 +203,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should disable buttons when disabled is true', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Title"
         description="Desc"
@@ -219,7 +220,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should have alert-specific styling', () => {
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Alert"
         description="Alert message"
@@ -236,7 +237,7 @@ describe('AppAlertDialog', () => {
 
   it('should close dialog after action is confirmed', () => {
     const mockAction = jest.fn();
-    render(
+    renderWithProviders(
       <AppAlertDialog
         title="Confirm"
         description="Proceed?"
@@ -254,7 +255,7 @@ describe('AppAlertDialog', () => {
   });
 
   it('should render icon for alert variant', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <AppAlertDialog
         title="Alert"
         description="Description"

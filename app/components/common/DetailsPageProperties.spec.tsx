@@ -1,9 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { screen } from '@testing-library/react';
 import { DetailsPageProperties } from './DetailsPageProperties';
 
 describe('DetailsPageProperties', () => {
   it('should render card container', () => {
-    const { container: _container } = render(
+    const { container: _container } = renderWithProviders(
       <DetailsPageProperties data={[]} />
     );
     expect(_container.firstChild).toBeInTheDocument();
@@ -19,7 +20,7 @@ describe('DetailsPageProperties', () => {
         ],
       },
     ];
-    render(<DetailsPageProperties data={data} />);
+    renderWithProviders(<DetailsPageProperties data={data} />);
 
     expect(screen.getByText('Personal Information')).toBeInTheDocument();
   });
@@ -35,7 +36,7 @@ describe('DetailsPageProperties', () => {
         fields: [{ label: 'Field 2', value: 'Value 2' }],
       },
     ];
-    render(<DetailsPageProperties data={data} />);
+    renderWithProviders(<DetailsPageProperties data={data} />);
 
     expect(screen.getByText('Section 1')).toBeInTheDocument();
     expect(screen.getByText('Section 2')).toBeInTheDocument();
@@ -51,7 +52,7 @@ describe('DetailsPageProperties', () => {
         ],
       },
     ];
-    render(<DetailsPageProperties data={data} />);
+    renderWithProviders(<DetailsPageProperties data={data} />);
 
     expect(screen.getByText('First Name')).toBeInTheDocument();
     expect(screen.getByText('Last Name')).toBeInTheDocument();
@@ -67,7 +68,7 @@ describe('DetailsPageProperties', () => {
         ],
       },
     ];
-    render(<DetailsPageProperties data={data} />);
+    renderWithProviders(<DetailsPageProperties data={data} />);
 
     expect(screen.getByText('12345678901')).toBeInTheDocument();
     expect(screen.getByText('test@example.com')).toBeInTheDocument();
@@ -83,7 +84,7 @@ describe('DetailsPageProperties', () => {
         ],
       },
     ];
-    render(<DetailsPageProperties data={data} />);
+    renderWithProviders(<DetailsPageProperties data={data} />);
 
     expect(screen.getByText('Phone')).toBeInTheDocument();
     expect(screen.getByText('test@example.com')).toBeInTheDocument();
@@ -99,7 +100,7 @@ describe('DetailsPageProperties', () => {
         ],
       },
     ];
-    render(<DetailsPageProperties data={data} />);
+    renderWithProviders(<DetailsPageProperties data={data} />);
 
     expect(screen.getByText('Phone')).toBeInTheDocument();
     expect(screen.getByText('John')).toBeInTheDocument();
@@ -114,14 +115,14 @@ describe('DetailsPageProperties', () => {
         ],
       },
     ];
-    render(<DetailsPageProperties data={data} />);
+    renderWithProviders(<DetailsPageProperties data={data} />);
 
     expect(screen.getByText('Field 1')).toBeInTheDocument();
     expect(screen.getByText('Value 1')).toBeInTheDocument();
   });
 
   it('should render separator between section title and fields', () => {
-    render(
+    renderWithProviders(
       <DetailsPageProperties
         data={[
           {
@@ -137,7 +138,7 @@ describe('DetailsPageProperties', () => {
   });
 
   it('should render dotted separator line between labels and values', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <DetailsPageProperties
         data={[
           {
@@ -153,7 +154,7 @@ describe('DetailsPageProperties', () => {
   });
 
   it('should render clipboard copy button for non-empty values', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <DetailsPageProperties
         data={[
           {
@@ -170,7 +171,7 @@ describe('DetailsPageProperties', () => {
   });
 
   it('should render empty section list when no data', () => {
-    const { container: _container } = render(
+    const { container: _container } = renderWithProviders(
       <DetailsPageProperties data={[]} />
     );
 
@@ -178,7 +179,7 @@ describe('DetailsPageProperties', () => {
   });
 
   it('should render fields with proper flex layout', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <DetailsPageProperties
         data={[
           {
@@ -207,7 +208,7 @@ describe('DetailsPageProperties', () => {
         ],
       },
     ];
-    render(<DetailsPageProperties data={data} />);
+    renderWithProviders(<DetailsPageProperties data={data} />);
 
     expect(screen.getByText('Full Name')).toBeInTheDocument();
     expect(screen.getByText('John Doe')).toBeInTheDocument();
@@ -216,7 +217,7 @@ describe('DetailsPageProperties', () => {
   });
 
   it('should use consistent spacing between sections', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <DetailsPageProperties
         data={[
           { title: 'Section 1', fields: [{ label: 'Field', value: 'Value' }] },
@@ -230,7 +231,7 @@ describe('DetailsPageProperties', () => {
   });
 
   it('should render multiple property sections', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <DetailsPageProperties
         data={[
           {

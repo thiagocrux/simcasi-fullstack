@@ -1,21 +1,22 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { fireEvent, screen } from '@testing-library/react';
 import { PasswordInput } from './PasswordInput';
 
 describe('PasswordInput', () => {
   it('should render as password input by default', () => {
-    render(<PasswordInput data-testid="password-input" />);
+    renderWithProviders(<PasswordInput data-testid="password-input" />);
     const input = screen.getByTestId('password-input') as HTMLInputElement;
     expect(input).toHaveAttribute('type', 'password');
   });
 
   it('should render eye-off icon by default', () => {
-    const { container } = render(<PasswordInput />);
+    const { container } = renderWithProviders(<PasswordInput />);
     const svg = container.querySelector('svg');
     expect(svg).toBeInTheDocument();
   });
 
   it('should accept standard input props', () => {
-    render(
+    renderWithProviders(
       <PasswordInput
         data-testid="pwd"
         placeholder="Enter password"
@@ -28,7 +29,9 @@ describe('PasswordInput', () => {
   });
 
   it('should become text input when visibility toggle is clicked', () => {
-    const { container } = render(<PasswordInput data-testid="pwd-input" />);
+    const { container } = renderWithProviders(
+      <PasswordInput data-testid="pwd-input" />
+    );
     const input = screen.getByTestId('pwd-input') as HTMLInputElement;
     const button = container.querySelector('button');
 
@@ -40,7 +43,9 @@ describe('PasswordInput', () => {
   });
 
   it('should toggle back to password type when clicked again', () => {
-    const { container } = render(<PasswordInput data-testid="pwd-input" />);
+    const { container } = renderWithProviders(
+      <PasswordInput data-testid="pwd-input" />
+    );
     const input = screen.getByTestId('pwd-input') as HTMLInputElement;
     const button = container.querySelector('button');
 
@@ -52,19 +57,19 @@ describe('PasswordInput', () => {
   });
 
   it('should render button with ghost variant', () => {
-    const { container: _container } = render(<PasswordInput />);
+    const { container: _container } = renderWithProviders(<PasswordInput />);
     const button = _container.querySelector('button');
     expect(button).toBeInTheDocument();
     expect(button?.className).toContain('hover:bg-transparent');
   });
 
   it('should have cursor-pointer on addon', () => {
-    const { container: _container } = render(<PasswordInput />);
+    const { container: _container } = renderWithProviders(<PasswordInput />);
     expect(_container.querySelector('button')).toBeInTheDocument();
   });
 
   it('should handle multiple rapid toggles', () => {
-    const { container: _container } = render(
+    const { container: _container } = renderWithProviders(
       <PasswordInput data-testid="pwd-input" />
     );
     const input = screen.getByTestId('pwd-input') as HTMLInputElement;
@@ -78,22 +83,26 @@ describe('PasswordInput', () => {
   });
 
   it('should accept className prop', () => {
-    const { container } = render(<PasswordInput className="custom-class" />);
+    const { container } = renderWithProviders(
+      <PasswordInput className="custom-class" />
+    );
     const inputGroup = container.firstChild as HTMLElement;
     expect(inputGroup).toHaveClass('custom-class');
   });
 
   it('should forward input value correctly', () => {
-    render(<PasswordInput data-testid="pwd" defaultValue="mypassword" />);
+    renderWithProviders(
+      <PasswordInput data-testid="pwd" defaultValue="mypassword" />
+    );
     const input = screen.getByTestId('pwd') as HTMLInputElement;
     expect(input.value).toBe('mypassword');
   });
 
   it('should maintain visibility state independently', () => {
-    const { container: _container1 } = render(
+    const { container: _container1 } = renderWithProviders(
       <PasswordInput data-testid="pwd1" />
     );
-    render(<PasswordInput data-testid="pwd2" />);
+    renderWithProviders(<PasswordInput data-testid="pwd2" />);
 
     const input1 = screen.getByTestId('pwd1') as HTMLInputElement;
     const input2 = screen.getByTestId('pwd2') as HTMLInputElement;
@@ -106,7 +115,7 @@ describe('PasswordInput', () => {
   });
 
   it('should apply correct styling to toggle button', () => {
-    const { container } = render(<PasswordInput />);
+    const { container } = renderWithProviders(<PasswordInput />);
     const button = container.querySelector('button');
     expect(button).toHaveClass(
       'hover:bg-transparent!',

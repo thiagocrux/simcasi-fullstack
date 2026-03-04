@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { fireEvent, screen } from '@testing-library/react';
 import { AppTableToolbar } from './AppTableToolbar';
 
 interface TestData {
@@ -25,7 +26,7 @@ describe('AppTableToolbar', () => {
   });
 
   it('should render toolbar container', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}
@@ -39,7 +40,7 @@ describe('AppTableToolbar', () => {
   });
 
   it('should render advanced filters toggle button', () => {
-    render(
+    renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}
@@ -55,7 +56,7 @@ describe('AppTableToolbar', () => {
   });
 
   it('should toggle advanced filters visibility when button is clicked', () => {
-    render(
+    renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}
@@ -73,7 +74,7 @@ describe('AppTableToolbar', () => {
   });
 
   it('should not render advanced filters section when showAdvancedFilters is false', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}
@@ -88,7 +89,7 @@ describe('AppTableToolbar', () => {
   });
 
   it('should render print button when showPrintButton is true', () => {
-    render(
+    renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}
@@ -108,7 +109,7 @@ describe('AppTableToolbar', () => {
   });
 
   it('should not render print button when showPrintButton is false', () => {
-    render(
+    renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}
@@ -125,7 +126,7 @@ describe('AppTableToolbar', () => {
   });
 
   it('should accept custom className', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}
@@ -141,7 +142,7 @@ describe('AppTableToolbar', () => {
   });
 
   it('should render children when provided', () => {
-    render(
+    renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}
@@ -157,7 +158,7 @@ describe('AppTableToolbar', () => {
   });
 
   it('should render date range filter fields when filters are toggled', () => {
-    render(
+    renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}
@@ -181,7 +182,7 @@ describe('AppTableToolbar', () => {
       setFilterValue: jest.fn(),
     });
 
-    render(
+    renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}
@@ -204,7 +205,7 @@ describe('AppTableToolbar', () => {
       setFilterValue: jest.fn(),
     });
 
-    render(
+    renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}

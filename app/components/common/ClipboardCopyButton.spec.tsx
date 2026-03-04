@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { fireEvent, screen } from '@testing-library/react';
 import { ClipboardCopyButton } from './ClipboardCopyButton';
 
 jest.mock('sonner', () => ({
@@ -16,24 +17,28 @@ describe('ClipboardCopyButton', () => {
 
   describe('icon variant (default)', () => {
     it('should render button with ghost variant', () => {
-      render(<ClipboardCopyButton text="Copy me" />);
+      renderWithProviders(<ClipboardCopyButton text="Copy me" />);
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('data-variant', 'ghost');
     });
 
     it('should render copy icon', () => {
-      const { container } = render(<ClipboardCopyButton text="Copy me" />);
+      const { container } = renderWithProviders(
+        <ClipboardCopyButton text="Copy me" />
+      );
       expect(container.querySelector('svg')).toBeInTheDocument();
     });
 
     it('should not render text label in icon variant', () => {
-      render(<ClipboardCopyButton text="Copy me" variant="icon" />);
+      renderWithProviders(
+        <ClipboardCopyButton text="Copy me" variant="icon" />
+      );
       const span = screen.queryByText('Copy me');
       expect(span).not.toBeInTheDocument();
     });
 
     it('should copy text to clipboard when clicked', () => {
-      render(<ClipboardCopyButton text="Hello World" />);
+      renderWithProviders(<ClipboardCopyButton text="Hello World" />);
       const button = screen.getByRole('button');
       fireEvent.click(button);
 
@@ -43,7 +48,7 @@ describe('ClipboardCopyButton', () => {
     it('should show toast notification on copy', () => {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { toast } = require('sonner');
-      render(<ClipboardCopyButton text="Text" />);
+      renderWithProviders(<ClipboardCopyButton text="Text" />);
       const button = screen.getByRole('button');
       fireEvent.click(button);
 
@@ -55,12 +60,14 @@ describe('ClipboardCopyButton', () => {
 
   describe('label variant', () => {
     it('should render text label', () => {
-      render(<ClipboardCopyButton text="My Label" variant="label" />);
+      renderWithProviders(
+        <ClipboardCopyButton text="My Label" variant="label" />
+      );
       expect(screen.getByText('My Label')).toBeInTheDocument();
     });
 
     it('should render label with truncation classes', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <ClipboardCopyButton text="My Label" variant="label" />
       );
       const span = container.querySelector('[class*="truncate"]');
@@ -68,7 +75,7 @@ describe('ClipboardCopyButton', () => {
     });
 
     it('should have title attribute for full text on hover', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <ClipboardCopyButton text="Long text here" variant="label" />
       );
       const span = container.querySelector('span');
@@ -76,7 +83,7 @@ describe('ClipboardCopyButton', () => {
     });
 
     it('should render copy icon next to label', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <ClipboardCopyButton text="Label" variant="label" />
       );
       const svg = container.querySelector('svg');
@@ -84,7 +91,9 @@ describe('ClipboardCopyButton', () => {
     });
 
     it('should copy text when label variant is clicked', () => {
-      render(<ClipboardCopyButton text="Label text" variant="label" />);
+      renderWithProviders(
+        <ClipboardCopyButton text="Label text" variant="label" />
+      );
       const button = screen.getByRole('button');
       fireEvent.click(button);
 
@@ -93,7 +102,7 @@ describe('ClipboardCopyButton', () => {
 
     it('should truncate long text in label variant', () => {
       const longText = 'This is a very long text that should be truncated';
-      const { container } = render(
+      const { container } = renderWithProviders(
         <ClipboardCopyButton text={longText} variant="label" />
       );
       const span = container.querySelector('.truncate');
@@ -103,7 +112,7 @@ describe('ClipboardCopyButton', () => {
 
   describe('custom className', () => {
     it('should accept and apply custom className', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <ClipboardCopyButton text="Text" className="custom-class" />
       );
       const button = container.querySelector('button');
@@ -111,7 +120,7 @@ describe('ClipboardCopyButton', () => {
     });
 
     it('should merge custom className with default classes', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <ClipboardCopyButton text="Text" className="mx-2" />
       );
       const button = container.querySelector('button');
@@ -122,13 +131,17 @@ describe('ClipboardCopyButton', () => {
 
   describe('icon styling', () => {
     it('should render icon with muted foreground color', () => {
-      const { container } = render(<ClipboardCopyButton text="Text" />);
+      const { container } = renderWithProviders(
+        <ClipboardCopyButton text="Text" />
+      );
       const svg = container.querySelector('svg');
       expect(svg).toHaveClass('text-muted-foreground');
     });
 
     it('should render icon with shrink-0 to prevent squishing', () => {
-      const { container } = render(<ClipboardCopyButton text="Text" />);
+      const { container } = renderWithProviders(
+        <ClipboardCopyButton text="Text" />
+      );
       const svg = container.querySelector('svg');
       expect(svg).toHaveClass('shrink-0');
     });
@@ -136,7 +149,7 @@ describe('ClipboardCopyButton', () => {
 
   describe('multiple clicks', () => {
     it('should copy on each click', () => {
-      render(<ClipboardCopyButton text="Copy" />);
+      renderWithProviders(<ClipboardCopyButton text="Copy" />);
       const button = screen.getByRole('button');
 
       fireEvent.click(button);
@@ -149,7 +162,7 @@ describe('ClipboardCopyButton', () => {
     it('should show toast for each copy', () => {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { toast } = require('sonner');
-      render(<ClipboardCopyButton text="Text" />);
+      renderWithProviders(<ClipboardCopyButton text="Text" />);
       const button = screen.getByRole('button');
 
       fireEvent.click(button);
@@ -162,7 +175,7 @@ describe('ClipboardCopyButton', () => {
   describe('special characters and formatting', () => {
     it('should copy text with special characters', () => {
       const specialText = 'Email: user@example.com & phone: (123) 456-7890';
-      render(<ClipboardCopyButton text={specialText} />);
+      renderWithProviders(<ClipboardCopyButton text={specialText} />);
       const button = screen.getByRole('button');
       fireEvent.click(button);
 
@@ -171,7 +184,7 @@ describe('ClipboardCopyButton', () => {
 
     it('should copy text with newlines', () => {
       const textWithNewlines = 'Line 1\nLine 2\nLine 3';
-      render(<ClipboardCopyButton text={textWithNewlines} />);
+      renderWithProviders(<ClipboardCopyButton text={textWithNewlines} />);
       const button = screen.getByRole('button');
       fireEvent.click(button);
 
@@ -181,7 +194,7 @@ describe('ClipboardCopyButton', () => {
     });
 
     it('should copy empty string', () => {
-      render(<ClipboardCopyButton text="" />);
+      renderWithProviders(<ClipboardCopyButton text="" />);
       const button = screen.getByRole('button');
       fireEvent.click(button);
 
@@ -191,13 +204,13 @@ describe('ClipboardCopyButton', () => {
 
   describe('button size and styling', () => {
     it('should render with sm size', () => {
-      render(<ClipboardCopyButton text="Text" />);
+      renderWithProviders(<ClipboardCopyButton text="Text" />);
       const button = screen.getByRole('button');
       expect(button).toHaveClass('h-6');
     });
 
     it('should have cursor-pointer', () => {
-      render(<ClipboardCopyButton text="Text" />);
+      renderWithProviders(<ClipboardCopyButton text="Text" />);
       const button = screen.getByRole('button');
       expect(button).toHaveClass('cursor-pointer');
     });

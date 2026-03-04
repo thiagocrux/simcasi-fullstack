@@ -1,4 +1,5 @@
-import { fireEvent, render } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { fireEvent } from '@testing-library/react';
 import { AppTablePagination } from './AppTablePagination';
 
 describe('AppTablePagination', () => {
@@ -27,20 +28,24 @@ describe('AppTablePagination', () => {
   });
 
   it('should render pagination container', () => {
-    const { container } = render(<AppTablePagination table={mockTable} />);
+    const { container } = renderWithProviders(
+      <AppTablePagination table={mockTable} />
+    );
     expect(
       container.querySelector('[class*="pagination"]') || container.firstChild
     ).toBeInTheDocument();
   });
 
   it('should display current page information', () => {
-    render(<AppTablePagination table={mockTable} />);
+    renderWithProviders(<AppTablePagination table={mockTable} />);
     expect(mockTable.getState).toHaveBeenCalled();
   });
 
   it('should disable previous button on first page', () => {
     mockTable.getCanPreviousPage.mockReturnValue(false);
-    const { container } = render(<AppTablePagination table={mockTable} />);
+    const { container } = renderWithProviders(
+      <AppTablePagination table={mockTable} />
+    );
     const prevButton = container.querySelector(
       'button[aria-label*="previous"]'
     );
@@ -54,26 +59,28 @@ describe('AppTablePagination', () => {
     mockTable.getState.mockReturnValue({
       pagination: { pageIndex: 1, pageSize: 10 },
     });
-    render(<AppTablePagination table={mockTable} />);
+    renderWithProviders(<AppTablePagination table={mockTable} />);
     expect(mockTable.getCanPreviousPage).toHaveBeenCalled();
   });
 
   it('should disable next button on last page', () => {
     mockTable.getCanNextPage.mockReturnValue(false);
     mockTable.getPageCount.mockReturnValue(1);
-    render(<AppTablePagination table={mockTable} />);
+    renderWithProviders(<AppTablePagination table={mockTable} />);
     expect(mockTable.getCanNextPage).toHaveBeenCalled();
   });
 
   it('should enable next button when not on last page', () => {
     mockTable.getCanNextPage.mockReturnValue(true);
-    render(<AppTablePagination table={mockTable} />);
+    renderWithProviders(<AppTablePagination table={mockTable} />);
     expect(mockTable.getCanNextPage).toHaveBeenCalled();
   });
 
   it('should call previousPage when previous button clicked', async () => {
     mockTable.getCanPreviousPage.mockReturnValue(true);
-    const { container } = render(<AppTablePagination table={mockTable} />);
+    const { container } = renderWithProviders(
+      <AppTablePagination table={mockTable} />
+    );
     const buttons = container.querySelectorAll('button');
     const prevButton = Array.from(buttons).find(
       (btn) =>
@@ -89,7 +96,9 @@ describe('AppTablePagination', () => {
 
   it('should call nextPage when next button clicked', async () => {
     mockTable.getCanNextPage.mockReturnValue(true);
-    const { container } = render(<AppTablePagination table={mockTable} />);
+    const { container } = renderWithProviders(
+      <AppTablePagination table={mockTable} />
+    );
     const buttons = container.querySelectorAll('button');
     const nextButton = Array.from(buttons).find(
       (btn) =>
@@ -105,7 +114,7 @@ describe('AppTablePagination', () => {
 
   it('should display page count', () => {
     mockTable.getPageCount.mockReturnValue(5);
-    render(<AppTablePagination table={mockTable} />);
+    renderWithProviders(<AppTablePagination table={mockTable} />);
     expect(mockTable.getPageCount).toHaveBeenCalled();
   });
 
@@ -113,12 +122,14 @@ describe('AppTablePagination', () => {
     mockTable.getState.mockReturnValue({
       pagination: { pageIndex: 2, pageSize: 10 },
     });
-    render(<AppTablePagination table={mockTable} />);
+    renderWithProviders(<AppTablePagination table={mockTable} />);
     expect(mockTable.getState).toHaveBeenCalled();
   });
 
   it('should handle page size changes', () => {
-    const { container } = render(<AppTablePagination table={mockTable} />);
+    const { container } = renderWithProviders(
+      <AppTablePagination table={mockTable} />
+    );
     expect(container.firstChild).toBeInTheDocument();
   });
 
@@ -128,16 +139,18 @@ describe('AppTablePagination', () => {
         .fill(null)
         .map((_, i) => ({ id: `row-${i}` })),
     });
-    render(<AppTablePagination table={mockTable} />);
+    renderWithProviders(<AppTablePagination table={mockTable} />);
     expect(mockTable.getRowModel).toHaveBeenCalled();
   });
 
   it('should update pagination state when table state changes', () => {
-    const { rerender } = render(<AppTablePagination table={mockTable} />);
+    const { rerender } = renderWithProviders(
+      <AppTablePagination table={mockTable} />
+    );
     mockTable.getState.mockReturnValue({
       pagination: { pageIndex: 1, pageSize: 10 },
     });
-    rerender(<AppTablePagination table={mockTable} />);
+    renderWithProviders(<AppTablePagination table={mockTable} />);
     expect(mockTable.getState.mock.calls.length).toBeGreaterThan(0);
   });
 
@@ -147,7 +160,7 @@ describe('AppTablePagination', () => {
     });
     mockTable.getPageCount.mockReturnValue(5);
     mockTable.getCanNextPage.mockReturnValue(false);
-    render(<AppTablePagination table={mockTable} />);
+    renderWithProviders(<AppTablePagination table={mockTable} />);
     expect(mockTable.getPageCount).toHaveBeenCalled();
   });
 });

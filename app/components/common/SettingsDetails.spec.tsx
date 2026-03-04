@@ -1,5 +1,6 @@
 import { useUser } from '@/hooks/useUser';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { fireEvent, screen } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import { SettingsDetails } from './SettingsDetails';
 
@@ -19,35 +20,35 @@ describe('SettingsDetails', () => {
   });
 
   it('should render card container', () => {
-    const { container } = render(<SettingsDetails />);
+    const { container } = renderWithProviders(<SettingsDetails />);
     expect(container.querySelector('[data-slot="card"]')).toBeInTheDocument();
   });
 
   it('should render "Conta" title', () => {
-    render(<SettingsDetails />);
+    renderWithProviders(<SettingsDetails />);
     expect(screen.getByText('Conta')).toBeInTheDocument();
   });
 
   it('should render separator line', () => {
-    const { container } = render(<SettingsDetails />);
+    const { container } = renderWithProviders(<SettingsDetails />);
     const separator = container.querySelector('[data-slot="separator"]');
     expect(separator).toBeInTheDocument();
   });
 
   it('should render "Atualizar senha" link button', () => {
-    render(<SettingsDetails />);
+    renderWithProviders(<SettingsDetails />);
     const button = screen.getByText('Atualizar senha');
     expect(button).toBeInTheDocument();
   });
 
   it('should render link button with link variant', () => {
-    render(<SettingsDetails />);
+    renderWithProviders(<SettingsDetails />);
     const button = screen.getByRole('button');
     expect(button).toHaveAttribute('data-variant', 'link');
   });
 
   it('should have cursor-pointer class', () => {
-    render(<SettingsDetails />);
+    renderWithProviders(<SettingsDetails />);
     const button = screen.getByRole('button');
     expect(button).toHaveClass('cursor-pointer');
   });
@@ -57,7 +58,7 @@ describe('SettingsDetails', () => {
       user: { id: 'user-456', name: 'Jane Doe', email: 'jane@example.com' },
     });
 
-    render(<SettingsDetails />);
+    renderWithProviders(<SettingsDetails />);
     const button = screen.getByRole('button');
     fireEvent.click(button);
 
@@ -70,7 +71,7 @@ describe('SettingsDetails', () => {
       user: { id: userId, name: 'Test User', email: 'test@example.com' },
     });
 
-    render(<SettingsDetails />);
+    renderWithProviders(<SettingsDetails />);
     const button = screen.getByRole('button');
     fireEvent.click(button);
 
@@ -78,19 +79,19 @@ describe('SettingsDetails', () => {
   });
 
   it('should render with consistent layout', () => {
-    const { container } = render(<SettingsDetails />);
+    const { container } = renderWithProviders(<SettingsDetails />);
     const card = container.querySelector('[class*="gap-8"]');
     expect(card).toBeInTheDocument();
   });
 
   it('should have proper text styling for title', () => {
-    render(<SettingsDetails />);
+    renderWithProviders(<SettingsDetails />);
     const title = screen.getByText('Conta');
     expect(title).toHaveClass('font-medium', 'text-lg');
   });
 
   it('should render single section', () => {
-    const { container } = render(<SettingsDetails />);
+    const { container } = renderWithProviders(<SettingsDetails />);
     const sections = container.querySelectorAll(
       '[class*="flex"][class*="flex-col"]'
     );
@@ -98,13 +99,13 @@ describe('SettingsDetails', () => {
   });
 
   it('should render button with no padding', () => {
-    render(<SettingsDetails />);
+    renderWithProviders(<SettingsDetails />);
     const button = screen.getByRole('button');
     expect(button).toHaveClass('px-0');
   });
 
   it('should render button with minimum width', () => {
-    render(<SettingsDetails />);
+    renderWithProviders(<SettingsDetails />);
     const button = screen.getByRole('button');
     expect(button).toHaveClass('w-min');
   });
@@ -114,7 +115,7 @@ describe('SettingsDetails', () => {
       user: { id: 'special-unique-id', name: 'Special User' },
     });
 
-    render(<SettingsDetails />);
+    renderWithProviders(<SettingsDetails />);
     fireEvent.click(screen.getByRole('button'));
 
     expect(mockPush).toHaveBeenCalledWith(
@@ -123,7 +124,7 @@ describe('SettingsDetails', () => {
   });
 
   it('should render with card styling', () => {
-    const { container } = render(<SettingsDetails />);
+    const { container } = renderWithProviders(<SettingsDetails />);
     expect(container.querySelector('[data-slot="card"]')).toHaveClass(
       'px-8',
       'py-6',

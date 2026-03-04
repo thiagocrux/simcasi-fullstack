@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { fireEvent, screen } from '@testing-library/react';
 import { Combobox } from './Combobox';
 
 describe('Combobox', () => {
@@ -9,7 +10,7 @@ describe('Combobox', () => {
   ];
 
   it('should render trigger button with placeholder when no value is selected', () => {
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value=""
@@ -24,7 +25,7 @@ describe('Combobox', () => {
   });
 
   it('should render selected label when value is provided', () => {
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value="opt2"
@@ -39,7 +40,7 @@ describe('Combobox', () => {
   });
 
   it.skip('should open popover when trigger button is clicked', () => {
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value=""
@@ -57,7 +58,7 @@ describe('Combobox', () => {
   });
 
   it.skip('should render command input with search placeholder when opened', () => {
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value=""
@@ -77,7 +78,7 @@ describe('Combobox', () => {
   });
 
   it.skip('should render all data items as options', () => {
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value=""
@@ -98,7 +99,7 @@ describe('Combobox', () => {
 
   it.skip('should call onChange when an option is selected', () => {
     const mockOnChange = jest.fn();
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value=""
@@ -119,7 +120,7 @@ describe('Combobox', () => {
   });
 
   it.skip('should close popover after selection', () => {
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value=""
@@ -140,7 +141,7 @@ describe('Combobox', () => {
   });
 
   it.skip('should filter options based on search input', () => {
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value=""
@@ -161,7 +162,7 @@ describe('Combobox', () => {
   });
 
   it.skip('should show empty message when no matches found', () => {
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value=""
@@ -182,7 +183,7 @@ describe('Combobox', () => {
   });
 
   it.skip('should show checkmark on selected option', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <Combobox
         data={mockData}
         value="opt1"
@@ -201,7 +202,7 @@ describe('Combobox', () => {
   });
 
   it('should disable button when disabled prop is true', () => {
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value=""
@@ -217,7 +218,7 @@ describe('Combobox', () => {
   });
 
   it('should render outline variant button', () => {
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value=""
@@ -234,7 +235,7 @@ describe('Combobox', () => {
 
   it('should accept ref forwarding', () => {
     const ref = jest.fn();
-    render(
+    renderWithProviders(
       <Combobox
         ref={ref}
         data={mockData}
@@ -251,7 +252,7 @@ describe('Combobox', () => {
 
   it.skip('should toggle selection when clicking already selected option', () => {
     const mockOnChange = jest.fn();
-    render(
+    renderWithProviders(
       <Combobox
         data={mockData}
         value="opt1"

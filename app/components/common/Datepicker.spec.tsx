@@ -1,26 +1,29 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { fireEvent, screen } from '@testing-library/react';
 import { Datepicker } from './Datepicker';
 
 describe('Datepicker', () => {
   it('should render trigger button', () => {
-    render(
+    renderWithProviders(
       <Datepicker placeholder="Select a date" onValueChange={jest.fn()} />
     );
     expect(screen.getByText('Select a date')).toBeInTheDocument();
   });
 
   it('should show placeholder when no value is selected', () => {
-    render(<Datepicker placeholder="Choose date" onValueChange={jest.fn()} />);
+    renderWithProviders(
+      <Datepicker placeholder="Choose date" onValueChange={jest.fn()} />
+    );
     expect(screen.getByText('Choose date')).toBeInTheDocument();
   });
 
   it('should render with default placeholder when not provided', () => {
-    render(<Datepicker onValueChange={jest.fn()} />);
+    renderWithProviders(<Datepicker onValueChange={jest.fn()} />);
     expect(screen.getByText('Selecione uma data')).toBeInTheDocument();
   });
 
   it('should format and display selected date', () => {
-    render(
+    renderWithProviders(
       <Datepicker
         value={new Date(2024, 0, 15)} // January 15, 2024
         placeholder="Select"
@@ -31,7 +34,7 @@ describe('Datepicker', () => {
   });
 
   it('should parse ISO date string', () => {
-    render(
+    renderWithProviders(
       <Datepicker
         value="2024-01-15"
         placeholder="Select"
@@ -42,7 +45,7 @@ describe('Datepicker', () => {
   });
 
   it('should parse yyyy-MM-dd date string', () => {
-    render(
+    renderWithProviders(
       <Datepicker
         value="2024-03-20"
         placeholder="Select"
@@ -53,14 +56,16 @@ describe('Datepicker', () => {
   });
 
   it('should open calendar popover when button is clicked', () => {
-    render(<Datepicker placeholder="Select" onValueChange={jest.fn()} />);
+    renderWithProviders(
+      <Datepicker placeholder="Select" onValueChange={jest.fn()} />
+    );
     const button = screen.getByRole('button');
     fireEvent.click(button);
     expect(button).toBeInTheDocument();
   });
 
   it('should display chevron icon', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <Datepicker placeholder="Select" onValueChange={jest.fn()} />
     );
     const icon = container.querySelector('svg');
@@ -68,7 +73,7 @@ describe('Datepicker', () => {
   });
 
   it('should have error styling when hasError is true', () => {
-    render(
+    renderWithProviders(
       <Datepicker
         placeholder="Select"
         hasError={true}
@@ -80,7 +85,7 @@ describe('Datepicker', () => {
   });
 
   it('should be disabled when disabled prop is true', () => {
-    render(
+    renderWithProviders(
       <Datepicker
         placeholder="Select"
         disabled={true}
@@ -93,7 +98,9 @@ describe('Datepicker', () => {
 
   it('should call onValueChange with date string in yyyy-MM-dd format when date is selected', () => {
     const mockOnChange = jest.fn();
-    render(<Datepicker placeholder="Select" onValueChange={mockOnChange} />);
+    renderWithProviders(
+      <Datepicker placeholder="Select" onValueChange={mockOnChange} />
+    );
 
     // Since actual date selection requires complex calendar interaction,
     // we test that the callback would be called correctly
@@ -103,7 +110,7 @@ describe('Datepicker', () => {
 
   it('should handle Date object value', () => {
     const testDate = new Date(2024, 11, 25); // December 25, 2024.
-    render(
+    renderWithProviders(
       <Datepicker
         value={testDate}
         placeholder="Select"
@@ -114,7 +121,7 @@ describe('Datepicker', () => {
   });
 
   it('should not render description when hidden dates are not exceeded', () => {
-    render(
+    renderWithProviders(
       <Datepicker
         placeholder="Select"
         hidden={{
@@ -129,19 +136,23 @@ describe('Datepicker', () => {
   });
 
   it('should render with outline variant button', () => {
-    render(<Datepicker placeholder="Select" onValueChange={jest.fn()} />);
+    renderWithProviders(
+      <Datepicker placeholder="Select" onValueChange={jest.fn()} />
+    );
     const button = screen.getByRole('button');
     expect(button?.className).toContain('shadow-xs');
   });
 
   it('should render with full width button', () => {
-    render(<Datepicker placeholder="Select" onValueChange={jest.fn()} />);
+    renderWithProviders(
+      <Datepicker placeholder="Select" onValueChange={jest.fn()} />
+    );
     const button = screen.getByRole('button');
     expect(button).toHaveClass('w-full');
   });
 
   it('should handle undefined value gracefully', () => {
-    render(
+    renderWithProviders(
       <Datepicker
         value={undefined}
         placeholder="No date"
@@ -152,14 +163,14 @@ describe('Datepicker', () => {
   });
 
   it('should handle empty string value gracefully', () => {
-    render(
+    renderWithProviders(
       <Datepicker value="" placeholder="Empty date" onValueChange={jest.fn()} />
     );
     expect(screen.getByText('Empty date')).toBeInTheDocument();
   });
 
   it('should ignore invalid date strings', () => {
-    render(
+    renderWithProviders(
       <Datepicker
         value="invalid-date"
         placeholder="Invalid shown"
@@ -171,26 +182,32 @@ describe('Datepicker', () => {
 
   it('should accept ref forwarding', () => {
     const ref = jest.fn();
-    render(
+    renderWithProviders(
       <Datepicker ref={ref} placeholder="Select" onValueChange={jest.fn()} />
     );
     expect(ref).toBeCalled();
   });
 
   it('should have justify-between layout', () => {
-    render(<Datepicker placeholder="Select" onValueChange={jest.fn()} />);
+    renderWithProviders(
+      <Datepicker placeholder="Select" onValueChange={jest.fn()} />
+    );
     const button = screen.getByRole('button');
     expect(button).toHaveClass('justify-between');
   });
 
   it('should have gap-2 between text and icon', () => {
-    render(<Datepicker placeholder="Select" onValueChange={jest.fn()} />);
+    renderWithProviders(
+      <Datepicker placeholder="Select" onValueChange={jest.fn()} />
+    );
     const button = screen.getByRole('button');
     expect(button).toHaveClass('gap-2');
   });
 
   it('should have muted foreground color on placeholder text', () => {
-    render(<Datepicker placeholder="Select" onValueChange={jest.fn()} />);
+    renderWithProviders(
+      <Datepicker placeholder="Select" onValueChange={jest.fn()} />
+    );
     const button = screen.getByRole('button');
     expect(button).toHaveClass('text-muted-foreground');
   });

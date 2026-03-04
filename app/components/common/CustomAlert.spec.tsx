@@ -1,33 +1,34 @@
-import { render, screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { screen } from '@testing-library/react';
 import { CustomAlert } from './CustomAlert';
 
 describe('CustomAlert', () => {
   describe('default variant', () => {
     it('should render alert container', () => {
-      const { container } = render(<CustomAlert title="Test" />);
+      const { container } = renderWithProviders(<CustomAlert title="Test" />);
       const alert = container.querySelector('[role="alert"]');
       expect(alert).toBeInTheDocument();
     });
 
     it('should render with info icon by default', () => {
-      const { container } = render(<CustomAlert />);
+      const { container } = renderWithProviders(<CustomAlert />);
       // The info icon should be rendered (lucide-react InfoIcon)
       expect(container.querySelector('svg')).toBeInTheDocument();
     });
 
     it('should render title when provided', () => {
-      render(<CustomAlert title="Important Notice" />);
+      renderWithProviders(<CustomAlert title="Important Notice" />);
       expect(screen.getByText('Important Notice')).toBeInTheDocument();
     });
 
     it('should render title with font-semibold class', () => {
-      render(<CustomAlert title="Notice" />);
+      renderWithProviders(<CustomAlert title="Notice" />);
       const title = screen.getByText('Notice');
       expect(title).toHaveClass('font-semibold');
     });
 
     it('should not render title when not provided', () => {
-      const { container } = render(<CustomAlert />);
+      const { container } = renderWithProviders(<CustomAlert />);
       const alertTitle = container.querySelector('[role="heading"]');
       expect(alertTitle).not.toBeInTheDocument();
     });
@@ -35,20 +36,20 @@ describe('CustomAlert', () => {
 
   describe('info variant', () => {
     it('should render with info styling classes', () => {
-      const { container } = render(<CustomAlert variant="info" />);
+      const { container } = renderWithProviders(<CustomAlert variant="info" />);
       const alert = container.querySelector('[role="alert"]');
       expect(alert).toHaveClass('bg-sky-100', 'text-sky-600');
     });
 
     it('should render info icon for info variant', () => {
-      const { container } = render(<CustomAlert variant="info" />);
+      const { container } = renderWithProviders(<CustomAlert variant="info" />);
       // Info variant uses InfoIcon - check for svg element directly
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
     });
 
     it('should render description with markdown support', () => {
-      render(
+      renderWithProviders(
         <CustomAlert
           variant="info"
           title="Info"
@@ -61,13 +62,17 @@ describe('CustomAlert', () => {
 
   describe('success variant', () => {
     it('should render with success styling classes', () => {
-      const { container } = render(<CustomAlert variant="success" />);
+      const { container } = renderWithProviders(
+        <CustomAlert variant="success" />
+      );
       const alert = container.querySelector('[role="alert"]');
       expect(alert).toHaveClass('bg-green-200', 'text-green-600');
     });
 
     it('should render with CircleCheck icon', () => {
-      const { container } = render(<CustomAlert variant="success" />);
+      const { container } = renderWithProviders(
+        <CustomAlert variant="success" />
+      );
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
     });
@@ -75,13 +80,17 @@ describe('CustomAlert', () => {
 
   describe('warning variant', () => {
     it('should render with warning styling classes', () => {
-      const { container } = render(<CustomAlert variant="warning" />);
+      const { container } = renderWithProviders(
+        <CustomAlert variant="warning" />
+      );
       const alert = container.querySelector('[role="alert"]');
       expect(alert).toHaveClass('bg-amber-100', 'text-amber-600');
     });
 
     it('should render with AlertTriangle icon', () => {
-      const { container } = render(<CustomAlert variant="warning" />);
+      const { container } = renderWithProviders(
+        <CustomAlert variant="warning" />
+      );
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
     });
@@ -89,19 +98,23 @@ describe('CustomAlert', () => {
 
   describe('danger variant', () => {
     it('should render with danger styling classes', () => {
-      const { container } = render(<CustomAlert variant="danger" />);
+      const { container } = renderWithProviders(
+        <CustomAlert variant="danger" />
+      );
       const alert = container.querySelector('[role="alert"]');
       expect(alert).toHaveClass('bg-red-200', 'text-red-600');
     });
 
     it('should render with CircleX icon', () => {
-      const { container } = render(<CustomAlert variant="danger" />);
+      const { container } = renderWithProviders(
+        <CustomAlert variant="danger" />
+      );
       const svg = container.querySelector('svg');
       expect(svg).toBeInTheDocument();
     });
 
     it('should render danger description', () => {
-      render(
+      renderWithProviders(
         <CustomAlert
           variant="danger"
           title="Error"
@@ -114,7 +127,7 @@ describe('CustomAlert', () => {
 
   describe('description with markdown', () => {
     it('should render markdown links in description', () => {
-      render(
+      renderWithProviders(
         <CustomAlert
           title="Alert"
           description="Click [here](https://example.com)"
@@ -124,17 +137,21 @@ describe('CustomAlert', () => {
     });
 
     it('should render markdown bold text', () => {
-      render(<CustomAlert title="Alert" description="This is **important**" />);
+      renderWithProviders(
+        <CustomAlert title="Alert" description="This is **important**" />
+      );
       expect(screen.getByText(/important/i)).toBeInTheDocument();
     });
 
     it('should render markdown italic text', () => {
-      render(<CustomAlert title="Alert" description="This is *italic*" />);
+      renderWithProviders(
+        <CustomAlert title="Alert" description="This is *italic*" />
+      );
       expect(screen.getByText(/italic/i)).toBeInTheDocument();
     });
 
     it('should not render description if empty', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <CustomAlert title="Alert" description="" />
       );
 
@@ -146,7 +163,7 @@ describe('CustomAlert', () => {
 
   describe('children and className', () => {
     it('should render children content', () => {
-      render(
+      renderWithProviders(
         <CustomAlert>
           <p>Custom content</p>
         </CustomAlert>
@@ -155,7 +172,7 @@ describe('CustomAlert', () => {
     });
 
     it('should accept and apply custom className', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <CustomAlert className="custom-alert-class" />
       );
       const alert = container.querySelector('[role="alert"]');
@@ -163,7 +180,7 @@ describe('CustomAlert', () => {
     });
 
     it('should merge custom className with variant classes', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <CustomAlert variant="success" className="my-custom-class" />
       );
       const alert = container.querySelector('[role="alert"]');
@@ -173,7 +190,7 @@ describe('CustomAlert', () => {
 
   describe('all properties together', () => {
     it('should render complete alert with all properties', () => {
-      render(
+      renderWithProviders(
         <CustomAlert
           title="Success"
           description="Operation completed **successfully**"
@@ -191,19 +208,23 @@ describe('CustomAlert', () => {
 
   describe('dark mode support', () => {
     it('should include dark mode classes for info variant', () => {
-      const { container } = render(<CustomAlert variant="info" />);
+      const { container } = renderWithProviders(<CustomAlert variant="info" />);
       const alert = container.querySelector('[role="alert"]');
       expect(alert).toHaveClass('dark:bg-sky-800', 'dark:text-sky-400');
     });
 
     it('should include dark mode classes for success variant', () => {
-      const { container } = render(<CustomAlert variant="success" />);
+      const { container } = renderWithProviders(
+        <CustomAlert variant="success" />
+      );
       const alert = container.querySelector('[role="alert"]');
       expect(alert).toHaveClass('dark:bg-teal-600', 'dark:text-green-200');
     });
 
     it('should include dark mode classes for danger variant', () => {
-      const { container } = render(<CustomAlert variant="danger" />);
+      const { container } = renderWithProviders(
+        <CustomAlert variant="danger" />
+      );
       const alert = container.querySelector('[role="alert"]');
       expect(alert).toHaveClass('dark:bg-red-800', 'dark:text-red-300');
     });

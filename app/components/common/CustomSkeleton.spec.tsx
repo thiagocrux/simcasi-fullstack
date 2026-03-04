@@ -1,40 +1,52 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { render } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
 import { CustomSkeleton } from './CustomSkeleton';
 
 describe('CustomSkeleton', () => {
   describe('table variant', () => {
     it('should render table skeleton layout', () => {
-      const { container } = render(<CustomSkeleton variant="table" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="table" />
+      );
       expect(container.querySelector('.flex')).toBeInTheDocument();
     });
 
     it('should render header-like skeleton in table variant', () => {
-      const { container } = render(<CustomSkeleton variant="table" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="table" />
+      );
       const skeletons = container.querySelectorAll('[data-slot="skeleton"]');
       expect(skeletons.length).toBeGreaterThanOrEqual(3);
     });
 
     it('should render multiple body rows in table variant', () => {
-      const { container } = render(<CustomSkeleton variant="table" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="table" />
+      );
       const skeletons = container.querySelectorAll('[data-slot="skeleton"]');
       expect(skeletons.length).toBe(6);
     });
 
     it('should have skeleton elements with rounded-md', () => {
-      const { container } = render(<CustomSkeleton variant="table" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="table" />
+      );
       const skeletons = container.querySelectorAll('[class*="rounded-md"]');
       expect(skeletons.length).toBeGreaterThan(0);
     });
 
     it('should have gap spacing between rows', () => {
-      const { container } = render(<CustomSkeleton variant="table" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="table" />
+      );
       const wrapper = container.firstChild as HTMLElement;
       expect(wrapper).toHaveClass('gap-y-4');
     });
 
     it('should render pagination area at bottom', () => {
-      const { container } = render(<CustomSkeleton variant="table" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="table" />
+      );
       const centered = container.querySelector('.flex.justify-center');
       expect(centered).toBeInTheDocument();
       const skeleton = centered?.querySelector('[data-slot="skeleton"]');
@@ -42,7 +54,9 @@ describe('CustomSkeleton', () => {
     });
 
     it('should render with flex column layout', () => {
-      const { container } = render(<CustomSkeleton variant="table" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="table" />
+      );
       const wrapper = container.firstChild as HTMLElement;
       expect(wrapper).toHaveClass('flex', 'flex-col');
     });
@@ -50,18 +64,24 @@ describe('CustomSkeleton', () => {
 
   describe('item-list variant', () => {
     it('should render item list skeleton layout', () => {
-      const { container } = render(<CustomSkeleton variant="item-list" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="item-list" />
+      );
       expect(container.querySelector('.flex')).toBeInTheDocument();
     });
 
     it('should render 5 identical skeleton items', () => {
-      const { container } = render(<CustomSkeleton variant="item-list" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="item-list" />
+      );
       const skeletons = container.querySelectorAll('[data-slot="skeleton"]');
       expect(skeletons.length).toBe(5);
     });
 
     it('should have equal height skeletons for list items', () => {
-      const { container } = render(<CustomSkeleton variant="item-list" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="item-list" />
+      );
       const skeletons = container.querySelectorAll('[data-slot="skeleton"]');
       skeletons.forEach((skeleton) => {
         expect(skeleton).toHaveClass('h-6');
@@ -69,13 +89,17 @@ describe('CustomSkeleton', () => {
     });
 
     it('should have gap spacing between list items', () => {
-      const { container } = render(<CustomSkeleton variant="item-list" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="item-list" />
+      );
       const wrapper = container.firstChild as HTMLElement;
       expect(wrapper).toHaveClass('gap-y-4');
     });
 
     it('should have full width skeletons', () => {
-      const { container } = render(<CustomSkeleton variant="item-list" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="item-list" />
+      );
       const skeletons = container.querySelectorAll('[data-slot="skeleton"]');
       skeletons.forEach((skeleton) => {
         expect(skeleton).toHaveClass('rounded-md');
@@ -83,13 +107,17 @@ describe('CustomSkeleton', () => {
     });
 
     it('should render with flex column layout', () => {
-      const { container } = render(<CustomSkeleton variant="item-list" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="item-list" />
+      );
       const wrapper = container.firstChild as HTMLElement;
       expect(wrapper).toHaveClass('flex', 'flex-col');
     });
 
     it('should not render pagination area', () => {
-      const { container } = render(<CustomSkeleton variant="item-list" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="item-list" />
+      );
       const centered = container.querySelector('.flex.justify-center');
       expect(centered).not.toBeInTheDocument();
     });
@@ -97,10 +125,10 @@ describe('CustomSkeleton', () => {
 
   describe('variant comparison', () => {
     it('should render different structures for different variants', () => {
-      const { container: tableContainer } = render(
+      const { container: tableContainer } = renderWithProviders(
         <CustomSkeleton variant="table" />
       );
-      const { container: listContainer } = render(
+      const { container: listContainer } = renderWithProviders(
         <CustomSkeleton variant="item-list" />
       );
 
@@ -115,10 +143,10 @@ describe('CustomSkeleton', () => {
     });
 
     it('table variant should have more complex structure than list variant', () => {
-      const { container: tableContainer } = render(
+      const { container: tableContainer } = renderWithProviders(
         <CustomSkeleton variant="table" />
       );
-      const { container: listContainer } = render(
+      const { container: listContainer } = renderWithProviders(
         <CustomSkeleton variant="item-list" />
       );
 
@@ -131,7 +159,9 @@ describe('CustomSkeleton', () => {
 
   describe('styling consistency', () => {
     it('should apply rounded-md to all skeleton elements', () => {
-      const { container } = render(<CustomSkeleton variant="table" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="table" />
+      );
       const skeletons = container.querySelectorAll('[data-slot="skeleton"]');
       skeletons.forEach((skeleton) => {
         expect(skeleton).toHaveClass('rounded-md');
@@ -139,14 +169,18 @@ describe('CustomSkeleton', () => {
     });
 
     it('table variant header should have partial width for first column', () => {
-      const { container } = render(<CustomSkeleton variant="table" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="table" />
+      );
       const firstRow = container.querySelector('.flex.flex-row');
       const firstSkeleton = firstRow?.querySelector('[data-slot="skeleton"]');
       expect(firstSkeleton).toHaveClass('w-1/2');
     });
 
     it('table variant header should have partial width for last column', () => {
-      const { container } = render(<CustomSkeleton variant="table" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="table" />
+      );
       const firstRow = container.querySelector('.flex.flex-row');
       const skeletons = firstRow?.querySelectorAll('[data-slot="skeleton"]');
       if (skeletons && skeletons.length > 1) {
@@ -155,7 +189,9 @@ describe('CustomSkeleton', () => {
     });
 
     it('pagination skeleton should have centered width', () => {
-      const { container } = render(<CustomSkeleton variant="table" />);
+      const { container } = renderWithProviders(
+        <CustomSkeleton variant="table" />
+      );
       const centered = container.querySelector('.flex.justify-center');
       const pagingSkeleton = centered?.querySelector('[data-slot="skeleton"]');
       expect(pagingSkeleton).toHaveClass('w-48');
@@ -164,7 +200,7 @@ describe('CustomSkeleton', () => {
 
   describe('undefined or invalid variant handling', () => {
     it('should not render anything when variant is undefined', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <CustomSkeleton variant={undefined as any} />
       );
       expect(container.firstChild).toBeNull();

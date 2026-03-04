@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { render } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
 import { useTheme } from 'next-themes';
 import { ThemeSwitcher } from './ThemeSwitcher';
 
@@ -14,12 +14,12 @@ describe('ThemeSwitcher', () => {
   });
 
   it('should render theme switcher component', () => {
-    const { container } = render(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
     expect(container.querySelector('button')).toBeInTheDocument();
   });
 
   it('should render select element for theme selection', () => {
-    const { container } = render(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
     expect(container.querySelector('button')).toBeInTheDocument();
   });
 
@@ -30,36 +30,38 @@ describe('ThemeSwitcher', () => {
       resolvedTheme: 'dark',
       themes: ['light', 'dark', 'system'],
     } as any);
-    const { container } = render(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
     expect(container.querySelector('button')).toBeInTheDocument();
   });
 
   it('should accept showLabel prop', () => {
-    const { container } = render(<ThemeSwitcher showLabel={true} />);
+    const { container } = renderWithProviders(
+      <ThemeSwitcher showLabel={true} />
+    );
     expect(container.querySelector('button')).toBeInTheDocument();
   });
 
   it('should accept custom selectClasses', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <ThemeSwitcher selectClasses="custom-select-class" />
     );
     expect(container.firstChild).toBeInTheDocument();
   });
 
   it('should accept custom contentClasses', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <ThemeSwitcher contentClasses="custom-content-class" />
     );
     expect(container.firstChild).toBeInTheDocument();
   });
 
   it('should support light theme selection', () => {
-    const { container } = render(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
     expect(container.querySelector('button')).toBeInTheDocument();
   });
 
   it('should support dark theme selection', () => {
-    const { container } = render(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
     expect(container.querySelector('button')).toBeInTheDocument();
   });
 
@@ -70,17 +72,17 @@ describe('ThemeSwitcher', () => {
       resolvedTheme: 'light',
       themes: ['light', 'dark', 'system'],
     } as any);
-    const { container } = render(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
     expect(container.querySelector('button')).toBeInTheDocument();
   });
 
   it('should call setTheme when theme is changed', () => {
-    const { container } = render(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
     expect(container.querySelector('button')).toBeInTheDocument();
   });
 
   it('should persist theme selection', () => {
-    render(<ThemeSwitcher />);
+    renderWithProviders(<ThemeSwitcher />);
     expect(jest.mocked(useTheme)).toHaveBeenCalled();
   });
 
@@ -92,22 +94,22 @@ describe('ThemeSwitcher', () => {
       themes: ['light', 'dark', 'system'],
       systemTheme: 'dark',
     } as any);
-    const { container } = render(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
     expect(container.querySelector('button')).toBeInTheDocument();
   });
 
   it('should be hydration safe', () => {
-    const { container } = render(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
     expect(container.querySelector('button')).toBeInTheDocument();
   });
 
   it('should use localStorage for persistence', () => {
-    render(<ThemeSwitcher />);
+    renderWithProviders(<ThemeSwitcher />);
     expect(jest.mocked(useTheme)).toHaveBeenCalled();
   });
 
   it('should handle theme switching gracefully', () => {
-    const { rerender, container } = render(<ThemeSwitcher />);
+    const { rerender, container } = renderWithProviders(<ThemeSwitcher />);
 
     jest.mocked(useTheme).mockReturnValue({
       theme: 'dark',
@@ -116,18 +118,18 @@ describe('ThemeSwitcher', () => {
       themes: ['light', 'dark', 'system'],
     } as any);
 
-    rerender(<ThemeSwitcher />);
+    renderWithProviders(<ThemeSwitcher />);
     expect(container.querySelector('button')).toBeInTheDocument();
   });
 
   it('should render icon for theme indicator', () => {
-    const { container } = render(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
     const icons = container.querySelectorAll('svg');
     expect(icons.length).toBeGreaterThanOrEqual(0);
   });
 
   it('should support responsive design', () => {
-    const { container } = render(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
     expect(container.firstChild).toBeInTheDocument();
   });
 });

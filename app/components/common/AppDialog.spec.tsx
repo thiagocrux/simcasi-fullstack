@@ -1,9 +1,10 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { fireEvent, screen } from '@testing-library/react';
 import { AppDialog } from './AppDialog';
 
 describe('AppDialog', () => {
   it('should not render dialog content when open is false', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={false}
         title="Test"
@@ -16,7 +17,7 @@ describe('AppDialog', () => {
   });
 
   it('should render dialog when open is true', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Test"
@@ -29,7 +30,7 @@ describe('AppDialog', () => {
   });
 
   it('should render dialog title', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Test Dialog"
@@ -42,7 +43,7 @@ describe('AppDialog', () => {
   });
 
   it('should render description', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -55,7 +56,7 @@ describe('AppDialog', () => {
   });
 
   it('should render cancel button', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -68,7 +69,7 @@ describe('AppDialog', () => {
   });
 
   it('should render continue button', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -82,7 +83,7 @@ describe('AppDialog', () => {
 
   it('should call cancel action when cancel button is clicked', () => {
     const mockCancel = jest.fn();
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -98,7 +99,7 @@ describe('AppDialog', () => {
 
   it('should call continue action when continue button is clicked', () => {
     const mockContinue = jest.fn();
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -113,7 +114,7 @@ describe('AppDialog', () => {
   });
 
   it('should render children content', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -128,7 +129,7 @@ describe('AppDialog', () => {
   });
 
   it('should render content slot when provided', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -142,7 +143,7 @@ describe('AppDialog', () => {
   });
 
   it('should accept custom className', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -157,7 +158,7 @@ describe('AppDialog', () => {
   });
 
   it('should render cancel button as secondary variant', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -171,7 +172,7 @@ describe('AppDialog', () => {
   });
 
   it('should hide cancel button when hidden is true', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -185,7 +186,7 @@ describe('AppDialog', () => {
   });
 
   it('should hide continue button when hidden is true', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -199,7 +200,7 @@ describe('AppDialog', () => {
   });
 
   it('should disable cancel button when disabled is true', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -213,7 +214,7 @@ describe('AppDialog', () => {
   });
 
   it('should disable continue button when disabled is true', () => {
-    render(
+    renderWithProviders(
       <AppDialog
         open={true}
         title="Title"
@@ -227,7 +228,7 @@ describe('AppDialog', () => {
   });
 
   it('should render action icon when provided', () => {
-    const { container } = render(
+    const { container } = renderWithProviders(
       <AppDialog
         open={true}
         title="Title"

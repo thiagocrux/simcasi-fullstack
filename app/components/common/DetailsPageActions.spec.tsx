@@ -1,5 +1,6 @@
 import { usePermission } from '@/hooks/usePermission';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { renderWithProviders } from '@/tests/utils';
+import { fireEvent, screen } from '@testing-library/react';
 import { DetailsPageActions } from './DetailsPageActions';
 
 describe('DetailsPageActions', () => {
@@ -13,7 +14,7 @@ describe('DetailsPageActions', () => {
   it('should return null when user has no permissions', () => {
     mockCan.mockReturnValue(false);
 
-    const { container: _container } = render(
+    const { container: _container } = renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete User"
@@ -30,7 +31,7 @@ describe('DetailsPageActions', () => {
   it('should render update button when user has update permission', () => {
     mockCan.mockImplementation((perm: string) => perm === 'update:user');
 
-    render(
+    renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete"
@@ -46,7 +47,7 @@ describe('DetailsPageActions', () => {
   it('should render delete button when user has delete permission', () => {
     mockCan.mockReturnValue(true);
 
-    render(
+    renderWithProviders(
       <DetailsPageActions
         entity="patient"
         dialogTitle="Delete"
@@ -62,7 +63,7 @@ describe('DetailsPageActions', () => {
   it('should render both buttons when user has both permissions', () => {
     mockCan.mockReturnValue(true);
 
-    render(
+    renderWithProviders(
       <DetailsPageActions
         entity="exam"
         dialogTitle="Delete Exam"
@@ -80,7 +81,7 @@ describe('DetailsPageActions', () => {
     const mockUpdateAction = jest.fn();
     mockCan.mockReturnValue(true);
 
-    render(
+    renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete"
@@ -99,7 +100,7 @@ describe('DetailsPageActions', () => {
   it('should hide update button when updateAction.hidden is true', () => {
     mockCan.mockReturnValue(true);
 
-    render(
+    renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete"
@@ -116,7 +117,7 @@ describe('DetailsPageActions', () => {
   it('should hide delete button when deleteAction.hidden is true', () => {
     mockCan.mockReturnValue(true);
 
-    render(
+    renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete"
@@ -133,7 +134,7 @@ describe('DetailsPageActions', () => {
   it('should render delete button with destructive color', () => {
     mockCan.mockReturnValue(true);
 
-    const { container: _container } = render(
+    const { container: _container } = renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete"
@@ -151,7 +152,7 @@ describe('DetailsPageActions', () => {
     const mockDeleteAction = jest.fn();
     mockCan.mockReturnValue(true);
 
-    render(
+    renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete User"
@@ -170,7 +171,7 @@ describe('DetailsPageActions', () => {
   it('should check correct permissions for different entities', () => {
     mockCan.mockReturnValue(true);
 
-    render(
+    renderWithProviders(
       <DetailsPageActions
         entity="exam"
         dialogTitle="Delete"
@@ -187,7 +188,7 @@ describe('DetailsPageActions', () => {
   it('should render buttons with outline variant', () => {
     mockCan.mockReturnValue(true);
 
-    render(
+    renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete"
@@ -211,7 +212,7 @@ describe('DetailsPageActions', () => {
   it('should render buttons with sm size', () => {
     mockCan.mockReturnValue(true);
 
-    render(
+    renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete"
@@ -228,7 +229,7 @@ describe('DetailsPageActions', () => {
   it('should accept custom className', () => {
     mockCan.mockReturnValue(true);
 
-    const { container } = render(
+    const { container } = renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete"
@@ -246,7 +247,7 @@ describe('DetailsPageActions', () => {
   it('should render without labels when not provided', () => {
     mockCan.mockReturnValue(true);
 
-    const { container } = render(
+    const { container } = renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete"
@@ -272,7 +273,7 @@ describe('DetailsPageActions', () => {
       mockCan.mockClear();
       mockCan.mockReturnValue(true);
 
-      render(
+      renderWithProviders(
         <DetailsPageActions
           entity={entity}
           dialogTitle="Delete"
@@ -290,7 +291,7 @@ describe('DetailsPageActions', () => {
   it('should have cursor-pointer class on buttons', () => {
     mockCan.mockReturnValue(true);
 
-    render(
+    renderWithProviders(
       <DetailsPageActions
         entity="user"
         dialogTitle="Delete"
@@ -308,7 +309,7 @@ describe('DetailsPageActions', () => {
   it('should handle mixed action states', () => {
     mockCan.mockReturnValue(true);
 
-    const { container } = render(
+    const { container } = renderWithProviders(
       <DetailsPageActions
         entity="patient"
         dialogTitle="Delete Patient"
