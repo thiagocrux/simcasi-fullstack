@@ -177,7 +177,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           label="Gestão de usuários"
           items={data.userManagement}
         />
-        <AppSidebarContent label="Auditorias" items={data.audit} />
+        <AppSidebarContent label="Auditoria" items={data.audit} />
       </SidebarContent>
       <SidebarFooter>
         <AppSidebarUser user={userData} dropdownItems={data.settings} />

@@ -3,7 +3,7 @@
 import { Skeleton } from '../ui/skeleton';
 
 interface CustomSkeleton {
-  variant: 'table' | 'item-list';
+  variant: 'table' | 'item-list' | 'record-list' | 'chart';
 }
 
 export function CustomSkeleton({ variant }: CustomSkeleton) {
@@ -33,6 +33,29 @@ export function CustomSkeleton({ variant }: CustomSkeleton) {
         <Skeleton className="rounded-md h-6" />
         <Skeleton className="rounded-md h-6" />
         <Skeleton className="rounded-md h-6" />
+      </div>
+    );
+  }
+
+  if (variant === 'record-list') {
+    return (
+      <div className="flex flex-col gap-y-2">
+        <Skeleton className="rounded-md h-19.5" />
+        <Skeleton className="rounded-md h-19.5" />
+        <Skeleton className="rounded-md h-19.5" />
+        <Skeleton className="rounded-md h-19.5" />
+        <Skeleton className="rounded-md h-19.5" />
+      </div>
+    );
+  }
+
+  if (variant === 'chart') {
+    return (
+      <div className="flex flex-col gap-y-4">
+        <div className="mx-auto w-120">
+          <Skeleton className="rounded-md h-6" />
+        </div>
+        <Skeleton className="rounded-md h-60" />
       </div>
     );
   }

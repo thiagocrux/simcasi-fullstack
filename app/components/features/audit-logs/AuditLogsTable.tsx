@@ -1,10 +1,5 @@
 'use client';
 
-import {
-  Action,
-  AuditLog,
-  EntityName,
-} from '@/core/domain/entities/audit-log.entity';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import {
   getCoreRowModel,
@@ -34,6 +29,11 @@ import {
   ACTION_LABELS,
   ENTITY_LABELS,
 } from '@/core/domain/constants/audit-log.constants';
+import {
+  Action,
+  AuditLog,
+  EntityName,
+} from '@/core/domain/entities/audit-log.entity';
 import { User } from '@/core/domain/entities/user.entity';
 import { ActionResponse } from '@/lib/actions.utils';
 import { exportToCsv } from '@/lib/csv.utils';
@@ -65,6 +65,8 @@ import { EntityPreviewWrapper } from './EntityPreviewWrapper';
 
 interface AuditLogsTableProps {
   pageSize?: number;
+  showTableToolbar?: boolean;
+  showTablePagination?: boolean;
   showFilterInput?: boolean;
   showPrintButton?: boolean;
   showColumnToggleButton?: boolean;
@@ -110,6 +112,8 @@ const ACTION_VARIANTS: Record<string, BadgeProps['variant']> = {
 
 export function AuditLogsTable({
   pageSize = DEFAULT_PAGE_SIZE,
+  showTableToolbar = true,
+  showTablePagination = true,
   showFilterInput = true,
   showPrintButton = true,
   showColumnToggleButton = true,
@@ -687,7 +691,7 @@ export function AuditLogsTable({
 
   return (
     <div className="grid grid-cols-1 mx-auto w-full">
-      {(hasRegisteredData || isFiltering) && (
+      {showTableToolbar && (hasRegisteredData || isFiltering) && (
         <AppTableToolbar
           table={table}
           selectedFilterOption={selectedFilterOption}
@@ -722,7 +726,7 @@ export function AuditLogsTable({
               </>
             )}
           />
-          {hasRows && (
+          {showTablePagination && hasRows && (
             <AppTablePagination
               table={table}
               showPaginationInput={showPaginationInput}
