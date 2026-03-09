@@ -26,6 +26,7 @@ The project uses a modern toolchain focused on developer experience and performa
 - `prisma` — Next-generation ORM for Node.js and TypeScript.
 - `react` — The library for web and native user interfaces.
 - `react-hook-form` — Performant, flexible form library with easy validation.
+- `recharts` — A composable charting library built on React components.
 - `resend` — Email API for developers (used for messaging and notifications).
 - `sonner` — An opinionated toast component for React.
 - `tailwindcss` — Utility-first CSS framework for styling.
