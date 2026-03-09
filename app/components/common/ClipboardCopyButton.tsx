@@ -7,43 +7,66 @@ import { cn } from '@/lib/shared.utils';
 import { Button } from '../ui/button';
 
 interface ClipboardCopyButtonProps {
-  text: string;
-  variant?: 'icon' | 'label';
+  value: string;
+  label?: string;
+  variant?: 'icon' | 'label' | 'button';
   className?: string;
 }
 
 export function ClipboardCopyButton({
-  text,
-  variant = 'icon',
+  value,
+  label,
+  variant = 'button',
   className,
 }: ClipboardCopyButtonProps) {
   function handleCopy() {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(value);
     toast.success('Copiado para a área de transferência.');
   }
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      className={cn(
-        'p-0! sm:p-1! h-6 cursor-pointer',
-        variant === 'label' && ' p-0',
-        className
-      )}
-      onClick={handleCopy}
-    >
+    <>
       {variant === 'label' ? (
-        <span
-          className={
-            'block truncate max-w-40 xs:max-w-55 2xs:max-w-75 3xs:max-w-95 '
-          }
-          title={text}
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn('p-0! sm:p-1! h-6 cursor-pointer', className)}
+          onClick={handleCopy}
         >
-          {text}
-        </span>
+          <span
+            className={
+              'block truncate max-w-40 xs:max-w-55 2xs:max-w-75 3xs:max-w-95'
+            }
+            title={value}
+          >
+            {value}
+          </span>
+          <Copy className="ml-1.5 size-3.5 text-muted-foreground shrink-0" />
+        </Button>
       ) : null}
-      <Copy className="ml-1.5 size-3.5 text-muted-foreground shrink-0" />
-    </Button>
+
+      {variant === 'icon' ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn('p-0! sm:p-1! h-6 cursor-pointer', className)}
+          onClick={handleCopy}
+        >
+          <Copy className="ml-1.5 size-3.5 text-muted-foreground shrink-0" />
+        </Button>
+      ) : null}
+
+      {variant === 'button' ? (
+        <Button
+          variant="outline"
+          size="sm"
+          className="cursor-pointer select-none"
+          onClick={handleCopy}
+        >
+          {label || value}
+          <Copy />
+        </Button>
+      ) : null}
+    </>
   );
 }

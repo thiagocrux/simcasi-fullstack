@@ -28,7 +28,7 @@ export function PreviewDialogContent({ fields }: PreviewDialogContentProps) {
           <p className="text-muted-foreground">{field.label}</p>
           <div className="flex-1 mx-2 border-b border-dashed" />
           {field.value && (
-            <ClipboardCopyButton text={String(field.value)} variant="label" />
+            <ClipboardCopyButton value={String(field.value)} variant="label" />
           )}
         </div>
       ))}

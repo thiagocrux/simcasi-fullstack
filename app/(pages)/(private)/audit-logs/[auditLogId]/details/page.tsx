@@ -63,18 +63,14 @@ export default async function AuditLogDetailsPage({
     },
   ];
 
-  const jsonFields = [
+  const changeLog = [
     {
       label: 'Valores antigos',
-      value: log.oldValues
-        ? JSON.stringify(log.oldValues, null, 2)
-        : 'Nenhum dado anterior registrado.',
+      value: log.oldValues ? JSON.stringify(log.oldValues, null, 2) : null,
     },
     {
       label: 'Novos valores',
-      value: log.newValues
-        ? JSON.stringify(log.newValues, null, 2)
-        : 'Nenhum novo dado registrado.',
+      value: log.newValues ? JSON.stringify(log.newValues, null, 2) : null,
     },
   ];
 
@@ -88,20 +84,7 @@ export default async function AuditLogDetailsPage({
         />
       </div>
 
-      <DetailsPageProperties data={data} />
-
-      <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
-        {jsonFields.map((field) => (
-          <div key={field.label} className="flex flex-col gap-4">
-            <h3 className="font-semibold text-lg">{field.label}</h3>
-            <div className="bg-muted p-4 rounded-lg max-h-[400px] overflow-auto">
-              <pre className="font-mono text-xs break-all leading-relaxed whitespace-pre-wrap">
-                {field.value}
-              </pre>
-            </div>
-          </div>
-        ))}
-      </div>
+      <DetailsPageProperties data={data} changeLog={changeLog} />
     </div>
   );
 }
