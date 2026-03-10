@@ -3,10 +3,11 @@
 import { LogOut } from 'lucide-react';
 
 import { useLogout } from '@/hooks/useLogout';
+import { cn } from '@/lib/shared.utils';
 import { ThemeSwitcher } from '../common/ThemeSwitcher';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
-import { SidebarTrigger } from '../ui/sidebar';
+import { SidebarTrigger, useSidebar } from '../ui/sidebar';
 
 interface AppHeaderProps {
   /**
@@ -31,8 +32,19 @@ export function AppHeader({ variant = 'private' }: AppHeaderProps) {
     );
   }
 
+  // Only use sidebar context in private variant
+  const { open, isMobile } = useSidebar();
+
+  // Dynamic positioning based on sidebar state
+  const positionClass = isMobile ? 'left-0' : open ? 'left-64' : 'left-12';
+
   return (
-    <header className="top-0 z-50 sticky flex justify-between items-center gap-2 bg-background p-4 border-b shrink-0">
+    <header
+      className={cn(
+        'top-0 right-0 z-40 fixed flex justify-between items-center gap-2 bg-background p-4 border-b transition-all duration-300 shrink-0',
+        positionClass
+      )}
+    >
       <div className="flex items-center gap-2">
         <SidebarTrigger className="-ml-1 cursor-pointer" />
         <Separator

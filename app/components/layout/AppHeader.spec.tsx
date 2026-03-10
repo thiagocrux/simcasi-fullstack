@@ -45,11 +45,18 @@ describe('AppHeader', () => {
   });
 
   describe('private variant (default)', () => {
-    it('should render sticky header with banner role', () => {
+    it('should render fixed header with banner role', () => {
       renderWithProviders(<AppHeader />);
       const header = screen.getByRole('banner');
       expect(header).toBeInTheDocument();
-      expect(header).toHaveClass('sticky', 'top-0', 'z-50');
+      expect(header).toHaveClass('fixed', 'top-0', 'right-0', 'z-40');
+    });
+
+    it('should render header with dynamic position based on sidebar state', () => {
+      renderWithProviders(<AppHeader />);
+      const header = screen.getByRole('banner');
+      // Default SidebarProvider has open=true, so should have left-64
+      expect(header).toHaveClass('left-64');
     });
 
     it('should render theme switcher component', () => {
