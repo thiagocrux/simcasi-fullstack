@@ -318,25 +318,9 @@ export function AuditLogsTable({
       {
         accessorKey: 'action',
         header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              const next = getNextSortDirection(column.getIsSorted());
-              column.toggleSorting(next === 'desc');
-              if (next === false) {
-                setSorting([]);
-              }
-            }}
-            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
-          >
+          <span className={`px-1! select-none ${COLUMN_MAX_WIDTH}`}>
             {COLUMN_LABELS[column.id]}
-            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
-              <ArrowDownAZ />
-            )}
-            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
-              <ArrowUpZA />
-            )}
-          </Button>
+          </span>
         ),
         cell: ({ row, column }) => (
           <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
