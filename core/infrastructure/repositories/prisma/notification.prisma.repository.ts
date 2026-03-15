@@ -89,14 +89,33 @@ export class PrismaNotificationRepository implements NotificationRepository {
       }
     }
 
+    // Build orderBy clause with support for relationship sorting (createdBy, updatedBy).
+    const orderByClause = (() => {
+      if (!orderBy) return [{ createdAt: 'desc' as const }];
+
+      if (orderBy === 'createdBy') {
+        return [
+          { creator: { name: orderDir } },
+          { createdAt: 'desc' as const },
+        ];
+      }
+
+      if (orderBy === 'updatedBy') {
+        return [
+          { updater: { name: orderDir } },
+          { createdAt: 'desc' as const },
+        ];
+      }
+
+      return [{ [orderBy]: orderDir }, { createdAt: 'desc' as const }];
+    })();
+
     const [items, total] = await Promise.all([
       prisma.notification.findMany({
         where,
         skip,
         take,
-        orderBy: orderBy
-          ? [{ [orderBy]: orderDir }, { createdAt: 'desc' }]
-          : [{ createdAt: 'desc' }],
+        orderBy: orderByClause,
       }),
       prisma.notification.count({ where }),
     ]);

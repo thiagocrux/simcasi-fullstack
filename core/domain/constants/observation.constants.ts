@@ -5,7 +5,9 @@ export const OBSERVATION_SORTABLE_FIELDS = [
   'id',
   'patientId',
   'hasPartnerBeingTreated',
+  'createdBy',
   'createdAt',
+  'updatedBy',
   'updatedAt',
   'deletedAt',
 ] as const;

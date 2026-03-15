@@ -8,7 +8,9 @@ export const EXAM_SORTABLE_FIELDS = [
   'treponemalTestResult',
   'treponemalTestDate',
   'nontreponemalTestDate',
+  'createdBy',
   'createdAt',
+  'updatedBy',
   'updatedAt',
   'deletedAt',
 ] as const;

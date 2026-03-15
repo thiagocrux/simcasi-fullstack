@@ -8,7 +8,9 @@ export const PATIENT_SORTABLE_FIELDS = [
   'cpf',
   'socialName',
   'birthDate',
+  'createdBy',
   'createdAt',
+  'updatedBy',
   'updatedAt',
   'motherName',
 ] as const;

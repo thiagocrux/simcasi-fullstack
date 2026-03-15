@@ -7,7 +7,9 @@ export const USER_SORTABLE_FIELDS = [
   'email',
   'roleId',
   'isSystem',
+  'createdBy',
   'createdAt',
+  'updatedBy',
   'updatedAt',
   'deletedAt',
 ] as const;

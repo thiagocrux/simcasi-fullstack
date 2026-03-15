@@ -7,7 +7,9 @@ export const TREATMENT_SORTABLE_FIELDS = [
   'medication',
   'healthCenter',
   'startDate',
+  'createdBy',
   'createdAt',
+  'updatedBy',
   'updatedAt',
   'deletedAt',
 ] as const;

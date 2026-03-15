@@ -5,7 +5,9 @@ export const NOTIFICATION_SORTABLE_FIELDS = [
   'id',
   'patientId',
   'sinan',
+  'createdBy',
   'createdAt',
+  'updatedBy',
   'updatedAt',
   'deletedAt',
 ] as const;
