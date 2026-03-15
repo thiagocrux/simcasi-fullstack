@@ -497,6 +497,10 @@ export function ObservationsTable({
             row.getValue(column.id)
           );
 
+          if (!user?.updatedBy) {
+            return '-';
+          }
+
           return (
             <UserPreviewDialog
               title="Informações do editor"

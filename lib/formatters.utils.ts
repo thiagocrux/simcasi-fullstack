@@ -28,17 +28,17 @@ export function formatDate(date: Date | string | null | undefined) {
  * Useful for birth dates, exam dates, etc.
  *
  * @param {Date | string | undefined | null} date The date to format.
- * @return {string} The formatted date string, or '—' if input is invalid.
+ * @return {string} The formatted date string, or '-' if input is invalid.
  */
 export function formatCalendarDate(date: Date | string | undefined | null) {
   if (!date) {
-    return '—';
+    return '-';
   }
 
   const validatedDate = date instanceof Date ? date : new Date(date);
 
   if (isNaN(validatedDate.getTime())) {
-    return '—';
+    return '-';
   }
 
   return new Intl.DateTimeFormat('pt-BR', {

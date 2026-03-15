@@ -494,6 +494,10 @@ export function UsersTable({
             row.getValue(column.id)
           );
 
+          if (!user?.updatedBy) {
+            return '-';
+          }
+
           return (
             <UserPreviewDialog
               title="Informações do editor"

@@ -1267,8 +1267,8 @@ export function PatientsTable({
             row.getValue(column.id) as string
           );
 
-          if (!user) {
-            return renderOrFallback(null, (value) => value);
+          if (!user?.updatedBy) {
+            return '-';
           }
 
           return (
