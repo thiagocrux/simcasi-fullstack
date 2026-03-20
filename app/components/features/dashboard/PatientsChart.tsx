@@ -216,7 +216,7 @@ export function PatientsChart() {
     queryFn: async () => {
       try {
         const response = await findPatients({
-          take: 1000,
+          take: 100,
           ...dateRange,
         });
         if (response.success) {

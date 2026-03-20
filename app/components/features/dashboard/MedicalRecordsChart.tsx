@@ -293,7 +293,7 @@ export function MedicalRecordsChart() {
     queryFn: async () => {
       try {
         const response = await findExams({
-          take: 1000,
+          take: 100,
           ...dateRange,
         });
         if (response.success) {
@@ -322,7 +322,7 @@ export function MedicalRecordsChart() {
     queryFn: async () => {
       try {
         const response = await findNotifications({
-          take: 1000,
+          take: 100,
           ...dateRange,
         });
         if (response.success) {
@@ -354,7 +354,7 @@ export function MedicalRecordsChart() {
     queryFn: async () => {
       try {
         const response = await findObservations({
-          take: 1000,
+          take: 100,
           ...dateRange,
         });
         if (response.success) {
@@ -383,7 +383,7 @@ export function MedicalRecordsChart() {
     queryFn: async () => {
       try {
         const response = await findTreatments({
-          take: 1000,
+          take: 100,
           ...dateRange,
         });
         if (response.success) {
