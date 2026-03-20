@@ -38,9 +38,9 @@ export default async function UserDetailsPage({
     {
       title: 'Identificação e acesso',
       fields: [
-        { label: 'ID do cargo', value: user?.roleId ?? '-' },
-        { label: 'Nome', value: user?.name ?? '-' },
-        { label: 'E-mail', value: user?.email ?? '-' },
+        { label: 'ID do cargo', value: user?.roleId || '-' },
+        { label: 'Nome', value: user?.name || '-' },
+        { label: 'E-mail', value: user?.email || '-' },
       ],
     },
     {
@@ -48,11 +48,11 @@ export default async function UserDetailsPage({
       fields: [
         {
           label: 'ID',
-          value: user?.id ?? '-',
+          value: user?.id || '-',
         },
         {
           label: 'Criado por',
-          value: user?.createdBy ?? '-',
+          value: user?.createdBy || '-',
         },
         {
           label: 'Criado em',
@@ -60,7 +60,7 @@ export default async function UserDetailsPage({
         },
         {
           label: 'Atualizado por',
-          value: user?.updatedBy ?? '-',
+          value: user?.updatedBy || '-',
         },
         {
           label: 'Atualizado em',

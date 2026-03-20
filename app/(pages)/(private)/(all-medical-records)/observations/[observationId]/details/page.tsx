@@ -40,7 +40,7 @@ export default async function ObservationDetailsPage({
     {
       title: 'Dados da observação',
       fields: [
-        { label: 'Observações', value: observation?.observations ?? '-' },
+        { label: 'Observações', value: observation?.observations || '-' },
         {
           label: 'Parceiro sendo tratado',
           value: observation?.hasPartnerBeingTreated ? 'Sim' : 'Não',
@@ -50,15 +50,15 @@ export default async function ObservationDetailsPage({
     {
       title: 'Metadados',
       fields: [
-        { label: 'ID', value: observation?.id ?? '-' },
-        { label: 'Criado por', value: observation?.createdBy ?? '-' },
+        { label: 'ID', value: observation?.id || '-' },
+        { label: 'Criado por', value: observation?.createdBy || '-' },
         {
           label: 'Criado em',
           value: observation?.createdAt
             ? formatDate(new Date(observation.createdAt))
             : '-',
         },
-        { label: 'Atualizado por', value: observation?.updatedBy ?? '-' },
+        { label: 'Atualizado por', value: observation?.updatedBy || '-' },
         {
           label: 'Atualizado em',
           value: observation?.updatedAt

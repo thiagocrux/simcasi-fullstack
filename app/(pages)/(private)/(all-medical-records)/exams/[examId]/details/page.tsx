@@ -36,8 +36,8 @@ export default async function ExamDetailsPage({
     {
       title: 'Teste Treponêmico',
       fields: [
-        { label: 'Tipo', value: exam?.treponemalTestType ?? '-' },
-        { label: 'Resultado', value: exam?.treponemalTestResult ?? '-' },
+        { label: 'Tipo', value: exam?.treponemalTestType || '-' },
+        { label: 'Resultado', value: exam?.treponemalTestResult || '-' },
         {
           label: 'Data',
           value: exam?.treponemalTestDate
@@ -46,14 +46,14 @@ export default async function ExamDetailsPage({
               )
             : '-',
         },
-        { label: 'Local', value: exam?.treponemalTestLocation ?? '-' },
+        { label: 'Local', value: exam?.treponemalTestLocation || '-' },
       ],
     },
     {
-      title: 'Teste Não Treponêmico',
+      title: 'Teste não treponêmico',
       fields: [
-        { label: 'VDRL', value: exam?.nontreponemalVdrlTest ?? '-' },
-        { label: 'Titulação', value: exam?.nontreponemalTestTitration ?? '-' },
+        { label: 'VDRL', value: exam?.nontreponemalVdrlTest || '-' },
+        { label: 'Titulação', value: exam?.nontreponemalTestTitration || '-' },
         {
           label: 'Data',
           value: exam?.nontreponemalTestDate
@@ -69,7 +69,7 @@ export default async function ExamDetailsPage({
       fields: [
         {
           label: 'Outro teste não treponêmico',
-          value: exam?.otherNontreponemalTest ?? '-',
+          value: exam?.otherNontreponemalTest || '-',
         },
         {
           label: 'Data do outro teste não treponêmico',
@@ -81,20 +81,20 @@ export default async function ExamDetailsPage({
         },
         {
           label: 'Observações de referência',
-          value: exam?.referenceObservations ?? '-',
+          value: exam?.referenceObservations || '-',
         },
       ],
     },
     {
       title: 'Metadados',
       fields: [
-        { label: 'ID', value: exam?.id ?? '-' },
-        { label: 'Criado por', value: exam?.createdBy ?? '-' },
+        { label: 'ID', value: exam?.id || '-' },
+        { label: 'Criado por', value: exam?.createdBy || '-' },
         {
           label: 'Criado em',
           value: exam?.createdAt ? formatDate(new Date(exam.createdAt)) : '-',
         },
-        { label: 'Atualizado por', value: exam?.updatedBy ?? '-' },
+        { label: 'Atualizado por', value: exam?.updatedBy || '-' },
         {
           label: 'Atualizado em',
           value: exam?.updatedAt ? formatDate(new Date(exam.updatedAt)) : '-',

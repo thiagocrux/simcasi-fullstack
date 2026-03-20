@@ -44,37 +44,37 @@ export default async function TreatmentDetailsPage({
     {
       title: 'Dados do tratamento',
       fields: [
-        { label: 'Medicamento', value: treatment?.medication ?? '-' },
-        { label: 'Unidade de saúde', value: treatment?.healthCenter ?? '-' },
+        { label: 'Medicamento', value: treatment?.medication || '-' },
+        { label: 'Unidade de saúde', value: treatment?.healthCenter || '-' },
         {
           label: 'Data de início',
           value: treatment?.startDate
             ? Intl.DateTimeFormat('pt-BR').format(new Date(treatment.startDate))
             : '-',
         },
-        { label: 'Dosagem', value: treatment?.dosage ?? '-' },
+        { label: 'Dosagem', value: treatment?.dosage || '-' },
       ],
     },
     {
       title: 'Observações',
       fields: [
-        { label: 'Observações', value: treatment?.observations ?? '-' },
+        { label: 'Observações', value: treatment?.observations || '-' },
         {
           label: 'Informações do parceiro',
-          value: treatment?.partnerInformation ?? '-',
+          value: treatment?.partnerInformation || '-',
         },
       ],
     },
     {
       title: 'Metadados',
       fields: [
-        { label: 'ID', value: treatment?.id ?? '-' },
+        { label: 'ID', value: treatment?.id || '-' },
         {
           label: 'Criado por',
           value:
             createdByUser?.success && createdByUser.data
               ? createdByUser.data.name
-              : (treatment?.createdBy ?? '-'),
+              : treatment?.createdBy || '-',
         },
         {
           label: 'Criado em',
@@ -87,7 +87,7 @@ export default async function TreatmentDetailsPage({
           value:
             updatedByUser?.success && updatedByUser.data
               ? updatedByUser.data.name
-              : (treatment?.updatedBy ?? '-'),
+              : treatment?.updatedBy || '-',
         },
         {
           label: 'Atualizado em',
