@@ -101,6 +101,16 @@ Seed the database with initial data:
 pnpm prisma:seed
 ```
 
+### 5.1 (Optional) Populate with Demo Data
+
+To populate the database with comprehensive demo data for testing and development (35 patients with 5+ records each across multiple record types), run:
+
+```bash
+pnpm prisma:seed-demo-data
+```
+
+> ⚠️ **Security Note:** This script includes a production safety check and will not execute when `NODE_ENV=production`. It's designed for development environments only.
+
 ### 6. Run the Development Server
 
 ```bash
@@ -128,10 +138,13 @@ docker-compose up -d
 pnpm prisma:migrate
 pnpm prisma:seed
 
-# 4. Start development server
+# 4. (Optional) Populate with demo data for testing
+pnpm prisma:seed-demo-data
+
+# 5. Start development server
 pnpm dev
 
-# 5. View the application and API documentation
+# 6. View the application and API documentation
 # Open http://localhost:3000 in your browser
 # API docs: http://localhost:3000/api/docs
 ```
@@ -256,6 +269,16 @@ This section documents the main scripts available in `package.json` and what the
   ```bash
   pnpm prisma:seed
   ```
+
+- #### `prisma:seed-demo-data`
+
+  Populates the database with comprehensive demo data for development and testing. Creates 35 patients with 5+ records each (exams, notifications, observations, treatments) distributed across multiple months.
+
+  ```bash
+  pnpm prisma:seed-demo-data
+  ```
+
+  > ⚠️ **Security Note:** This script includes a production safety check and will not execute when `NODE_ENV=production`. Designed for development environments only.
 
 ### Testing
 
