@@ -319,4 +319,22 @@ describe('DetailsPageActions', () => {
       />
     );
   });
+
+  it('should render children when provided', () => {
+    mockCan.mockReturnValue(true);
+
+    renderWithProviders(
+      <DetailsPageActions
+        entity="user"
+        dialogTitle="Delete"
+        dialogDescription="Confirm"
+        updateAction={{ action: jest.fn() }}
+        deleteAction={{ action: jest.fn() }}
+      >
+        <button>Extra Action</button>
+      </DetailsPageActions>
+    );
+
+    expect(screen.getByText('Extra Action')).toBeInTheDocument();
+  });
 });

@@ -72,6 +72,9 @@ export class LoginUseCase implements UseCase<LoginInput, SessionOutput> {
       userAgent: context.userAgent || 'unknown',
     });
 
+    // Enforce single-session policy: revoke all other active sessions for this user.
+    await this.sessionRepository.revokeOtherSessions(session.id, user.id);
+
     // 4. Fetch permissions and role code for the user.
     const [permissions, role] = await Promise.all([
       this.permissionRepository.findByRoleId(user.roleId),

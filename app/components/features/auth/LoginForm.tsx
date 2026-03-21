@@ -27,9 +27,10 @@ import { Spinner } from '../../ui/spinner';
 
 interface LoginFormProps {
   className?: string;
+  reasonMessage?: string;
 }
 
-export function LoginForm({ className }: LoginFormProps) {
+export function LoginForm({ className, reasonMessage }: LoginFormProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
@@ -95,6 +96,11 @@ export function LoginForm({ className }: LoginFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={className}>
+      {reasonMessage && (
+        <div className="bg-yellow-50 dark:bg-yellow-950 mb-4 px-4 py-3 border border-yellow-300 dark:border-yellow-700 rounded-md text-yellow-800 dark:text-yellow-200 text-sm">
+          {reasonMessage}
+        </div>
+      )}
       <FieldGroup className="flex flex-col gap-4 mb-4">
         <Field>
           <FieldLabel htmlFor="email">E-mail</FieldLabel>

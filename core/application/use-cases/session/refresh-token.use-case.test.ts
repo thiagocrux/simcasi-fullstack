@@ -25,6 +25,7 @@ const mockSessionRepository = {
   softDelete: jest.fn(),
   create: jest.fn(),
   revokeAllByUserId: jest.fn(),
+  revokeOtherSessions: jest.fn(),
 };
 const mockRoleRepository = { findById: jest.fn() };
 const mockPermissionRepository = { findByRoleId: jest.fn() };
@@ -85,6 +86,10 @@ describe('RefreshTokenUseCase', () => {
     const result = await useCase.execute({ refreshToken: 'old-refresh' });
 
     expect(mockSessionRepository.softDelete).toHaveBeenCalledWith('old-sess');
+    expect(mockSessionRepository.revokeOtherSessions).toHaveBeenCalledWith(
+      'new-sess',
+      'u1'
+    );
     expect(result.accessToken).toBe('new-access');
     expect(result.refreshToken).toBe('new-refresh');
     expect(result.user.id).toBe('u1');
@@ -160,6 +165,10 @@ describe('RefreshTokenUseCase', () => {
     const result = await useCase.execute({ refreshToken: 'tok' });
 
     expect(mockSessionRepository.revokeAllByUserId).not.toHaveBeenCalled();
+    expect(mockSessionRepository.revokeOtherSessions).toHaveBeenCalledWith(
+      'new-sess',
+      'u1'
+    );
     expect(result.accessToken).toBe('at');
   });
 

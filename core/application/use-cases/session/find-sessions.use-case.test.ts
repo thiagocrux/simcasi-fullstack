@@ -40,6 +40,8 @@ describe('FindSessionsUseCase', () => {
         userAgent: 'Chrome',
         issuedAt: now,
         expiresAt: now,
+        createdAt: now,
+        updatedAt: null,
         deletedAt: null,
         extraField: 'should be excluded',
       },
@@ -55,6 +57,8 @@ describe('FindSessionsUseCase', () => {
       userAgent: 'Chrome',
       issuedAt: now,
       expiresAt: now,
+      createdAt: now,
+      updatedAt: null,
       deletedAt: null,
     });
     expect((result.items[0] as any).extraField).toBeUndefined();

@@ -123,6 +123,9 @@ export class RefreshTokenUseCase implements UseCase<
       userAgent: context.userAgent || 'unknown',
     });
 
+    // Enforce single-session policy: revoke all other active sessions for this user.
+    await this.sessionRepository.revokeOtherSessions(newSession.id, user.id);
+
     // 6. Fetch permissions and role for the user's role.
     const [permissions, role] = await Promise.all([
       this.permissionRepository.findByRoleId(user.roleId),

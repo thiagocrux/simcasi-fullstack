@@ -3,7 +3,10 @@
 
 import { cookies } from 'next/headers';
 
+import { FindSessionsOutput } from '@/core/application/contracts/session/find-sessions.contract';
 import { GetSessionByIdOutput } from '@/core/application/contracts/session/get-session-by-id.contract';
+import { RevokeAllSessionsOutput } from '@/core/application/contracts/session/revoke-all-sessions.contract';
+import { RevokeSessionOutput } from '@/core/application/contracts/session/revoke-session.contract';
 import { IdSchema } from '@/core/application/validation/schemas/common.schema';
 import {
   CreateSessionInput,
@@ -11,15 +14,20 @@ import {
   RequestPasswordResetSchema,
   ResetPasswordInput,
   resetPasswordSchema,
+  SessionQueryInput,
+  sessionQuerySchema,
   sessionSchema,
 } from '@/core/application/validation/schemas/session.schema';
 import { formatZodError } from '@/core/application/validation/zod.utils';
 import { ValidationError } from '@/core/domain/errors/app.error';
 import { makeTokenProvider } from '@/core/infrastructure/factories/security.factory';
 import {
+  makeFindSessionsUseCase,
   makeGetSessionByIdUseCase,
   makeLoginUseCase,
   makeLogoutUseCase,
+  makeRevokeAllSessionsUseCase,
+  makeRevokeSessionUseCase,
   makeValidateSessionUseCase,
 } from '@/core/infrastructure/factories/session.factory';
 import {
@@ -35,6 +43,8 @@ import {
   withSecuredActionAndAutomaticRetry,
 } from '@/lib/actions.utils';
 import { logger } from '@/lib/logger.utils';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 /**
  * Authenticates a user and establishes a persistent session via cookies.
@@ -235,6 +245,135 @@ export async function resetPassword(input: ResetPasswordInput) {
   } catch (error: any) {
     return handleActionError(error);
   }
+}
+
+/**
+ * Retrieves a paginated list of session records with optional filtering.
+ * @param query Criteria for filtering and pagination.
+ * @return A promise resolving to the sessions and metadata.
+ */
+export async function findSessions(
+  query?: SessionQueryInput
+): Promise<ActionResponse<FindSessionsOutput>> {
+  return withSecuredActionAndAutomaticRetry(['read:session'], async () => {
+    const parsedData = sessionQuerySchema.safeParse(query);
+    const useCase = makeFindSessionsUseCase();
+    return await useCase.execute(parsedData.data || {});
+  });
+}
+
+/**
+ * Revokes an active session by its unique identifier.
+ * If the session being revoked belongs to the currently authenticated user,
+ * the auth cookies are cleared and the user is redirected to the login page.
+ * @param id The UUID of the session to revoke.
+ * @return A promise resolving to a success indicator.
+ * @throws ValidationError If the provided ID is invalid.
+ */
+export async function revokeSession(
+  id: string
+): Promise<ActionResponse<RevokeSessionOutput>> {
+  // Capture the current session ID before execution to detect own-session revocation.
+  let currentSessionId: string | null = null;
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('access_token')?.value;
+    if (token) {
+      const validateSessionUseCase = makeValidateSessionUseCase();
+      const { sessionId } = await validateSessionUseCase.execute({ token });
+      currentSessionId = sessionId;
+    }
+  } catch {
+    // Ignore — if we can't read the current session, own-session detection is skipped.
+  }
+
+  const result = await withSecuredActionAndAutomaticRetry(
+    ['delete:session'],
+    async () => {
+      const parsedId = IdSchema.safeParse(id);
+      if (!parsedId.success) {
+        throw new ValidationError(
+          'ID inválido.',
+          formatZodError(parsedId.error)
+        );
+      }
+
+      const useCase = makeRevokeSessionUseCase();
+      const revokeResult = await useCase.execute({ id: parsedId.data });
+
+      revalidatePath('/sessions');
+
+      return revokeResult;
+    }
+  );
+
+  // If the revoked session was the caller's own session, clear cookies and redirect.
+  if (result.success && currentSessionId === id) {
+    const cookieStore = await cookies();
+    cookieStore.delete('access_token');
+    cookieStore.delete('refresh_token');
+    redirect('/auth/login?reason=session_revoked');
+  }
+
+  return result;
+}
+
+/**
+ * Revokes all active sessions belonging to a specific user.
+ * If the target user is the currently authenticated user,
+ * the auth cookies are cleared and the user is redirected to the login page.
+ * @param userId The UUID of the user whose sessions will be revoked.
+ * @return A promise resolving to a success indicator.
+ * @throws ValidationError If the provided user ID is invalid.
+ */
+export async function revokeAllSessionsByUserId(
+  userId: string
+): Promise<ActionResponse<RevokeAllSessionsOutput>> {
+  // Capture the current user ID before execution to detect own-account revocation.
+  let currentUserId: string | null = null;
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('access_token')?.value;
+    if (token) {
+      const validateSessionUseCase = makeValidateSessionUseCase();
+      const { userId: uid } = await validateSessionUseCase.execute({ token });
+      currentUserId = uid;
+    }
+  } catch {
+    // Ignore — if we can't read the current session, own-account detection is skipped.
+  }
+
+  const parsedId = IdSchema.safeParse(userId);
+  if (!parsedId.success) {
+    return {
+      success: false,
+      name: 'ValidationError',
+      message: 'ID inválido.',
+      code: 'VALIDATION_ERROR',
+    };
+  }
+
+  const result = await withSecuredActionAndAutomaticRetry(
+    ['delete:session'],
+    async () => {
+      const useCase = makeRevokeAllSessionsUseCase();
+      const revokeResult = await useCase.execute({ userId: parsedId.data });
+
+      revalidatePath('/sessions');
+
+      return revokeResult;
+    }
+  );
+
+  // If the current user revoked their own sessions, clear cookies and redirect.
+  if (result.success && currentUserId === userId) {
+    const cookieStore = await cookies();
+    cookieStore.delete('access_token');
+    cookieStore.delete('refresh_token');
+    redirect('/auth/login?reason=all_sessions_revoked');
+  }
+
+  return result;
 }
 
 /**

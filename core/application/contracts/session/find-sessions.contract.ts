@@ -42,6 +42,10 @@ export interface FindSessionsOutput {
     issuedAt: Date;
     /** Timestamp of session expiration. */
     expiresAt: Date;
+    /** Timestamp of session persistence start. */
+    createdAt: Date;
+    /** Timestamp of the last session refresh or modification. */
+    updatedAt?: Date | null;
     /** Timestamp of session revocation. */
     deletedAt: Date | null;
   }>;

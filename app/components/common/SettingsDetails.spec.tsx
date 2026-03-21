@@ -43,13 +43,13 @@ describe('SettingsDetails', () => {
 
   it('should render link button with link variant', () => {
     renderWithProviders(<SettingsDetails />);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: /atualizar senha/i });
     expect(button).toHaveAttribute('data-variant', 'link');
   });
 
   it('should have cursor-pointer class', () => {
     renderWithProviders(<SettingsDetails />);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: /atualizar senha/i });
     expect(button).toHaveClass('cursor-pointer');
   });
 
@@ -59,7 +59,7 @@ describe('SettingsDetails', () => {
     });
 
     renderWithProviders(<SettingsDetails />);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: /atualizar senha/i });
     fireEvent.click(button);
 
     expect(mockPush).toHaveBeenCalledWith('/users/user-456/change-password');
@@ -72,7 +72,7 @@ describe('SettingsDetails', () => {
     });
 
     renderWithProviders(<SettingsDetails />);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: /atualizar senha/i });
     fireEvent.click(button);
 
     expect(mockPush).toHaveBeenCalledWith(`/users/${userId}/change-password`);
@@ -100,13 +100,13 @@ describe('SettingsDetails', () => {
 
   it('should render button with no padding', () => {
     renderWithProviders(<SettingsDetails />);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: /atualizar senha/i });
     expect(button).toHaveClass('px-0');
   });
 
   it('should render button with minimum width', () => {
     renderWithProviders(<SettingsDetails />);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: /atualizar senha/i });
     expect(button).toHaveClass('w-min');
   });
 
@@ -116,7 +116,7 @@ describe('SettingsDetails', () => {
     });
 
     renderWithProviders(<SettingsDetails />);
-    fireEvent.click(screen.getByRole('button'));
+    fireEvent.click(screen.getByRole('button', { name: /atualizar senha/i }));
 
     expect(mockPush).toHaveBeenCalledWith(
       '/users/special-unique-id/change-password'
@@ -130,5 +130,26 @@ describe('SettingsDetails', () => {
       'py-6',
       'text-sm'
     );
+  });
+
+  it('should render "Sessões" section title', () => {
+    renderWithProviders(<SettingsDetails />);
+    expect(screen.getByText('Sessões')).toBeInTheDocument();
+  });
+
+  it('should render "Encerrar todas as minhas sessões" button', () => {
+    renderWithProviders(<SettingsDetails />);
+    const button = screen.getByRole('button', {
+      name: /encerrar todas as minhas sessões/i,
+    });
+    expect(button).toBeInTheDocument();
+  });
+
+  it('should render revoke sessions button with text-destructive class', () => {
+    renderWithProviders(<SettingsDetails />);
+    const button = screen.getByRole('button', {
+      name: /encerrar todas as minhas sessões/i,
+    });
+    expect(button).toHaveClass('text-destructive');
   });
 });

@@ -12,6 +12,7 @@ jest.mock('@/hooks/usePermission');
 jest.mock('@/hooks/useRole');
 jest.mock('@/hooks/useUser');
 jest.mock('@/app/actions/user.actions');
+jest.mock('@/app/actions/session.actions');
 jest.mock('@/lib/csv.utils');
 
 describe('UsersTable', () => {

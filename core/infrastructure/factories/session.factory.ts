@@ -3,6 +3,7 @@ import { GetSessionByIdUseCase } from '@/core/application/use-cases/session/get-
 import { LoginUseCase } from '@/core/application/use-cases/session/login.use-case';
 import { LogoutUseCase } from '@/core/application/use-cases/session/logout.use-case';
 import { RefreshTokenUseCase } from '@/core/application/use-cases/session/refresh-token.use-case';
+import { RevokeAllSessionsUseCase } from '@/core/application/use-cases/session/revoke-all-sessions.use-case';
 import { RevokeSessionUseCase } from '@/core/application/use-cases/session/revoke-session.use-case';
 import { ValidateSessionUseCase } from '@/core/application/use-cases/session/validate-session.use-case';
 import { PrismaAuditLogRepository } from '../repositories/prisma/audit-log.prisma.repository';
@@ -92,4 +93,12 @@ export function makeValidateSessionUseCase() {
  */
 export function makeGetSessionByIdUseCase() {
   return new GetSessionByIdUseCase(sessionRepository);
+}
+
+/**
+ * Factory function to create an instance of RevokeAllSessionsUseCase.
+ * @return A fully initialized RevokeAllSessionsUseCase.
+ */
+export function makeRevokeAllSessionsUseCase() {
+  return new RevokeAllSessionsUseCase(sessionRepository, auditLogRepository);
 }

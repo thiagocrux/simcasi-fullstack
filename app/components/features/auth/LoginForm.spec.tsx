@@ -1,4 +1,5 @@
 import { renderWithProviders } from '@/tests/utils';
+import { screen } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import { LoginForm } from './LoginForm';
 
@@ -55,5 +56,17 @@ describe('LoginForm', () => {
     const { container } = renderWithProviders(<LoginForm />);
     const checkboxes = container.querySelectorAll('input[type="checkbox"]');
     expect(checkboxes.length).toBeGreaterThanOrEqual(0);
+  });
+
+  it('should render reason message banner when reasonMessage is provided.', () => {
+    renderWithProviders(
+      <LoginForm reasonMessage="Sua sessão foi encerrada." />
+    );
+    expect(screen.getByText('Sua sessão foi encerrada.')).toBeInTheDocument();
+  });
+
+  it('should not render reason message banner when reasonMessage is undefined.', () => {
+    const { container } = renderWithProviders(<LoginForm />);
+    expect(container.querySelector('.bg-yellow-50')).not.toBeInTheDocument();
   });
 });

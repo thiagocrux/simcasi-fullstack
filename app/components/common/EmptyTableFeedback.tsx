@@ -20,7 +20,12 @@ type MedicalRecordVariant =
   | 'observations'
   | 'treatments';
 
-type Variant = 'users' | 'patients' | 'audit-logs' | MedicalRecordVariant;
+type Variant =
+  | 'users'
+  | 'patients'
+  | 'sessions'
+  | 'audit-logs'
+  | MedicalRecordVariant;
 
 interface EmptyTableProps {
   variant: Variant;
@@ -101,6 +106,13 @@ export function EmptyTableFeedback({ variant, patientId }: EmptyTableProps) {
         'Não há registros de auditoria que correspondam aos seus critérios de busca.',
       buttonLabel: '',
       permission: 'read:audit-log',
+    },
+    sessions: {
+      title: 'Ops! Nenhuma sessão ativa foi encontrada.',
+      description:
+        'Não há sessões ativas que correspondam aos seus critérios de busca.',
+      buttonLabel: '',
+      permission: 'read:session',
     },
   };
 

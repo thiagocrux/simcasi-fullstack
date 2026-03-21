@@ -1,6 +1,7 @@
 'use client';
 
 import { SquarePen, Trash2 } from 'lucide-react';
+import { ReactNode } from 'react';
 
 import { usePermission } from '@/hooks/usePermission';
 import { cn } from '@/lib/shared.utils';
@@ -10,7 +11,7 @@ import { AppAlertDialog } from './AppAlertDialog';
 type Entity =
   | 'role'
   | 'permission'
-  | 'session '
+  | 'session'
   | 'user'
   | 'patient'
   | 'exam'
@@ -34,6 +35,7 @@ interface DetailsPageActions {
     hidden?: boolean;
   };
   className?: string;
+  children?: ReactNode;
 }
 
 export function DetailsPageActions({
@@ -43,6 +45,7 @@ export function DetailsPageActions({
   updateAction,
   deleteAction,
   className,
+  children,
 }: DetailsPageActions) {
   const { can } = usePermission();
 
@@ -87,6 +90,8 @@ export function DetailsPageActions({
           </Button>
         </AppAlertDialog>
       ) : null}
+
+      {children}
     </div>
   );
 }

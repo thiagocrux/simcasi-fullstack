@@ -1,12 +1,15 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
+import { revokeAllSessionsByUserId } from '@/app/actions/session.actions';
 import { deleteUser, getUser } from '@/app/actions/user.actions';
 import { DetailsPageActions } from '@/app/components/common/DetailsPageActions';
 import { DetailsPageProperties } from '@/app/components/common/DetailsPageProperties';
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
+import { RevokeAllSessionsButton } from '@/app/components/features/sessions/RevokeAllSessionsButton';
 import { GetUserByIdOutput } from '@/core/application/contracts/user/get-user-by-id.contract';
+import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { isImmutableEmail } from '@/core/domain/utils/user.utils';
 import { publicEnv } from '@/core/infrastructure/lib/env.public';
 import { ActionResponse } from '@/lib/actions.utils';
@@ -80,6 +83,12 @@ export default async function UserDetailsPage({
     deleteUser(userId);
   }
 
+  async function handleRevokeAllSessions() {
+    'use server';
+    await revokeAllSessionsByUserId(userId);
+    redirect(`/users/${userId}/details`);
+  }
+
   return (
     <>
       <div className="flex flex-col gap-8 w-full max-w-3xl">
@@ -96,12 +105,15 @@ export default async function UserDetailsPage({
           deleteAction={{
             label: 'Deletar usuário',
             action: handleDelete,
-            hidden: isImmutableEmail(
-              user.email,
-              publicEnv.NEXT_PUBLIC_DEFAULT_USER_EMAIL
-            ),
+            hidden:
+              isImmutableEmail(
+                user.email,
+                publicEnv.NEXT_PUBLIC_DEFAULT_USER_EMAIL
+              ) || userId === SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
           }}
-        />
+        >
+          <RevokeAllSessionsButton action={handleRevokeAllSessions} />
+        </DetailsPageActions>
         <DetailsPageProperties data={data} />
       </div>
     </>

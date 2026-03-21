@@ -14,7 +14,10 @@ import {
 import { LoginUseCase } from './login.use-case';
 
 const mockUserRepository = { findByEmail: jest.fn() };
-const mockSessionRepository = { create: jest.fn() };
+const mockSessionRepository = {
+  create: jest.fn(),
+  revokeOtherSessions: jest.fn(),
+};
 const mockRoleRepository = { findById: jest.fn() };
 const mockPermissionRepository = { findByRoleId: jest.fn() };
 const mockHashProvider = { compare: jest.fn() };
@@ -57,6 +60,7 @@ describe('LoginUseCase', () => {
     mockHashProvider.compare.mockResolvedValueOnce(true);
     mockTokenProvider.getRefreshExpiryDate.mockReturnValueOnce(new Date());
     mockSessionRepository.create.mockResolvedValueOnce({ id: 'sess-1' });
+    mockSessionRepository.revokeOtherSessions.mockResolvedValueOnce(undefined);
     mockPermissionRepository.findByRoleId.mockResolvedValueOnce([
       { code: 'create:patient' },
     ]);
@@ -130,6 +134,7 @@ describe('LoginUseCase', () => {
     mockHashProvider.compare.mockResolvedValueOnce(true);
     mockTokenProvider.getRefreshExpiryDate.mockReturnValueOnce(new Date());
     mockSessionRepository.create.mockResolvedValueOnce({ id: 'sess-1' });
+    mockSessionRepository.revokeOtherSessions.mockResolvedValueOnce(undefined);
     mockPermissionRepository.findByRoleId.mockResolvedValueOnce([]);
     mockRoleRepository.findById.mockResolvedValueOnce(null);
 
