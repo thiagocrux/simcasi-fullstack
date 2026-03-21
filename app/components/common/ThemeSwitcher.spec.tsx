@@ -109,7 +109,7 @@ describe('ThemeSwitcher', () => {
   });
 
   it('should handle theme switching gracefully', () => {
-    const { rerender, container } = renderWithProviders(<ThemeSwitcher />);
+    const { container } = renderWithProviders(<ThemeSwitcher />);
 
     jest.mocked(useTheme).mockReturnValue({
       theme: 'dark',

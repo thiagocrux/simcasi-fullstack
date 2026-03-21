@@ -12,7 +12,7 @@ import { withAuthentication } from '@/lib/api.utils';
  */
 export const PATCH = withAuthentication(
   ['update:permission'],
-  async (request, { params }) => {
+  async (_request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const useCase = makeRestorePermissionUseCase();
     await useCase.execute({ id });

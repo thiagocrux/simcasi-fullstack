@@ -9,15 +9,7 @@ export const metadata: Metadata = {
   description: 'Atualize a senha do usuário logado ao sistema no SIMCASI.',
 };
 
-interface UpdatePasswordPageProps {
-  params: Promise<{ userId: string }>;
-}
-
-export default async function UpdatePasswordPage({
-  params,
-}: UpdatePasswordPageProps) {
-  const { userId } = await params;
-
+export default async function UpdatePasswordPage() {
   return (
     <>
       <div className="flex flex-col gap-8 w-full max-w-3xl">

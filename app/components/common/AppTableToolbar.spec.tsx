@@ -3,13 +3,6 @@ import { renderWithProviders } from '@/tests/utils';
 import { fireEvent, screen } from '@testing-library/react';
 import { AppTableToolbar } from './AppTableToolbar';
 
-interface TestData {
-  id: string;
-  name: string;
-  status: string;
-  createdAt: string;
-}
-
 describe('AppTableToolbar', () => {
   let mockTable: any;
   const mockHandleDataExport = jest.fn();
@@ -74,7 +67,7 @@ describe('AppTableToolbar', () => {
   });
 
   it('should not render advanced filters section when showAdvancedFilters is false', () => {
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <AppTableToolbar
         table={mockTable}
         columnLabelMapper={{ id: 'ID', name: 'Name' }}

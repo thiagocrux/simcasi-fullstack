@@ -12,7 +12,7 @@ import { withAuthentication } from '@/lib/api.utils';
  */
 export const GET = withAuthentication(
   ['read:audit-log'],
-  async (request, { params }) => {
+  async (_request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const useCase = makeGetAuditLogByIdUseCase();
     const result = await useCase.execute({ id });

@@ -24,7 +24,7 @@
     const localStorageTheme = (() => {
       try {
         return localStorage.getItem('theme');
-      } catch (error) {
+      } catch (_error) {
         return null;
       }
     })();
@@ -69,7 +69,7 @@
           keepalive: true,
         }).catch(() => {});
       }
-    } catch (error) {
+    } catch (_error) {
       // If logging fails, silently ignore to avoid affecting the user
     }
   }

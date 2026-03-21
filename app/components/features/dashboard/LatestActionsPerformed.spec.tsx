@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderWithProviders } from '@/tests/utils';
-import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { LatestActionsPerformed } from './LatestActionsPerformed';
 
@@ -72,7 +72,9 @@ describe('LatestActionsPerformed', () => {
       error: null,
     });
 
-    const { container } = renderWithProviders(<LatestActionsPerformed maxListSize={10} />);
+    const { container } = renderWithProviders(
+      <LatestActionsPerformed maxListSize={10} />
+    );
     expect(container).toBeInTheDocument();
   });
 

@@ -231,7 +231,7 @@ describe('DetailsPageProperties', () => {
   });
 
   it('should render multiple property sections', () => {
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <DetailsPageProperties
         data={[
           {

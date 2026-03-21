@@ -16,7 +16,7 @@ import { withAuthentication } from '@/lib/api.utils';
  */
 export const GET = withAuthentication(
   ['read:exam'],
-  async (request, { params }) => {
+  async (_request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const getExamByIdUseCase = makeGetExamByIdUseCase();
     const exam = await getExamByIdUseCase.execute({ id });
@@ -56,7 +56,7 @@ export const PATCH = withAuthentication(
  */
 export const DELETE = withAuthentication(
   ['delete:exam'],
-  async (request, { params }) => {
+  async (_request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const deleteUseCase = makeDeleteExamUseCase();
     await deleteUseCase.execute({

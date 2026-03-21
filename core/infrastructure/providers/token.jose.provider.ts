@@ -73,7 +73,7 @@ export class JoseTokenProvider implements TokenProvider {
         currentDate: new Date(0),
       });
       return payload as T;
-    } catch (error: any) {
+    } catch {
       // We only return null if the token is signature-invalid or malformed.
       return null;
     }

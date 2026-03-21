@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-require-imports */
 jest.mock('@/core/infrastructure/lib/request-context', () => ({
   getRequestContext: jest.fn(() => ({
     userId: 'ctx-user-id',

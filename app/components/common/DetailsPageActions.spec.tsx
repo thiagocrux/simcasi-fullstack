@@ -309,7 +309,7 @@ describe('DetailsPageActions', () => {
   it('should handle mixed action states', () => {
     mockCan.mockReturnValue(true);
 
-    const { container } = renderWithProviders(
+    renderWithProviders(
       <DetailsPageActions
         entity="patient"
         dialogTitle="Delete Patient"

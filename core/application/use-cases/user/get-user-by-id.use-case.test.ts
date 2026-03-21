@@ -13,7 +13,6 @@ describe('GetUserByIdUseCase', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     useCase = new GetUserByIdUseCase(mockUserRepository as any);
   });
 

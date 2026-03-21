@@ -16,7 +16,7 @@ import { withAuthentication } from '@/lib/api.utils';
  */
 export const GET = withAuthentication(
   ['read:permission'],
-  async (request, { params }) => {
+  async (_request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const useCase = makeGetPermissionByIdUseCase();
     const result = await useCase.execute({ id });
@@ -56,7 +56,7 @@ export const PATCH = withAuthentication(
  */
 export const DELETE = withAuthentication(
   ['delete:permission'],
-  async (request, { params }) => {
+  async (_request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const useCase = makeDeletePermissionUseCase();
     await useCase.execute({ id });

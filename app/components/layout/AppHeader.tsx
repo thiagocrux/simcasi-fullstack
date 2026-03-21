@@ -18,24 +18,9 @@ interface AppHeaderProps {
   variant?: 'private' | 'public';
 }
 
-/**
- * Global header component for the application.
- */
-export function AppHeader({ variant = 'private' }: AppHeaderProps) {
-  const { handleLogout } = useLogout();
-
-  if (variant === 'public') {
-    return (
-      <div className="top-4 right-4 z-50 absolute flex items-center gap-x-2">
-        <ThemeSwitcher />
-      </div>
-    );
-  }
-
-  // Only use sidebar context in private variant
+function PrivateHeader({ handleLogout }: { handleLogout: () => void }) {
   const { open, isMobile } = useSidebar();
 
-  // Dynamic positioning based on sidebar state
   const positionClass = isMobile ? 'left-0' : open ? 'left-64' : 'left-12';
 
   return (
@@ -66,4 +51,21 @@ export function AppHeader({ variant = 'private' }: AppHeaderProps) {
       </div>
     </header>
   );
+}
+
+/**
+ * Global header component for the application.
+ */
+export function AppHeader({ variant = 'private' }: AppHeaderProps) {
+  const { handleLogout } = useLogout();
+
+  if (variant === 'public') {
+    return (
+      <div className="top-4 right-4 z-50 absolute flex items-center gap-x-2">
+        <ThemeSwitcher />
+      </div>
+    );
+  }
+
+  return <PrivateHeader handleLogout={handleLogout} />;
 }

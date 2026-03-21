@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderWithProviders } from '@/tests/utils';
 import { useQuery } from '@tanstack/react-query';
 import { LatestPatientsRegistered } from './LatestPatientsRegistered';

@@ -144,9 +144,7 @@ describe('AppTablePagination', () => {
   });
 
   it('should update pagination state when table state changes', () => {
-    const { rerender } = renderWithProviders(
-      <AppTablePagination table={mockTable} />
-    );
+    renderWithProviders(<AppTablePagination table={mockTable} />);
     mockTable.getState.mockReturnValue({
       pagination: { pageIndex: 1, pageSize: 10 },
     });

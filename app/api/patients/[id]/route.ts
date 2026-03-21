@@ -16,7 +16,7 @@ import { withAuthentication } from '@/lib/api.utils';
  */
 export const GET = withAuthentication(
   ['read:patient'],
-  async (request, { params }) => {
+  async (_request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const getPatientByIdUseCase = makeGetPatientByIdUseCase();
     const patient = await getPatientByIdUseCase.execute({ id });
@@ -56,7 +56,7 @@ export const PATCH = withAuthentication(
  */
 export const DELETE = withAuthentication(
   ['delete:patient'],
-  async (request, { params }) => {
+  async (_request, { params }) => {
     const { id } = await (params as Promise<{ id: string }>);
     const deleteUseCase = makeDeletePatientUseCase();
     await deleteUseCase.execute({

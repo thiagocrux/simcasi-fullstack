@@ -206,7 +206,7 @@ function configureRequestBodies(collection) {
               item.request.body.raw = JSON.stringify(body, null, 2);
               console.log('   ✓ Injected {{refreshToken}} into request body');
             }
-          } catch (e) {
+          } catch (_e) {
             // Ignore parse errors, maybe it's not JSON
           }
         }
