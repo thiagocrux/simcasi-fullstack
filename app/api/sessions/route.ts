@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 
-import { makeFindSessionsUseCase } from '@/core/infrastructure/factories/session.factory';
+import {
+  makeFindSessionsUseCase,
+  makeRevokeAllSessionsUseCase,
+} from '@/core/infrastructure/factories/session.factory';
 import { withAuthentication } from '@/lib/api.utils';
 
 /**
@@ -18,8 +21,18 @@ export const GET = withAuthentication(['read:session'], async (request) => {
 });
 
 /**
- * DELETE /api/sessions/:id (via body or query for bulk, but here we'll use a specific ID if we had dynamic routes)
- * For simplicity in this file, we'll handle DELETE via body if needed,
- * but usually it's better in [id]/route.ts.
- * Let's just create the directory for it.
+ * [DELETE] /api/sessions
+ * Revokes all active sessions for a given user.
+ * @param request The incoming Next.js request.
+ * @return A promise resolving to a success flag.
  */
+export const DELETE = withAuthentication(
+  ['delete:session'],
+  async (request) => {
+    const body = await request.json();
+    const useCase = makeRevokeAllSessionsUseCase();
+    const result = await useCase.execute({ userId: body.userId });
+
+    return NextResponse.json(result);
+  }
+);

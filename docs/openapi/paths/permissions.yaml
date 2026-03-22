@@ -51,7 +51,7 @@ collection:
               summary: Create new permission with role assignments
               value:
                 code: APPROVE_TREATMENT_PROTOCOL
-                label: Aprove treatment protocol
+                label: Approve treatment protocol
                 roleIds:
                   - role-admin-123
                   - role-medical-coordinator-456
@@ -195,7 +195,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
 restore:
-  post:
+  patch:
     operationId: restorePermission
     summary: Restore a permission
     description: Reverses soft-delete for a permission.
@@ -224,12 +224,8 @@ restore:
                 ipAddress: 192.168.1.100
                 userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
-      '200':
-        description: Permission successfully restored to active capabilities (OK).
-        content:
-          application/json:
-            schema:
-              $ref: '../components/schemas/permission.yaml#/Permission'
+      '204':
+        description: Permission successfully restored to active capabilities (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':

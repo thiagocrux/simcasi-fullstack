@@ -205,7 +205,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
 restore:
-  post:
+  patch:
     operationId: restoreExam
     summary: Restore an exam
     description: Reverses soft-delete for an exam.

@@ -199,7 +199,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
 restore:
-  post:
+  patch:
     operationId: restoreRole
     summary: Restore a role
     description: Reverses soft-delete for a role.
@@ -228,12 +228,8 @@ restore:
                 ipAddress: 192.168.1.100
                 userAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
     responses:
-      '200':
-        description: Role successfully restored to active profiles (OK).
-        content:
-          application/json:
-            schema:
-              $ref: '../components/schemas/role.yaml#/Role'
+      '204':
+        description: Role successfully restored to active profiles (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':

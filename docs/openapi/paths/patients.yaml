@@ -217,7 +217,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
 restore:
-  post:
+  patch:
     operationId: restorePatient
     summary: Restore a patient
     description: Reverses a soft-delete operation, returning the patient to active monitoring status.

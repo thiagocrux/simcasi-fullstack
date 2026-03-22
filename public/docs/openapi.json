@@ -345,11 +345,7 @@
         "tags": [
           "Authentication"
         ],
-        "security": [
-          {
-            "BearerAuth": []
-          }
-        ],
+        "security": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -516,36 +512,22 @@
             "BearerAuth": []
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "sessionId"
-                ],
-                "properties": {
-                  "sessionId": {
-                    "type": "string",
-                    "description": "Unique identifier of the session to terminate."
-                  }
-                }
-              },
-              "examples": {
-                "logoutRequest": {
-                  "summary": "Logout request with session identifier",
-                  "value": {
-                    "sessionId": "9c08f5eb-1234-5678-9abc-def012345678"
+        "responses": {
+          "200": {
+            "description": "Session successfully terminated (OK).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Logged out successfully"
+                    }
                   }
                 }
               }
             }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Session successfully terminated and tokens invalidated (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -768,8 +750,8 @@
               }
             }
           },
-          "400": {
-            "description": "The request payload contains invalid data (ValidationError).",
+          "404": {
+            "description": "The requested resource was not found (NotFoundError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -818,8 +800,8 @@
               }
             }
           },
-          "404": {
-            "description": "The requested resource was not found (NotFoundError).",
+          "422": {
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -879,6 +861,7 @@
         "tags": [
           "Authentication"
         ],
+        "security": [],
         "parameters": [
           {
             "name": "token",
@@ -2578,7 +2561,7 @@
       }
     },
     "/users/{id}/restore": {
-      "post": {
+      "patch": {
         "operationId": "restoreUser",
         "summary": "Restore a user",
         "description": "Reverses a soft-delete operation, restoring the user's active status and system access.",
@@ -2639,8 +2622,211 @@
           }
         },
         "responses": {
+          "204": {
+            "description": "User successfully restored to active status (No Content)."
+          },
+          "401": {
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "message",
+                    "code"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Technical name of the error class.",
+                      "example": "ValidationError"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message describing the error.",
+                      "example": "Invalid input data."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "A machine-readable string identifying the specific error type.",
+                      "example": "VALIDATION_ERROR"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Detailed validation errors, organized by field name.",
+                      "example": {
+                        "email": [
+                          "Invalid email address."
+                        ],
+                        "password": [
+                          "Password is too short."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "message",
+                    "code"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Technical name of the error class.",
+                      "example": "ValidationError"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message describing the error.",
+                      "example": "Invalid input data."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "A machine-readable string identifying the specific error type.",
+                      "example": "VALIDATION_ERROR"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Detailed validation errors, organized by field name.",
+                      "example": {
+                        "email": [
+                          "Invalid email address."
+                        ],
+                        "password": [
+                          "Password is too short."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found (NotFoundError).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "message",
+                    "code"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Technical name of the error class.",
+                      "example": "ValidationError"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message describing the error.",
+                      "example": "Invalid input data."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "A machine-readable string identifying the specific error type.",
+                      "example": "VALIDATION_ERROR"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Detailed validation errors, organized by field name.",
+                      "example": {
+                        "email": [
+                          "Invalid email address."
+                        ],
+                        "password": [
+                          "Password is too short."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/change-password": {
+      "patch": {
+        "operationId": "changePassword",
+        "summary": "Change password",
+        "description": "Allows the authenticated user to update their own password by providing the current and new passwords.",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ],
+                "properties": {
+                  "currentPassword": {
+                    "type": "string",
+                    "description": "The user's current password."
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "description": "The new password to set."
+                  }
+                }
+              },
+              "examples": {
+                "changePassword": {
+                  "summary": "Change user password",
+                  "value": {
+                    "currentPassword": "OldSecurePass#2026",
+                    "newPassword": "NewSecurePass#2026"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
           "200": {
-            "description": "User successfully restored to active status (OK).",
+            "description": "Password successfully updated (OK).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2822,6 +3008,56 @@
           },
           "404": {
             "description": "The requested resource was not found (NotFoundError).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "message",
+                    "code"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Technical name of the error class.",
+                      "example": "ValidationError"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message describing the error.",
+                      "example": "Invalid input data."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "A machine-readable string identifying the specific error type.",
+                      "example": "VALIDATION_ERROR"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Detailed validation errors, organized by field name.",
+                      "example": {
+                        "email": [
+                          "Invalid email address."
+                        ],
+                        "password": [
+                          "Password is too short."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request payload contains invalid data (ValidationError).",
             "content": {
               "application/json": {
                 "schema": {
@@ -4994,7 +5230,7 @@
       }
     },
     "/patients/{id}/restore": {
-      "post": {
+      "patch": {
         "operationId": "restorePatient",
         "summary": "Restore a patient",
         "description": "Reverses a soft-delete operation, returning the patient to active monitoring status.",
@@ -6951,7 +7187,7 @@
       }
     },
     "/roles/{id}/restore": {
-      "post": {
+      "patch": {
         "operationId": "restoreRole",
         "summary": "Restore a role",
         "description": "Reverses soft-delete for a role.",
@@ -7012,74 +7248,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Role successfully restored to active profiles (OK).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "Unique identifier for the record (UUID)."
-                        },
-                        "createdAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "description": "Timestamp of record creation in ISO 8601 format."
-                        },
-                        "updatedAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "nullable": true,
-                          "description": "Timestamp of the last record update in ISO 8601 format."
-                        },
-                        "deletedAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "nullable": true,
-                          "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
-                        },
-                        "updatedBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "nullable": true,
-                          "description": "ID of the user who last updated this record."
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "code": {
-                          "type": "string",
-                          "description": "Unique identifier code for the role (e.g., admin, nurse).",
-                          "example": "admin"
-                        },
-                        "label": {
-                          "type": "string",
-                          "description": "Human-friendly label for the role (used in UI and seed).",
-                          "example": "Administrator"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+          "204": {
+            "description": "Role successfully restored to active profiles (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -7607,7 +7777,7 @@
                   "summary": "Create new permission with role assignments",
                   "value": {
                     "code": "APPROVE_TREATMENT_PROTOCOL",
-                    "label": "Aprove treatment protocol",
+                    "label": "Approve treatment protocol",
                     "roleIds": [
                       "role-admin-123",
                       "role-medical-coordinator-456"
@@ -8751,7 +8921,7 @@
       }
     },
     "/permissions/{id}/restore": {
-      "post": {
+      "patch": {
         "operationId": "restorePermission",
         "summary": "Restore a permission",
         "description": "Reverses soft-delete for a permission.",
@@ -8812,74 +8982,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Permission successfully restored to active capabilities (OK).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "Unique identifier for the record (UUID)."
-                        },
-                        "createdAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "description": "Timestamp of record creation in ISO 8601 format."
-                        },
-                        "updatedAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "nullable": true,
-                          "description": "Timestamp of the last record update in ISO 8601 format."
-                        },
-                        "deletedAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "nullable": true,
-                          "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
-                        },
-                        "updatedBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "nullable": true,
-                          "description": "ID of the user who last updated this record."
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "code": {
-                          "type": "string",
-                          "description": "Unique identifier code for the permission (e.g., read:patient).",
-                          "example": "read:patient"
-                        },
-                        "label": {
-                          "type": "string",
-                          "description": "Human-friendly label describing the permission (e.g., \"Read patient records\").",
-                          "example": "Leitura de paciente"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+          "204": {
+            "description": "Permission successfully restored to active capabilities (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -10749,7 +10853,7 @@
       }
     },
     "/exams/{id}/restore": {
-      "post": {
+      "patch": {
         "operationId": "restoreExam",
         "summary": "Restore an exam",
         "description": "Reverses soft-delete for an exam.",
@@ -12674,7 +12778,7 @@
       }
     },
     "/treatments/{id}/restore": {
-      "post": {
+      "patch": {
         "operationId": "restoreTreatment",
         "summary": "Restore a treatment",
         "description": "Reverses soft-delete for a treatment.",
@@ -12735,98 +12839,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Treatment successfully restored to active records (OK).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "Unique identifier for the record (UUID)."
-                        },
-                        "createdAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "description": "Timestamp of record creation in ISO 8601 format."
-                        },
-                        "updatedAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "nullable": true,
-                          "description": "Timestamp of the last record update in ISO 8601 format."
-                        },
-                        "deletedAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "nullable": true,
-                          "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
-                        },
-                        "updatedBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "nullable": true,
-                          "description": "ID of the user who last updated this record."
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "patientId": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "Linked patient unique identifier."
-                        },
-                        "medication": {
-                          "type": "string",
-                          "description": "Medication name (e.g., Benzathine Penicillin G).",
-                          "example": "Benzathine Penicillin G"
-                        },
-                        "dosage": {
-                          "type": "string",
-                          "description": "Pharmacological dosage information.",
-                          "example": "2.4 million units"
-                        },
-                        "healthCenter": {
-                          "type": "string",
-                          "description": "Health center unit where treatment was administered."
-                        },
-                        "startDate": {
-                          "type": "string",
-                          "format": "date-time",
-                          "description": "ISO 8601 timestamp for treatment start."
-                        },
-                        "observations": {
-                          "type": "string",
-                          "nullable": true,
-                          "description": "Additional clinical observations."
-                        },
-                        "partnerInformation": {
-                          "type": "string",
-                          "nullable": true,
-                          "description": "Details about partner notification or treatment."
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+          "204": {
+            "description": "Treatment successfully restored to active records (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -14467,7 +14481,7 @@
       }
     },
     "/notifications/{id}/restore": {
-      "post": {
+      "patch": {
         "operationId": "restoreNotification",
         "summary": "Restore a notification",
         "description": "Reverses soft-delete for a notification.",
@@ -16233,7 +16247,7 @@
       }
     },
     "/observations/{id}/restore": {
-      "post": {
+      "patch": {
         "operationId": "restoreObservation",
         "summary": "Restore an observation",
         "description": "Reverses soft-delete for an observation.",
@@ -16294,77 +16308,8 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Observation successfully restored to active records (OK).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "Unique identifier for the record (UUID)."
-                        },
-                        "createdAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "description": "Timestamp of record creation in ISO 8601 format."
-                        },
-                        "updatedAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "nullable": true,
-                          "description": "Timestamp of the last record update in ISO 8601 format."
-                        },
-                        "deletedAt": {
-                          "type": "string",
-                          "format": "date-time",
-                          "nullable": true,
-                          "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "createdBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "ID of the user who created this record."
-                        },
-                        "updatedBy": {
-                          "type": "string",
-                          "format": "uuid",
-                          "nullable": true,
-                          "description": "ID of the user who last updated this record."
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "patientId": {
-                          "type": "string",
-                          "format": "uuid",
-                          "description": "Linked patient unique identifier."
-                        },
-                        "hasPartnerBeingTreated": {
-                          "type": "boolean",
-                          "description": "Indicates if the patient's sexual partner is undergoing treatment."
-                        },
-                        "observations": {
-                          "type": "string",
-                          "description": "Clinical observations or case notes."
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+          "204": {
+            "description": "Observation successfully restored to active records (No Content)."
           },
           "401": {
             "description": "Authentication required or invalid credentials (UnauthorizedError).",
@@ -17417,9 +17362,412 @@
             }
           }
         }
+      },
+      "delete": {
+        "operationId": "revokeAllSessions",
+        "summary": "Revoke all sessions for a user",
+        "description": "Terminates all active sessions belonging to the specified user, forcing a re-authentication on all devices.",
+        "tags": [
+          "Sessions"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "userId"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Unique identifier of the user whose sessions will be revoked."
+                  }
+                }
+              },
+              "examples": {
+                "revokeAllSessions": {
+                  "summary": "Revoke all sessions for a user",
+                  "value": {
+                    "userId": "7e8f9a0b-1234-5678-9abc-def012345678"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "All sessions successfully revoked (OK).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "message",
+                    "code"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Technical name of the error class.",
+                      "example": "ValidationError"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message describing the error.",
+                      "example": "Invalid input data."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "A machine-readable string identifying the specific error type.",
+                      "example": "VALIDATION_ERROR"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Detailed validation errors, organized by field name.",
+                      "example": {
+                        "email": [
+                          "Invalid email address."
+                        ],
+                        "password": [
+                          "Password is too short."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "message",
+                    "code"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Technical name of the error class.",
+                      "example": "ValidationError"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message describing the error.",
+                      "example": "Invalid input data."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "A machine-readable string identifying the specific error type.",
+                      "example": "VALIDATION_ERROR"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Detailed validation errors, organized by field name.",
+                      "example": {
+                        "email": [
+                          "Invalid email address."
+                        ],
+                        "password": [
+                          "Password is too short."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/sessions/{id}": {
+      "get": {
+        "operationId": "getSession",
+        "summary": "Get a session",
+        "description": "Fetches full details of a single session record identified by its UUID.",
+        "tags": [
+          "Sessions"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Unique identifier for the session.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session details successfully retrieved (OK).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Unique identifier for the record (UUID)."
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Timestamp of record creation in ISO 8601 format."
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true,
+                          "description": "Timestamp of the last record update in ISO 8601 format."
+                        },
+                        "deletedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true,
+                          "description": "Timestamp of soft-deletion in ISO 8601 format, if applicable."
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "userId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "Unique identifier for the associated user."
+                        },
+                        "issuedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "ISO 8601 timestamp for session issuance."
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "ISO 8601 timestamp for session expiration."
+                        },
+                        "ipAddress": {
+                          "type": "string",
+                          "format": "ipv4",
+                          "description": "IP address recorded at the start of the session."
+                        },
+                        "userAgent": {
+                          "type": "string",
+                          "description": "User agent recorded at the start of the session."
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required or invalid credentials (UnauthorizedError).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "message",
+                    "code"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Technical name of the error class.",
+                      "example": "ValidationError"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message describing the error.",
+                      "example": "Invalid input data."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "A machine-readable string identifying the specific error type.",
+                      "example": "VALIDATION_ERROR"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Detailed validation errors, organized by field name.",
+                      "example": {
+                        "email": [
+                          "Invalid email address."
+                        ],
+                        "password": [
+                          "Password is too short."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied due to insufficient permissions (ForbiddenError).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "message",
+                    "code"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Technical name of the error class.",
+                      "example": "ValidationError"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message describing the error.",
+                      "example": "Invalid input data."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "A machine-readable string identifying the specific error type.",
+                      "example": "VALIDATION_ERROR"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Detailed validation errors, organized by field name.",
+                      "example": {
+                        "email": [
+                          "Invalid email address."
+                        ],
+                        "password": [
+                          "Password is too short."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested resource was not found (NotFoundError).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "message",
+                    "code"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Technical name of the error class.",
+                      "example": "ValidationError"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message describing the error.",
+                      "example": "Invalid input data."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "A machine-readable string identifying the specific error type.",
+                      "example": "VALIDATION_ERROR"
+                    },
+                    "errors": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Detailed validation errors, organized by field name.",
+                      "example": {
+                        "email": [
+                          "Invalid email address."
+                        ],
+                        "password": [
+                          "Password is too short."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "operationId": "revokeSession",
         "summary": "Revoke a session",
@@ -17649,6 +17997,42 @@
         "responses": {
           "200": {
             "description": "Service operational and database connection verified (OK).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "description": "General Service status.",
+                      "example": "UP"
+                    },
+                    "database": {
+                      "type": "string",
+                      "description": "Database connectivity status.",
+                      "example": "UP"
+                    },
+                    "uptime": {
+                      "type": "number",
+                      "description": "System uptime in seconds."
+                    },
+                    "latency": {
+                      "type": "string",
+                      "description": "Database connection latency.",
+                      "example": "12ms"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "ISO 8601 timestamp of the check."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable — one or more dependencies are unreachable (Service Unavailable).",
             "content": {
               "application/json": {
                 "schema": {

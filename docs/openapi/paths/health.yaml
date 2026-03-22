@@ -13,3 +13,9 @@ check:
           application/json:
             schema:
               $ref: '../components/schemas/health.yaml#/HealthStatus'
+      '503':
+        description: Service unavailable — one or more dependencies are unreachable (Service Unavailable).
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/health.yaml#/HealthStatus'

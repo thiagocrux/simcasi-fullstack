@@ -196,7 +196,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
 restore:
-  post:
+  patch:
     operationId: restoreObservation
     summary: Restore an observation
     description: Reverses soft-delete for an observation.
@@ -225,12 +225,8 @@ restore:
                 ipAddress: 192.168.1.130
                 userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
     responses:
-      '200':
-        description: Observation successfully restored to active records (OK).
-        content:
-          application/json:
-            schema:
-              $ref: '../components/schemas/observation.yaml#/Observation'
+      '204':
+        description: Observation successfully restored to active records (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':

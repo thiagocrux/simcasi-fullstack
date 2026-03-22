@@ -189,7 +189,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
 restore:
-  post:
+  patch:
     operationId: restoreUser
     summary: Restore a user
     description: Reverses a soft-delete operation, restoring the user's active status and system access.
@@ -218,8 +218,49 @@ restore:
                 ipAddress: 192.168.1.105
                 userAgent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
     responses:
+      '204':
+        description: User successfully restored to active status (No Content).
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
+
+changePassword:
+  patch:
+    operationId: changePassword
+    summary: Change password
+    description: Allows the authenticated user to update their own password by providing the current and new passwords.
+    tags:
+      - Users
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - currentPassword
+              - newPassword
+            properties:
+              currentPassword:
+                type: string
+                description: The user's current password.
+              newPassword:
+                type: string
+                description: The new password to set.
+          examples:
+            changePassword:
+              summary: Change user password
+              value:
+                currentPassword: OldSecurePass#2026
+                newPassword: NewSecurePass#2026
+    responses:
       '200':
-        description: User successfully restored to active status (OK).
+        description: Password successfully updated (OK).
         content:
           application/json:
             schema:
@@ -230,3 +271,5 @@ restore:
         $ref: '../components/responses.yaml#/ForbiddenError'
       '404':
         $ref: '../components/responses.yaml#/NotFoundError'
+      '422':
+        $ref: '../components/responses.yaml#/ValidationError'
