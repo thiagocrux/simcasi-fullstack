@@ -34,15 +34,29 @@ jobs:
 
       - name: Generate Prisma Client
         run: pnpm run prisma:generate
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/ci
 
       - name: Test Client
         run: pnpm test -- --selectProjects=client
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/ci
+          JWT_SECRET: ci-dummy-secret-minimum-32-characters!!
 
       - name: Test Server
         run: pnpm test -- --selectProjects=server
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/ci
+          JWT_SECRET: ci-dummy-secret-minimum-32-characters!!
 
       - name: Test API Actions
         run: pnpm test -- --selectProjects=api-actions
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/ci
+          JWT_SECRET: ci-dummy-secret-minimum-32-characters!!
 
       - name: Build
         run: pnpm run build
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/ci
+          JWT_SECRET: ci-dummy-secret-minimum-32-characters!!
