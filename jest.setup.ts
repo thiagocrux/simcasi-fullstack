@@ -162,11 +162,13 @@ jest.mock('@/hooks/useMobile', () => ({
 // ============================================================================
 
 // Mock navigator.clipboard for copy-to-clipboard functionality tests.
-Object.assign(navigator, {
-  clipboard: {
-    writeText: jest.fn(() => Promise.resolve()),
-  },
-});
+if (typeof navigator !== 'undefined') {
+  Object.assign(navigator, {
+    clipboard: {
+      writeText: jest.fn(() => Promise.resolve()),
+    },
+  });
+}
 
 // Mock localStorage and sessionStorage for storage-dependent tests.
 const storageMock = (): Storage => ({
