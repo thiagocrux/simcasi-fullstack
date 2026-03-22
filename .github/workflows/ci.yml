@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Generate Prisma Client
+        run: pnpm run prisma:generate
+
+      - name: Test Client
+        run: pnpm test -- --selectProjects=client
+
+      - name: Test Server
+        run: pnpm test -- --selectProjects=server
+
+      - name: Test API Actions
+        run: pnpm test -- --selectProjects=api-actions
+
+      - name: Build
+        run: pnpm run build
