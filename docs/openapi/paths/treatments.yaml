@@ -200,7 +200,7 @@ item:
         $ref: '../components/responses.yaml#/NotFoundError'
 
 restore:
-  post:
+  patch:
     operationId: restoreTreatment
     summary: Restore a treatment
     description: Reverses soft-delete for a treatment.
@@ -229,12 +229,8 @@ restore:
                 ipAddress: 192.168.1.120
                 userAgent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
     responses:
-      '200':
-        description: Treatment successfully restored to active records (OK).
-        content:
-          application/json:
-            schema:
-              $ref: '../components/schemas/treatment.yaml#/Treatment'
+      '204':
+        description: Treatment successfully restored to active records (No Content).
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':

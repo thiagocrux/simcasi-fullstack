@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Generate Prisma Client
+        run: pnpm run prisma:generate
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/ci
+
+      - name: Test Client
+        run: pnpm test -- --selectProjects=client
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/ci
+          JWT_SECRET: ci-dummy-secret-minimum-32-characters!!
+
+      - name: Test Server
+        run: pnpm test -- --selectProjects=server
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/ci
+          JWT_SECRET: ci-dummy-secret-minimum-32-characters!!
+
+      - name: Test API Actions
+        run: pnpm test -- --selectProjects=api-actions
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/ci
+          JWT_SECRET: ci-dummy-secret-minimum-32-characters!!
+
+      - name: Build
+        run: pnpm run build
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/ci
+          JWT_SECRET: ci-dummy-secret-minimum-32-characters!!

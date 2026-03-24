@@ -54,8 +54,7 @@ refresh:
     description: Performs secure token rotation by validating the current refresh token and issuing a new access/refresh pair, thereby extending the user's session lifecycle.
     tags:
       - Authentication
-    security:
-      - BearerAuth: []
+    security: []
     requestBody:
       required: true
       content:
@@ -88,26 +87,17 @@ logout:
       - Authentication
     security:
       - BearerAuth: []
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - sessionId
-            properties:
-              sessionId:
-                type: string
-                description: Unique identifier of the session to terminate.
-          examples:
-            logoutRequest:
-              summary: Logout request with session identifier
-              value:
-                sessionId: 9c08f5eb-1234-5678-9abc-def012345678
     responses:
-      '204':
-        description: Session successfully terminated and tokens invalidated (No Content).
+      '200':
+        description: Session successfully terminated (OK).
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Logged out successfully
       '401':
         $ref: '../components/responses.yaml#/UnauthorizedError'
 
@@ -160,7 +150,7 @@ resetPassword:
           application/json:
             schema:
               $ref: '../components/schemas/auth.yaml#/UserBase'
-      '400':
+      '422':
         $ref: '../components/responses.yaml#/ValidationError'
       '404':
         $ref: '../components/responses.yaml#/NotFoundError'
@@ -172,6 +162,7 @@ validateResetToken:
     description: Verifies before rendering the UI if the provided token is still authorized for a reset operation.
     tags:
       - Authentication
+    security: []
     parameters:
       - name: token
         in: query

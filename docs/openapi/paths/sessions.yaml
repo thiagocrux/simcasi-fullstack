@@ -36,8 +36,78 @@ collection:
         $ref: '../components/responses.yaml#/UnauthorizedError'
       '403':
         $ref: '../components/responses.yaml#/ForbiddenError'
+  delete:
+    operationId: revokeAllSessions
+    summary: Revoke all sessions for a user
+    description: Terminates all active sessions belonging to the specified user, forcing a re-authentication on all devices.
+    tags:
+      - Sessions
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - userId
+            properties:
+              userId:
+                type: string
+                format: uuid
+                description: Unique identifier of the user whose sessions will be revoked.
+          examples:
+            revokeAllSessions:
+              summary: Revoke all sessions for a user
+              value:
+                userId: 7e8f9a0b-1234-5678-9abc-def012345678
+    responses:
+      '200':
+        description: All sessions successfully revoked (OK).
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                success:
+                  type: boolean
+                  example: true
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
 
 item:
+  get:
+    operationId: getSession
+    summary: Get a session
+    description: Fetches full details of a single session record identified by its UUID.
+    tags:
+      - Sessions
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the session.
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: Session details successfully retrieved (OK).
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/session.yaml#/Session'
+      '401':
+        $ref: '../components/responses.yaml#/UnauthorizedError'
+      '403':
+        $ref: '../components/responses.yaml#/ForbiddenError'
+      '404':
+        $ref: '../components/responses.yaml#/NotFoundError'
   delete:
     operationId: revokeSession
     summary: Revoke a session

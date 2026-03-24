@@ -81,6 +81,8 @@ paths:
     $ref: './paths/users.yaml#/item'
   /users/{id}/restore:
     $ref: './paths/users.yaml#/restore'
+  /users/change-password:
+    $ref: './paths/users.yaml#/changePassword'
   /patients:
     $ref: './paths/patients.yaml#/collection'
   /patients/{id}:
