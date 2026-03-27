@@ -255,9 +255,9 @@ function RenderCustomLegend(props: LegendPropsExtended) {
 }
 
 const RANGE_OPTIONS = [
-  { label: 'Últimos 7 dias', value: 7 },
-  { label: 'Últimos 30 dias', value: 30 },
   { label: 'Últimos 6 meses', value: 180 },
+  { label: 'Últimos 30 dias', value: 30 },
+  { label: 'Últimos 7 dias', value: 7 },
 ];
 
 /**
@@ -272,7 +272,7 @@ export function MedicalRecordsChart() {
     return () => cancelAnimationFrame(frame);
   }, []);
 
-  const [rangeDays, setRangeDays] = useState(7);
+  const [rangeDays, setRangeDays] = useState(180);
 
   const dateRange = useMemo(() => {
     const now = new Date();
@@ -458,22 +458,43 @@ export function MedicalRecordsChart() {
     );
   }
 
+  const rangeButtons = (
+    <div className="flex flex-wrap justify-center gap-2 mb-4 w-full">
+      {RANGE_OPTIONS.map((option) => (
+        <Button
+          key={option.value}
+          variant={option.value === rangeDays ? 'outline' : 'secondary'}
+          className="flex-1 min-w-[120px] max-w-xs wrap-break-word whitespace-normal cursor-pointer"
+          onClick={() => setRangeDays(option.value)}
+          type="button"
+        >
+          <span className="block w-full text-center wrap-break-word whitespace-normal">
+            {option.label}
+          </span>
+        </Button>
+      ))}
+    </div>
+  );
+
   if (chartData.length === 0) {
     return (
-      <div className="flex flex-col justify-center items-center gap-6 mx-auto sm:p-12 px-6 rounded-md max-w-lg text-center">
-        <Image
-          src="/icons/no-results-found.svg"
-          width={150}
-          height={150}
-          alt=""
-        />
-        <div className="flex flex-col gap-2">
-          <p className="font-bold text-xl">Nenhum dado encontrado</p>
-          <p className="text-muted-foreground">
-            Não há registros de exames, notificações, observações ou tratamentos
-            para o período selecionado. Tente ajustar o intervalo de datas ou
-            cadastre novos dados para visualizar o gráfico.
-          </p>
+      <div className="flex flex-col items-center">
+        {rangeButtons}
+        <div className="flex flex-col justify-center items-center gap-6 mx-auto sm:p-12 px-6 rounded-md max-w-lg text-center">
+          <Image
+            src="/icons/no-results-found.svg"
+            width={150}
+            height={150}
+            alt=""
+          />
+          <div className="flex flex-col gap-2">
+            <p className="font-bold text-xl">Nenhum dado encontrado</p>
+            <p className="text-muted-foreground">
+              Não há registros de exames, notificações, observações ou
+              tratamentos para o período selecionado. Tente ajustar o intervalo
+              de datas ou cadastre novos dados para visualizar o gráfico.
+            </p>
+          </div>
         </div>
       </div>
     );

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
   return (
-    <div className="flex flex-col gap-8 w-full max-w-6xl">
+    <div className="flex flex-col gap-8 pt-6 w-full max-w-6xl">
       <PageHeader
         title="Dashboard"
         description="Acompanhe indicadores e informações consolidadas sobre pacientes, exames, tratamentos, observações e notificações no SIMCASI. Gerencie e visualize dados essenciais em um só lugar."
