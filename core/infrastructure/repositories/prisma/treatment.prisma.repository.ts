@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Treatment } from '@/core/domain/entities/treatment.entity';
 import { TreatmentRepository } from '@/core/domain/repositories/treatment.repository';
 import { Prisma } from '@prisma/client';
@@ -77,6 +76,7 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
         where[searchBy as keyof Prisma.TreatmentWhereInput] = {
           contains: search,
           mode: 'insensitive',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
         // Default generic search
@@ -143,6 +143,7 @@ export class PrismaTreatmentRepository implements TreatmentRepository {
     data: Partial<Omit<Treatment, 'id' | 'createdAt'>>,
     updatedBy: string
   ): Promise<Treatment> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { patientId, ...updateData } = data as any;
 
     const treatment = await prisma.treatment.update({

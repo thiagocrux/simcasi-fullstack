@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Permission } from '@/core/domain/entities/permission.entity';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import { Prisma } from '@prisma/client';
@@ -131,6 +130,7 @@ export class PrismaPermissionRepository implements PermissionRepository {
         where[searchBy as keyof Prisma.PermissionWhereInput] = {
           contains: search,
           mode: 'insensitive',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
         where.code = { contains: search, mode: 'insensitive' };
@@ -195,6 +195,7 @@ export class PrismaPermissionRepository implements PermissionRepository {
     },
     updatedBy: string
   ): Promise<Permission> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { roleIds, ...permissionData } = data as any;
     const permission = await prisma.permission.update({
       where: { id },

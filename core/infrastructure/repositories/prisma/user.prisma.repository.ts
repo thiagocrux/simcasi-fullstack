@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { USER_SEARCHABLE_FIELDS } from '@/core/domain/constants/user.constants';
 import { User } from '@/core/domain/entities/user.entity';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
@@ -119,6 +118,7 @@ export class PrismaUserRepository implements UserRepository {
         where[searchBy as keyof Prisma.UserWhereInput] = {
           contains: search,
           mode: 'insensitive',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
         // Default behavior: Generic OR search across common fields.
@@ -169,6 +169,7 @@ export class PrismaUserRepository implements UserRepository {
           createdBy: inputCreatedBy,
           updatedBy: inputUpdatedBy,
           ...updateData
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } = data as any;
         const finalCreatorId = (existing.createdBy as string) || inputCreatedBy;
 
@@ -217,6 +218,7 @@ export class PrismaUserRepository implements UserRepository {
     data: Partial<Omit<User, 'id' | 'createdAt'>>,
     updatedBy: string
   ): Promise<User> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { roleId, ...updateData } = data as any;
 
     const user = await prisma.user.update({

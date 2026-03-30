@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Exam } from '@/core/domain/entities/exam.entity';
 import { ExamRepository } from '@/core/domain/repositories/exam.repository';
 import { Prisma } from '@prisma/client';
@@ -74,6 +73,7 @@ export class PrismaExamRepository implements ExamRepository {
         where[searchBy as keyof Prisma.ExamWhereInput] = {
           contains: search,
           mode: 'insensitive',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
         // Default behavior: Generic OR search across common fields.
@@ -146,6 +146,7 @@ export class PrismaExamRepository implements ExamRepository {
     data: Partial<Omit<Exam, 'id' | 'createdAt'>>,
     updatedBy: string
   ): Promise<Exam> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { patientId, ...updateData } = data as any;
 
     const exam = await prisma.exam.update({

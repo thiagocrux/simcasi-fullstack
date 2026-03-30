@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Patient } from '@/core/domain/entities/patient.entity';
 import { PatientRepository } from '@/core/domain/repositories/patient.repository';
 import { Prisma } from '@prisma/client';
@@ -139,6 +138,7 @@ export class PrismaPatientRepository implements PatientRepository {
         where[searchBy as keyof Prisma.PatientWhereInput] = {
           contains: search,
           mode: isInsensitive ? 'insensitive' : undefined,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
         // Default behavior: Generic OR search across common fields.

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SECURITY_CONSTANTS } from '@/core/domain/constants/security.constants';
 import { TokenProvider } from '@/core/domain/providers/token.provider';
 import { SignJWT, jwtVerify } from 'jose';
@@ -35,7 +34,7 @@ export class JoseTokenProvider implements TokenProvider {
    * @param payload The data object to be included in the JWT claims.
    * @return A promise that resolves to the signed JWT string.
    */
-  async generateAccessToken(payload: Record<string, any>): Promise<string> {
+  async generateAccessToken(payload: Record<string, unknown>): Promise<string> {
     return new SignJWT(payload)
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
@@ -48,7 +47,9 @@ export class JoseTokenProvider implements TokenProvider {
    * @param payload The data object to be included in the refresh token claims.
    * @return A promise that resolves to the signed refresh token string.
    */
-  async generateRefreshToken(payload: Record<string, any>): Promise<string> {
+  async generateRefreshToken(
+    payload: Record<string, unknown>
+  ): Promise<string> {
     return new SignJWT(payload)
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()

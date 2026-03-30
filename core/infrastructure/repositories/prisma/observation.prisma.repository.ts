@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Observation } from '@/core/domain/entities/observation.entity';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
 import { Prisma } from '@prisma/client';
@@ -77,6 +76,7 @@ export class PrismaObservationRepository implements ObservationRepository {
         where[searchBy as keyof Prisma.ObservationWhereInput] = {
           contains: search,
           mode: 'insensitive',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
         // Default behavior: Generic OR search across common fields.
@@ -138,6 +138,7 @@ export class PrismaObservationRepository implements ObservationRepository {
     data: Partial<Omit<Observation, 'id' | 'createdAt'>>,
     updatedBy: string
   ): Promise<Observation> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { patientId, ...updateData } = data as any;
 
     const observation = await prisma.observation.update({

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AuditLog } from '@/core/domain/entities/audit-log.entity';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { Prisma } from '@prisma/client';
@@ -96,6 +95,7 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
           where[searchBy as keyof Prisma.AuditLogWhereInput] = {
             contains: search,
             ...(isInsensitive ? { mode: 'insensitive' } : {}),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any;
         }
       } else {
@@ -136,7 +136,9 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     const log = await prisma.auditLog.create({
       data: {
         ...data,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         oldValues: data.oldValues as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         newValues: data.newValues as any,
       },
     });

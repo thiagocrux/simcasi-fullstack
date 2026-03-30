@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Notification } from '@/core/domain/entities/notification.entity';
 import { NotificationRepository } from '@/core/domain/repositories/notification.repository';
 import { Prisma } from '@prisma/client';
@@ -77,6 +76,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
         where[searchBy as keyof Prisma.NotificationWhereInput] = {
           contains: search,
           mode: 'insensitive',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
         // Default behavior: Generic OR search across common fields.
@@ -141,6 +141,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
     data: Partial<Omit<Notification, 'id' | 'createdAt'>>,
     updatedBy: string
   ): Promise<Notification> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { patientId, ...updateData } = data as any;
 
     const notification = await prisma.notification.update({

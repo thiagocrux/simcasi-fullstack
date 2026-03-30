@@ -23,7 +23,7 @@ export class PrismaPasswordResetTokenRepository implements PasswordResetTokenRep
       },
     });
 
-    return tokenRecord as unknown as PasswordResetToken;
+    return tokenRecord as PasswordResetToken;
   }
 
   /**
@@ -44,7 +44,7 @@ export class PrismaPasswordResetTokenRepository implements PasswordResetTokenRep
       },
     });
 
-    return (tokenRecord as unknown as PasswordResetToken) || null;
+    return (tokenRecord as PasswordResetToken) || null;
   }
 
   /**
@@ -58,7 +58,7 @@ export class PrismaPasswordResetTokenRepository implements PasswordResetTokenRep
       data: { usedAt: new Date() },
     });
 
-    return tokenRecord as unknown as PasswordResetToken;
+    return tokenRecord as PasswordResetToken;
   }
 
   /**
