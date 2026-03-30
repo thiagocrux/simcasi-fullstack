@@ -43,12 +43,24 @@ describe('PrismaAuditLogRepository', () => {
     const result = await repository.findAll();
 
     expect(prisma.auditLog.findMany).toHaveBeenCalledWith({
-      where: {},
+      where: {
+        action: undefined,
+        entityId: undefined,
+        entityName: undefined,
+        userId: undefined,
+      },
       skip: 0,
       take: 20,
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ createdAt: 'desc' }],
     });
-    expect(prisma.auditLog.count).toHaveBeenCalledWith({ where: {} });
+    expect(prisma.auditLog.count).toHaveBeenCalledWith({
+      where: {
+        action: undefined,
+        entityId: undefined,
+        entityName: undefined,
+        userId: undefined,
+      },
+    });
     expect(result).toEqual({ items: [auditLogMock], total: 1 });
   });
 
