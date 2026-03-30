@@ -63,6 +63,6 @@ if (missingVars.length > 0) {
   });
 
   throw new ConfigurationError(
-    `Variáveis de ambiente obrigatórias não definidas: ${missingList}`
+    `Required environment variables are not defined: ${missingList}`
   );
 }

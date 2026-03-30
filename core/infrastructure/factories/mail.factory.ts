@@ -19,7 +19,7 @@ export function makeMailProvider(): MailProvider {
   const apiKey = env.RESEND_API_KEY;
   const from = env.MAIL_FROM || 'no-reply@onboarding.resend.dev';
 
-  if (apiKey && apiKey !== '' && !apiKey.includes('your_')) {
+  if (apiKey && apiKey.startsWith('re_')) {
     mailProvider = new ResendMailProvider(apiKey, from);
   } else {
     mailProvider = new NullMailProvider();

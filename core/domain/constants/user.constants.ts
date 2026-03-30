@@ -19,8 +19,3 @@ export const USER_SORTABLE_FIELDS = [
  * Only non-sensitive descriptors like name and email are searchable.
  */
 export const USER_SEARCHABLE_FIELDS = ['name', 'email'] as const;
-
-/**
- * General constants for user-related logic and business rules.
- */
-export const USER_CONSTANTS = {} as const;
