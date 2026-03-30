@@ -180,7 +180,7 @@ export function ThemeSwitcher({
       icon: <Moon />,
     },
     system: {
-      label: 'Tema do sistema',
+      label: 'Padrão do sistema',
       icon: <Monitor />,
     },
   };
