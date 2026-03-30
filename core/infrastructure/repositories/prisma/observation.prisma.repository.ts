@@ -2,8 +2,11 @@
 import { Observation } from '@/core/domain/entities/observation.entity';
 import { ObservationRepository } from '@/core/domain/repositories/observation.repository';
 import { Prisma } from '@prisma/client';
-import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
+import {
+  buildDateRangeFilter,
+  buildOrderByClause,
+} from '../../lib/query.utils';
 
 export class PrismaObservationRepository implements ObservationRepository {
   /**
@@ -63,14 +66,9 @@ export class PrismaObservationRepository implements ObservationRepository {
     };
 
     // Add date range filter only if dates are provided
-    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
-    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
-
-    if (start || end) {
-      where.createdAt = {
-        gte: start,
-        lte: end,
-      };
+    const dateFilter = buildDateRangeFilter(startDate, endDate, timezoneOffset);
+    if (dateFilter) {
+      where.createdAt = dateFilter;
     }
 
     if (search) {
@@ -86,26 +84,7 @@ export class PrismaObservationRepository implements ObservationRepository {
       }
     }
 
-    // Build orderBy clause with support for relationship sorting (createdBy, updatedBy).
-    const orderByClause = (() => {
-      if (!orderBy) return [{ createdAt: 'desc' as const }];
-
-      if (orderBy === 'createdBy') {
-        return [
-          { creator: { name: orderDir } },
-          { createdAt: 'desc' as const },
-        ];
-      }
-
-      if (orderBy === 'updatedBy') {
-        return [
-          { updater: { name: orderDir } },
-          { createdAt: 'desc' as const },
-        ];
-      }
-
-      return [{ [orderBy]: orderDir }, { createdAt: 'desc' as const }];
-    })();
+    const orderByClause = buildOrderByClause(orderBy, orderDir);
 
     const [items, total] = await Promise.all([
       prisma.observation.findMany({

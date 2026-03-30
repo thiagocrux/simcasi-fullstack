@@ -2,8 +2,11 @@
 import { AuditLog } from '@/core/domain/entities/audit-log.entity';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { Prisma } from '@prisma/client';
-import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
+import {
+  buildDateRangeFilter,
+  buildOrderByClause,
+} from '../../lib/query.utils';
 
 export class PrismaAuditLogRepository implements AuditLogRepository {
   /**
@@ -62,14 +65,9 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     };
 
     // Add date range filter only if dates are provided.
-    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
-    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
-
-    if (start || end) {
-      where.createdAt = {
-        gte: start,
-        lte: end,
-      };
+    const dateFilter = buildDateRangeFilter(startDate, endDate, timezoneOffset);
+    if (dateFilter) {
+      where.createdAt = dateFilter;
     }
 
     if (search) {
@@ -117,11 +115,7 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
         where,
         skip,
         take,
-        // Uses 'createdAt' as the default ordering field because audit logs are immutable.
-        // Ordering by 'updatedAt' or similar fields is not applicable for immutable records.
-        orderBy: orderBy
-          ? [{ [orderBy]: orderDir }, { createdAt: 'desc' }]
-          : { createdAt: 'desc' },
+        orderBy: buildOrderByClause(orderBy, orderDir),
       }),
       prisma.auditLog.count({ where }),
     ]);
