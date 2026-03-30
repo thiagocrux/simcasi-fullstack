@@ -117,6 +117,11 @@ describe('User Actions', () => {
       const validInput = {
         name: 'Jane Smith',
         email: 'jane@example.com',
+        phone: '(11) 91234-5678',
+        enrollmentNumber: 'MAT-000001',
+        professionalRegistration: 'CRM-000001',
+        cpf: '529.982.247-25',
+        workplace: 'Hospital Test',
         password: 'SecurePass123!',
         roleId: VALID_UUID,
       };
@@ -138,6 +143,11 @@ describe('User Actions', () => {
       const invalidInput = {
         name: 'Invalid User',
         email: 'not-an-email',
+        phone: '(00) 0000-0000',
+        enrollmentNumber: 'MAT-000000',
+        professionalRegistration: 'CRM-000000',
+        cpf: '000.000.000-00',
+        workplace: 'Test',
         password: 'short',
         roleId: VALID_UUID,
       };

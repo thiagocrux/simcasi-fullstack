@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { cookies, headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 import { AppError } from '@/core/domain/errors/app.error';
 import { InvalidTokenError } from '@/core/domain/errors/session.error';
@@ -299,9 +300,12 @@ export async function withSecuredActionAndAutomaticRetry<T>(
               cookieDeleteError.message
             );
           }
+
+          redirect('/login');
         }
       } else {
         logger.warn('[RETRY] No refresh token found in cookies.');
+        redirect('/login');
       }
     }
 

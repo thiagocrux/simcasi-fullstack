@@ -23,6 +23,7 @@ import { toast } from 'sonner';
 import { Combobox } from '../../common/Combobox';
 import { FieldError } from '../../common/FieldError';
 import { FieldGroupHeading } from '../../common/FieldGroupHeading';
+import { MaskedInput } from '../../common/MaskedInput';
 import { PasswordInput } from '../../common/PasswordInput';
 import { Button } from '../../ui/button';
 import { Card } from '../../ui/card';
@@ -61,6 +62,11 @@ export function UserForm({
     defaultValues: {
       name: '',
       email: '',
+      phone: '',
+      enrollmentNumber: '',
+      professionalRegistration: '',
+      cpf: '',
+      workplace: '',
       password: '',
       passwordConfirmation: '',
       roleId: '',
@@ -130,16 +136,52 @@ export function UserForm({
       return;
     }
 
-    const { name, email, roleId } = input;
-    mutate(isEditMode ? { name, email, roleId } : input);
+    const {
+      name,
+      email,
+      phone,
+      enrollmentNumber,
+      professionalRegistration,
+      cpf,
+      workplace,
+      roleId,
+    } = input;
+    mutate(
+      isEditMode
+        ? {
+            name,
+            email,
+            phone,
+            enrollmentNumber,
+            professionalRegistration,
+            cpf,
+            workplace,
+            roleId,
+          }
+        : input
+    );
   }
 
   useEffect(() => {
     if (user && user.success) {
-      const { name, email, roleId } = user.data;
+      const {
+        name,
+        email,
+        phone,
+        enrollmentNumber,
+        professionalRegistration,
+        cpf,
+        workplace,
+        roleId,
+      } = user.data;
       reset({
         name,
         email,
+        phone,
+        enrollmentNumber,
+        professionalRegistration,
+        cpf,
+        workplace,
         roleId,
       });
     }
@@ -155,10 +197,10 @@ export function UserForm({
     <Card className="flex flex-col px-4 sm:px-8 py-8 sm:py-12">
       <form onSubmit={handleSubmit(onSubmit)} className={className}>
         <FieldGroup className="gap-8 grid grid-cols-1">
-          <FieldGroupHeading text="Dados do usuário" />
+          <FieldGroupHeading text="Identificação pessoal" />
 
           <div className="gap-4 grid grid-cols-1 lg:grid-cols-2">
-            <Field className="col-span-full">
+            <Field>
               <FieldLabel htmlFor="name">Nome</FieldLabel>
               <Input
                 {...register('name')}
@@ -173,6 +215,33 @@ export function UserForm({
             </Field>
 
             <Field>
+              <Controller
+                name="cpf"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <FieldLabel htmlFor="cpf">CPF</FieldLabel>
+                    <MaskedInput
+                      {...field}
+                      onValueChange={field.onChange}
+                      variant="cpf"
+                      placeholder="000.000.000-00"
+                      hasError={!!formErrors.cpf}
+                      disabled={isFormBusy}
+                    />
+                    {formErrors.cpf && (
+                      <FieldError message={formErrors.cpf.message} />
+                    )}
+                  </>
+                )}
+              />
+            </Field>
+          </div>
+
+          <FieldGroupHeading text="Contato" />
+
+          <div className="gap-4 grid grid-cols-1 lg:grid-cols-2">
+            <Field>
               <FieldLabel htmlFor="email">E-mail</FieldLabel>
               <Input
                 {...register('email')}
@@ -186,6 +255,33 @@ export function UserForm({
               )}
             </Field>
 
+            <Field>
+              <Controller
+                name="phone"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <FieldLabel htmlFor="phone">Telefone</FieldLabel>
+                    <MaskedInput
+                      {...field}
+                      onValueChange={field.onChange}
+                      variant="phone"
+                      placeholder="(99) 99999-9999"
+                      hasError={!!formErrors.phone}
+                      disabled={isFormBusy}
+                    />
+                    {formErrors.phone && (
+                      <FieldError message={formErrors.phone.message} />
+                    )}
+                  </>
+                )}
+              />
+            </Field>
+          </div>
+
+          <FieldGroupHeading text="Vínculo profissional" />
+
+          <div className="gap-4 grid grid-cols-1 lg:grid-cols-2">
             <Field>
               <Controller
                 name="roleId"
@@ -214,8 +310,58 @@ export function UserForm({
               />
             </Field>
 
-            {!isEditMode ? (
-              <>
+            <Field>
+              <FieldLabel htmlFor="enrollmentNumber">Matrícula</FieldLabel>
+              <Input
+                {...register('enrollmentNumber')}
+                name="enrollmentNumber"
+                placeholder="MAT-000001"
+                aria-invalid={!!formErrors.enrollmentNumber}
+                disabled={isFormBusy}
+              />
+              {formErrors.enrollmentNumber && (
+                <FieldError message={formErrors.enrollmentNumber.message} />
+              )}
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="professionalRegistration">
+                Registro profissional
+              </FieldLabel>
+              <Input
+                {...register('professionalRegistration')}
+                name="professionalRegistration"
+                placeholder="CRM-000001"
+                aria-invalid={!!formErrors.professionalRegistration}
+                disabled={isFormBusy}
+              />
+              {formErrors.professionalRegistration && (
+                <FieldError
+                  message={formErrors.professionalRegistration.message}
+                />
+              )}
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="workplace">Local de trabalho</FieldLabel>
+              <Input
+                {...register('workplace')}
+                name="workplace"
+                placeholder="Hospital Central"
+                aria-invalid={!!formErrors.workplace}
+                disabled={isFormBusy}
+              />
+              {formErrors.workplace && (
+                <FieldError message={formErrors.workplace.message} />
+              )}
+            </Field>
+          </div>
+
+          {!isEditMode && (
+            <>
+              <FieldGroupHeading text="Segurança" />
+
+              <div className="gap-4 grid grid-cols-1 lg:grid-cols-2">
                 <Field>
                   <FieldLabel htmlFor="password">Senha</FieldLabel>
                   <PasswordInput
@@ -246,9 +392,9 @@ export function UserForm({
                     />
                   )}
                 </Field>
-              </>
-            ) : null}
-          </div>
+              </div>
+            </>
+          )}
         </FieldGroup>
 
         <Separator className="col-span-full my-8" />

@@ -24,6 +24,39 @@ export interface UserRepository {
   findByEmail(email: string, includeDeleted?: boolean): Promise<User | null>;
 
   /**
+   * Finds a user by CPF.
+   *
+   * @param cpf The user CPF.
+   * @param includeDeleted Whether to include soft-deleted records.
+   * @return The found user or null.
+   */
+  findByCpf(cpf: string, includeDeleted?: boolean): Promise<User | null>;
+
+  /**
+   * Finds a user by enrollment number.
+   *
+   * @param enrollmentNumber The user enrollment number.
+   * @param includeDeleted Whether to include soft-deleted records.
+   * @return The found user or null.
+   */
+  findByEnrollmentNumber(
+    enrollmentNumber: string,
+    includeDeleted?: boolean
+  ): Promise<User | null>;
+
+  /**
+   * Finds a user by professional registration.
+   *
+   * @param professionalRegistration The user professional registration.
+   * @param includeDeleted Whether to include soft-deleted records.
+   * @return The found user or null.
+   */
+  findByProfessionalRegistration(
+    professionalRegistration: string,
+    includeDeleted?: boolean
+  ): Promise<User | null>;
+
+  /**
    * Lists users with pagination and filtering support.
    *
    * @param params Pagination and filtering parameters.

@@ -24,7 +24,13 @@ import {
 } from '@/core/domain/errors/app.error';
 import { RegisterUserUseCase } from './register-user.use-case';
 
-const mockUserRepository = { findByEmail: jest.fn(), create: jest.fn() };
+const mockUserRepository = {
+  findByEmail: jest.fn(),
+  findByCpf: jest.fn(),
+  findByEnrollmentNumber: jest.fn(),
+  findByProfessionalRegistration: jest.fn(),
+  create: jest.fn(),
+};
 const mockRoleRepository = { findById: jest.fn() };
 const mockHashProvider = { hash: jest.fn() };
 const mockAuditLogRepository = { create: jest.fn() };
@@ -35,6 +41,11 @@ describe('RegisterUserUseCase', () => {
   const validInput = {
     name: 'User',
     email: 'a@b.com',
+    phone: '(11) 91234-5678',
+    enrollmentNumber: 'MAT-000001',
+    professionalRegistration: 'CRM-000001',
+    cpf: '529.982.247-25',
+    workplace: 'Hospital Test',
     password: 'pass',
     roleId: 'r1',
   };
@@ -59,6 +70,11 @@ describe('RegisterUserUseCase', () => {
     });
     mockRoleRepository.findById.mockResolvedValueOnce({ id: 'r1' });
     mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockUserRepository.findByCpf.mockResolvedValueOnce(null);
+    mockUserRepository.findByEnrollmentNumber.mockResolvedValueOnce(null);
+    mockUserRepository.findByProfessionalRegistration.mockResolvedValueOnce(
+      null
+    );
     mockHashProvider.hash.mockResolvedValueOnce('hashed-pw');
     const created = { id: 'u1', ...validInput, password: 'hashed-pw' };
     mockUserRepository.create.mockResolvedValueOnce(created);
@@ -95,6 +111,58 @@ describe('RegisterUserUseCase', () => {
     });
     mockRoleRepository.findById.mockResolvedValueOnce({ id: 'r1' });
     mockUserRepository.findByEmail.mockResolvedValueOnce({ id: 'existing' });
+
+    await expect(useCase.execute(validInput)).rejects.toThrow(ConflictError);
+  });
+
+  it('should throw ConflictError when CPF exists', async () => {
+    const {
+      userSchema,
+    } = require('@/core/application/validation/schemas/user.schema');
+    userSchema.safeParse.mockReturnValueOnce({
+      success: true,
+      data: validInput,
+    });
+    mockRoleRepository.findById.mockResolvedValueOnce({ id: 'r1' });
+    mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockUserRepository.findByCpf.mockResolvedValueOnce({ id: 'existing' });
+
+    await expect(useCase.execute(validInput)).rejects.toThrow(ConflictError);
+  });
+
+  it('should throw ConflictError when enrollment number exists', async () => {
+    const {
+      userSchema,
+    } = require('@/core/application/validation/schemas/user.schema');
+    userSchema.safeParse.mockReturnValueOnce({
+      success: true,
+      data: validInput,
+    });
+    mockRoleRepository.findById.mockResolvedValueOnce({ id: 'r1' });
+    mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockUserRepository.findByCpf.mockResolvedValueOnce(null);
+    mockUserRepository.findByEnrollmentNumber.mockResolvedValueOnce({
+      id: 'existing',
+    });
+
+    await expect(useCase.execute(validInput)).rejects.toThrow(ConflictError);
+  });
+
+  it('should throw ConflictError when professional registration exists', async () => {
+    const {
+      userSchema,
+    } = require('@/core/application/validation/schemas/user.schema');
+    userSchema.safeParse.mockReturnValueOnce({
+      success: true,
+      data: validInput,
+    });
+    mockRoleRepository.findById.mockResolvedValueOnce({ id: 'r1' });
+    mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+    mockUserRepository.findByCpf.mockResolvedValueOnce(null);
+    mockUserRepository.findByEnrollmentNumber.mockResolvedValueOnce(null);
+    mockUserRepository.findByProfessionalRegistration.mockResolvedValueOnce({
+      id: 'existing',
+    });
 
     await expect(useCase.execute(validInput)).rejects.toThrow(ConflictError);
   });

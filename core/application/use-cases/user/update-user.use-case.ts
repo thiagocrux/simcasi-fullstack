@@ -123,6 +123,46 @@ export class UpdateUserUseCase implements UseCase<
       }
     }
 
+    // 5a. Check for CPF duplicates if being changed.
+    if (data.cpf && data.cpf !== existingUser.cpf) {
+      const duplicateCpf = await this.userRepository.findByCpf(data.cpf);
+      if (duplicateCpf) {
+        throw new ConflictError(
+          `O CPF ${data.cpf} já se encontra em uso por outro usuário do sistema.`
+        );
+      }
+    }
+
+    // 5b. Check for enrollment number duplicates if being changed.
+    if (
+      data.enrollmentNumber &&
+      data.enrollmentNumber !== existingUser.enrollmentNumber
+    ) {
+      const duplicateEnrollment =
+        await this.userRepository.findByEnrollmentNumber(data.enrollmentNumber);
+      if (duplicateEnrollment) {
+        throw new ConflictError(
+          `A matrícula ${data.enrollmentNumber} já se encontra em uso por outro usuário do sistema.`
+        );
+      }
+    }
+
+    // 5c. Check for professional registration duplicates if being changed.
+    if (
+      data.professionalRegistration &&
+      data.professionalRegistration !== existingUser.professionalRegistration
+    ) {
+      const duplicateRegistration =
+        await this.userRepository.findByProfessionalRegistration(
+          data.professionalRegistration
+        );
+      if (duplicateRegistration) {
+        throw new ConflictError(
+          `O registro profissional ${data.professionalRegistration} já se encontra em uso por outro usuário do sistema.`
+        );
+      }
+    }
+
     // 6. Handle password hashing.
     const updateData = { ...data };
     if (data.password) {
