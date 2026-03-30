@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { USER_SEARCHABLE_FIELDS } from '@/core/domain/constants/user.constants';
 import { User } from '@/core/domain/entities/user.entity';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import { Prisma } from '@prisma/client';
@@ -112,8 +113,11 @@ export class PrismaUserRepository implements UserRepository {
     }
 
     if (search) {
-      if (searchBy) {
-        // If a specific column is selected, we only filter by it.
+      if (
+        searchBy &&
+        (USER_SEARCHABLE_FIELDS as readonly string[]).includes(searchBy)
+      ) {
+        // Field-specific search, validated against the allowed searchable fields.
         where[searchBy as keyof Prisma.UserWhereInput] = {
           contains: search,
           mode: 'insensitive',

@@ -10,7 +10,7 @@ import { env } from './env.config';
 const pool = new Pool({ connectionString: env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const globalForPrisma = global as typeof global & { prisma?: PrismaClient };
 
 export const prisma =
   globalForPrisma.prisma ||
