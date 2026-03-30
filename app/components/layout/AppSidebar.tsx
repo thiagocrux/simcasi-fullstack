@@ -35,6 +35,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '../ui/sidebar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 /**
  * Main sidebar component for the application.
@@ -150,6 +151,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a
+                href="/dashboard"
                 onClick={() => router.push('/dashboard')}
                 className="select-none"
               >
@@ -158,9 +160,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="flex-1 grid text-sm text-left leading-tight">
                   <span className="font-medium truncate">SIMCASI</span>
-                  <span className="text-xs truncate">
-                    Sistema de Monitoramento de Casos de Sífilis
-                  </span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="text-xs truncate">
+                        Sistema de Monitoramento de Casos de Sífilis
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>Sistema de Monitoramento de Casos de Sífilis</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </a>
             </SidebarMenuButton>
