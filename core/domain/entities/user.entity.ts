@@ -9,6 +9,16 @@ export interface User {
   name: string;
   /** Primary electronic mail address used for login and notifications. */
   email: string;
+  /** Contact phone number. */
+  phone: string;
+  /** Unique enrollment number (matrícula). */
+  enrollmentNumber: string;
+  /** Unique professional registration (registro profissional). */
+  professionalRegistration: string;
+  /** Individual taxpayer registry number (CPF). */
+  cpf: string;
+  /** Healthcare facility or workplace name. */
+  workplace: string;
   /** Hashed password string. Omitted in most responses for security. */
   password?: string;
   /** Reference to the assigned security role. */

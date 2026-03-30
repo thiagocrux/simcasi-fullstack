@@ -8,6 +8,16 @@ export interface UpdateUserInput {
   name?: string;
   /** Email address for the user. */
   email?: string;
+  /** Contact phone number. */
+  phone?: string;
+  /** Unique enrollment number (matrícula). */
+  enrollmentNumber?: string;
+  /** Unique professional registration. */
+  professionalRegistration?: string;
+  /** Individual taxpayer registry number (CPF). */
+  cpf?: string;
+  /** Healthcare facility or workplace name. */
+  workplace?: string;
   /** Optional new password to set. */
   password?: string;
   /** ID of the role assigned to the user. */

@@ -67,19 +67,24 @@ model RolePermission {
 
 /// @description User domain record representing application users and credentials.
 /// @note Soft-deleted accounts must be restored on re-registration.
-/// @invariant `email` is unique across active and deleted records.
+/// @invariant `email`, `cpf`, `enrollment_number`, and `professional_registration` are unique across active and deleted records.
 model User {
-  id        String    @id @default(uuid()) @db.Uuid
-  name      String
-  email     String    @unique
-  password  String
-  roleId    String    @map("role_id") @db.Uuid
-  isSystem  Boolean   @default(false) @map("is_system")
-  createdBy String?   @map("created_by") @db.Uuid
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedBy String?   @map("updated_by") @db.Uuid
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+  id                       String    @id @default(uuid()) @db.Uuid
+  name                     String
+  email                    String    @unique
+  phone                    String
+  enrollmentNumber         String    @unique @map("enrollment_number")
+  professionalRegistration String    @unique @map("professional_registration")
+  cpf                      String    @unique
+  workplace                String
+  password                 String
+  roleId                   String    @map("role_id") @db.Uuid
+  isSystem                 Boolean   @default(false) @map("is_system")
+  createdBy                String?   @map("created_by") @db.Uuid
+  createdAt                DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedBy                String?   @map("updated_by") @db.Uuid
+  updatedAt                DateTime? @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt                DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   role    Role  @relation("UserRole", fields: [roleId], references: [id], onDelete: Restrict)
   creator User? @relation("UsersCreated", fields: [createdBy], references: [id], onDelete: Restrict)

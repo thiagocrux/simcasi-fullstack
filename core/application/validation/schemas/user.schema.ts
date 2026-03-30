@@ -20,6 +20,19 @@ export const userSchema = z.object({
   email: z
     .email(messages.INVALID_FIELD('E-mail'))
     .nonempty(messages.REQUIRED_FIELD('E-mail')),
+  phone: z
+    .string()
+    .nonempty(messages.REQUIRED_FIELD('Telefone'))
+    .regex(regex.PHONE, messages.INVALID_FIELD('Telefone')),
+  enrollmentNumber: z.string().nonempty(messages.REQUIRED_FIELD('Matrícula')),
+  professionalRegistration: z
+    .string()
+    .nonempty(messages.REQUIRED_FIELD('Registro profissional')),
+  cpf: z
+    .string()
+    .nonempty(messages.REQUIRED_FIELD('CPF'))
+    .regex(regex.CPF, messages.INVALID_FIELD('CPF')),
+  workplace: z.string().nonempty(messages.REQUIRED_FIELD('Local de trabalho')),
   password: z
     .string()
     .nonempty(messages.REQUIRED_FIELD('Senha'))
@@ -126,6 +139,11 @@ export type UpdateUserInput = Partial<z.infer<typeof userSchema>>;
 export type UserFormInput = {
   name: string;
   email: string;
+  phone: string;
+  enrollmentNumber: string;
+  professionalRegistration: string;
+  cpf: string;
+  workplace: string;
   roleId: string;
   password?: string;
   passwordConfirmation?: string;

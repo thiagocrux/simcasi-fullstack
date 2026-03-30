@@ -13,7 +13,7 @@ import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
 import { isImmutableEmail } from '@/core/domain/utils/user.utils';
 import { publicEnv } from '@/core/infrastructure/lib/env.public';
 import { ActionResponse } from '@/lib/actions.utils';
-import { formatDate } from '@/lib/formatters.utils';
+import { applyMask, formatDate } from '@/lib/formatters.utils';
 import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
@@ -39,11 +39,41 @@ export default async function UserDetailsPage({
 
   const data = [
     {
-      title: 'Identificação e acesso',
+      title: 'Identificação pessoal',
       fields: [
-        { label: 'ID do cargo', value: user?.roleId || '-' },
         { label: 'Nome', value: user?.name || '-' },
+        {
+          label: 'CPF',
+          value: user?.cpf ? applyMask(user.cpf, 'cpf') : '-',
+        },
+      ],
+    },
+    {
+      title: 'Contato',
+      fields: [
         { label: 'E-mail', value: user?.email || '-' },
+        {
+          label: 'Telefone',
+          value: user?.phone ? applyMask(user.phone, 'phone') : '-',
+        },
+      ],
+    },
+    {
+      title: 'Vínculo profissional',
+      fields: [
+        { label: 'Cargo', value: user?.roleId || '-' },
+        {
+          label: 'Matrícula',
+          value: user?.enrollmentNumber || '-',
+        },
+        {
+          label: 'Registro profissional',
+          value: user?.professionalRegistration || '-',
+        },
+        {
+          label: 'Local de trabalho',
+          value: user?.workplace || '-',
+        },
       ],
     },
     {

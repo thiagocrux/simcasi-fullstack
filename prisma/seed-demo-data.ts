@@ -244,12 +244,35 @@ const CLINICAL_NOTES = [
 // All test data is generated with these seeds as a base.
 
 const TEST_USERS = [
-  { name: 'Varys', email: 'varys@mock.com', roleCode: 'admin' },
-  { name: 'Petyr Baelish', email: 'petyr.baelish@mock.com', roleCode: 'user' },
+  {
+    name: 'Varys',
+    email: 'varys@mock.com',
+    roleCode: 'admin',
+    phone: '(11) 91234-5601',
+    enrollmentNumber: 'MAT-100001',
+    professionalRegistration: 'CRM-100001',
+    cpf: '529.982.247-25',
+    workplace: 'Hospital Real de Porto Real',
+  },
+  {
+    name: 'Petyr Baelish',
+    email: 'petyr.baelish@mock.com',
+    roleCode: 'user',
+    phone: '(21) 91234-5602',
+    enrollmentNumber: 'MAT-100002',
+    professionalRegistration: 'CRM-100002',
+    cpf: '418.273.956-30',
+    workplace: 'Clínica do Dedo Mindinho',
+  },
   {
     name: 'Illyrio Mopatis',
     email: 'illyrio.mopatis@mock.com',
     roleCode: 'viewer',
+    phone: '(31) 91234-5603',
+    enrollmentNumber: 'MAT-100003',
+    professionalRegistration: 'CRM-100003',
+    cpf: '305.614.738-42',
+    workplace: 'Hospital de Pentos',
   },
 ] as const;
 
@@ -509,6 +532,11 @@ async function seedTestUsers(): Promise<string[]> {
       data: {
         name: userData.name,
         email: userData.email,
+        phone: userData.phone,
+        enrollmentNumber: userData.enrollmentNumber,
+        professionalRegistration: userData.professionalRegistration,
+        cpf: userData.cpf,
+        workplace: userData.workplace,
         password: passwordHash,
         roleId: role.id,
         isSystem: false,
