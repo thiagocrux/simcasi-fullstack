@@ -71,6 +71,35 @@ export class RegisterUserUseCase implements UseCase<
       );
     }
 
+    // 3a. Check if the CPF is already in use.
+    const existingCpf = await this.userRepository.findByCpf(input.cpf);
+    if (existingCpf) {
+      throw new ConflictError(
+        `O CPF ${input.cpf} já se encontra em uso por outro usuário do sistema.`
+      );
+    }
+
+    // 3b. Check if the enrollment number is already in use.
+    const existingEnrollment = await this.userRepository.findByEnrollmentNumber(
+      input.enrollmentNumber
+    );
+    if (existingEnrollment) {
+      throw new ConflictError(
+        `A matrícula ${input.enrollmentNumber} já se encontra em uso por outro usuário do sistema.`
+      );
+    }
+
+    // 3c. Check if the professional registration is already in use.
+    const existingRegistration =
+      await this.userRepository.findByProfessionalRegistration(
+        input.professionalRegistration
+      );
+    if (existingRegistration) {
+      throw new ConflictError(
+        `O registro profissional ${input.professionalRegistration} já se encontra em uso por outro usuário do sistema.`
+      );
+    }
+
     // 4. Hash the password.
     const hashedPassword = await this.hashProvider.hash(input.password);
 

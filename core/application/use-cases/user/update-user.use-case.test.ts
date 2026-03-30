@@ -38,6 +38,9 @@ import { UpdateUserUseCase } from './update-user.use-case';
 const mockUserRepository = {
   findById: jest.fn(),
   findByEmail: jest.fn(),
+  findByCpf: jest.fn(),
+  findByEnrollmentNumber: jest.fn(),
+  findByProfessionalRegistration: jest.fn(),
   update: jest.fn(),
 };
 const mockRoleRepository = { findById: jest.fn() };
@@ -144,6 +147,79 @@ describe('UpdateUserUseCase', () => {
 
     await expect(
       useCase.execute({ id: 'u1', email: 'taken@test.com' } as any)
+    ).rejects.toThrow(ConflictError);
+  });
+
+  it('should throw ConflictError when CPF already exists', async () => {
+    const {
+      userSchema,
+    } = require('@/core/application/validation/schemas/user.schema');
+    userSchema.partial.mockReturnValueOnce({
+      safeParse: jest.fn(() => ({
+        success: true,
+        data: { cpf: '999.999.999-99' },
+      })),
+    });
+    mockUserRepository.findById.mockResolvedValueOnce({
+      id: 'u1',
+      cpf: '111.111.111-11',
+      isSystem: false,
+    });
+    mockUserRepository.findByCpf.mockResolvedValueOnce({ id: 'u2' });
+
+    await expect(
+      useCase.execute({ id: 'u1', cpf: '999.999.999-99' } as any)
+    ).rejects.toThrow(ConflictError);
+  });
+
+  it('should throw ConflictError when enrollment number already exists', async () => {
+    const {
+      userSchema,
+    } = require('@/core/application/validation/schemas/user.schema');
+    userSchema.partial.mockReturnValueOnce({
+      safeParse: jest.fn(() => ({
+        success: true,
+        data: { enrollmentNumber: 'MAT-999' },
+      })),
+    });
+    mockUserRepository.findById.mockResolvedValueOnce({
+      id: 'u1',
+      enrollmentNumber: 'MAT-001',
+      isSystem: false,
+    });
+    mockUserRepository.findByEnrollmentNumber.mockResolvedValueOnce({
+      id: 'u2',
+    });
+
+    await expect(
+      useCase.execute({ id: 'u1', enrollmentNumber: 'MAT-999' } as any)
+    ).rejects.toThrow(ConflictError);
+  });
+
+  it('should throw ConflictError when professional registration already exists', async () => {
+    const {
+      userSchema,
+    } = require('@/core/application/validation/schemas/user.schema');
+    userSchema.partial.mockReturnValueOnce({
+      safeParse: jest.fn(() => ({
+        success: true,
+        data: { professionalRegistration: 'CRM-999' },
+      })),
+    });
+    mockUserRepository.findById.mockResolvedValueOnce({
+      id: 'u1',
+      professionalRegistration: 'CRM-001',
+      isSystem: false,
+    });
+    mockUserRepository.findByProfessionalRegistration.mockResolvedValueOnce({
+      id: 'u2',
+    });
+
+    await expect(
+      useCase.execute({
+        id: 'u1',
+        professionalRegistration: 'CRM-999',
+      } as any)
     ).rejects.toThrow(ConflictError);
   });
 

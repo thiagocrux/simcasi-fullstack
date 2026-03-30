@@ -58,6 +58,49 @@ describe('PrismaUserRepository', () => {
     expect(result).toEqual(userMock);
   });
 
+  it('should find a user by CPF', async () => {
+    (prisma.user.findFirst as jest.Mock).mockResolvedValueOnce(userMock);
+    const result = await repository.findByCpf(userMock.cpf);
+    expect(prisma.user.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          cpf: userMock.cpf,
+        }),
+      })
+    );
+    expect(result).toEqual(userMock);
+  });
+
+  it('should find a user by enrollment number', async () => {
+    (prisma.user.findFirst as jest.Mock).mockResolvedValueOnce(userMock);
+    const result = await repository.findByEnrollmentNumber(
+      userMock.enrollmentNumber
+    );
+    expect(prisma.user.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          enrollmentNumber: userMock.enrollmentNumber,
+        }),
+      })
+    );
+    expect(result).toEqual(userMock);
+  });
+
+  it('should find a user by professional registration', async () => {
+    (prisma.user.findFirst as jest.Mock).mockResolvedValueOnce(userMock);
+    const result = await repository.findByProfessionalRegistration(
+      userMock.professionalRegistration
+    );
+    expect(prisma.user.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          professionalRegistration: userMock.professionalRegistration,
+        }),
+      })
+    );
+    expect(result).toEqual(userMock);
+  });
+
   it('should retrieve all users with default params', async () => {
     (prisma.user.findMany as jest.Mock).mockResolvedValueOnce([userMock]);
     (prisma.user.count as jest.Mock).mockResolvedValueOnce(1);

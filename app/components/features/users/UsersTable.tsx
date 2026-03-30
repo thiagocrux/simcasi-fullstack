@@ -14,7 +14,9 @@ import {
   type VisibilityState,
 } from '@tanstack/react-table';
 import {
+  ArrowDown01,
   ArrowDownAZ,
+  ArrowUp10,
   ArrowUpZA,
   ClockArrowDown,
   ClockArrowUp,
@@ -37,7 +39,7 @@ import { useRole } from '@/hooks/useRole';
 import { useUser } from '@/hooks/useUser';
 import { ActionResponse } from '@/lib/actions.utils';
 import { exportToCsv } from '@/lib/csv.utils';
-import { formatDate } from '@/lib/formatters.utils';
+import { applyMask, formatDate } from '@/lib/formatters.utils';
 import { logger } from '@/lib/logger.utils';
 import {
   findRecordById,
@@ -76,6 +78,11 @@ const COLUMN_LABELS: Record<string, string> = {
   id: 'ID',
   name: 'Nome',
   email: 'E-mail',
+  phone: 'Telefone',
+  enrollmentNumber: 'Matrícula',
+  professionalRegistration: 'Registro profissional',
+  cpf: 'CPF',
+  workplace: 'Local de trabalho',
   roleId: 'Nível de permissão',
   createdBy: 'Criado por',
   createdAt: 'Criado em',
@@ -83,7 +90,13 @@ const COLUMN_LABELS: Record<string, string> = {
   updatedAt: 'Atualizado em',
 };
 
-const FILTERABLE_COLUMNS = ['name', 'email'];
+const FILTERABLE_COLUMNS = [
+  'name',
+  'email',
+  'cpf',
+  'enrollmentNumber',
+  'professionalRegistration',
+];
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN = 'name';
 const COLUMN_MAX_WIDTH = 'max-w-md';
@@ -314,6 +327,191 @@ export function UsersTable({
       },
       {
         accessorKey: 'email',
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
+              }
+            }}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            {COLUMN_LABELS[column.id]}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ArrowDownAZ />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ArrowUpZA />
+            )}
+          </Button>
+        ),
+        cell: ({ row, column }) => (
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
+            {renderOrFallback(row.getValue(column.id), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
+              />
+            ))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'cpf',
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
+              }
+            }}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            {COLUMN_LABELS[column.id]}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ArrowDown01 />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ArrowUp10 />
+            )}
+          </Button>
+        ),
+        cell: ({ row, column }) => (
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
+            {renderOrFallback(row.getValue(column.id), (value) => (
+              <HighlightedText
+                text={applyMask(String(value), column.id)}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
+              />
+            ))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'phone',
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
+              }
+            }}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            {COLUMN_LABELS[column.id]}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ArrowDown01 />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ArrowUp10 />
+            )}
+          </Button>
+        ),
+        cell: ({ row, column }) => (
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
+            {renderOrFallback(row.getValue(column.id), (value) => (
+              <HighlightedText
+                text={applyMask(String(value), column.id)}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
+              />
+            ))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'enrollmentNumber',
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
+              }
+            }}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            {COLUMN_LABELS[column.id]}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ArrowDownAZ />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ArrowUpZA />
+            )}
+          </Button>
+        ),
+        cell: ({ row, column }) => (
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
+            {renderOrFallback(row.getValue(column.id), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
+              />
+            ))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'professionalRegistration',
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = getNextSortDirection(column.getIsSorted());
+              if (next === false) {
+                setSorting([]);
+              } else {
+                column.toggleSorting(next === 'desc');
+              }
+            }}
+            className={`px-1! select-none cursor-pointer ${COLUMN_MAX_WIDTH}`}
+          >
+            {COLUMN_LABELS[column.id]}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'asc' && (
+              <ArrowDownAZ />
+            )}
+            {column.getSortIndex() === 0 && column.getIsSorted() === 'desc' && (
+              <ArrowUpZA />
+            )}
+          </Button>
+        ),
+        cell: ({ row, column }) => (
+          <div className={`ml-1 truncate ${COLUMN_MAX_WIDTH}`}>
+            {renderOrFallback(row.getValue(column.id), (value) => (
+              <HighlightedText
+                text={value}
+                highlight={
+                  selectedFilterOption === column.id ? searchValue : ''
+                }
+              />
+            ))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'workplace',
         header: ({ column }) => (
           <Button
             variant="ghost"

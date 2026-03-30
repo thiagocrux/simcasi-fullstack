@@ -5,6 +5,7 @@ import { ReactNode } from 'react';
 
 import { User } from '@/core/domain/entities/user.entity';
 import { useRole } from '@/hooks/useRole';
+import { applyMask } from '@/lib/formatters.utils';
 import { AppDialog } from '../../common/AppDialog';
 import { NotFoundPreviewContent } from '../audit-logs/NotFoundPreviewContent';
 import { PreviewDialogContent } from '../audit-logs/PreviewDialogContent';
@@ -33,6 +34,26 @@ export function UserPreviewDialog({
     {
       label: 'E-mail',
       value: user?.email || '-',
+    },
+    {
+      label: 'CPF',
+      value: user?.cpf ? applyMask(user.cpf, 'cpf') : '-',
+    },
+    {
+      label: 'Telefone',
+      value: user?.phone ? applyMask(user.phone, 'phone') : '-',
+    },
+    {
+      label: 'Matrícula',
+      value: user?.enrollmentNumber || '-',
+    },
+    {
+      label: 'Registro profissional',
+      value: user?.professionalRegistration || '-',
+    },
+    {
+      label: 'Local de trabalho',
+      value: user?.workplace || '-',
     },
     {
       label: 'Nível de permissão',

@@ -67,6 +67,54 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   /**
+   * Finds a user by their CPF.
+   */
+  async findByCpf(cpf: string, includeDeleted = false): Promise<User | null> {
+    const user = await prisma.user.findFirst({
+      where: {
+        cpf,
+        deletedAt: includeDeleted ? undefined : null,
+      },
+    });
+
+    return (user as User) || null;
+  }
+
+  /**
+   * Finds a user by their enrollment number.
+   */
+  async findByEnrollmentNumber(
+    enrollmentNumber: string,
+    includeDeleted = false
+  ): Promise<User | null> {
+    const user = await prisma.user.findFirst({
+      where: {
+        enrollmentNumber,
+        deletedAt: includeDeleted ? undefined : null,
+      },
+    });
+
+    return (user as User) || null;
+  }
+
+  /**
+   * Finds a user by their professional registration.
+   */
+  async findByProfessionalRegistration(
+    professionalRegistration: string,
+    includeDeleted = false
+  ): Promise<User | null> {
+    const user = await prisma.user.findFirst({
+      where: {
+        professionalRegistration,
+        deletedAt: includeDeleted ? undefined : null,
+      },
+    });
+
+    return (user as User) || null;
+  }
+
+  /**
    * Retrieves a paginated list of users with optional filtering.
    *
    * @param params Filtering and pagination parameters.

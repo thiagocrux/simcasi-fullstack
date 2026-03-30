@@ -1156,6 +1156,31 @@
                                 "description": "User's unique electronic mail address.",
                                 "example": "dr.thiago@simcasi.gov.br"
                               },
+                              "phone": {
+                                "type": "string",
+                                "description": "Contact phone number.",
+                                "example": "(11) 99999-0001"
+                              },
+                              "enrollmentNumber": {
+                                "type": "string",
+                                "description": "Unique enrollment number (matrícula).",
+                                "example": "MAT-000001"
+                              },
+                              "professionalRegistration": {
+                                "type": "string",
+                                "description": "Unique professional registration.",
+                                "example": "CRM-000001"
+                              },
+                              "cpf": {
+                                "type": "string",
+                                "description": "Individual taxpayer registry number (CPF).",
+                                "example": "529.982.247-25"
+                              },
+                              "workplace": {
+                                "type": "string",
+                                "description": "Healthcare facility or workplace name.",
+                                "example": "Hospital Central SIMCASI"
+                              },
                               "roleId": {
                                 "type": "string",
                                 "format": "uuid",
@@ -1307,6 +1332,11 @@
                     "required": [
                       "name",
                       "email",
+                      "phone",
+                      "enrollmentNumber",
+                      "professionalRegistration",
+                      "cpf",
+                      "workplace",
                       "password",
                       "roleId"
                     ],
@@ -1319,6 +1349,26 @@
                         "type": "string",
                         "format": "email",
                         "description": "User's unique electronic mail address."
+                      },
+                      "phone": {
+                        "type": "string",
+                        "description": "Contact phone number."
+                      },
+                      "enrollmentNumber": {
+                        "type": "string",
+                        "description": "Unique enrollment number (matrícula)."
+                      },
+                      "professionalRegistration": {
+                        "type": "string",
+                        "description": "Unique professional registration."
+                      },
+                      "cpf": {
+                        "type": "string",
+                        "description": "Individual taxpayer registry number (CPF)."
+                      },
+                      "workplace": {
+                        "type": "string",
+                        "description": "Healthcare facility or workplace name."
                       },
                       "password": {
                         "type": "string",
@@ -1413,6 +1463,31 @@
                           "format": "email",
                           "description": "User's unique electronic mail address.",
                           "example": "dr.thiago@simcasi.gov.br"
+                        },
+                        "phone": {
+                          "type": "string",
+                          "description": "Contact phone number.",
+                          "example": "(11) 99999-0001"
+                        },
+                        "enrollmentNumber": {
+                          "type": "string",
+                          "description": "Unique enrollment number (matrícula).",
+                          "example": "MAT-000001"
+                        },
+                        "professionalRegistration": {
+                          "type": "string",
+                          "description": "Unique professional registration.",
+                          "example": "CRM-000001"
+                        },
+                        "cpf": {
+                          "type": "string",
+                          "description": "Individual taxpayer registry number (CPF).",
+                          "example": "529.982.247-25"
+                        },
+                        "workplace": {
+                          "type": "string",
+                          "description": "Healthcare facility or workplace name.",
+                          "example": "Hospital Central SIMCASI"
                         },
                         "roleId": {
                           "type": "string",
@@ -1774,6 +1849,31 @@
                           "description": "User's unique electronic mail address.",
                           "example": "dr.thiago@simcasi.gov.br"
                         },
+                        "phone": {
+                          "type": "string",
+                          "description": "Contact phone number.",
+                          "example": "(11) 99999-0001"
+                        },
+                        "enrollmentNumber": {
+                          "type": "string",
+                          "description": "Unique enrollment number (matrícula).",
+                          "example": "MAT-000001"
+                        },
+                        "professionalRegistration": {
+                          "type": "string",
+                          "description": "Unique professional registration.",
+                          "example": "CRM-000001"
+                        },
+                        "cpf": {
+                          "type": "string",
+                          "description": "Individual taxpayer registry number (CPF).",
+                          "example": "529.982.247-25"
+                        },
+                        "workplace": {
+                          "type": "string",
+                          "description": "Healthcare facility or workplace name.",
+                          "example": "Hospital Central SIMCASI"
+                        },
                         "roleId": {
                           "type": "string",
                           "format": "uuid",
@@ -1986,6 +2086,26 @@
                         "format": "email",
                         "description": "User's updated electronic mail address."
                       },
+                      "phone": {
+                        "type": "string",
+                        "description": "Updated contact phone number."
+                      },
+                      "enrollmentNumber": {
+                        "type": "string",
+                        "description": "Updated enrollment number (matrícula)."
+                      },
+                      "professionalRegistration": {
+                        "type": "string",
+                        "description": "Updated professional registration."
+                      },
+                      "cpf": {
+                        "type": "string",
+                        "description": "Updated individual taxpayer registry number (CPF)."
+                      },
+                      "workplace": {
+                        "type": "string",
+                        "description": "Updated healthcare facility or workplace name."
+                      },
                       "roleId": {
                         "type": "string",
                         "format": "uuid",
@@ -2072,6 +2192,31 @@
                           "format": "email",
                           "description": "User's unique electronic mail address.",
                           "example": "dr.thiago@simcasi.gov.br"
+                        },
+                        "phone": {
+                          "type": "string",
+                          "description": "Contact phone number.",
+                          "example": "(11) 99999-0001"
+                        },
+                        "enrollmentNumber": {
+                          "type": "string",
+                          "description": "Unique enrollment number (matrícula).",
+                          "example": "MAT-000001"
+                        },
+                        "professionalRegistration": {
+                          "type": "string",
+                          "description": "Unique professional registration.",
+                          "example": "CRM-000001"
+                        },
+                        "cpf": {
+                          "type": "string",
+                          "description": "Individual taxpayer registry number (CPF).",
+                          "example": "529.982.247-25"
+                        },
+                        "workplace": {
+                          "type": "string",
+                          "description": "Healthcare facility or workplace name.",
+                          "example": "Hospital Central SIMCASI"
                         },
                         "roleId": {
                           "type": "string",
@@ -2887,6 +3032,31 @@
                           "format": "email",
                           "description": "User's unique electronic mail address.",
                           "example": "dr.thiago@simcasi.gov.br"
+                        },
+                        "phone": {
+                          "type": "string",
+                          "description": "Contact phone number.",
+                          "example": "(11) 99999-0001"
+                        },
+                        "enrollmentNumber": {
+                          "type": "string",
+                          "description": "Unique enrollment number (matrícula).",
+                          "example": "MAT-000001"
+                        },
+                        "professionalRegistration": {
+                          "type": "string",
+                          "description": "Unique professional registration.",
+                          "example": "CRM-000001"
+                        },
+                        "cpf": {
+                          "type": "string",
+                          "description": "Individual taxpayer registry number (CPF).",
+                          "example": "529.982.247-25"
+                        },
+                        "workplace": {
+                          "type": "string",
+                          "description": "Healthcare facility or workplace name.",
+                          "example": "Hospital Central SIMCASI"
                         },
                         "roleId": {
                           "type": "string",
