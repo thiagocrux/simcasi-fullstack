@@ -1,9 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { USER_SEARCHABLE_FIELDS } from '@/core/domain/constants/user.constants';
 import { User } from '@/core/domain/entities/user.entity';
 import { UserRepository } from '@/core/domain/repositories/user.repository';
 import { Prisma } from '@prisma/client';
-import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
+import {
+  buildDateRangeFilter,
+  buildOrderByClause,
+} from '../../lib/query.utils';
 
 export class PrismaUserRepository implements UserRepository {
   /**
@@ -101,22 +104,21 @@ export class PrismaUserRepository implements UserRepository {
     };
 
     // Add date range filter only if dates are provided
-    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
-    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
-
-    if (start || end) {
-      where.createdAt = {
-        gte: start,
-        lte: end,
-      };
+    const dateFilter = buildDateRangeFilter(startDate, endDate, timezoneOffset);
+    if (dateFilter) {
+      where.createdAt = dateFilter;
     }
 
     if (search) {
-      if (searchBy) {
-        // If a specific column is selected, we only filter by it.
+      if (
+        searchBy &&
+        (USER_SEARCHABLE_FIELDS as readonly string[]).includes(searchBy)
+      ) {
+        // Field-specific search, validated against the allowed searchable fields.
         where[searchBy as keyof Prisma.UserWhereInput] = {
           contains: search,
           mode: 'insensitive',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
         // Default behavior: Generic OR search across common fields.
@@ -127,26 +129,7 @@ export class PrismaUserRepository implements UserRepository {
       }
     }
 
-    // Build orderBy clause with support for relationship sorting (createdBy, updatedBy).
-    const orderByClause = (() => {
-      if (!orderBy) return [{ createdAt: 'desc' as const }];
-
-      if (orderBy === 'createdBy') {
-        return [
-          { creator: { name: orderDir } },
-          { createdAt: 'desc' as const },
-        ];
-      }
-
-      if (orderBy === 'updatedBy') {
-        return [
-          { updater: { name: orderDir } },
-          { createdAt: 'desc' as const },
-        ];
-      }
-
-      return [{ [orderBy]: orderDir }, { createdAt: 'desc' as const }];
-    })();
+    const orderByClause = buildOrderByClause(orderBy, orderDir);
 
     const [items, total] = await Promise.all([
       prisma.user.findMany({
@@ -186,6 +169,7 @@ export class PrismaUserRepository implements UserRepository {
           createdBy: inputCreatedBy,
           updatedBy: inputUpdatedBy,
           ...updateData
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } = data as any;
         const finalCreatorId = (existing.createdBy as string) || inputCreatedBy;
 
@@ -234,6 +218,7 @@ export class PrismaUserRepository implements UserRepository {
     data: Partial<Omit<User, 'id' | 'createdAt'>>,
     updatedBy: string
   ): Promise<User> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { roleId, ...updateData } = data as any;
 
     const user = await prisma.user.update({

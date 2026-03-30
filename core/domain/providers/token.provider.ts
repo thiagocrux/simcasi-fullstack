@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /**
  * Interface for Token management (Domain Provider).
  * Decouples the application from specific libraries like jsonwebtoken or jose.
@@ -11,14 +9,14 @@ export interface TokenProvider {
    * @param payload The data object to be encoded within the token.
    * @return A promise that resolves to the signed access token string.
    */
-  generateAccessToken(payload: any): Promise<string>;
+  generateAccessToken(payload: Record<string, unknown>): Promise<string>;
 
   /**
    * Generates a refresh token to allow session renewal.
    * @param payload The data object to be encoded within the refresh token.
    * @return A promise that resolves to the signed refresh token string.
    */
-  generateRefreshToken(payload: any): Promise<string>;
+  generateRefreshToken(payload: Record<string, unknown>): Promise<string>;
 
   /**
    * Verifies the signature and decodes the token payload.

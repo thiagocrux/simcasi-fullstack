@@ -1,9 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Role } from '@/core/domain/entities/role.entity';
 import { RoleRepository } from '@/core/domain/repositories/role.repository';
 import { Prisma } from '@prisma/client';
-import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
+import {
+  buildDateRangeFilter,
+  buildOrderByClause,
+} from '../../lib/query.utils';
 
 export class PrismaRoleRepository implements RoleRepository {
   /**
@@ -74,14 +76,9 @@ export class PrismaRoleRepository implements RoleRepository {
     };
 
     // Add date range filter only if dates are provided
-    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
-    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
-
-    if (start || end) {
-      where.createdAt = {
-        gte: start,
-        lte: end,
-      };
+    const dateFilter = buildDateRangeFilter(startDate, endDate, timezoneOffset);
+    if (dateFilter) {
+      where.createdAt = dateFilter;
     }
 
     if (search) {
@@ -89,6 +86,7 @@ export class PrismaRoleRepository implements RoleRepository {
         where[searchBy as keyof Prisma.RoleWhereInput] = {
           contains: search,
           mode: 'insensitive',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
         where.code = { contains: search, mode: 'insensitive' };
@@ -100,9 +98,7 @@ export class PrismaRoleRepository implements RoleRepository {
         where,
         skip,
         take,
-        orderBy: orderBy
-          ? [{ [orderBy]: orderDir }, { createdAt: 'desc' }]
-          : [{ createdAt: 'desc' }],
+        orderBy: buildOrderByClause(orderBy, orderDir),
       }),
       prisma.role.count({ where }),
     ]);
@@ -156,6 +152,7 @@ export class PrismaRoleRepository implements RoleRepository {
     },
     updatedBy: string
   ): Promise<Role> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { permissionIds, ...roleData } = data as any;
     const role = await prisma.role.update({
       where: { id },

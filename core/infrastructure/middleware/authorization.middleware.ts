@@ -35,7 +35,7 @@ export async function authorize(
   roleId: string,
   requiredPermissions: string[]
 ): Promise<void> {
-  // If no permissions required, skip
+  // If no permissions required, skip.
   if (requiredPermissions.length === 0) return;
 
   const validatePermissions = makeValidatePermissionsUseCase();
@@ -45,6 +45,8 @@ export async function authorize(
   });
 
   if (!isAuthorized) {
-    throw new ForbiddenError('Você não tem permissão para executar esta ação.');
+    throw new ForbiddenError(
+      `Missing required permission(s): ${requiredPermissions.join(', ')}`
+    );
   }
 }

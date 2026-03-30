@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as z from 'zod';
 
 /**
@@ -10,12 +9,16 @@ import * as z from 'zod';
  * @return A flattened Record of field errors.
  */
 export function formatZodError(error: z.ZodError): Record<string, string[]> {
+  // `treeifyError` is not part of Zod's public types but is available at runtime in Zod 4.
+  // This cast is intentional — if Zod is upgraded, verify this method still exists.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tree = (z as any).treeifyError(error);
   const fieldErrors: Record<string, string[]> = {};
 
   if (tree.properties) {
     for (const [key, value] of Object.entries(tree.properties)) {
       if (value && typeof value === 'object' && 'errors' in value) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         fieldErrors[key] = (value as any).errors;
       }
     }

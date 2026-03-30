@@ -1,8 +1,11 @@
 import { Session } from '@/core/domain/entities/session.entity';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { Prisma } from '@prisma/client';
-import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
+import {
+  buildDateRangeFilter,
+  buildOrderByClause,
+} from '../../lib/query.utils';
 
 export class PrismaSessionRepository implements SessionRepository {
   /**
@@ -58,14 +61,9 @@ export class PrismaSessionRepository implements SessionRepository {
     };
 
     // Add date range filter only if dates are provided
-    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
-    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
-
-    if (start || end) {
-      where.createdAt = {
-        gte: start,
-        lte: end,
-      };
+    const dateFilter = buildDateRangeFilter(startDate, endDate, timezoneOffset);
+    if (dateFilter) {
+      where.createdAt = dateFilter;
     }
 
     if (search) {
@@ -80,9 +78,7 @@ export class PrismaSessionRepository implements SessionRepository {
         where,
         skip,
         take,
-        orderBy: orderBy
-          ? [{ [orderBy]: orderDir }, { createdAt: 'desc' }]
-          : [{ createdAt: 'desc' }],
+        orderBy: buildOrderByClause(orderBy, orderDir),
       }),
       prisma.session.count({ where }),
     ]);

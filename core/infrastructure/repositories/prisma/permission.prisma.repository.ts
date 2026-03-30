@@ -1,9 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Permission } from '@/core/domain/entities/permission.entity';
 import { PermissionRepository } from '@/core/domain/repositories/permission.repository';
 import { Prisma } from '@prisma/client';
-import { normalizeDateFilter } from '../../lib/date.utils';
 import { prisma } from '../../lib/prisma';
+import {
+  buildDateRangeFilter,
+  buildOrderByClause,
+} from '../../lib/query.utils';
 
 export class PrismaPermissionRepository implements PermissionRepository {
   /**
@@ -118,14 +120,9 @@ export class PrismaPermissionRepository implements PermissionRepository {
     };
 
     // Add date range filter only if dates are provided
-    const start = normalizeDateFilter(startDate, 'start', timezoneOffset);
-    const end = normalizeDateFilter(endDate, 'end', timezoneOffset);
-
-    if (start || end) {
-      where.createdAt = {
-        gte: start,
-        lte: end,
-      };
+    const dateFilter = buildDateRangeFilter(startDate, endDate, timezoneOffset);
+    if (dateFilter) {
+      where.createdAt = dateFilter;
     }
 
     if (search) {
@@ -133,6 +130,7 @@ export class PrismaPermissionRepository implements PermissionRepository {
         where[searchBy as keyof Prisma.PermissionWhereInput] = {
           contains: search,
           mode: 'insensitive',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any;
       } else {
         where.code = { contains: search, mode: 'insensitive' };
@@ -144,9 +142,7 @@ export class PrismaPermissionRepository implements PermissionRepository {
         where,
         skip,
         take,
-        orderBy: orderBy
-          ? [{ [orderBy]: orderDir }, { createdAt: 'desc' }]
-          : [{ createdAt: 'desc' }],
+        orderBy: buildOrderByClause(orderBy, orderDir),
       }),
       prisma.permission.count({ where }),
     ]);
@@ -199,6 +195,7 @@ export class PrismaPermissionRepository implements PermissionRepository {
     },
     updatedBy: string
   ): Promise<Permission> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { roleIds, ...permissionData } = data as any;
     const permission = await prisma.permission.update({
       where: { id },

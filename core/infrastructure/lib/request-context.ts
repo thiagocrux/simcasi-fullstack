@@ -34,7 +34,7 @@ export function getRequestContext(): RequestContext {
 
   if (!context) {
     throw new Error(
-      '[REQUEST_CONTEXT_ERROR] Tentativa de acessar o contexto fora de um escopo de requisição válido. Verifique se o ponto de entrada (Server Action ou rota de API) está corretamente envolvido.'
+      '[REQUEST_CONTEXT_ERROR] Attempted to access context outside of a valid request scope. Ensure the entry point (Server Action or API route) is correctly wrapped.'
     );
   }
 

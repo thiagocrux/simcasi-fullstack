@@ -22,7 +22,8 @@ export interface AuthenticationContext {
  *
  * The token is searched in the following order:
  * 1. The `tokenOverride` parameter (if provided via retry logic).
- * 2. The 'Authorization' header (using the Bearer scheme).
+ * 2. The 'Authorization' header — both `Bearer <token>` and raw token formats are accepted.
+ *    (Raw format is kept for tools/clients that omit the Bearer prefix.)
  * 3. The 'access_token' cookie.
  *
  * @param request The incoming Next.js request object.
