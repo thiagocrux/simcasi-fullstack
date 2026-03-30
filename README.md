@@ -105,7 +105,7 @@ SIMCASI follows **Clean Architecture** with three layers: Domain, Application, a
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for code standards, workflow, commit conventions, and CI details.
+See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for code standards, workflow, commit conventions, and CI details.
 
 ## License
 
