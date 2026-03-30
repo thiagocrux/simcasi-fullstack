@@ -29,7 +29,9 @@ export class ResendMailProvider implements MailProvider {
     params?: Record<string, unknown>;
   }): Promise<void> {
     try {
-      const isHtml = /<[a-z][\s\S]*>/i.test(data.body);
+      const isHtml = /<(p|div|h[1-6]|br|ul|li|span|a|b|i|strong|em)[\s>]/i.test(
+        data.body
+      );
 
       const emailOptions = {
         from: this.from,

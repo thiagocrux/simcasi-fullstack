@@ -43,7 +43,6 @@ export const env = {
   JWT_ACCESS_TOKEN_EXPIRATION: process.env.JWT_ACCESS_TOKEN_EXPIRATION ?? '15m',
   JWT_REFRESH_TOKEN_EXPIRATION:
     process.env.JWT_REFRESH_TOKEN_EXPIRATION ?? '7d',
-
   // -- MESSAGING (RESEND) --
   RESEND_API_KEY: process.env.RESEND_API_KEY,
   MAIL_FROM: process.env.MAIL_FROM,
@@ -64,5 +63,20 @@ if (missingVars.length > 0) {
 
   throw new ConfigurationError(
     `Required environment variables are not defined: ${missingList}`
+  );
+}
+
+/**
+ * Validate JWT expiration format (e.g. '15m', '7d', '3600s').
+ */
+const JWT_EXPIRATION_FORMAT = /^\d+[smhd]$/;
+const invalidExpirations = [
+  ['JWT_ACCESS_TOKEN_EXPIRATION', env.JWT_ACCESS_TOKEN_EXPIRATION],
+  ['JWT_REFRESH_TOKEN_EXPIRATION', env.JWT_REFRESH_TOKEN_EXPIRATION],
+].filter(([, value]) => !JWT_EXPIRATION_FORMAT.test(value!));
+
+if (invalidExpirations.length > 0) {
+  throw new ConfigurationError(
+    `Invalid JWT expiration format for: ${invalidExpirations.map(([k]) => k).join(', ')}. Expected format: <number><s|m|h|d> (e.g. '15m', '7d').`
   );
 }
