@@ -16,6 +16,13 @@ jest.mock('@/hooks/useUser', () => ({
       name: 'Test User',
       email: 'test@example.com',
     },
+    isUserAdmin: true,
+  })),
+}));
+
+jest.mock('@/hooks/usePermission', () => ({
+  usePermission: jest.fn(() => ({
+    can: jest.fn(() => true),
   })),
 }));
 
@@ -69,6 +76,33 @@ describe('AppSidebar', () => {
         /Registros de auditoria|Logs de auditoria|Auditoria/i
       );
       expect(auditElements.length).toBeGreaterThan(0);
+    });
+
+    it('should not render audit section when user is not admin', () => {
+      const mockUseUser = jest.mocked(
+        jest.requireMock('@/hooks/useUser').useUser
+      );
+      mockUseUser.mockReturnValue({
+        user: { id: 'user-123', name: 'Test User', email: 'test@example.com' },
+        isUserAdmin: false,
+      });
+
+      renderWithProviders(<AppSidebar />);
+      expect(
+        screen.queryByText(/Registros de auditoria/i)
+      ).not.toBeInTheDocument();
+    });
+
+    it('should not render "Criar novo usuário" when user lacks create:user permission', () => {
+      const mockUsePermission = jest.mocked(
+        jest.requireMock('@/hooks/usePermission').usePermission
+      );
+      mockUsePermission.mockReturnValue({
+        can: jest.fn(() => false),
+      });
+
+      renderWithProviders(<AppSidebar />);
+      expect(screen.queryByText(/Criar novo usuário/i)).not.toBeInTheDocument();
     });
   });
 

@@ -24,6 +24,7 @@ import {
 import { AppSidebarContent } from './AppSidebarContent';
 import { AppSidebarUser } from './AppSidebarUser';
 
+import { usePermission } from '@/hooks/usePermission';
 import { useUser } from '@/hooks/useUser';
 import {
   Sidebar,
@@ -42,7 +43,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
  */
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
-  const { user } = useUser();
+  const { can } = usePermission();
+  const { user, isUserAdmin } = useUser();
 
   const userData = {
     name: user?.name || 'Carregando...',
@@ -99,13 +101,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: '/users',
         icon: Contact,
         isActive: false,
-        items: [
-          {
-            title: 'Criar novo usuário',
-            url: '/users/new',
-            icon: UserPlus,
-          },
-        ],
+        ...(can('create:user')
+          ? {
+              items: [
+                {
+                  title: 'Criar novo usuário',
+                  url: '/users/new',
+                  icon: UserPlus,
+                },
+              ],
+            }
+          : {}),
       },
       {
         title: 'Sessões',
@@ -186,7 +192,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           label="Gestão de usuários"
           items={data.userManagement}
         />
-        <AppSidebarContent label="Auditoria" items={data.audit} />
+        {isUserAdmin && (
+          <AppSidebarContent label="Auditoria" items={data.audit} />
+        )}
       </SidebarContent>
       <SidebarFooter>
         <AppSidebarUser user={userData} dropdownItems={data.settings} />

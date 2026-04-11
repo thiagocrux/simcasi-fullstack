@@ -113,7 +113,7 @@ export function UserForm({
     isPending || isSubmitting || (isEditMode && isFetchingUser);
 
   // Only administrators can update user roles.
-  const canUpdateRole = !isFormBusy || isUserAdmin;
+  const canUpdateRole = !isFormBusy && isUserAdmin;
 
   async function onSubmit(input: UserFormInput) {
     if (!loggedUser?.id) {
@@ -188,10 +188,10 @@ export function UserForm({
   }, [user, reset]);
 
   useEffect(() => {
-    if (!can('create:user')) {
-      router.replace('/dashboard'); // ou outra rota segura
+    if (!isEditMode && !can('create:user')) {
+      router.replace('/dashboard');
     }
-  }, [can, router]);
+  }, [can, isEditMode, router]);
 
   return (
     <Card className="flex flex-col px-4 sm:px-8 py-8 sm:py-12">

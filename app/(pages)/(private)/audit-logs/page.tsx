@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 
 import { PageHeader } from '@/app/components/common/PageHeader';
 import { ReturnLink } from '@/app/components/common/ReturnLink';
+import { AuditLogPageGuard } from '@/app/components/features/audit-logs/AuditLogPageGuard';
 import { AuditLogsTable } from '@/app/components/features/audit-logs/AuditLogsTable';
 
 export const metadata: Metadata = {
@@ -12,13 +13,15 @@ export const metadata: Metadata = {
 
 export default async function AuditLogsPage() {
   return (
-    <div className="flex flex-col gap-8 w-full max-w-6xl">
-      <ReturnLink />
-      <PageHeader
-        title="Logs de auditoria"
-        description="Visualize e acompanhe o histórico de todas as operações realizadas no sistema pelos usuários para fins de segurança e conformidade."
-      />
-      <AuditLogsTable showIdColumn={false} />
-    </div>
+    <AuditLogPageGuard>
+      <div className="flex flex-col gap-8 w-full max-w-6xl">
+        <ReturnLink />
+        <PageHeader
+          title="Logs de auditoria"
+          description="Visualize e acompanhe o histórico de todas as operações realizadas no sistema pelos usuários para fins de segurança e conformidade."
+        />
+        <AuditLogsTable showIdColumn={false} />
+      </div>
+    </AuditLogPageGuard>
   );
 }

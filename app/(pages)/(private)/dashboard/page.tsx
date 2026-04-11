@@ -1,9 +1,8 @@
 import { PageHeader } from '@/app/components/common/PageHeader';
-import { LatestActionsPerformed } from '@/app/components/features/dashboard/LatestActionsPerformed';
-import { LatestPatientsRegistered } from '@/app/components/features/dashboard/LatestPatientsRegistered';
 import { MedicalRecordsChart } from '@/app/components/features/dashboard/MedicalRecordsChart';
 import { PatientsChart } from '@/app/components/features/dashboard/PatientsChart';
 import { QuickStartSection } from '@/app/components/features/dashboard/QuickStartSection';
+import { RecentActivitySection } from '@/app/components/features/dashboard/RecentActivitySection';
 import { Separator } from '@/app/components/ui/separator';
 import { Metadata } from 'next';
 
@@ -64,21 +63,7 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="gap-8 grid grid-cols-2">
-        <div className="flex flex-col gap-2 col-span-full xl:col-span-1">
-          <p className="font-semibold text-base">
-            Últimos pacientes cadastrados
-          </p>
-          <LatestPatientsRegistered />
-        </div>
-
-        <div className="flex flex-col gap-2 col-span-full xl:col-span-1">
-          <p className="font-semibold text-base">
-            Últimos registros do sistema
-          </p>
-          <LatestActionsPerformed />
-        </div>
-      </div>
+      <RecentActivitySection />
     </div>
   );
 }
