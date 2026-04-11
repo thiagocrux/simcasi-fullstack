@@ -196,9 +196,9 @@ export default async function SupportPage() {
         </pre>
         <div className="top-3 right-3 absolute">
           <ClipboardCopyButton
+            variant="icon"
             value={EMAIL_TEMPLATE}
             label="Copiar modelo"
-            variant="button"
           />
         </div>
       </div>

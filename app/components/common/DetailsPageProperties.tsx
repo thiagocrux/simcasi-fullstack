@@ -59,21 +59,25 @@ export function DetailsPageProperties({
         <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
           {changeLog.map((field) => (
             <div key={field.label} className="flex flex-col gap-4">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center start">
                 <h3 className="font-semibold text-lg">{field.label}</h3>
-                {field.value ? (
-                  <ClipboardCopyButton
-                    variant="button"
-                    label="Copiar dados"
-                    value={field.value}
-                  />
-                ) : null}
               </div>
               <div className="bg-muted p-4 rounded-lg max-h-[400px] overflow-auto">
                 {field.value ? (
-                  <pre className="font-mono text-xs break-all leading-relaxed whitespace-pre-wrap">
-                    {field.value}
-                  </pre>
+                  <div className="relative">
+                    <pre className="font-mono text-sm break-all leading-relaxed whitespace-pre-wrap">
+                      {field.value}
+                    </pre>
+                    <div className="-top-2 -right-2 absolute">
+                      {field.value ? (
+                        <ClipboardCopyButton
+                          variant="icon"
+                          label="Copiar dados"
+                          value={field.value}
+                        />
+                      ) : null}
+                    </div>
+                  </div>
                 ) : (
                   <p className="text-sm">
                     Não há valores para serem mostrados.
