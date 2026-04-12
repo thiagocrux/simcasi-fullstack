@@ -75,7 +75,9 @@ export const PERMISSION_CODES = PERMISSIONS.map(
  * Notes:
  * - `admin`: Receives all existing permissions across all modules.
  * - `user`: Broad permissions except for sensitive administrative actions (user creation, audit logs).
+ *   Can update own profile (excluding role).
  * - `viewer`: Read-only access to clinical data; excluded from audit-log metadata visibility.
+ *   Can update own profile (excluding role).
  */
 export const PERMISSIONS_BY_ROLE: Record<string, readonly string[]> = {
   admin: [...PERMISSION_CODES],
@@ -86,7 +88,8 @@ export const PERMISSIONS_BY_ROLE: Record<string, readonly string[]> = {
   ),
   viewer: PERMISSION_CODES.filter(
     (permission) =>
-      permission.startsWith('read') && !permission.endsWith(':audit-log')
+      ['update:user'].includes(permission) ||
+      (permission.startsWith('read') && !permission.endsWith(':audit-log'))
   ),
 };
 

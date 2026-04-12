@@ -106,7 +106,12 @@ item:
   patch:
     operationId: updateUser
     summary: Update a user
-    description: Updates profile information for an existing user record. Only provided fields are updated.
+    description: |
+      Updates profile information for an existing user record. Only provided fields are updated.
+      
+      **Role Restrictions:**
+      * **Admin:** Can update any user and change their assigned role.
+      * **User/Viewer:** Can only update their own profile and are forbidden from changing their own role.
     tags:
       - Users
     security:
