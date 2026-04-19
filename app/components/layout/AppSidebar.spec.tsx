@@ -17,6 +17,7 @@ jest.mock('@/hooks/useUser', () => ({
       email: 'test@example.com',
     },
     isUserAdmin: true,
+    isHydrated: true,
   })),
 }));
 
@@ -85,6 +86,7 @@ describe('AppSidebar', () => {
       mockUseUser.mockReturnValue({
         user: { id: 'user-123', name: 'Test User', email: 'test@example.com' },
         isUserAdmin: false,
+        isHydrated: true,
       });
 
       renderWithProviders(<AppSidebar />);
