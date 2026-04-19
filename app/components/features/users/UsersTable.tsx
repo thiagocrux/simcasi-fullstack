@@ -101,6 +101,14 @@ const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN = 'name';
 const COLUMN_MAX_WIDTH = 'max-w-md';
 
+/**
+ * Component to display and manage users in a paginated table.
+ * 
+ * NOTE: The actions menu visibility follows these rules:
+ * - Admin: Full access to all actions.
+ * - User: Can revoke sessions for anyone; can only edit self.
+ * - Viewer: Can only revoke sessions for self; can only edit self.
+ */
 export function UsersTable({
   pageSize = DEFAULT_PAGE_SIZE,
   showFilterInput = true,
@@ -112,7 +120,7 @@ export function UsersTable({
   const router = useRouter();
   const { getRoleLabel } = useRole();
   const { can } = usePermission();
-  const { user: loggedUser, isUserAdmin } = useUser();
+  const { user: loggedUser, isUserAdmin, isHealthProfessional } = useUser();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -803,7 +811,7 @@ export function UsersTable({
                   </DropdownMenuItem>
                 )}
 
-                {can('delete:session') && (
+                {(isUserAdmin || isHealthProfessional || row.original.id === loggedUser?.id) && (
                   <AppAlertDialog
                     title="Revogar todas as sessões?"
                     description="Esta ação encerrará todas as sessões ativas deste usuário. Ele precisará fazer login novamente."
@@ -831,7 +839,7 @@ export function UsersTable({
                   ) && (
                     <AppAlertDialog
                       title="Você tem certeza absoluta?"
-                      description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente a observação."
+                      description="Esta ação não pode ser desfeita. Isso irá deletar permanentemente o usuário."
                       cancelAction={{ action: () => {} }}
                       continueAction={{
                         action: () => handleDelete(row.original.id as string),
@@ -859,6 +867,9 @@ export function UsersTable({
     getRoleLabel,
     relatedUsers,
     canUpdateUser,
+    loggedUser,
+    isUserAdmin,
+    isHealthProfessional,
     can,
     router,
     handleDelete,
@@ -968,11 +979,12 @@ export function UsersTable({
                   </ContextMenuItem>
                 )}
 
-                {(can('delete:session') || can('delete:user')) && (
-                  <ContextMenuSeparator />
-                )}
+                {(isUserAdmin ||
+                  isHealthProfessional ||
+                  row.original.id === loggedUser?.id ||
+                  can('delete:user')) && <ContextMenuSeparator />}
 
-                {can('delete:session') && (
+                {(isUserAdmin || isHealthProfessional || row.original.id === loggedUser?.id) && (
                   <AppAlertDialog
                     title="Revogar todas as sessões?"
                     description="Esta ação encerrará todas as sessões ativas deste usuário. Ele precisará fazer login novamente."

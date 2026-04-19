@@ -4,6 +4,7 @@ import { SquarePen, Trash2 } from 'lucide-react';
 import { ReactNode } from 'react';
 
 import { usePermission } from '@/hooks/usePermission';
+import { useUser } from '@/hooks/useUser';
 import { cn } from '@/lib/shared.utils';
 import { Button } from '../ui/button';
 import { AppAlertDialog } from './AppAlertDialog';
@@ -22,6 +23,8 @@ type Entity =
 
 interface DetailsPageActions {
   entity: Entity;
+  entityId?: string;
+  ownerId?: string;
   dialogTitle: string;
   dialogDescription: string;
   updateAction: {
@@ -40,6 +43,8 @@ interface DetailsPageActions {
 
 export function DetailsPageActions({
   entity,
+  entityId,
+  ownerId,
   dialogTitle,
   dialogDescription,
   updateAction,
@@ -48,8 +53,22 @@ export function DetailsPageActions({
   children,
 }: DetailsPageActions) {
   const { can } = usePermission();
+  const { user, isUserAdmin, isHealthProfessional } = useUser();
 
-  if (!can(`update:${entity}`) && !can(`delete:${entity}`)) {
+  const isSelf = entity === 'user' && entityId === user?.id;
+  const showUpdateButton =
+    can(`update:${entity}`) &&
+    (isUserAdmin || isSelf || entity !== 'user') &&
+    !updateAction.hidden;
+
+  const isOwner = !!ownerId && user?.id === ownerId;
+  const isSessionEntity = entity === 'session';
+  const showDeleteButton = !deleteAction.hidden && (
+    (isSessionEntity && (isUserAdmin || isHealthProfessional || isOwner)) ||
+    (!isSessionEntity && can(`delete:${entity}`) && isUserAdmin)
+  );
+
+  if (!showUpdateButton && !showDeleteButton && !children) {
     return null;
   }
 
@@ -60,7 +79,7 @@ export function DetailsPageActions({
         className
       )}
     >
-      {can(`update:${entity}`) && !updateAction.hidden ? (
+      {showUpdateButton ? (
         <Button
           size="sm"
           variant="outline"
@@ -72,7 +91,7 @@ export function DetailsPageActions({
         </Button>
       ) : null}
 
-      {can(`delete:${entity}`) && !deleteAction.hidden ? (
+      {showDeleteButton ? (
         <AppAlertDialog
           title={dialogTitle}
           description={dialogDescription}

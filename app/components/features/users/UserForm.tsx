@@ -112,8 +112,15 @@ export function UserForm({
   const isFormBusy =
     isPending || isSubmitting || (isEditMode && isFetchingUser);
 
-  // Only administrators can update user roles.
-  const canUpdateRole = !isFormBusy && isUserAdmin;
+  // Detect if the user being edited is the protected seed admin.
+  const isProtectedUser =
+    isEditMode &&
+    !!user?.success &&
+    (!!user.data.isSystem ||
+      user.data.email === process.env.NEXT_PUBLIC_DEFAULT_USER_EMAIL);
+
+  // Only administrators can update user roles, and protected users' roles are immutable.
+  const canUpdateRole = !isFormBusy && isUserAdmin && !isProtectedUser;
 
   async function onSubmit(input: UserFormInput) {
     if (!loggedUser?.id) {
@@ -248,7 +255,7 @@ export function UserForm({
                 name="email"
                 placeholder="exemplo@email.com"
                 aria-invalid={!!formErrors.email}
-                disabled={isFormBusy}
+                disabled={isFormBusy || isProtectedUser}
               />
               {formErrors.email && (
                 <FieldError message={formErrors.email.message} />

@@ -2,20 +2,32 @@
 
 import { ShieldOff } from 'lucide-react';
 
-import { usePermission } from '@/hooks/usePermission';
+import { useUser } from '@/hooks/useUser';
 import { AppAlertDialog } from '../../common/AppAlertDialog';
 import { Button } from '../../ui/button';
 
 interface RevokeAllSessionsButtonProps {
+  targetUserId: string;
   action: () => void;
 }
 
+/**
+ * Button component to trigger the revocation of all sessions for a specific user.
+ * 
+ * Visibility Rules:
+ * - Shown for Admin and Health Professional roles.
+ * - Shown for the session owner (self-service).
+ */
 export function RevokeAllSessionsButton({
+  targetUserId,
   action,
 }: RevokeAllSessionsButtonProps) {
-  const { can } = usePermission();
+  const { user: loggedUser, isUserAdmin, isHealthProfessional } = useUser();
 
-  if (!can('delete:session')) {
+  const isOwnAccount = targetUserId === loggedUser?.id;
+  const canRevoke = isUserAdmin || isHealthProfessional || isOwnAccount;
+
+  if (!canRevoke) {
     return null;
   }
 
