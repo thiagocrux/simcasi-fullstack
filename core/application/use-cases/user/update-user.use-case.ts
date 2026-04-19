@@ -99,6 +99,22 @@ export class UpdateUserUseCase implements UseCase<
       }
     }
 
+    // 4a. Prevent role changes for protected system users.
+    if (data.roleId && data.roleId !== existingUser.roleId) {
+      const isProtected =
+        existingUser.isSystem ||
+        isImmutableEmail(
+          existingUser.email,
+          env.NEXT_PUBLIC_DEFAULT_USER_EMAIL
+        );
+
+      if (isProtected) {
+        throw new ForbiddenError(
+          'O cargo de um usuário protegido pelo sistema não pode ser alterado.'
+        );
+      }
+    }
+
     // 5. Check for duplicates if the email is being changed.
     if (data.email && data.email !== existingUser.email) {
       // Prevent identity change for protected system users to guarantee integration stability.
