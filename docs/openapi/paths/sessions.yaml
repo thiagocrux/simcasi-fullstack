@@ -39,7 +39,12 @@ collection:
   delete:
     operationId: revokeAllSessions
     summary: Revoke all sessions for a user
-    description: Terminates all active sessions belonging to the specified user, forcing a re-authentication on all devices.
+    description: |
+      Terminates all active sessions belonging to the specified user, forcing a re-authentication on all devices.
+
+      **Role Restrictions:**
+      * **Admin:** Can revoke all sessions for any user.
+      * **User/Viewer:** Can only revoke all sessions for their own account.
     tags:
       - Sessions
     security:
@@ -111,7 +116,12 @@ item:
   delete:
     operationId: revokeSession
     summary: Revoke a session
-    description: Terminates an active user session by revoking its security tokens and forcing a re-authentication flow.
+    description: |
+      Terminates an active user session by revoking its security tokens and forcing a re-authentication flow.
+
+      **Role Restrictions:**
+      * **Admin:** Can revoke any session.
+      * **User/Viewer:** Can only revoke their own sessions.
     tags:
       - Sessions
     security:

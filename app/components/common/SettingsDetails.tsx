@@ -1,6 +1,8 @@
 'use client';
 
 import { revokeAllSessionsByUserId } from '@/app/actions/session.actions';
+import { useLogout } from '@/hooks/useLogout';
+import { useRole } from '@/hooks/useRole';
 import { useUser } from '@/hooks/useUser';
 import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
@@ -12,9 +14,16 @@ import { ThemeSwitcher } from './ThemeSwitcher';
 export function SettingsDetails() {
   const router = useRouter();
   const { user } = useUser();
+  const { getRoleLabel } = useRole();
+  const { handleLogout } = useLogout();
 
   async function handleRevokeAllSessions() {
     if (user?.id) {
+      const isViewer = getRoleLabel(user?.roleId) === 'Leitor';
+      if (isViewer) {
+        handleLogout();
+      }
+
       await revokeAllSessionsByUserId(user.id);
     }
   }

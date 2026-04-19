@@ -2,11 +2,15 @@
 jest.mock('@/core/infrastructure/lib/request-context', () => ({
   getRequestContext: jest.fn(() => ({
     userId: 'ctx-user-id',
+    roleId: 'role-id',
+    roleCode: 'admin',
     ipAddress: '127.0.0.1',
     userAgent: 'Jest',
   })),
 }));
 
+import { ForbiddenError } from '@/core/domain/errors/app.error';
+import { getRequestContext } from '@/core/infrastructure/lib/request-context';
 import { RevokeAllSessionsUseCase } from './revoke-all-sessions.use-case';
 
 const mockSessionRepository = { revokeAllByUserId: jest.fn() };
@@ -63,5 +67,43 @@ describe('RevokeAllSessionsUseCase', () => {
     await useCase.execute({ userId: 'user-456' });
 
     expect(callOrder).toEqual(['revokeAllByUserId', 'auditLog']);
+  });
+
+  it('should throw ForbiddenError when viewer tries to revoke sessions of another user', async () => {
+    const viewerCtx = {
+      userId: 'ctx-user-id',
+      roleId: 'role-id',
+      roleCode: 'viewer',
+      ipAddress: '127.0.0.1',
+      userAgent: 'Jest',
+    };
+    jest
+      .mocked(getRequestContext)
+      .mockReturnValueOnce(viewerCtx)
+      .mockReturnValueOnce(viewerCtx);
+
+    await expect(useCase.execute({ userId: 'other-user' })).rejects.toThrow(
+      ForbiddenError
+    );
+  });
+
+  it('should allow viewer to revoke their own sessions', async () => {
+    const viewerCtx = {
+      userId: 'ctx-user-id',
+      roleId: 'role-id',
+      roleCode: 'viewer',
+      ipAddress: '127.0.0.1',
+      userAgent: 'Jest',
+    };
+    jest
+      .mocked(getRequestContext)
+      .mockReturnValueOnce(viewerCtx)
+      .mockReturnValueOnce(viewerCtx);
+    mockSessionRepository.revokeAllByUserId.mockResolvedValueOnce(undefined);
+    mockAuditLogRepository.create.mockResolvedValueOnce(undefined);
+
+    const result = await useCase.execute({ userId: 'ctx-user-id' });
+
+    expect(result).toEqual({ success: true });
   });
 });

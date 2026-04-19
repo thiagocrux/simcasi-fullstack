@@ -97,6 +97,7 @@ export default async function SessionDetailsPage({
         />
         <DetailsPageActions
           entity="session"
+          ownerId={session.userId ?? undefined}
           dialogTitle="Você tem certeza absoluta?"
           dialogDescription="Esta ação não pode ser desfeita. A sessão será revogada permanentemente."
           updateAction={{ hidden: true, action: handleNoOp }}

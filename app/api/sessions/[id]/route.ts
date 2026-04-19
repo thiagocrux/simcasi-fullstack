@@ -27,17 +27,18 @@ export const GET = withAuthentication(
 /**
  * [DELETE] /api/sessions/[id]
  * Revokes a specific session record.
+ *
+ * NOTE: The permission array is intentionally empty to allow self-service.
+ * The 'admin OR self' check is enforced in the RevokeSessionUseCase.
+ *
  * @param _request The incoming Next.js request.
  * @param context The request context containing the route parameters.
  * @return A promise resolving to a success flag.
  */
-export const DELETE = withAuthentication(
-  ['delete:session'],
-  async (_request, { params }) => {
-    const { id } = await (params as Promise<{ id: string }>);
-    const revokeUseCase = makeRevokeSessionUseCase();
-    await revokeUseCase.execute({ id });
+export const DELETE = withAuthentication([], async (_request, { params }) => {
+  const { id } = await (params as Promise<{ id: string }>);
+  const revokeUseCase = makeRevokeSessionUseCase();
+  await revokeUseCase.execute({ id });
 
-    return NextResponse.json({ success: true });
-  }
-);
+  return NextResponse.json({ success: true });
+});

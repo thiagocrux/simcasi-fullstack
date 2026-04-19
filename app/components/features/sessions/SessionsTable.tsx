@@ -83,6 +83,14 @@ const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_FILTER_COLUMN = 'ipAddress';
 const COLUMN_MAX_WIDTH = 'max-w-md';
 
+/**
+ * Component to display and manage user sessions in a paginated table.
+ * Supports filtering, sorting, and administrative revocation.
+ * 
+ * NOTE: The actions menu visibility follows these rules:
+ * - Read Actions: Visible to all authenticated users.
+ * - Delete Actions: Follows 'delete:session' permission or ownership.
+ */
 export function SessionsTable({
   pageSize = DEFAULT_PAGE_SIZE,
   showFilterInput = true,
@@ -93,7 +101,7 @@ export function SessionsTable({
 }: SessionsTableProps) {
   const router = useRouter();
   const { can } = usePermission();
-  const { isUserAdmin } = useUser();
+  const { user: loggedUser, isUserAdmin, isHealthProfessional } = useUser();
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -531,7 +539,9 @@ export function SessionsTable({
         id: 'actions',
         enableHiding: false,
         cell: ({ row }) => {
-          if (!isUserAdmin) return null;
+          const isOwnSession = row.original.userId === loggedUser?.id;
+          const canRevoke = can('delete:session') || isOwnSession;
+
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -549,7 +559,7 @@ export function SessionsTable({
                 >
                   <Eye /> Ver detalhes
                 </DropdownMenuItem>
-                {can('delete:session') && (
+                {canRevoke && (
                   <AppAlertDialog
                     title="Você tem certeza absoluta?"
                     description="Esta ação não pode ser desfeita. A sessão será revogada permanentemente."
@@ -577,7 +587,9 @@ export function SessionsTable({
     selectedFilterOption,
     searchValue,
     relatedUsers,
+    loggedUser,
     isUserAdmin,
+    isHealthProfessional,
     can,
     router,
     handleRevoke,
@@ -643,7 +655,9 @@ export function SessionsTable({
           <AppTable
             table={table}
             renderRowContextMenu={(row) => {
-              if (!isUserAdmin) return null;
+              const isOwnSession = row.original.userId === loggedUser?.id;
+              const canRevoke = can('delete:session') || isOwnSession;
+
               return (
                 <>
                   <ContextMenuItem
@@ -654,7 +668,7 @@ export function SessionsTable({
                   >
                     <Eye className="mr-2 w-4 h-4" /> Ver detalhes
                   </ContextMenuItem>
-                  {can('delete:session') && (
+                  {canRevoke && (
                     <>
                       <ContextMenuSeparator />
                       <AppAlertDialog

@@ -2047,7 +2047,7 @@
       "patch": {
         "operationId": "updateUser",
         "summary": "Update a user",
-        "description": "Updates profile information for an existing user record. Only provided fields are updated.",
+        "description": "Updates profile information for an existing user record. Only provided fields are updated.\n\n**Role Restrictions:**\n* **Admin:** Can update any user and change their assigned role.\n* **User/Viewer:** Can only update their own profile and are forbidden from changing their own role.\n",
         "tags": [
           "Users"
         ],
@@ -17536,7 +17536,7 @@
       "delete": {
         "operationId": "revokeAllSessions",
         "summary": "Revoke all sessions for a user",
-        "description": "Terminates all active sessions belonging to the specified user, forcing a re-authentication on all devices.",
+        "description": "Terminates all active sessions belonging to the specified user, forcing a re-authentication on all devices.\n\n**Role Restrictions:**\n* **Admin:** Can revoke all sessions for any user.\n* **User/Viewer:** Can only revoke all sessions for their own account.\n",
         "tags": [
           "Sessions"
         ],
@@ -17941,7 +17941,7 @@
       "delete": {
         "operationId": "revokeSession",
         "summary": "Revoke a session",
-        "description": "Terminates an active user session by revoking its security tokens and forcing a re-authentication flow.",
+        "description": "Terminates an active user session by revoking its security tokens and forcing a re-authentication flow.\n\n**Role Restrictions:**\n* **Admin:** Can revoke any session.\n* **User/Viewer:** Can only revoke their own sessions.\n",
         "tags": [
           "Sessions"
         ],

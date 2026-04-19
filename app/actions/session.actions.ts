@@ -266,6 +266,11 @@ export async function findSessions(
  * Revokes an active session by its unique identifier.
  * If the session being revoked belongs to the currently authenticated user,
  * the auth cookies are cleared and the user is redirected to the login page.
+ *
+ * NOTE: The permission array is intentionally empty here to allow all authenticated
+ * users to access the action. The 'admin OR self-service' restriction is
+ * enforced within the Use Case logic to prevent unauthorized revocations.
+ *
  * @param id The UUID of the session to revoke.
  * @return A promise resolving to a success indicator.
  * @throws ValidationError If the provided ID is invalid.
@@ -287,25 +292,19 @@ export async function revokeSession(
     // Ignore — if we can't read the current session, own-session detection is skipped.
   }
 
-  const result = await withSecuredActionAndAutomaticRetry(
-    ['delete:session'],
-    async () => {
-      const parsedId = IdSchema.safeParse(id);
-      if (!parsedId.success) {
-        throw new ValidationError(
-          'ID inválido.',
-          formatZodError(parsedId.error)
-        );
-      }
-
-      const useCase = makeRevokeSessionUseCase();
-      const revokeResult = await useCase.execute({ id: parsedId.data });
-
-      revalidatePath('/sessions');
-
-      return revokeResult;
+  const result = await withSecuredActionAndAutomaticRetry([], async () => {
+    const parsedId = IdSchema.safeParse(id);
+    if (!parsedId.success) {
+      throw new ValidationError('ID inválido.', formatZodError(parsedId.error));
     }
-  );
+
+    const useCase = makeRevokeSessionUseCase();
+    const revokeResult = await useCase.execute({ id: parsedId.data });
+
+    revalidatePath('/sessions');
+
+    return revokeResult;
+  });
 
   // If the revoked session was the caller's own session, clear cookies and redirect.
   if (result.success && currentSessionId === id) {
@@ -322,6 +321,11 @@ export async function revokeSession(
  * Revokes all active sessions belonging to a specific user.
  * If the target user is the currently authenticated user,
  * the auth cookies are cleared and the user is redirected to the login page.
+ *
+ * NOTE: The permission array is intentionally empty here to allow all authenticated
+ * users to access the action. The 'admin OR self-service' restriction is
+ * enforced within the Use Case logic to prevent unauthorized revocations.
+ *
  * @param userId The UUID of the user whose sessions will be revoked.
  * @return A promise resolving to a success indicator.
  * @throws ValidationError If the provided user ID is invalid.
@@ -353,17 +357,14 @@ export async function revokeAllSessionsByUserId(
     };
   }
 
-  const result = await withSecuredActionAndAutomaticRetry(
-    ['delete:session'],
-    async () => {
-      const useCase = makeRevokeAllSessionsUseCase();
-      const revokeResult = await useCase.execute({ userId: parsedId.data });
+  const result = await withSecuredActionAndAutomaticRetry([], async () => {
+    const useCase = makeRevokeAllSessionsUseCase();
+    const revokeResult = await useCase.execute({ userId: parsedId.data });
 
-      revalidatePath('/sessions');
+    revalidatePath('/sessions');
 
-      return revokeResult;
-    }
-  );
+    return revokeResult;
+  });
 
   // If the current user revoked their own sessions, clear cookies and redirect.
   if (result.success && currentUserId === userId) {

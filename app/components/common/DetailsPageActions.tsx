@@ -24,6 +24,7 @@ type Entity =
 interface DetailsPageActions {
   entity: Entity;
   entityId?: string;
+  ownerId?: string;
   dialogTitle: string;
   dialogDescription: string;
   updateAction: {
@@ -43,6 +44,7 @@ interface DetailsPageActions {
 export function DetailsPageActions({
   entity,
   entityId,
+  ownerId,
   dialogTitle,
   dialogDescription,
   updateAction,
@@ -51,17 +53,22 @@ export function DetailsPageActions({
   children,
 }: DetailsPageActions) {
   const { can } = usePermission();
-  const { user, isUserAdmin } = useUser();
+  const { user, isUserAdmin, isHealthProfessional } = useUser();
 
   const isSelf = entity === 'user' && entityId === user?.id;
   const showUpdateButton =
     can(`update:${entity}`) &&
     (isUserAdmin || isSelf || entity !== 'user') &&
     !updateAction.hidden;
-  const showDeleteButton =
-    can(`delete:${entity}`) && isUserAdmin && !deleteAction.hidden;
 
-  if (!showUpdateButton && !showDeleteButton) {
+  const isOwner = !!ownerId && user?.id === ownerId;
+  const isSessionEntity = entity === 'session';
+  const showDeleteButton = !deleteAction.hidden && (
+    (isSessionEntity && (isUserAdmin || isHealthProfessional || isOwner)) ||
+    (!isSessionEntity && can(`delete:${entity}`) && isUserAdmin)
+  );
+
+  if (!showUpdateButton && !showDeleteButton && !children) {
     return null;
   }
 

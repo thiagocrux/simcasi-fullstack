@@ -143,7 +143,10 @@ export default async function UserDetailsPage({
               ) || userId === SYSTEM_CONSTANTS.DEFAULT_SYSTEM_USER_ID,
           }}
         >
-          <RevokeAllSessionsButton action={handleRevokeAllSessions} />
+          <RevokeAllSessionsButton
+            targetUserId={userId}
+            action={handleRevokeAllSessions}
+          />
         </DetailsPageActions>
         <DetailsPageProperties data={data} />
       </div>

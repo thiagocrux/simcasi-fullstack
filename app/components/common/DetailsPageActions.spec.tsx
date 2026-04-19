@@ -1,4 +1,5 @@
 import { usePermission } from '@/hooks/usePermission';
+import { useUser } from '@/hooks/useUser';
 import { renderWithProviders } from '@/tests/utils';
 import { fireEvent, screen } from '@testing-library/react';
 import { DetailsPageActions } from './DetailsPageActions';
@@ -9,6 +10,10 @@ describe('DetailsPageActions', () => {
   beforeEach(() => {
     mockCan = jest.fn((): boolean => true);
     (usePermission as jest.Mock).mockReturnValue({ can: mockCan });
+    (useUser as jest.Mock).mockReturnValue({
+      user: { id: 'test-user-id' },
+      isUserAdmin: true,
+    });
   });
 
   it('should return null when user has no permissions', () => {

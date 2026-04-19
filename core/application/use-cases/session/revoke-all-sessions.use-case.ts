@@ -3,6 +3,7 @@ import {
   AUDIT_LOG_ENTITY,
 } from '@/core/domain/constants/audit-log.constants';
 import { SYSTEM_CONSTANTS } from '@/core/domain/constants/system.constants';
+import { ForbiddenError } from '@/core/domain/errors/app.error';
 import { AuditLogRepository } from '@/core/domain/repositories/audit-log.repository';
 import { SessionRepository } from '@/core/domain/repositories/session.repository';
 import { getRequestContext } from '@/core/infrastructure/lib/request-context';
@@ -35,12 +36,25 @@ export class RevokeAllSessionsUseCase implements UseCase<
    *
    * @param input The data containing the target user ID.
    * @return A promise that resolves when all sessions are revoked.
+   * @throws {ForbiddenError} If the user is not an admin/health professional and attempts to revoke sessions for a different user.
    */
   async execute(
     input: RevokeAllSessionsInput
   ): Promise<RevokeAllSessionsOutput> {
     const { userId } = input;
     const { userId: actorId, ipAddress, userAgent } = getRequestContext();
+
+    // Authorization check: Admin OR Health Professional OR own sessions.
+    const context = getRequestContext();
+    const isAdmin = context.roleCode === 'admin';
+    const isHealthProfessional = context.roleCode === 'user';
+    const isOwnAccount = userId === actorId;
+
+    if (!isAdmin && !isHealthProfessional && !isOwnAccount) {
+      throw new ForbiddenError(
+        'You do not have permission to terminate sessions for other users.'
+      );
+    }
 
     await this.sessionRepository.revokeAllByUserId(userId);
 
