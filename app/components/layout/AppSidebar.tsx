@@ -44,7 +44,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
   const { can } = usePermission();
-  const { user, isUserAdmin } = useUser();
+  const { user, isUserAdmin, isHydrated } = useUser();
 
   const userData = {
     name: user?.name || 'Carregando...',
@@ -101,7 +101,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: '/users',
         icon: Contact,
         isActive: false,
-        ...(can('create:user')
+        ...(isHydrated && can('create:user')
           ? {
               items: [
                 {
@@ -192,7 +192,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           label="Gestão de usuários"
           items={data.userManagement}
         />
-        {isUserAdmin && (
+        {isHydrated && isUserAdmin && (
           <AppSidebarContent label="Auditoria" items={data.audit} />
         )}
       </SidebarContent>

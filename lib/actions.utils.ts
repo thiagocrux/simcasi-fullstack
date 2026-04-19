@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { cookies, headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 import { AppError } from '@/core/domain/errors/app.error';
 import { InvalidTokenError } from '@/core/domain/errors/session.error';
@@ -301,11 +300,22 @@ export async function withSecuredActionAndAutomaticRetry<T>(
             );
           }
 
-          redirect('/login');
+          return {
+            success: false,
+            name: 'UnauthorizedError',
+            message: 'Sua sessão expirou. Por favor, faça login novamente.',
+            code: 'SESSION_EXPIRED',
+          } as ActionResponse<T>;
         }
       } else {
         logger.warn('[RETRY] No refresh token found in cookies.');
-        redirect('/login');
+
+        return {
+          success: false,
+          name: 'UnauthorizedError',
+          message: 'Sua sessão expirou. Por favor, faça login novamente.',
+          code: 'SESSION_EXPIRED',
+        } as ActionResponse<T>;
       }
     }
 
