@@ -11,6 +11,7 @@ import {
   Circle,
   CircleCheck,
   IdCard,
+  Plus,
   Search,
   User,
   X,
@@ -250,9 +251,15 @@ export function NewMedicalRecordDialog({
                     alt=""
                   />
                   <p className="w-xs font-medium text-center">
-                    Sua busca não retornou resultados. Ajuste os filtros e tente
-                    de novo!
+                    Nenhum paciente encontrado. Tente uma nova busca ou cadastre
+                    um novo paciente.
                   </p>
+                  {patientList?.success && patientList.data.total === 0 ? (
+                    <Button className="cursor-pointer select-none">
+                      <Plus />
+                      Cadastrar paciente
+                    </Button>
+                  ) : null}
                 </div>
               )}
 
