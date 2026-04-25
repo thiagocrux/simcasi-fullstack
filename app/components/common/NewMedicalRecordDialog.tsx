@@ -255,7 +255,10 @@ export function NewMedicalRecordDialog({
                     um novo paciente.
                   </p>
                   {patientList?.success && patientList.data.total === 0 ? (
-                    <Button className="cursor-pointer select-none">
+                    <Button
+                      className="cursor-pointer select-none"
+                      onClick={() => router.push('/patients/new')}
+                    >
                       <Plus />
                       Cadastrar paciente
                     </Button>
